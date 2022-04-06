@@ -1,8 +1,8 @@
 # About
-C++ numpy-like template-based array implementation
+C++ numpy-like template-based array implementation.
 
 # Description
-Implements two flavours of N-dimensional array in a minimalistic way
+Implements two flavours of N-dimensional array in a minimalistic way.
 
 ## Static array
 
@@ -11,7 +11,7 @@ This implies stack array storage.
 
 ## Dynamic array
 std::vector-based implementation in which only the element type is known at compile time.
-This implies heap array storage
+This implies heap array storage.
 
 # Repo
 ```
@@ -30,7 +30,8 @@ Open np/doc/build/html/index.html in your browser.
 
 # Usage example
 ```
-#include "include/np.hpp"
+#include <iostream>
+#include <np/Creators.hpp>
 
 int main(int, char **) {
     // PI number calculation with Monte-Carlo method
