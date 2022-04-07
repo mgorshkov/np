@@ -28,6 +28,7 @@ SOFTWARE.
 #include <vector>
 #include <cctype>
 #include <numeric>
+#include <algorithm>
 
 #include <np/Constants.hpp>
 #include <np/Exception.hpp>

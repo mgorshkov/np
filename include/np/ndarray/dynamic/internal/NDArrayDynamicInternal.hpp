@@ -31,6 +31,7 @@ SOFTWARE.
 #include <utility>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <np/Shape.hpp>
 #include <np/internal/Tools.hpp>
