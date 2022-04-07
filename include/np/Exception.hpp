@@ -28,6 +28,7 @@ SOFTWARE.
 #include <exception>
 #include <string>
 #include <cerrno>
+#include <cstring>
 
 #define NP_THROW_UNLESS(cond, message) \
 if (!(cond)) throw np::exception(message);
@@ -44,7 +45,7 @@ public:
     }
 
     exception(const std::string& message, const std::string& arg)
-        : std::runtime_error(message + arg + ", Error: " + strerror(errno))
+        : std::runtime_error(message + arg + ", Error: " + std::strerror(errno))
     {
     }
 };
