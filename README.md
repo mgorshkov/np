@@ -28,7 +28,7 @@ make doc
 
 Open np/doc/build/html/index.html in your browser.
 
-# Usage example
+# Usage example (samples/monte-carlo)
 ```
 #include <iostream>
 #include <np/Creators.hpp>
@@ -45,8 +45,16 @@ int main(int, char **) {
     return 0;
 }
 ```
+# How to build the sample
+
 1. Clone the repo
-2. Include the repo into user's project as CMake subproject
+```
+git clone https://github.com/mgorshkov/np.git
+```
+2. cd samples/monte-carlo
+```
+cd samples/monte-carlo
+```
 3. Make build dir
 ```
 mkdir -p build-release && cd build-release
@@ -57,7 +65,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 5. Build
 ```
-cmake --build.
+cmake --build .
 ```
 6. Run the app
 ```
