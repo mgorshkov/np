@@ -25,11 +25,13 @@ target_include_directories(${NP} INTERFACE $<BUILD_INTERFACE:include>)
 
 # Make unit tests and doc if it's the main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    option(MAKE_UNIT_TESTS, "Make unit tests" ON)
-    option(MAKE_DOC, "Make doc" ON)
+    set(MAKE_UNIT_TESTS ON)
+    set(MAKE_DOC ON)
+    set(MAKE_SAMPLE ON)
 else()
-    option(MAKE_UNIT_TESTS, "Make unit tests" OFF)
-    option(MAKE_DOC, "Make doc" OFF)
+    set(MAKE_UNIT_TESTS OFF)
+    set(MAKE_DOC OFF)
+    set(MAKE_SAMPLE OFF)
 endif()
 
 if (MAKE_UNIT_TESTS)
@@ -43,3 +45,14 @@ if (MAKE_DOC)
     message(STATUS "Enable doxygen in ${NP}")
     add_subdirectory(doc)
 endif()
+
+if (MAKE_SAMPLE)
+    message(STATUS "Enable samples build in ${NP}")
+    add_subdirectory(samples/monte-carlo)
+endif()
+
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT ${NP_UNIT_TESTS}
+)

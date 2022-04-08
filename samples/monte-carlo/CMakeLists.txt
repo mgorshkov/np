@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(MONTE_CARLO monte_carlo)
 
-project($MONTE_CARLO)
+project(${MONTE_CARLO})
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -30,5 +30,8 @@ target_link_libraries(
     ${PTHREAD}
     stdc++)
 
-
-
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${MONTE_CARLO}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT ${MONTE_CARLO}
+)
