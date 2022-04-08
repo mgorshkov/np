@@ -18,15 +18,25 @@ This implies heap array storage.
 git clone https://github.com/mgorshkov/np.git
 ```
 
-# Docs
+# Build unit tests and sample
 ```
-cd doc
-mkdir -p build && cd build
+mkdir build && cd build
 cmake ..
-make doc
+cmake --build .
 ```
 
-Open np/doc/build/html/index.html in your browser.
+# Build docs
+```
+cmake --build . --target doc
+```
+
+Open np/build/doc/html/index.html in your browser.
+
+# Install
+```
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=~/np_install
+cmake --build . --target install
+```
 
 # Usage example (samples/monte-carlo)
 ```

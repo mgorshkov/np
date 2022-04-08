@@ -48,3 +48,8 @@ target_link_libraries(
     ${PTHREAD}
     stdc++)
 
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${NP_UNIT_TESTS}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT ${NP_UNIT_TESTS}
+)
