@@ -1,0 +1,87 @@
+var namespacenp =
+[
+    [ "ndarray", null, [
+      [ "array_dynamic", null, [
+        [ "internal", null, [
+          [ "NDArrayDynamic", "classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_n_d_array_dynamic.html", null ],
+          [ "NDArrayDynamicInternal", "classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_n_d_array_dynamic_internal.html", null ],
+          [ "Span", "structnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_span.html", null ],
+          [ "SquareBracketsInserter", "classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_square_brackets_inserter.html", null ]
+        ] ],
+        [ "NDArrayDynamic", "classnp_1_1ndarray_1_1array__dynamic_1_1_n_d_array_dynamic.html", null ]
+      ] ],
+      [ "array_static", null, [
+        [ "internal", null, [
+          [ "NDArrayStaticInternal", "classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_internal.html", null ],
+          [ "NDArrayStaticInternal< DType >", "classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_internal_3_01_d_type_01_4.html", null ],
+          [ "NDArrayStaticInternal< DType, SizeT >", "classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_internal_3_01_d_type_00_01_size_t_01_4.html", null ],
+          [ "NDArrayStaticInternal< DType, SizeT, SizeTs... >", "classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_internal_3_01_d_type_00_01_size_t_00_01_size_ts_8_8_8_01_4.html", null ]
+        ] ],
+        [ "NDArrayStatic", "classnp_1_1ndarray_1_1array__static_1_1_n_d_array_static.html", null ],
+        [ "NDArrayStatic< DType, SizeT, SizeTs... >", "classnp_1_1ndarray_1_1array__static_1_1_n_d_array_static_3_01_d_type_00_01_size_t_00_01_size_ts_8_8_8_01_4.html", null ],
+        [ "NDArrayStaticStub", "classnp_1_1ndarray_1_1array__static_1_1_n_d_array_static_stub.html", null ]
+      ] ]
+    ] ],
+    [ "random", null, [
+      [ "rand_helper", "structnp_1_1random_1_1rand__helper.html", null ],
+      [ "rand_helper< DType, SizeT >", "structnp_1_1random_1_1rand__helper_3_01_d_type_00_01_size_t_01_4.html", null ],
+      [ "rand_helper< DType, SizeT, SizeTs... >", "structnp_1_1random_1_1rand__helper_3_01_d_type_00_01_size_t_00_01_size_ts_8_8_8_01_4.html", null ]
+    ] ],
+    [ "DTypeToCharCodeConvertor", "classnp_1_1_d_type_to_char_code_convertor.html", null ],
+    [ "exception", "classnp_1_1exception.html", null ],
+    [ "Shape", "classnp_1_1_shape.html", "classnp_1_1_shape" ],
+    [ "add", "namespacenp.html#aa31bc32132c0d4b3368e62e644c43bcc", null ],
+    [ "append", "namespacenp.html#ad7e0fd0f5efae7a0ab5d06dc2de017c9", null ],
+    [ "arange", "namespacenp.html#a56e3ade5561748db2a08381e7cca85df", null ],
+    [ "arange", "namespacenp.html#aa4b5daccc3c245d7e91370350667e312", null ],
+    [ "arange", "namespacenp.html#a3eaaa4c5702b9e7a9b0131410e810363", null ],
+    [ "arange", "namespacenp.html#a8a4c939acf7bfb6a09870520615451b9", null ],
+    [ "c_", "namespacenp.html#ac9372781ecc4a81617654b99107993cd", null ],
+    [ "column_stack", "namespacenp.html#a475dbb8a2b8057917ed4a4ca1f2d949f", null ],
+    [ "concatenate", "namespacenp.html#ab280b37c1eec2fa8e5be6923dab33159", null ],
+    [ "copy", "namespacenp.html#ad34d1d31862f3cd6551ebbc057acb36a", null ],
+    [ "corrcoef", "namespacenp.html#aee7b070ca88f2c83badfb28bd9e6a319", null ],
+    [ "cos", "namespacenp.html#a1a536228f00aa1d49745f970ce05a38e", null ],
+    [ "cov", "namespacenp.html#aeca5a287821d297740f542b355a81413", null ],
+    [ "cumsum", "namespacenp.html#a17cce38dcbbc0def86d96cfd17bc2810", null ],
+    [ "del", "namespacenp.html#a5f85e5bcb0d0298ea7b035ce03d7db13", null ],
+    [ "divide", "namespacenp.html#a41747d26758e49478ae88c8a96e951b2", null ],
+    [ "empty", "namespacenp.html#ad76d510b5734e13e8f2398cb5f23d5ae", null ],
+    [ "empty", "namespacenp.html#a7cdabca76c50f555354b2d2ad79f6260", null ],
+    [ "exp", "namespacenp.html#a20c28a7f638afdccde952df0645369b7", null ],
+    [ "eye", "namespacenp.html#afa81a08a0b629881f998ac658f13d572", null ],
+    [ "eye", "namespacenp.html#a14d8d019ac30c7679d17c88f630f635e", null ],
+    [ "full", "namespacenp.html#a2c2626f804e583ccf2bd4aef70174668", null ],
+    [ "full", "namespacenp.html#a1e9934993e0fefd9a8df9fb126df011e", null ],
+    [ "genfromtxt", "namespacenp.html#a03a9f66617e5b995206365ba3e4a7de0", null ],
+    [ "hsplit", "namespacenp.html#ac61fbebf704184be73ab6f1d86bf8ad2", null ],
+    [ "hstack", "namespacenp.html#ae665e3d317b24dffe26df8c787b6b4c9", null ],
+    [ "insert", "namespacenp.html#a4a6c8cc45af400d931beca2e398456ce", null ],
+    [ "len", "namespacenp.html#a9a37e644db7e9e3d02ae31d4ad7c0d7b", null ],
+    [ "linspace", "namespacenp.html#a2dfcd923d40dbe8f476133969177e304", null ],
+    [ "linspace", "namespacenp.html#afe84cd603b0fff194c3770f5c166b8bd", null ],
+    [ "load", "namespacenp.html#a8def7891b1a2a7c1f19391b610147928", null ],
+    [ "loadtxt", "namespacenp.html#ac48b0ed99cb1622db735afbc19da6444", null ],
+    [ "log", "namespacenp.html#a2c06be003071f1238568bb5ce220ccd0", null ],
+    [ "max", "namespacenp.html#afc5bf868c7e5c50aa2063f6f3fa8fbbd", null ],
+    [ "mean", "namespacenp.html#ad4860d058d00435aacc90d96129fe554", null ],
+    [ "median", "namespacenp.html#a5662f4f5be0d86ae938e2d8f374c9c91", null ],
+    [ "min", "namespacenp.html#adb6d920fec2400387e33a96b5a5fd4c3", null ],
+    [ "multiply", "namespacenp.html#ae7e07f3a4861552fb3c59e843c443010", null ],
+    [ "ones", "namespacenp.html#a543fdf8424f4072d7b5362eb932d3adc", null ],
+    [ "ones", "namespacenp.html#abdb9a9bc5a12c36c695cff8b07472f52", null ],
+    [ "r_", "namespacenp.html#ab87dafd718b6087fe2fb0d47aa57a3f3", null ],
+    [ "save", "namespacenp.html#aaff1f1e1028de736139857a28516f3d1", null ],
+    [ "savetxt", "namespacenp.html#a8769a275e4a1eff1d1facc10f723441e", null ],
+    [ "savez", "namespacenp.html#a5e2b7043bd445fd2f7ad764927ea151e", null ],
+    [ "sin", "namespacenp.html#a34eddd68c47c87f9179f9397088b348a", null ],
+    [ "sqrt", "namespacenp.html#a4fcd570862e630b74a837ea7bea9f248", null ],
+    [ "std_", "namespacenp.html#a015a5844739f24c593033a250165fb82", null ],
+    [ "subtract", "namespacenp.html#a78b9b149c234c0968c1266351ad96460", null ],
+    [ "sum", "namespacenp.html#ad6114587e48b5a6a7baef716cd7562e8", null ],
+    [ "transpose", "namespacenp.html#aba20d22958998ff544046b6e764c7847", null ],
+    [ "vsplit", "namespacenp.html#add88f1be85c7c0980e44166dbaa2bd52", null ],
+    [ "vstack", "namespacenp.html#ab31aa22305efd447d324b4e8430290d4", null ],
+    [ "zeros", "namespacenp.html#a00fcd8de262c88427cc3327311b787de", null ],
+    [ "zeros", "namespacenp.html#a9517db28c9167612abeb8cc648d76fb2", null ]
+];
