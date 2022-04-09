@@ -30,6 +30,10 @@ SOFTWARE.
 #include <cerrno>
 #include <cstring>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #define NP_THROW_UNLESS(cond, message) \
 if (!(cond)) throw np::Exception(message);
 

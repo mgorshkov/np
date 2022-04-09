@@ -80,11 +80,11 @@ namespace np::ndarray::array_static {
             return m_ArrayImpl;
         }
 
-        inline DType min() const {
+        inline DType minimum() const {
             return m_ArrayImpl;
         }
 
-        inline DType max() const {
+        inline DType maximum() const {
             return m_ArrayImpl;
         }
 
