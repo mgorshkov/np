@@ -217,10 +217,10 @@ namespace np::ndarray::array_dynamic {
         inline DType sum() const;
 
         // Array-wise minimum value
-        inline DType min() const;
+        inline DType minimum() const;
 
         // Maximum value of an Array row
-        inline DType max() const;
+        inline DType maximum() const;
 
         // Cumulative sum of the elements
         inline NDArrayDynamic<DType, Storage> cumsum() const;

@@ -84,7 +84,7 @@ TEST_F(NDArrayStaticInternalTest, from1DFloatCArrayCreationTest) {
     >>> print(np.array([1.1,2.2,3.3]))
     [1.1 2.2 3.3]
      */
-    float c_array_1d[3] = {1.1, 2.2, 3.3};
+    float c_array_1d[3] = {1.1f, 2.2f, 3.3f};
     NDArrayStaticInternal<float, 3> array_1d = c_array_1d;
     checkArrayRepr(array_1d, "[1.1 2.2 3.3]");
 }
@@ -116,7 +116,7 @@ TEST_F(NDArrayStaticInternalTest, from2DFloatCArrayCreationTest) {
     [[1.1 2.2 3.3]
      [4.4 5.5 6.6]]
     */
-    float c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
+    float c_array_2d[2][3] = {{1.1f, 2.2f, 3.3f}, {4.4f, 5.5f, 6.6f}};
     NDArrayStaticInternal<float, 2, 3> array_2d{c_array_2d};
     checkArrayRepr(array_2d, "[[1.1 2.2 3.3]\n [4.4000001 5.5 6.5999999]]");
 }
@@ -173,10 +173,10 @@ TEST_F(NDArrayStaticInternalTest, from3DFloatCArrayCreationTest) {
       [[ 7.7  8.8  9.9]
        [10.1 11.11 12.12]]]
      */
-    float c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3},
-                                       {4.4, 5.5, 6.6}},
-                               {{7.7, 8.8, 9.9},
-                                       {10.1, 11.11, 12.12}}};
+    float c_array_3d[2][2][3] = {{{1.1f, 2.2f, 3.3f},
+                                       {4.4f, 5.5f, 6.6f}},
+                               {{7.7f, 8.8f, 9.9f},
+                                       {10.1f, 11.11f, 12.12f}}};
     NDArrayStaticInternal<float, 2, 2, 3> array_3d{c_array_3d};
     checkArrayRepr(array_3d, "[[[1.1 2.2 3.3]\n [4.4000001 5.5 6.5999999]]\n [[7.6999998 8.8000002 9.8999996]\n [10.1 11.11 12.12]]]");
 }

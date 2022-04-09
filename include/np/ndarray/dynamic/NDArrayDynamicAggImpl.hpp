@@ -44,7 +44,7 @@ namespace np::ndarray::array_dynamic {
 
     // Array-wise minimum value
     template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::min() const {
+    inline DType NDArrayDynamic<DType, Storage>::minimum() const {
         DType result{};
         bool inited{false};
         auto size = m_ArrayImpl.size();
@@ -60,7 +60,7 @@ namespace np::ndarray::array_dynamic {
 
     // Array-wise maximum value
     template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::max() const {
+    inline DType NDArrayDynamic<DType, Storage>::maximum() const {
         DType result{};
         bool inited{false};
         auto size = m_ArrayImpl.size();
