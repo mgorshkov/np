@@ -68,9 +68,9 @@ protected:
         DType sum_, DType min_, DType max_, NDArrayDynamic<DType> cumsum_, DType mean_, DType median_, const NDArrayDynamic<DType>& corrcoef_, DType std__) {
         auto sum__ = sum<DType>(array);
         EXPECT_EQ(sum_, sum__);
-        auto min__ = minimum<DType>(array);
+        auto min__ = min<DType>(array);
         EXPECT_EQ(min_, min__);
-        auto max__ = maximum<DType>(array);
+        auto max__ = max<DType>(array);
         EXPECT_EQ(max_, max__);
         auto cumsum__ = cumsum<DType>(array);
         bool equal = array_equal(cumsum_, cumsum__);
@@ -92,9 +92,9 @@ protected:
                                               float_ mean_, float_ median_, const NDArrayDynamic<float_>& corrcoef_, float_ std__) {
         auto sum__ = sum<float_>(array);
         EXPECT_DOUBLE_EQ(sum_, sum__);
-        auto min__ = minimum<float_>(array);
+        auto min__ = min<float_>(array);
         EXPECT_DOUBLE_EQ(min_, min__);
-        auto max__ = maximum<float_>(array);
+        auto max__ = max<float_>(array);
         EXPECT_DOUBLE_EQ(max_, max__);
         auto cumsum__ = cumsum<float_>(array);
         bool equal = array_equal(cumsum_, cumsum__);

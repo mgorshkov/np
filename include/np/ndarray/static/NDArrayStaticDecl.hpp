@@ -80,11 +80,11 @@ namespace np::ndarray::array_static {
             return m_ArrayImpl;
         }
 
-        inline DType minimum() const {
+        inline DType min() const {
             return m_ArrayImpl;
         }
 
-        inline DType maximum() const {
+        inline DType max() const {
             return m_ArrayImpl;
         }
 
@@ -373,7 +373,5 @@ namespace np::ndarray::array_static {
         inline void save(std::ostream& stream);
         
         internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
-    
-        static const constexpr std::tuple m_Shape = std::make_tuple(SizeT, SizeTs...);
     };
 }

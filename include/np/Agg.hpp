@@ -69,8 +69,8 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto minimum(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.minimum();
+    inline auto min(const Array<DType, SizeT, SizeTs...> &array) {
+        return array.min();
     }
 
     //////////////////////////////////////////////////////////////
@@ -86,8 +86,8 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto maximum(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.maximum();
+    inline auto max(const Array<DType, SizeT, SizeTs...> &array) {
+        return array.max();
     }
 
     //////////////////////////////////////////////////////////////

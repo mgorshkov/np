@@ -337,9 +337,6 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        static const constexpr std::tuple m_Shape{std::make_tuple(SizeT, SizeTs...)};
-        static const constexpr std::size_t m_Dims{sizeof...(SizeTs) + 1};
-
     private:
         NDArrayStaticInternal<ReducedType, SizeT> m_Impl;
     };

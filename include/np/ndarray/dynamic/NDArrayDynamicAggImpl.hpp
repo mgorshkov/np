@@ -44,7 +44,7 @@ namespace np::ndarray::array_dynamic {
 
     // Array-wise minimum value
     template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::minimum() const {
+    inline DType NDArrayDynamic<DType, Storage>::min() const {
         DType result{};
         bool inited{false};
         auto size = m_ArrayImpl.size();
@@ -60,7 +60,7 @@ namespace np::ndarray::array_dynamic {
 
     // Array-wise maximum value
     template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::maximum() const {
+    inline DType NDArrayDynamic<DType, Storage>::max() const {
         DType result{};
         bool inited{false};
         auto size = m_ArrayImpl.size();
@@ -212,8 +212,8 @@ namespace np::ndarray::array_dynamic {
         }
 
         DType corr = static_cast<DType>(n * sum12 - sum1 * sum2)
-                     / sqrt((n * squareSum1 - sum1 * sum1)
-                            * (n * squareSum2 - sum2 * sum2));
+                     / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1)
+                            * (n * squareSum2 - sum2 * sum2)));
 
         return corr;
     }
@@ -256,7 +256,7 @@ namespace np::ndarray::array_dynamic {
             auto a = abs(get(i) - m);
             x.set(i, a * a);
         }
-        return std::sqrt(x.mean());
+        return static_cast<DType>(std::sqrt(x.mean()));
     }
 } // np::ndarray::array_dynamic
 
