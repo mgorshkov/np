@@ -183,7 +183,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType, DType start, DType stop, DType step = 1>
     auto arange() {
-        NP_THROW_UNLESS(step != 0, "Step must not be zero.");
+        NP_THROW_CONSTEXPR_UNLESS(step != 0, "Step must not be zero.");
 
         static DType const constexpr size = (stop - start) / step;
         NDArrayStatic<DType, size> array;
@@ -236,7 +236,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size num = 50>
     auto linspace(DType start, DType stop) {
-        NP_THROW_UNLESS(num > 0, "Number of samples must be non-negative.");
+        NP_THROW_CONSTEXPR_UNLESS(num > 0, "Number of samples must be non-negative.");
 
         NDArrayStatic<DType, num> array;
         Size i{0};

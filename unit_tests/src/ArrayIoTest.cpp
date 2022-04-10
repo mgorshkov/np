@@ -51,13 +51,13 @@ protected:
         ASSERT_EQ(fileSize1, fileSize2);
 
         std::vector<unsigned char> buffer1;
-        buffer1.reserve(fileSize1);
+        buffer1.reserve(static_cast<std::size_t>(fileSize1));
         buffer1.insert(buffer1.begin(),
                    std::istream_iterator<unsigned char>(input1),
                    std::istream_iterator<unsigned char>());
 
         std::vector<unsigned char> buffer2;
-        buffer2.reserve(fileSize2);
+        buffer2.reserve(static_cast<std::size_t>(fileSize2));
         buffer2.insert(buffer2.begin(),
                        std::istream_iterator<unsigned char>(input2),
                        std::istream_iterator<unsigned char>());

@@ -12,6 +12,7 @@ endif()
 
 if (MSVC)
     add_compile_options(/W4 /WX)
+    add_definitions(NOMINMAX)
 else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()

@@ -24,8 +24,7 @@ target_sources(${MONTE_CARLO} PUBLIC main.cpp)
 
 target_link_libraries(
     ${MONTE_CARLO}
-    ${PTHREAD}
-    stdc++)
+    ${PTHREAD})
 
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${MONTE_CARLO}

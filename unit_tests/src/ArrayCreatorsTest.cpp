@@ -253,15 +253,15 @@ TEST_F(ArrayCreatorsTest, testEyeDynamic) {
 
 // Create an NDArray with random values
 TEST_F(ArrayCreatorsTest, testRandomStatic) {
-    auto array = static_cast<NDArrayStatic<int_, 2, 2>>(random::rand<int_, 2, 2>());
+    auto array = static_cast<NDArrayStatic<float_, 2, 2>>(random::rand<float_, 2, 2>());
     Shape shape{2, 2};
-    checkArrayShape<int_, 2, 2>(array, shape);
+    checkArrayShape<float_, 2, 2>(array, shape);
 }
 
 TEST_F(ArrayCreatorsTest, testRandomDynamic) {
     Shape shape{2, 2};
-    auto array = random::rand<int_>(shape);
-    checkArrayShape<int_>(array, shape);
+    auto array = random::rand<float_>(shape);
+    checkArrayShape<float_>(array, shape);
 }
 
 // Create an empty NDArray
