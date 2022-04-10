@@ -41,10 +41,10 @@ if (!(cond)) throw np::Exception(message);
 if (!(cond)) throw np::Exception(message, arg);
 
 #define NP_THROW_CONSTEXPR_UNLESS(cond, message) \
-if (!(cond)) throw np::Exception(message);
+if constexpr (!(cond)) throw np::Exception(message);
 
 #define NP_THROW_CONSTEXPR_UNLESS_WITH_ARG(cond, message, arg) \
-if (!(cond)) throw np::Exception(message, arg);
+if constexpr (!(cond)) throw np::Exception(message, arg);
 
 namespace np {
 class Exception: public std::runtime_error {
