@@ -99,9 +99,8 @@ namespace np::ndarray::array_dynamic {
 
     template<typename DType, typename Storage>
     inline bool NDArrayDynamic<DType, Storage>::array_equal(const DType& element) const {
-        if (shape().size() != 1 || shape()[0] != 1)
-            return false;
-        return m_ArrayImpl[0] == element;
+        auto sh = shape();
+        return sh.size() == 1 && sh[0] == 1 && m_ArrayImpl.get(0) == element;
     }
 
     template <typename DType, typename Storage>
@@ -111,6 +110,11 @@ namespace np::ndarray::array_dynamic {
 
     template <typename DType, typename Storage>
     inline bool NDArrayDynamic<DType, Storage>::array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
+        return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
+    }
+
+    template <typename DType, typename Storage>
+    inline bool NDArrayDynamic<DType, Storage>::array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array) const {
         return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
     }
 }

@@ -33,7 +33,7 @@ using namespace np;
 
 class ArrayIoTest : public ::testing::Test {
 protected:
-    static void compareFiles(const std::string& file1, const std::string&    file2) {
+    static void compareFiles(const std::string& file1, const std::string& file2) {
         std::ifstream input1(file1, std::ios::binary);
         ASSERT_TRUE(input1.is_open());
 

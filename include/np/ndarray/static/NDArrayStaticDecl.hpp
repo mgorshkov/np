@@ -38,8 +38,11 @@ SOFTWARE.
 #include <np/internal/Tools.hpp>
 
 #include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
 
 namespace np::ndarray::array_static {
+
+    using np::ndarray::array_dynamic::NDArrayDynamic;
 
     template <typename DType, Size... SizeTs>
     class NDArrayStatic;
@@ -112,7 +115,7 @@ namespace np::ndarray::array_static {
             return m_ArrayImpl;
         }
 
-        inline DType get() const {
+        inline DType get(Size) const {
             return m_ArrayImpl;
         }
 
@@ -130,6 +133,18 @@ namespace np::ndarray::array_static {
 
         inline bool operator < (const NDArrayStaticStub& other) const {
             return m_ArrayImpl < other.m_ArrayImpl;
+        }
+
+        inline friend NDArrayStaticStub operator + (const NDArrayStaticStub& stub1, const NDArrayStaticStub& stub2) {
+            return NDArrayStaticStub{stub1.m_ArrayImpl + stub2.m_ArrayImpl};
+        }
+
+        inline NDArrayStaticStub add(const NDArrayStaticStub& stub) {
+            return NDArrayStaticStub{m_ArrayImpl + stub.m_ArrayImpl};
+        }
+
+        inline void set(Size, const DType& element) {
+            m_ArrayImpl = element;
         }
 
         template <typename DTypeOther, Size SizeTOther, Size... SizeTsOther> 
@@ -225,6 +240,9 @@ namespace np::ndarray::array_static {
         //inline ReducedType& at(const std::string& i);
         //inline ReducedType at(const std::string& i) const;
 
+        inline DType get(std::size_t i) const;
+        inline void set(std::size_t i, const DType& value);
+
         // Stream output
         inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayStatic &array) {
             return stream << array.m_ArrayImpl;
@@ -245,13 +263,13 @@ namespace np::ndarray::array_static {
         Size len() const;
 
         // Number of array dimensions
-        inline Size ndim();
+        inline Size ndim() const;
 
         // Number of array elements
-        inline Size size();
+        inline Size size() const;
 
         // Data type of array elements
-        inline constexpr DType dtype();
+        inline constexpr DType dtype() const;
 
         // Convert an array to a different type
         template<typename DTypeNew>
@@ -272,7 +290,7 @@ namespace np::ndarray::array_static {
         inline NDArrayStatic<DType, SizeT, SizeTs...> cos() const;
         inline NDArrayStatic<DType, SizeT, SizeTs...> log() const;
         // Dot product
-        inline NDArrayStatic<DType, SizeT, SizeTs...> dot(const NDArrayStatic &array) const;
+        inline DType dot(const NDArrayStatic &array) const;
 
         // Elementwise comparison
         inline NDArrayStatic<bool_, SizeT, SizeTs...> operator==(const NDArrayStatic &array) const;
@@ -302,10 +320,10 @@ namespace np::ndarray::array_static {
         inline DType median() const;
 
         // Covariance
-        inline auto cov() const;
+        inline NDArrayDynamic<DType> cov() const;
 
         // Correlation coefficient
-        inline auto corrcoef() const;
+        inline NDArrayDynamic<DType> corrcoef() const;
 
         // Compute the standard deviation along the specified axis.
         inline DType std_() const;
@@ -323,51 +341,65 @@ namespace np::ndarray::array_static {
         // inline void sort(Axis<N> axis = Axis<0>{});
 
         // Permute array dimensions
-        inline NDArrayStatic<DType, SizeT, SizeTs...> transpose() const;
-        inline NDArrayStatic<DType, SizeT, SizeTs...> T() const;
+        NDArrayDynamic<DType> transpose() const;
 
         // Flatten the array
-        inline auto ravel() const;
+        inline NDArrayStatic<DType, (SizeT * ... * SizeTs)> ravel() const;
 
         // Reshape, but don’t change data
-        inline NDArrayStatic<DType, SizeT, SizeTs...> reshape(Shape shape) const;
+        inline NDArrayDynamic<DType> reshape(const Shape& shape) const;
 
-        // Adding and removing elements
-        // Return a new array with shape (2, 6)
-        inline NDArrayStatic<DType, SizeT, SizeTs...> resize(Shape shape) const;
+        // Resize
+        inline NDArrayDynamic<DType> resize(const Shape& shape) const;
 
         // Append items to the array
-        inline auto append(const NDArrayStatic& array) const;
+        inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> append(const NDArrayStatic& array) const;
 
         // Insert items in the array
-        inline NDArrayStatic<DType, SizeT, SizeTs...> insert(Size index, const NDArrayStatic& array) const;
+        inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> insert(Size index, const NDArrayStatic& array) const;
 
         // Delete items from the array
-        inline NDArrayStatic<DType, SizeT, SizeTs...> del(Size index) const;
+        inline NDArrayStatic<DType, (SizeT * ... * SizeTs) - 1> del(Size index) const;
 
         // Concatenate arrays
-        inline NDArrayStatic<DType, SizeT, SizeTs...> concatenate(const NDArrayStatic& array) const;
+        inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> concatenate(const NDArrayStatic& array) const;
 
         // Stack arrays vertically (row-wise)
-        inline NDArrayStatic<DType, SizeT, SizeTs...> vstack(const NDArrayStatic& array) const;
+        inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> vstack(const NDArrayStatic& array) const;
 
         // Stack arrays vertically (row-wise)
-        inline NDArrayStatic<DType, SizeT, SizeTs...> r_(const NDArrayStatic& array) const;
+        inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> r_(const NDArrayStatic& array) const;
 
         // Stack arrays horizontally (column-wise)
-        inline NDArrayStatic<DType, SizeT, SizeTs...> hstack(const NDArrayStatic& array) const;
+        inline NDArrayDynamic<DType> hstack(const NDArrayStatic& array) const;
 
         // Create stacked column-wise arrays
-        inline NDArrayStatic<DType, SizeT, SizeTs...> column_stack(const NDArrayStatic& array) const;
+        inline NDArrayDynamic<DType> column_stack(const NDArrayStatic& array) const;
 
         // Create stacked column-wise arrays
-        inline NDArrayStatic<DType, SizeT, SizeTs...> c_(const NDArrayStatic& array) const;
+        inline NDArrayDynamic<DType> c_(const NDArrayStatic& array) const;
 
         // Split the array horizontally
-        inline std::vector<NDArrayStatic<DType, SizeT, SizeTs...>> hsplit(Size index) const;
+        inline std::vector<NDArrayDynamic<DType>> hsplit(Size index) const;
 
         // Split the array vertically
-        inline std::vector<NDArrayStatic<DType, SizeT, SizeTs...>> vsplit(Size index) const;
+        inline std::vector<NDArrayDynamic<DType>> vsplit(Size index) const;
+
+        inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator begin() {
+            return m_ArrayImpl.begin();
+        }
+
+        inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator end() {
+            return m_ArrayImpl.end();
+        }
+
+        inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cbegin() const {
+            return m_ArrayImpl.cbegin();
+        }
+
+        inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cend() const {
+            return m_ArrayImpl.cend();
+        }
 
     private:
         inline void save(std::ostream& stream);

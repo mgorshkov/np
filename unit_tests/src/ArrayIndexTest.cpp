@@ -38,22 +38,22 @@ protected:
 TEST_F(ArrayIndexTest, dynamicEmptyIntArrayTest) {
     // dynamic
     Array<int_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyFloatArrayTest) {
     Array<float_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyStringArrayTest) {
     Array<string_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyUnicodeArrayTest) {
     Array<unicode_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArrayTest) {

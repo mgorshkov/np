@@ -138,8 +138,14 @@ namespace np::ndarray::array_dynamic {
     }
 
     template<typename DType, typename Storage>
-    inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::dot(const NDArrayDynamic<DType, Storage> &) const {
-        NDArrayDynamic<DType, Storage> result;
+    inline DType NDArrayDynamic<DType, Storage>::dot(const NDArrayDynamic<DType, Storage>& array) const {
+        if (shape().size() != 1 || array.shape().size() != 1 || shape() != array.shape()) {
+            throw std::runtime_error("Shapes are different or arguments are not 1D arrays");
+        }
+        DType result{0};
+        for (Size i = 0; i < size(); ++i) {
+            result += get(i) * array.get(i);
+        }
         return result;
     }
 

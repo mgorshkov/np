@@ -42,9 +42,9 @@ namespace np::ndarray::array_dynamic {
     }
 
     template <typename DType, typename Storage>
-    inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> NDArrayDynamic<DType, Storage>::operator[](std::size_t i) const {
+    inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> NDArrayDynamic<DType, Storage>::operator[](std::size_t i) const {
         auto subArray = m_ArrayImpl[i];
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
+        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>{subArray};
     }
 
     template <typename DType, typename Storage>
@@ -54,9 +54,9 @@ namespace np::ndarray::array_dynamic {
     }
 
     template <typename DType, typename Storage>
-    inline const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> NDArrayDynamic<DType, Storage>::at(std::size_t i) const {
+    inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> NDArrayDynamic<DType, Storage>::at(std::size_t i) const {
         const auto subArray = m_ArrayImpl[i];
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
+        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>{subArray};
     }
 
     // Boolean indexing
@@ -82,17 +82,22 @@ namespace np::ndarray::array_dynamic {
             return false;
         };
         std::vector<DType> result;
-        std::copy_if(m_ArrayImpl.m_Impl.begin(),
-                     m_ArrayImpl.m_Impl.end(),
+        std::copy_if(m_ArrayImpl.cbegin(),
+                     m_ArrayImpl.cend(),
                      std::back_inserter(result),
                      pred);
 
         Shape shape{static_cast<Size>(result.size())};
-        return NDArrayDynamic<DType, Storage>{internal::NDArrayDynamicInternal{result, shape}};
+        return NDArrayDynamic<DType, Storage>{internal::NDArrayDynamicInternal<DType>{result, shape}};
     }
 
     template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::get(std::size_t i) const {
+    inline const DType& NDArrayDynamic<DType, Storage>::get(std::size_t i) const {
+        return m_ArrayImpl.get(i);
+    }
+
+    template<typename DType, typename Storage>
+    inline DType& NDArrayDynamic<DType, Storage>::get(std::size_t i) {
         return m_ArrayImpl.get(i);
     }
 

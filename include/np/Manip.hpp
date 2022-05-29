@@ -42,7 +42,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> transpose(const Array<DType, SizeT, SizeTs...>& array) {
+    auto transpose(const Array<DType, SizeT, SizeTs...>& array) {
         return array.transpose();
     }
 
@@ -128,7 +128,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> vstack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
+    auto vstack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
         return array1.vstack(array2);
     }
 
@@ -147,7 +147,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> r_(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
+    auto r_(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
         return array1.r_(array2);
     }
 
@@ -165,7 +165,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> hstack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
+    Array<DType> hstack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
         return array1.hstack(array2);
     }
 
@@ -183,7 +183,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> column_stack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
+    Array<DType> column_stack(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
         return array1.column_stack(array2);
     }
 
@@ -202,7 +202,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> c_(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
+    Array<DType> c_(const Array<DType, SizeT, SizeTs...>& array1, const Array<DType, SizeT, SizeTs...>& array2) {
         return array1.c_(array2);
     }
 
@@ -218,7 +218,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType, SizeT, SizeTs...>> hsplit(const Array<DType, SizeT, SizeTs...>& array, Size index) {
+    std::vector<Array<DType>> hsplit(const Array<DType, SizeT, SizeTs...>& array, Size index) {
         return array.hsplit(index);
     }
 
@@ -234,7 +234,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType, SizeT, SizeTs...>> vsplit(const Array<DType, SizeT, SizeTs...>& array, Size index) {
+    std::vector<Array<DType>> vsplit(const Array<DType, SizeT, SizeTs...>& array, Size index) {
         return array.vsplit(index);
     }
 

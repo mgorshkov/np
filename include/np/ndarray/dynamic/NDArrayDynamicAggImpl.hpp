@@ -27,6 +27,7 @@ SOFTWARE.
 #include <algorithm>
 
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/dynamic/Tools.hpp>
 
 namespace np::ndarray::array_dynamic {
 
@@ -108,49 +109,28 @@ namespace np::ndarray::array_dynamic {
         auto size = m_ArrayImpl.size();
         if (size == 0)
             return 0;
-        auto v = m_ArrayImpl.m_Impl;
+        auto array = m_ArrayImpl;
+        auto middle1 = array.begin();
+        std::advance(middle1, size / 2);
         if (size % 2 == 0) {
-            std::nth_element(v.begin(),
-                v.begin() + size / 2,
-                v.end());
+            auto middle2 = array.begin();
+            std::advance(middle2, (size - 1) / 2);
 
-            std::nth_element(v.begin(),
-                v.begin() + (size - 1) / 2,
-                v.end());
+            std::nth_element(array.begin(),
+                middle1,
+                array.end());
+
+            std::nth_element(array.begin(),
+                middle2,
+                array.end());
     
             // Find the average of values at indices size / 2 and (size - 1) / 2
-            return static_cast<DType>(v[(size - 1) / 2] + v[(size / 2)] / 2.0);
+            return static_cast<DType>((array.get((size - 1) / 2) + array.get(size / 2)) / 2.0);
         }
-        std::nth_element(v.begin(),
-            v.begin() + size / 2,
-            v.end());
-        return static_cast<DType>(v[size / 2]);
-    }
-
-    template<typename DType, typename Storage>
-    inline static DType vectorCov(const NDArrayDynamic<DType, Storage>& v1, const NDArrayDynamic<DType, Storage>& v2) {
-        auto sh1 = v1.shape();
-        if (sh1.size() != 1)
-            throw std::runtime_error("Only 1D arrays supported");
-
-        auto sh2 = v2.shape();
-        if (sh2.size() != 1)
-            throw std::runtime_error("Only 1D arrays supported");
-
-        if (v1.len() != v2.len()) {
-            throw std::runtime_error("Sizes are different");
-        }
-
-        auto v1_mean = v1.mean();
-        auto v2_mean = v2.mean();
-
-        DType sum = 0;
-
-        for (Size i = 0; i < v1.len(); ++i) {
-            sum += ((v1[i] - v1_mean) * (v2[i] - v2_mean));
-        }
-
-        return sum / (v1.len() - 1);
+        std::nth_element(array.begin(),
+            middle1,
+            array.end());
+        return static_cast<DType>(array.get(size / 2));
     }
 
     template<typename DType, typename Storage>
@@ -178,44 +158,6 @@ namespace np::ndarray::array_dynamic {
             set(result, i, subResult);
         }
         return result;
-    }
-
-    template<typename DType, typename Storage>
-    inline static DType vectorCorr(const NDArrayDynamic<DType, Storage>& v1, const NDArrayDynamic<DType, Storage>& v2) {
-        auto sh1 = v1.shape();
-        if (sh1.size() != 1)
-            throw std::runtime_error("Only 1D arrays supported");
-
-        auto sh2 = v2.shape();
-        if (sh2.size() != 1)
-            throw std::runtime_error("Only 1D arrays supported");
-
-        if (v1.len() != v2.len()) {
-            throw std::runtime_error("Sizes are different");
-        }
-
-        DType sum1 = 0;
-        DType sum2 = 0;
-        DType sum12 = 0;
-        DType squareSum1 = 0;
-        DType squareSum2 = 0;
-
-        Size n = v1.len();
-
-        for (Size i = 0; i < n; i++) {
-            sum1 += v1.get(i);
-            sum2 += v2.get(i);
-            sum12 += sum12 + v1.get(i) * v2.get(i);
-
-            squareSum1 += v1.get(i) * v1.get(i);
-            squareSum2 += v2.get(i) * v2.get(i);
-        }
-
-        DType corr = static_cast<DType>(n * sum12 - sum1 * sum2)
-                     / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1)
-                            * (n * squareSum2 - sum2 * sum2)));
-
-        return corr;
     }
 
     // Correlation coefficient

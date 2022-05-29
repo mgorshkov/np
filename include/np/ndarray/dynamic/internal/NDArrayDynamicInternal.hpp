@@ -52,44 +52,140 @@ namespace np::ndarray::array_dynamic::internal {
     using NDArrayDynamicInternalStorageVector = std::vector<DType>;
 
     template <typename Storage>
-    struct Span {
-        Span() {
+    class ConstSpan {
+    public:
+        using iterator = typename Storage::iterator;
+        using const_iterator = typename Storage::const_iterator;
 
+        typedef ptrdiff_t difference_type;
+
+        ConstSpan() = default;
+
+        ConstSpan(const_iterator cbegin, const_iterator cend)
+            : cbegin_{cbegin}
+            , cend_  {cend}
+        {
         }
 
-        Span(typename Storage::const_iterator begin, typename Storage::const_iterator end) 
+        ConstSpan(const_iterator cbegin, Size size)
+            : cbegin_{cbegin}
+            , cend_  {cbegin + size}
+        {
+        }
+
+        template <typename DType>
+        ConstSpan(const std::vector<DType>& vector)
+            : cbegin_{vector.cbegin()}
+            , cend_  {vector.cend()}
+        {
+        }
+
+        std::size_t size() const {
+            return cend_ - cbegin_;
+        }
+
+        const_iterator cbegin() const {
+            return cbegin_;
+        }
+
+        const_iterator cend() const {
+            return cend_;
+        }
+
+        typename const_iterator::reference operator[](std::size_t i) const {
+            return *(cbegin_ + i);
+        }
+
+        bool operator == (const Storage& storage) const {
+            auto it1 = storage.cbegin();
+            auto it2 = cbegin_;
+            while (it1 != storage.cend()) {
+                if (*it1 != *it2)
+                    return false;
+                ++it1;
+                ++it2;
+            }
+            return it2 == cend_;
+        }
+
+        inline iterator operator += (difference_type diff) {
+            return iterator(cbegin_ += diff, cend_);
+        }
+
+        inline iterator operator -= (difference_type diff) {
+            return iterator(cbegin_ -= diff, cend_);
+        }
+
+        template <typename StorageSpan>
+        friend class Span;
+
+    private:
+        const_iterator cbegin_;
+        const_iterator cend_;
+    };
+
+    template <typename Storage>
+    class Span {
+    public:
+        using iterator = typename Storage::iterator;
+        using const_iterator = typename Storage::const_iterator;
+        typedef ptrdiff_t difference_type;
+
+        Span() = default;
+
+        Span(iterator begin, iterator end)
             : begin_{begin}
             , end_  {end}
         {
         }
 
-        Span(typename Storage::const_iterator begin, std::size_t size)
+        Span(iterator begin, Size size)
             : begin_{begin}
             , end_  {begin + size}
         {
         }
 
         template <typename DType>
-        Span(const std::vector<DType> vector)
+        Span(const std::vector<DType>& vector)
             : begin_{vector.begin()}
-            , end_{vector.end()}
-        {   
+            , end_  {vector.end()}
+        {
         }
 
         std::size_t size() const {
             return end_ - begin_;
         }
 
-        typename Storage::const_iterator begin() const {
+        iterator begin() const {
             return begin_;
         }
 
-        typename Storage::const_iterator end() const {
+        iterator end() const {
             return end_;
         }
 
-        typename Storage::value_type operator[](std::size_t i) const {
+        iterator cbegin() const {
+            return begin_;
+        }
+
+        iterator cend() const {
+            return end_;
+        }
+
+        typename const_iterator::reference operator[](std::size_t i) const {
             return *(begin_ + i);
+        }
+
+        typename iterator::reference operator[](std::size_t i) {
+            return *(begin_ + i);
+        }
+
+        inline iterator operator += (difference_type diff) {
+            return iterator(begin_ += diff, end_);
+        }
+
+        inline iterator operator -= (difference_type diff) {
+            return iterator(begin_ -= diff, end_);
         }
 
         bool operator == (const Storage& storage) const {
@@ -103,13 +199,17 @@ namespace np::ndarray::array_dynamic::internal {
             }
             return it2 == end_;
         }
-    
-        typename Storage::const_iterator begin_;
-        typename Storage::const_iterator end_;
+
+    private:
+        iterator begin_;
+        iterator end_;
     };
 
     template <typename DType>
     using NDArrayDynamicInternalStorageSpan = Span<NDArrayDynamicInternalStorageVector<DType>>;
+
+    template <typename DType>
+    using NDArrayDynamicInternalStorageConstSpan = ConstSpan<NDArrayDynamicInternalStorageVector<DType>>;
 
     template<typename DType, typename Storage = NDArrayDynamicInternalStorageVector<DType>>
     class NDArrayDynamicInternal {
@@ -180,23 +280,27 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         // create 1D array
-        template <typename It>
-        inline NDArrayDynamicInternal(It it, Size size) noexcept
+        inline NDArrayDynamicInternal(const Storage& impl, Size size) noexcept
             : m_Shape{size}
-            , m_Impl(it, it + size)
+            , m_Impl{impl}
         {
         }
 
-        template <typename It>
-        inline NDArrayDynamicInternal(It it, const Shape& shape) noexcept
-            : m_Shape{shape}
-            , m_Impl(it, it + ndarray::internal::calcSizeByShape(shape))
+        inline NDArrayDynamicInternal(typename Storage::const_iterator it, Size size) noexcept
+            : m_Shape{size}
+            , m_Impl(it, size)
         {
         }
 
-        inline NDArrayDynamicInternal(const StdVector1DType& impl, Shape shape) noexcept
+        inline NDArrayDynamicInternal(const Storage& impl, Shape shape) noexcept
             : m_Shape{std::move(shape)}
             , m_Impl{impl}
+        {
+        }
+
+        inline NDArrayDynamicInternal(typename Storage::const_iterator it, Shape shape) noexcept
+            : m_Shape{std::move(shape)}
+            , m_Impl(it, np::ndarray::internal::calcSizeByShape(m_Shape))
         {
         }
 
@@ -506,24 +610,31 @@ namespace np::ndarray::array_dynamic::internal {
             return *this;
         }
 
-        inline NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>> operator[](std::size_t i) const {
-            if (m_Shape.size() == 0) {
+        inline NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>> operator[](std::size_t i) const {
+            if (m_Shape.empty()) {
                 throw std::runtime_error("Index " + std::to_string(i) + " of an empty array requested");
             }
-            auto itBegin = m_Impl.begin();
+            auto itBeginImpl = m_Impl.cbegin();
             if (m_Shape.size() == 1) {
-                return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>(itBegin, 1);
+                if (i != 0) {
+                    throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
+                }
+                return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>>(itBeginImpl, Shape{1});
             }
 
-            auto startIt = std::begin(m_Shape);
-            std::advance(startIt, 1);
-            Shape shape{std::vector(startIt, std::end(m_Shape))};
+            auto itBeginShape = std::cbegin(m_Shape);
+            std::advance(itBeginShape, 1);
+            Shape shape{std::vector(itBeginShape, std::cend(m_Shape))};
             auto layerSize = m_Shape[0] == 0 ? 0 : size() / m_Shape[0];
-            std::advance(itBegin, i * layerSize);
-            return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>(itBegin, shape);
+            std::advance(itBeginImpl, i * layerSize);
+            return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>>(itBeginImpl, shape);
         }
 
-        inline DType get(std::size_t i) const {
+        inline const DType& get(std::size_t i) const {
+            return m_Impl[i];
+        }
+
+        inline DType& get(std::size_t i) {
             return m_Impl[i];
         }
 
@@ -537,6 +648,10 @@ namespace np::ndarray::array_dynamic::internal {
             return m_Shape;
         }
 
+        inline void setShape(const Shape& shape) {
+            m_Shape = shape;
+        }
+
         inline std::size_t size() const {
             return m_Impl.size();
         }
@@ -548,10 +663,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         inline bool operator == (const DType& value) const {
-            if (size() == 1) {
-                return m_Impl[0] == value;
-            }
-            return false;
+            return size() == 1 && m_Impl[0] == value;
         }
 
         inline bool operator != (const DType& value) const {
@@ -578,14 +690,229 @@ namespace np::ndarray::array_dynamic::internal {
             std::sort(m_Impl.begin(), m_Impl.end());
         }
 
-        friend class NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageVector<DType>>;
-        friend class NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>;
+        class iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
 
-        friend class NDArrayDynamic<DType, NDArrayDynamicInternalStorageVector<DType>>;
-        friend class NDArrayDynamic<DType, NDArrayDynamicInternalStorageSpan<DType>>;
+            inline iterator(NDArrayDynamicInternal* container_, std::size_t offset_)
+                : container{container_}
+                , offset{offset_}{
+            }
 
-        //TODO fix this. access from NDArrayDynamic
-    //private:
+            inline iterator(const iterator& it)
+                : container{it.container}
+                , offset{it.offset}{
+            }
+
+            inline iterator& operator = (const iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline iterator operator ++ () {
+                return iterator(container, ++offset);
+            }
+
+            inline iterator operator ++ (int) {
+                return iterator(container, offset++);
+            }
+
+            inline iterator operator -- () {
+                return iterator(container, --offset);
+            }
+
+            inline iterator operator -- (int) {
+                return iterator(container, offset--);
+            }
+
+            inline iterator operator - (difference_type diff) {
+                return iterator(container, offset - diff);
+            }
+
+            inline iterator operator + (difference_type diff) {
+                return iterator(container, offset + diff);
+            }
+
+            inline iterator operator += (difference_type diff) {
+                return iterator(container, offset += diff);
+            }
+
+            inline iterator operator -= (difference_type diff) {
+                return iterator(container, offset -= diff);
+            }
+
+            inline difference_type operator - (const iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline value_type& operator * () {
+                return container->get(offset);
+            }
+
+        private:
+            NDArrayDynamicInternal* container;
+            std::size_t offset;
+        };
+
+        inline iterator begin() {
+            return iterator{this, 0};
+        }
+
+        inline iterator end() {
+            return iterator{this, m_Impl.size()};
+        }
+
+        class const_iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
+
+            inline const_iterator(const NDArrayDynamicInternal* container_, std::size_t offset_)
+                : container{container_}
+                , offset{offset_}{
+            }
+
+            inline const_iterator(const const_iterator& it)
+                : container{it.container}
+                , offset{it.offset}{
+            }
+
+            inline const_iterator& operator = (const const_iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const const_iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const const_iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline const_iterator operator ++ () {
+                return const_iterator(container, ++offset);
+            }
+
+            inline const_iterator operator ++ (int) {
+                return const_iterator(container, offset++);
+            }
+
+            inline const_iterator operator -- () {
+                return const_iterator(container, --offset);
+            }
+
+            inline const_iterator operator -- (int) {
+                return const_iterator(container, offset--);
+            }
+
+            inline const_iterator operator - (difference_type diff) {
+                return const_iterator(container, offset - diff);
+            }
+
+            inline const_iterator operator + (difference_type diff) {
+                return const_iterator(container, offset + diff);
+            }
+
+            inline const_iterator operator += (difference_type diff) {
+                return const_iterator(container, offset += diff);
+            }
+
+            inline const_iterator operator -= (difference_type diff) {
+                return const_iterator(container, offset -= diff);
+            }
+
+            inline difference_type operator - (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline auto operator * () const {
+                return container->get(offset);
+            }
+
+        private:
+            const NDArrayDynamicInternal* container;
+            std::size_t offset;
+        };
+
+        inline const_iterator cbegin() const {
+            return const_iterator{this, 0};
+        }
+
+        inline const_iterator cend() const {
+            return const_iterator{this, m_Impl.size()};
+        }
+
+        template <typename DTypeOther, typename StorageOther>
+        friend class NDArrayDynamicInternal;
+
+        template <typename DTypeOther, typename StorageOther>
+        friend class NDArrayDynamic;
+
+    private:
         Shape m_Shape;
         Storage m_Impl;
     };

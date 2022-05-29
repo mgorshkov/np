@@ -42,13 +42,13 @@ namespace np::ndarray::array_static {
 
     // Number of array dimensions
     template<typename DType, Size SizeT, Size... SizeTs>
-    Size NDArrayStatic<DType, SizeT, SizeTs...>::ndim() {
+    Size NDArrayStatic<DType, SizeT, SizeTs...>::ndim() const {
         return 1 + sizeof...(SizeTs);
     }
 
     // Number of array elements
     template<typename DType, Size SizeT, Size... SizeTs>
-    Size NDArrayStatic<DType, SizeT, SizeTs...>::size() {
+    Size NDArrayStatic<DType, SizeT, SizeTs...>::size() const {
         size_t result{SizeT};
         if constexpr ((sizeof...(SizeTs)) != 0)
             for (auto i : { SizeTs... }) result *= i;
@@ -56,7 +56,7 @@ namespace np::ndarray::array_static {
     }
 
     template<typename DType, Size SizeT, Size... SizeTs>
-    inline constexpr DType NDArrayStatic<DType, SizeT, SizeTs...>::dtype() {
+    inline constexpr DType NDArrayStatic<DType, SizeT, SizeTs...>::dtype() const {
         return DType{};
     }
 
