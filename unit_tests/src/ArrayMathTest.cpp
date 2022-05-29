@@ -58,40 +58,64 @@ TEST_F(ArrayMathTest, static1DIntArraysTest) {
     // static
     Array<int_, 3> array1{1, 2, 3};
     Array<int_, 3> array2{4, 5, 6};
-    Array<int_, 3> sum{5, 7, 9};
-    auto array = add<int_, 3>(array1, array2);
-    auto equal = array_equal(array, sum);
-    EXPECT_TRUE(equal);
+    {
+        Array<int_, 3> sum{5, 7, 9};
+        auto array = add<int_, 3>(array1, array2);
+        auto equal = array_equal(array, sum);
+        EXPECT_TRUE(equal);
+    }
+    {
+        auto result = array1.dot(array2);
+        EXPECT_EQ(32, result);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DIntArraysTest) {
     // dynamic
     Array<int_> array1{1, 2, 3};
     Array<int_> array2{4, 5, 6};
-    Array<int_> sum{5, 7, 9};
-    auto array = add<int_>(array1, array2);
-    auto equal = array_equal<int_>(array, sum);
-    EXPECT_TRUE(equal);
+    {
+        Array<int_> sum{5, 7, 9};
+        auto array = add<int_>(array1, array2);
+        auto equal = array_equal<int_>(array, sum);
+        EXPECT_TRUE(equal);
+    }
+    {
+        auto result = array1.dot(array2);
+        EXPECT_EQ(32, result);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DFloatArraysTest) {
     // static
     Array<float_, 3> array1{1.1, 2.2, 3.3};
     Array<float_, 3> array2{4.4, 5.5, 6.6};
-    Array<float_, 3> sum{5.5, 7.7, 9.9};
-    auto array = add<float_, 3>(array1, array2);
-    auto equal = array_equal(array, sum);
-    EXPECT_TRUE(equal);
+    {
+        Array<float_, 3> sum{5.5, 7.7, 9.9};
+        auto array = add<float_, 3>(array1, array2);
+        auto equal = array_equal(array, sum);
+        EXPECT_TRUE(equal);
+    }
+    {
+        auto result = array1.dot(array2);
+        EXPECT_EQ(38.72, result);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DFloatArraysTest) {
     // dynamic
     Array<float_> array1{1.1, 2.2, 3.3};
     Array<float_> array2{4.4, 5.5, 6.6};
-    Array<float_> sum{5.5, 7.7, 9.9};
-    auto array = add<float_>(array1, array2);
-    auto equal = array_equal<float_>(array, sum);
-    EXPECT_TRUE(equal);
+    {
+        Array<float_> sum{5.5, 7.7, 9.9};
+        auto array = add<float_>(array1, array2);
+        auto equal = array_equal<float_>(array, sum);
+        EXPECT_TRUE(equal);
+    }
+    {
+        auto result = array1.dot(array2);
+        EXPECT_EQ(38.72, result);
+    }
 }
 
 TEST_F(ArrayMathTest, static2DIntArraysTest) {

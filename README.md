@@ -5,13 +5,18 @@ C++ numpy-like template-based array implementation.
 Implements two flavours of N-dimensional array in a minimalistic way.
 
 ## Static array
-
 std::array-based implementation, in which the element type and all the dimensions are fixed and determined at compile time.
 This implies stack array storage.
 
 ## Dynamic array
 std::vector-based implementation in which only the element type is known at compile time.
 This implies heap array storage.
+
+# Requirements
+Any C++17-compatible compiler:
+* gcc 8 or higher
+* clang 6 or higher
+* Visual Studio 2017 or higher
 
 # Repo
 ```

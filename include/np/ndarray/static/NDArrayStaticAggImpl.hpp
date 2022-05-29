@@ -25,6 +25,7 @@ SOFTWARE.
 #pragma once
 
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <np/ndarray/static/Tools.hpp>
 
 namespace np::ndarray::array_static {
 
@@ -72,14 +73,14 @@ namespace np::ndarray::array_static {
     }
 
     // Cumulative sum of the elements
-    /*
     template<typename DType, Size SizeT, Size... SizeTs>
     inline auto NDArrayStatic<DType, SizeT, SizeTs...>::cumsum() const {
         NDArrayStatic<DType, (SizeT * ... * SizeTs)> result;
-        Size index = 0;
-        for (Size i = 0; i < SizeT; ++i) {
-            const auto& element = at(i);
-            //result = result.append(element.cumsum());
+        DType sum = 0;
+        for (Size i = 0; i < size(); ++i) {
+            const auto& element = get(i);
+            sum += element;
+            result.set(i, sum);
         }
         return result;
     }
@@ -102,36 +103,85 @@ namespace np::ndarray::array_static {
     // Median
     template<typename DType, Size SizeT, Size... SizeTs>
     inline DType NDArrayStatic<DType, SizeT, SizeTs...>::median() const {
-        DType result{};
-        for (Size i = 0; i < SizeT; ++i) {
-            const auto& element = at(i);
-            result += element.median();
-        }
-        if constexpr(SizeT == 0) {
+        auto s = size();
+        if (s == 0)
             return 0;
-        } else {
-            return result / SizeT;
+        auto array = m_ArrayImpl;
+        auto middle1 = array.begin();
+        std::advance(middle1, s / 2);
+        if (s % 2 == 0) {
+            auto middle2 = array.begin();
+            std::advance(middle2, (s - 1) / 2);
+
+            std::nth_element(array.begin(),
+                             middle1,
+                             array.end());
+
+            std::nth_element(array.begin(),
+                             middle2,
+                             array.end());
+
+            // Find the average of values at indices size / 2 and (size - 1) / 2
+            return static_cast<DType>((array.get((s - 1) / 2) + array.get(s / 2)) / 2.0);
         }
+        std::nth_element(array.begin(),
+                         middle1,
+                         array.end());
+        return static_cast<DType>(array.get(s / 2));
     }
 
     template<typename DType, Size SizeT, Size... SizeTs>
-    inline auto NDArrayStatic<DType, SizeT, SizeTs...>::cov() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result{};
+    inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::cov() const {
+        auto sh = shape();
+        if (sh.size() == 0)
+            return 0;
+        if (sh.size() != 1 && sh.size() != 2)
+            throw std::runtime_error("Only 1D and 2D arrays supported");
+
+        if (sh.size() == 1)
+            return NDArrayDynamic<DType>{1.0};
+
+        Shape resultShape({len(), len()});
+        NDArrayDynamic<DType> result{resultShape};
+        for (Size i = 0; i < len(); ++i) {
+            Shape subResultShape({1, len()});
+            NDArrayDynamic<DType> subResult{subResultShape};
+            for (Size j = 0; j < len(); ++j) {
+                auto subArray1 = at(i);
+                auto subArray2 = at(j);
+                DType c = vectorCov(subArray1, subArray2);
+                set(subResult, j, c);
+            }
+            set(result, i, subResult);
+        }
         return result;
     }
 
     // Correlation coefficient
     template<typename DType, Size SizeT, Size... SizeTs>
-    inline auto NDArrayStatic<DType, SizeT, SizeTs...>::corrcoef() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result{};
-        for (Size i = 0; i < SizeT; ++i) {
-            const auto& element = at(i);
-            result += element.corrcoef();
-        }
-        if constexpr(SizeT == 0) {
-            return 0;
-        } else {
-            return result / SizeT;
+    inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::corrcoef() const {
+        auto sh = shape();
+        if (sh.size() == 0)
+            return NDArrayDynamic<DType>{};
+
+        if (sh.size() != 1 && sh.size() != 2)
+            throw std::runtime_error("Only 1D and 2D arrays supported");
+
+        if (sh.size() == 1)
+            return NDArrayDynamic<DType>{1};
+
+        Shape resultShape({len(), len()});
+        NDArrayDynamic<DType> result{resultShape};
+        for (Size i = 0; i < len(); ++i) {
+            Shape subResultShape({1, len()});
+            NDArrayDynamic<DType> subResult{subResultShape};
+            for (Size j = 0; j < len(); ++j) {
+                auto subArray1 = at(i);
+                auto subArray2 = at(j);
+                DType c = vectorCorr(subArray1, subArray2);
+                subResult.set(j, c);
+            }
+            result.set(i, subResult);
         }
         return result;
     }
@@ -139,17 +189,13 @@ namespace np::ndarray::array_static {
     // Standard deviation
     template<typename DType, Size SizeT, Size... SizeTs>
     inline DType NDArrayStatic<DType, SizeT, SizeTs...>::std_() const {
-        DType result{};    
-        for (Size i = 0; i < SizeT; ++i) {
-            const auto& element = at(i);
-            result += element.std_();
+        NDArrayDynamic<DType> x{shape()};
+        DType m = mean();
+        for (Size i = 0; i < size(); ++i) {
+            auto a = abs(get(i) - m);
+            x.set(i, a * a);
         }
-        if constexpr(SizeT == 0) {
-            return 0;
-        } else {
-            return result / SizeT;
-        }
-        return result;
-    }*/
+        return static_cast<DType>(std::sqrt(x.mean()));
+    }
 }
 

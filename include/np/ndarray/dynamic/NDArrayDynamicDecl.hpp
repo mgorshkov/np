@@ -128,16 +128,18 @@ namespace np::ndarray::array_dynamic {
 
         inline NDArrayDynamic &operator=(NDArrayDynamic &&another) noexcept;
 
-        // Indexing
+        // Indexing arrays
         inline void set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>& array);
         inline void set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>& array);
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> operator[](std::size_t i) const;
+
+        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> operator[](std::size_t i) const;
         inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> at(std::size_t i);
-        inline const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> at(std::size_t i) const;
+        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> at(std::size_t i) const;
 
         inline NDArrayDynamic<DType, Storage> operator[](const std::string &cond) const;
 
-        inline DType get(std::size_t i) const;
+        inline const DType& get(std::size_t i) const;
+        inline DType& get(std::size_t i);
         inline void set(std::size_t i, const DType& value);
 
         inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayDynamic &array) {
@@ -191,7 +193,7 @@ namespace np::ndarray::array_dynamic {
         inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> log() const;
 
         // Dot product
-        inline NDArrayDynamic dot(const NDArrayDynamic &array) const;
+        inline DType dot(const NDArrayDynamic &array) const;
 
         // Elementwise comparison
         inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
@@ -211,6 +213,7 @@ namespace np::ndarray::array_dynamic {
         inline bool array_equal(const DType& value) const;
         inline bool array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
         inline bool array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
+        inline bool array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array) const;
 
         // Aggregate functions
         // Array-wise sum
@@ -255,9 +258,6 @@ namespace np::ndarray::array_dynamic {
         // Permute array dimensions
         inline NDArrayDynamic<DType, Storage> transpose() const;
 
-        // Permute array dimensions
-        void T();
-        
         // Flatten the array
         inline NDArrayDynamic<DType, Storage> ravel() const;
 
@@ -301,6 +301,22 @@ namespace np::ndarray::array_dynamic {
         // Split the array vertically
         inline std::vector<NDArrayDynamic<DType, Storage>> vsplit(Size index) const;
 
+        inline typename internal::NDArrayDynamicInternal<DType, Storage>::iterator begin() {
+            return m_ArrayImpl.begin();
+        }
+
+        inline typename internal::NDArrayDynamicInternal<DType, Storage>::iterator end() {
+            return m_ArrayImpl.end();
+        }
+
+        inline typename internal::NDArrayDynamicInternal<DType, Storage>::const_iterator cbegin() const {
+            return m_ArrayImpl.cbegin();
+        }
+
+        inline typename internal::NDArrayDynamicInternal<DType, Storage>::const_iterator cend() const {
+            return m_ArrayImpl.cend();
+        }
+
     private:
         inline void save(std::ostream& stream);
 
@@ -308,8 +324,8 @@ namespace np::ndarray::array_dynamic {
 
         internal::NDArrayDynamicInternal<DType, Storage> m_ArrayImpl;
 
-        friend class NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>;
-        friend class NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>;
+        template <typename DTypeOther, typename StorageOther>
+        friend class NDArrayDynamic;
     };
 
 } // namespace np::ndarray::array_dynamic

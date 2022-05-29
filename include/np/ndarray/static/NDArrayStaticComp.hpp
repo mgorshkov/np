@@ -32,9 +32,9 @@ namespace np::ndarray::array_static {
     inline NDArrayStatic<bool_, SizeT, SizeTs...>
     NDArrayStatic<DType, SizeT, SizeTs...>::operator==(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
         NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            auto equals = at(i) == array[i];
-            set(result, i, equals);
+        for (Size i = 0; i < size(); ++i) {
+            auto equals = get(i) == array.get(i);
+            result.set(i, equals);
         }
         return result;
     }
@@ -44,9 +44,9 @@ namespace np::ndarray::array_static {
     inline NDArrayStatic<bool_, SizeT, SizeTs...>
     NDArrayStatic<DType, SizeT, SizeTs...>::operator<(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
         NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            auto less = at(i) < array[i];
-            set(result, i, less);
+        for (Size i = 0; i < size(); ++i) {
+            auto less = get(i) < array.get(i);
+            result.set(i, less);
         }
         return result;
     }
@@ -56,9 +56,9 @@ namespace np::ndarray::array_static {
     inline NDArrayStatic<bool_, SizeT, SizeTs...>
     NDArrayStatic<DType, SizeT, SizeTs...>::operator>(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
         NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            auto more = at(i) > array[i];
-            set(result, i, more);
+        for (Size i = 0; i < size(); ++i) {
+            auto more = get(i) > array.get(i);
+            result.set(i, more);
         }
         return result;
     }

@@ -26,6 +26,8 @@ SOFTWARE.
 
 #include <cstddef>
 #include <math.h>
+#include <tuple>
+#include <type_traits>
 
 namespace np::internal {
     template<class T>
@@ -37,6 +39,31 @@ namespace np::internal {
         return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y) * ulp ||
             std::fabs(x - y) < std::numeric_limits<T>::min();
     }
+
+    // Append parameter to seq to the tail
+    template<Size...>
+    struct ReverseAppendToArgList {};
+
+    template<Size SizeT, Size... SizeTs>
+    struct ReverseAppendToArgList<SizeT, SizeTs...> {
+        static constexpr auto type = std::make_tuple(SizeTs..., SizeT);
+    };
+
+    template<Size...>
+    struct RevertArgList {
+        static constexpr auto type = std::make_tuple();
+    };
+
+    template<Size SizeT>
+    struct RevertArgList<SizeT> {
+        static constexpr auto type = SizeT;
+    };
+
+    template<Size SizeT, Size... SizeTs>
+    struct RevertArgList<SizeT, SizeTs...> {
+        static constexpr auto type = ReverseAppendToArgList<SizeT,
+            RevertArgList<SizeTs...>::type>::type;
+    };
 }
 
 namespace np {

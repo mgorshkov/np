@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(NP np)
 
-project(${NP} VERSION 0.0.1 DESCRIPTION "C++ Numpy Implementation")
+project(${NP} VERSION 0.0.2 DESCRIPTION "C++ Numpy Implementation")
 
 set(CMAKE_CXX_STANDARD 17)
 

@@ -354,7 +354,7 @@ namespace np {
             vector.resize(size);
             std::generate(vector.begin(), vector.end(), [&]{ return distribution(generator); });
 
-            auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal{vector, shape};
+            auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal<DType>{vector, shape};
             return NDArrayDynamic<DType>{internal};
         }
 

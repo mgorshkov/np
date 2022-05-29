@@ -60,7 +60,7 @@ namespace np::ndarray::array_dynamic {
 
     // Convert an array to a different type
     template<typename DType, typename DTypeNew>
-    inline DTypeNew convertValue(DType& value) {
+    inline DTypeNew convertValue(const DType& value) {
         return static_cast<DTypeNew>(value);
     }
 
@@ -68,8 +68,8 @@ namespace np::ndarray::array_dynamic {
     template<typename DTypeNew>
     inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> NDArrayDynamic<DType, Storage>::astype() {
         internal::NDArrayDynamicInternal<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> inter(shape());
-        for (std::size_t i = 0; i < m_ArrayImpl.m_Impl.size(); ++i) {
-            inter.set(i, convertValue<DType, DTypeNew>(m_ArrayImpl.m_Impl[i]));
+        for (std::size_t i = 0; i < m_ArrayImpl.size(); ++i) {
+            inter.set(i, convertValue<DType, DTypeNew>(m_ArrayImpl.get(i)));
         }
 
         NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> result{inter};

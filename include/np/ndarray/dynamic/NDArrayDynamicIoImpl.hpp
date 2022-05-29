@@ -88,7 +88,7 @@ namespace np::ndarray::array_dynamic {
         std::vector<DType> data;
         data.resize(size);
         stream.read(reinterpret_cast<char*>(data.data()), data.size() * sizeof(DType));
-        internal::NDArrayDynamicInternal<DType> arrayInternal(data.begin(), shape);
+        internal::NDArrayDynamicInternal<DType> arrayInternal(data, shape);
         return NDArrayDynamic<DType>{arrayInternal};
     }
 

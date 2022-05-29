@@ -24,6 +24,8 @@ SOFTWARE.
 
 #pragma once
 
+#include <type_traits>
+
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
 namespace np::ndarray::array_static {
@@ -85,5 +87,15 @@ namespace np::ndarray::array_static {
         return ReducedType{m_ArrayImpl[i]};
     }
     */
+
+    template<typename DType, Size SizeT, Size... SizeTs>
+    inline DType NDArrayStatic<DType, SizeT, SizeTs...>::get(std::size_t i) const {
+        return m_ArrayImpl.get(i);
+    }
+
+    template<typename DType, Size SizeT, Size... SizeTs>
+    inline void NDArrayStatic<DType, SizeT, SizeTs...>::set(std::size_t i, const DType& value) {
+        return m_ArrayImpl.set(i, value);
+    }
 }
 

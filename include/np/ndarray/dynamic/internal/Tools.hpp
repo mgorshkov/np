@@ -70,7 +70,7 @@ namespace np::ndarray::array_dynamic::internal {
         if (array1.size() != array2.size())
             return false;
         for (std::size_t i = 0 ; i < array1.size(); ++i) {
-            if (!np::internal::almost_equal(array1.m_Impl[i], array2.m_Impl[i], ULP_TOLERANCE))
+            if (!np::internal::almost_equal(array1.get(i), array2.get(i), ULP_TOLERANCE))
                 return false;
         }
         return true;

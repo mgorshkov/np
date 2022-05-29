@@ -177,6 +177,14 @@ namespace np::ndarray::array_static::internal {
             m_Impl[i] = element;
         }
 
+        inline const DType& get(std::size_t i) const {
+            return m_Impl[i];
+        }
+
+        inline DType& get(std::size_t i) {
+            return m_Impl[i];
+        }
+
         friend std::ostream& operator<< <>(std::ostream &stream, const NDArrayStaticInternal<DType, SizeT> &array);
         friend std::ostream& operator<< <>(std::ostream &stream, const NDArrayStaticInternal<std::wstring, SizeT> &array);
         friend std::wostream& operator<< <>(std::wostream &stream, const NDArrayStaticInternal<std::wstring, SizeT> &array);
@@ -185,6 +193,226 @@ namespace np::ndarray::array_static::internal {
             for (auto i = 0; i < SizeT; ++i) {
                 stream.write(reinterpret_cast<const char*>(&array.m_Impl[i]), sizeof(array.m_Impl[i]));
             }
+        }
+
+        class iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
+
+            inline iterator(NDArrayStaticInternal* container_, std::size_t offset_)
+                    : container{container_}
+                    , offset{offset_}{
+            }
+
+            inline iterator(const iterator& it)
+                    : container{it.container}
+                    , offset{it.offset}{
+            }
+
+            inline iterator& operator = (const iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline iterator operator ++ () {
+                return iterator(container, ++offset);
+            }
+
+            inline iterator operator ++ (int) {
+                return iterator(container, offset++);
+            }
+
+            inline iterator operator -- () {
+                return iterator(container, --offset);
+            }
+
+            inline iterator operator -- (int) {
+                return iterator(container, offset--);
+            }
+
+            inline difference_type operator - (const iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline iterator operator - (difference_type diff) {
+                return iterator(container, offset - diff);
+            }
+
+            inline iterator operator + (difference_type diff) {
+                return iterator(container, offset + diff);
+            }
+
+            inline iterator operator += (difference_type diff) {
+                return iterator(container, offset += diff);
+            }
+
+            inline iterator operator -= (difference_type diff) {
+                return iterator(container, offset -= diff);
+            }
+
+            inline value_type& operator * () {
+                return container->get(offset);
+            }
+
+            inline const value_type& operator * () const {
+                return container->get(offset);
+            }
+
+        private:
+            NDArrayStaticInternal* container;
+            std::size_t offset;
+        };
+
+        inline iterator begin() {
+            return iterator{this, 0};
+        }
+
+        inline iterator end() {
+            return iterator{this, SizeT};
+        }
+
+        class const_iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
+
+            inline const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
+                    : container{container_}
+                    , offset{offset_}{
+            }
+
+            inline const_iterator(const const_iterator& it)
+                    : container{it.container}
+                    , offset{it.offset}{
+            }
+
+            inline const_iterator& operator = (const const_iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const const_iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const const_iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline const_iterator operator ++ () {
+                return const_iterator(container, ++offset);
+            }
+
+            inline const_iterator operator ++ (int) {
+                return const_iterator(container, offset++);
+            }
+
+            inline const_iterator operator -- () {
+                return const_iterator(container, --offset);
+            }
+
+            inline const_iterator operator -- (int) {
+                return const_iterator(container, offset--);
+            }
+
+            inline difference_type operator - (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline const_iterator operator - (difference_type diff) {
+                return const_iterator(container, offset - diff);
+            }
+
+            inline const_iterator operator + (difference_type diff) {
+                return const_iterator(container, offset + diff);
+            }
+
+            inline const_iterator operator += (difference_type diff) {
+                return const_iterator(container, offset += diff);
+            }
+
+            inline const_iterator operator -= (difference_type diff) {
+                return const_iterator(container, offset -= diff);
+            }
+
+            inline const value_type& operator * () const {
+                return container->get(offset);
+            }
+
+        private:
+            const NDArrayStaticInternal* container;
+            std::size_t offset;
+        };
+
+        inline const_iterator cbegin() const {
+            return const_iterator{this, 0};
+        }
+
+        inline const_iterator cend() const {
+            return const_iterator{this, SizeT};
         }
 
     private:
@@ -327,6 +555,33 @@ namespace np::ndarray::array_static::internal {
             m_Impl.set(i, array);
         }
 
+        inline const DType& get(std::size_t i) const {
+            static constexpr Size size = (SizeT * ... * SizeTs);
+            auto index1 = i / (size / SizeT);
+            auto index2 = i % (size / SizeT);
+            return m_Impl[index1].get(index2);
+        }
+
+        inline DType& get(std::size_t i) {
+            static constexpr Size size = (SizeT * ... * SizeTs);
+            auto index1 = i / (size / SizeT);
+            auto index2 = i % (size / SizeT);
+            return m_Impl[index1].get(index2);
+        }
+
+        inline void set(std::size_t i, const DType& value) {
+            static constexpr Size size = (SizeT * ... * SizeTs);
+            auto index1 = i / (size / SizeT);
+            auto& subArray = m_Impl[index1];
+
+            if constexpr (std::is_same<DType, typename std::remove_reference<decltype(subArray)>::type>::value) {
+                subArray = value;
+            } else {
+                auto index2 = i % (size / SizeT);
+                subArray.set(index2, value);
+            }
+        }
+
         friend std::ostream & operator<< <> (std::ostream &stream, const NDArrayStaticInternal<DType, SizeT, SizeTs...> &array);
         friend std::ostream & operator<< <> (std::ostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array);
         friend std::wostream& operator<< <> (std::wostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array);
@@ -335,6 +590,224 @@ namespace np::ndarray::array_static::internal {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 dumpToStreamAsBinary(stream, array[index]);
             }
+        }
+
+        class iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
+
+            inline iterator(NDArrayStaticInternal* container_, std::size_t offset_)
+                : container{container_}
+                , offset{offset_}{
+            }
+
+            inline iterator(const iterator& it)
+                : container{it.container}
+                , offset{it.offset}{
+            }
+
+            inline iterator& operator = (const iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline iterator operator ++ () {
+                return iterator(container, ++offset);
+            }
+
+            inline iterator operator ++ (int) {
+                return iterator(container, offset++);
+            }
+
+            inline iterator operator -- () {
+                return iterator(container, --offset);
+            }
+
+            inline iterator operator -- (int) {
+                return iterator(container, offset--);
+            }
+
+            inline iterator operator - (difference_type diff) {
+                return iterator(container, offset - diff);
+            }
+
+            inline iterator operator + (difference_type diff) {
+                return iterator(container, offset + diff);
+            }
+
+            inline iterator operator += (difference_type diff) {
+                return iterator(container, offset += diff);
+            }
+
+            inline iterator operator -= (difference_type diff) {
+                return iterator(container, offset -= diff);
+            }
+
+            inline difference_type operator - (const iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline value_type& operator * () {
+                return container->get(offset);
+            }
+
+        private:
+            NDArrayStaticInternal* container;
+            std::size_t offset;
+        };
+
+        inline iterator begin() {
+            return iterator{this, 0};
+        }
+
+        inline iterator end() {
+            static constexpr Size size = (SizeT * ... * SizeTs);
+            return iterator{this, size};
+        }
+
+        class const_iterator {
+        public:
+            typedef ptrdiff_t difference_type;
+            typedef DType value_type;
+            typedef DType* pointer;
+            typedef DType& reference;
+            typedef std::random_access_iterator_tag iterator_category;
+
+            inline const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
+                    : container{container_}
+                    , offset{offset_}{
+            }
+
+            inline const_iterator(const const_iterator& it)
+                    : container{it.container}
+                    , offset{it.offset}{
+            }
+
+            inline const_iterator& operator = (const const_iterator& it) {
+                if (this != &it) {
+                    container = it.container;
+                    offset = it.offset;
+                }
+                return *this;
+            }
+
+            inline bool operator == (const const_iterator& it) const {
+                return container == it.container && offset == it.offset;
+            }
+
+            inline bool operator != (const const_iterator& it) const {
+                return !(*this == it);
+            }
+
+            inline bool operator > (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset > it.offset;
+            }
+
+            inline bool operator >= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset >= it.offset;
+            }
+
+            inline bool operator < (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset < it.offset;
+            }
+
+            inline bool operator <= (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset <= it.offset;
+            }
+
+            inline const_iterator operator ++ () {
+                return const_iterator(container, ++offset);
+            }
+
+            inline const_iterator operator ++ (int) {
+                return const_iterator(container, offset++);
+            }
+
+            inline const_iterator operator -- () {
+                return const_iterator(container, --offset);
+            }
+
+            inline const_iterator operator -- (int) {
+                return const_iterator(container, offset--);
+            }
+
+            inline const_iterator operator - (difference_type diff) {
+                return const_iterator(container, offset - diff);
+            }
+
+            inline const_iterator operator + (difference_type diff) {
+                return const_iterator(container, offset + diff);
+            }
+
+            inline const_iterator operator += (difference_type diff) {
+                return const_iterator(container, offset += diff);
+            }
+
+            inline const_iterator operator -= (difference_type diff) {
+                return const_iterator(container, offset -= diff);
+            }
+
+            inline difference_type operator - (const const_iterator& it) const {
+                assert(container == it.container);
+                return offset - it.offset;
+            }
+
+            inline const value_type& operator * () const {
+                return container->get(offset);
+            }
+
+        private:
+            const NDArrayStaticInternal* container;
+            std::size_t offset;
+        };
+
+        inline const_iterator cbegin() const {
+            return const_iterator{this, 0};
+        }
+
+        inline const_iterator cend() const {
+            static constexpr Size size = (SizeT * ... * SizeTs);
+            return const_iterator{this, size};
         }
 
     private:
