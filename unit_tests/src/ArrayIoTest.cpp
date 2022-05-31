@@ -110,7 +110,7 @@ TEST_F(ArrayIoTest, dynamicEmptyUnicodeArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static1DIntArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static1DIntArraySaveLoadTest) {
     /*
     >>> np.array([1,2,3,4])
      */
@@ -136,7 +136,7 @@ TEST_F(ArrayIoTest, dynamic1DIntArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static1DFloatArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static1DFloatArraySaveLoadTest) {
     /*
     >>> np.array([1.1, 2.2, 3.3, 4.4])
      */
@@ -157,7 +157,7 @@ TEST_F(ArrayIoTest, dynamic1DFloatArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static1DStringArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static1DStringArraySaveLoadTest) {
     Array<string_, 4> array{"str1", "str2", "str3", "str4"};
     static const char* filename = "1D_string";
     array.save(filename);
@@ -173,7 +173,7 @@ TEST_F(ArrayIoTest, dynamic1DStringArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static1DUnicodeArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static1DUnicodeArraySaveLoadTest) {
     Array<unicode_, 4> array{L"str1", L"str2", L"str3", L"str4"};
     static const char* filename = "1D_string";
     array.save(filename);
@@ -189,7 +189,7 @@ TEST_F(ArrayIoTest, dynamic1DUnicodeArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static2DIntArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static2DIntArraySaveLoadTest) {
     /*
     >>> np.array([[1,2,3,4],[5,6,7,8]])
      */
@@ -217,7 +217,7 @@ TEST_F(ArrayIoTest, dynamic2DIntArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static2DFloatArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static2DFloatArraySaveLoadTest) {
     /*
     >>> np.array([[1.1,2.2,3.3,4.4],[5.5,6.6,7.7,8.8]])
      */
@@ -240,7 +240,7 @@ TEST_F(ArrayIoTest, dynamic2DFloatArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static2DStringArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static2DStringArraySaveLoadTest) {
     string_ arr[2][4] = {{"str1", "str2", "str3", "str4"},
                              {"str5", "str6", "str7", "str8"}};
     Array<string_, 2, 4> array{arr};
@@ -260,7 +260,7 @@ TEST_F(ArrayIoTest, dynamic2DStringArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static2DUnicodeArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static2DUnicodeArraySaveLoadTest) {
     unicode_ arr[2][4] = {{L"str1", L"str2", L"str3", L"str4"},
                               {L"str5", L"str6", L"str7", L"str8"}};
     Array<unicode_, 2, 4> array{arr};
@@ -280,7 +280,7 @@ TEST_F(ArrayIoTest, dynamic2DUnicodeArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static3DIntArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static3DIntArraySaveLoadTest) {
     /*
     >>> np.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]],
         [[13, 14, 15], [16, 17, 18], [19, 20, 21], [22, 23, 24]]])
@@ -336,7 +336,7 @@ TEST_F(ArrayIoTest, dynamic3DIntArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static3DFloatArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static3DFloatArraySaveLoadTest) {
     /*
     >>> np.array([[[1.1, 2.2, 3.3], [4.4, 5.5, 6.6], [7.7, 8.8, 9.9], [10.1, 11.11, 12.12]],
         [[13.13, 14.14, 15.15], [16.16, 17.17, 18.18], [19.19, 20.2, 21.21], [22.22, 23.23, 24.24]]])
@@ -386,7 +386,7 @@ TEST_F(ArrayIoTest, dynamic3DFloatArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static3DStringArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static3DStringArraySaveLoadTest) {
     string_ arr[2][4][3] = {
         {
             {"str1_1", "str1_2", "str1_3"},
@@ -430,7 +430,7 @@ TEST_F(ArrayIoTest, dynamic3DStringArraySaveLoadTest) {
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_static3DUnicodeArraySaveLoadTest) {
+TEST_F(ArrayIoTest, static3DUnicodeArraySaveLoadTest) {
     unicode_ arr[2][4][3] = {{
         {L"str1_1", L"str1_2", L"str1_3"},
         {L"str2_1", L"str2_2", L"str2_3"},
@@ -450,7 +450,7 @@ TEST_F(ArrayIoTest, DISABLED_static3DUnicodeArraySaveLoadTest) {
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
-TEST_F(ArrayIoTest, DISABLED_dynamic3DUnicodeArraySaveLoadTest) {
+TEST_F(ArrayIoTest, dynamic3DUnicodeArraySaveLoadTest) {
     unicode_ arr[2][4][3] = {{
      {L"str1_1", L"str1_2", L"str1_3"},
      {L"str2_1", L"str2_2", L"str2_3"},

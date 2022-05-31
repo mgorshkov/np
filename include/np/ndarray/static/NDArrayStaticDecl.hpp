@@ -58,10 +58,9 @@ namespace np::ndarray::array_static {
         using StdArrayType = std::array<DType, 1>;
         using StdVectorType = std::vector<DType>;
 
-        inline NDArrayStaticStub() noexcept {
-        }
+        NDArrayStaticStub() noexcept = default;
 
-        inline NDArrayStaticStub(const DType& data) 
+        NDArrayStaticStub(const DType& data)
             : m_ArrayImpl{data}
         {
         }
@@ -71,67 +70,67 @@ namespace np::ndarray::array_static {
             return Shape{1};
         }
 
-        inline bool array_equal(const DType& element) const {
+        bool array_equal(const DType& element) const {
             return np::array_equal(m_ArrayImpl, element);
         }
 
-        inline bool array_equal(const NDArrayStaticStub &array) const {
+        bool array_equal(const NDArrayStaticStub &array) const {
             return np::array_equal(m_ArrayImpl, array.m_ArrayImpl);
         }
 
-        inline DType sum() const {
+        DType sum() const {
             return m_ArrayImpl;
         }
 
-        inline DType min() const {
+        DType min() const {
             return m_ArrayImpl;
         }
 
-        inline DType max() const {
+        DType max() const {
             return m_ArrayImpl;
         }
 
-        inline auto cumsum() const {
+        auto cumsum() const {
             return m_ArrayImpl;
         }
 
-        inline DType mean() const {
+        DType mean() const {
             return m_ArrayImpl;
         }
 
-        inline DType median() const {
+        DType median() const {
             return m_ArrayImpl;
         }
 
-        inline DType corrcoef() const {
+        DType corrcoef() const {
             return m_ArrayImpl;
         }
 
-        inline DType std_() const {
+        DType std_() const {
             return m_ArrayImpl;
         }
 
-        inline operator DType() const {
+        operator DType() const {
             return m_ArrayImpl;
         }
 
-        inline DType get(Size) const {
+        DType get(Size) const {
             return m_ArrayImpl;
         }
 
-        inline DType ravel() const {
+        DType ravel() const {
             return m_ArrayImpl;
         }
         
-        inline bool operator == (const NDArrayStaticStub& other) const {
+        bool operator == (const NDArrayStaticStub& other) const {
             return m_ArrayImpl == other.m_ArrayImpl;
         }
 
-        inline bool operator > (const NDArrayStaticStub& other) const {
+        bool operator > (const NDArrayStaticStub& other) const {
             return m_ArrayImpl > other.m_ArrayImpl;
         }
 
-        inline bool operator < (const NDArrayStaticStub& other) const {
+        bool operator < (const NDArrayStaticStub& other) const {
             return m_ArrayImpl < other.m_ArrayImpl;
         }
 
@@ -139,11 +138,11 @@ namespace np::ndarray::array_static {
             return NDArrayStaticStub{stub1.m_ArrayImpl + stub2.m_ArrayImpl};
         }
 
-        inline NDArrayStaticStub add(const NDArrayStaticStub& stub) {
+        NDArrayStaticStub add(const NDArrayStaticStub& stub) {
             return NDArrayStaticStub{m_ArrayImpl + stub.m_ArrayImpl};
         }
 
-        inline void set(Size, const DType& element) {
+        void set(Size, const DType& element) {
             m_ArrayImpl = element;
         }
 

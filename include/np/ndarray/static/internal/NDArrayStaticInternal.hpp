@@ -62,50 +62,49 @@ namespace np::ndarray::array_static::internal {
         using StdArrayType = std::array<DType, SizeT>;
         using StdVectorType = std::vector<DType>;
 
-        inline NDArrayStaticInternal() noexcept {
-        }
+        NDArrayStaticInternal() noexcept = default;
 
-        inline NDArrayStaticInternal(const DType& data) noexcept {
+        NDArrayStaticInternal(const DType& data) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = data;
             }
         }
 
-        inline NDArrayStaticInternal(CArrayType array) noexcept {
+        NDArrayStaticInternal(CArrayType array) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = array[i];
             }
         }
 
-        inline NDArrayStaticInternal(CArrayType&& array) noexcept {
+        NDArrayStaticInternal(CArrayType&& array) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 std::move(m_Impl[i], array[i]);
             }
         }
 
-        inline NDArrayStaticInternal(const NDArrayStaticInternal &another) noexcept
+        NDArrayStaticInternal(const NDArrayStaticInternal &another) noexcept
             : m_Impl{another.m_Impl}
         {
         }
 
-        inline NDArrayStaticInternal(NDArrayStaticInternal &&another) noexcept
+        NDArrayStaticInternal(NDArrayStaticInternal &&another) noexcept
             : m_Impl{std::move(another.m_Impl)}
         {
         }
 
-        inline NDArrayStaticInternal(const StdArrayType &array) noexcept {
+        NDArrayStaticInternal(const StdArrayType &array) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = array[i];
             }
         }
 
-        inline NDArrayStaticInternal(StdArrayType &&array) noexcept {
+        NDArrayStaticInternal(StdArrayType &&array) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = std::move(array[i]);
             }
         }
 
-        inline NDArrayStaticInternal(const StdVectorType &vector) noexcept {
+        NDArrayStaticInternal(const StdVectorType &vector) noexcept {
             assert(SizeT == vector.size());
 
             for (auto i = 0; i < SizeT; ++i) {
@@ -113,7 +112,7 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal(StdVectorType &&vector) noexcept {
+        NDArrayStaticInternal(StdVectorType &&vector) noexcept {
             assert(SizeT == vector.size());
 
             for (auto i = 0; i < SizeT; ++i) {
@@ -121,7 +120,7 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal(std::initializer_list<DType> init_list) noexcept {
+        NDArrayStaticInternal(std::initializer_list<DType> init_list) noexcept {
             if (init_list.size() == 1 && SizeT > 1) {
                 // fill
                 m_Impl.fill(*init_list.begin());
@@ -133,21 +132,21 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal &operator=(DType data[SizeT]) noexcept {
+        NDArrayStaticInternal &operator=(DType data[SizeT]) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = data[i];
             }
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const StdArrayType &array) noexcept {
+        NDArrayStaticInternal &operator=(const StdArrayType &array) noexcept {
             for (auto i = 0; i < SizeT; ++i) {
                 m_Impl[i] = array[i];
             }
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const StdVectorType &vector) noexcept {
+        NDArrayStaticInternal &operator=(const StdVectorType &vector) noexcept {
             assert(SizeT == vector.size());
 
             for (auto i = 0; i < SizeT; ++i) {
@@ -156,7 +155,7 @@ namespace np::ndarray::array_static::internal {
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const NDArrayStaticInternal &another) noexcept {
+        NDArrayStaticInternal &operator=(const NDArrayStaticInternal &another) noexcept {
             if (this != &another) {
                 for (auto i = 0; i < SizeT; ++i) {
                     m_Impl[i] = another[i];
@@ -165,23 +164,23 @@ namespace np::ndarray::array_static::internal {
             return *this;
         }
 
-        inline DType &operator[](std::size_t i) {
+        DType &operator[](std::size_t i) {
             return m_Impl[i];
         }
 
-        inline const DType &operator[](std::size_t i) const {
+        const DType &operator[](std::size_t i) const {
             return m_Impl[i];
         }
 
-        inline void set(std::size_t i, const DType& element) {
+        void set(std::size_t i, const DType& element) {
             m_Impl[i] = element;
         }
 
-        inline const DType& get(std::size_t i) const {
+        const DType& get(std::size_t i) const {
             return m_Impl[i];
         }
 
-        inline DType& get(std::size_t i) {
+        DType& get(std::size_t i) {
             return m_Impl[i];
         }
 
@@ -203,17 +202,17 @@ namespace np::ndarray::array_static::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline iterator(NDArrayStaticInternal* container_, std::size_t offset_)
+            iterator(NDArrayStaticInternal* container_, std::size_t offset_)
                     : container{container_}
                     , offset{offset_}{
             }
 
-            inline iterator(const iterator& it)
+            iterator(const iterator& it)
                     : container{it.container}
                     , offset{it.offset}{
             }
 
-            inline iterator& operator = (const iterator& it) {
+            iterator& operator = (const iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -221,76 +220,76 @@ namespace np::ndarray::array_static::internal {
                 return *this;
             }
 
-            inline bool operator == (const iterator& it) const {
+            bool operator == (const iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const iterator& it) const {
+            bool operator != (const iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const iterator& it) const {
+            bool operator > (const iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const iterator& it) const {
+            bool operator >= (const iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const iterator& it) const {
+            bool operator < (const iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const iterator& it) const {
+            bool operator <= (const iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline iterator operator ++ () {
+            iterator operator ++ () {
                 return iterator(container, ++offset);
             }
 
-            inline iterator operator ++ (int) {
+            iterator operator ++ (int) {
                 return iterator(container, offset++);
             }
 
-            inline iterator operator -- () {
+            iterator operator -- () {
                 return iterator(container, --offset);
             }
 
-            inline iterator operator -- (int) {
+            iterator operator -- (int) {
                 return iterator(container, offset--);
             }
 
-            inline difference_type operator - (const iterator& it) const {
+            difference_type operator - (const iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline iterator operator - (difference_type diff) {
+            iterator operator - (difference_type diff) {
                 return iterator(container, offset - diff);
             }
 
-            inline iterator operator + (difference_type diff) {
+            iterator operator + (difference_type diff) {
                 return iterator(container, offset + diff);
             }
 
-            inline iterator operator += (difference_type diff) {
+            iterator operator += (difference_type diff) {
                 return iterator(container, offset += diff);
             }
 
-            inline iterator operator -= (difference_type diff) {
+            iterator operator -= (difference_type diff) {
                 return iterator(container, offset -= diff);
             }
 
-            inline value_type& operator * () {
+            value_type& operator * () {
                 return container->get(offset);
             }
 
-            inline const value_type& operator * () const {
+            const value_type& operator * () const {
                 return container->get(offset);
             }
 
@@ -299,11 +298,11 @@ namespace np::ndarray::array_static::internal {
             std::size_t offset;
         };
 
-        inline iterator begin() {
+        iterator begin() {
             return iterator{this, 0};
         }
 
-        inline iterator end() {
+        iterator end() {
             return iterator{this, SizeT};
         }
 
@@ -315,17 +314,17 @@ namespace np::ndarray::array_static::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
+            const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
                     : container{container_}
                     , offset{offset_}{
             }
 
-            inline const_iterator(const const_iterator& it)
+            const_iterator(const const_iterator& it)
                     : container{it.container}
                     , offset{it.offset}{
             }
 
-            inline const_iterator& operator = (const const_iterator& it) {
+            const_iterator& operator = (const const_iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -333,72 +332,72 @@ namespace np::ndarray::array_static::internal {
                 return *this;
             }
 
-            inline bool operator == (const const_iterator& it) const {
+            bool operator == (const const_iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const const_iterator& it) const {
+            bool operator != (const const_iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const const_iterator& it) const {
+            bool operator > (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const const_iterator& it) const {
+            bool operator >= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const const_iterator& it) const {
+            bool operator < (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const const_iterator& it) const {
+            bool operator <= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline const_iterator operator ++ () {
+            const_iterator operator ++ () {
                 return const_iterator(container, ++offset);
             }
 
-            inline const_iterator operator ++ (int) {
+            const_iterator operator ++ (int) {
                 return const_iterator(container, offset++);
             }
 
-            inline const_iterator operator -- () {
+            const_iterator operator -- () {
                 return const_iterator(container, --offset);
             }
 
-            inline const_iterator operator -- (int) {
+            const_iterator operator -- (int) {
                 return const_iterator(container, offset--);
             }
 
-            inline difference_type operator - (const const_iterator& it) const {
+            difference_type operator - (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline const_iterator operator - (difference_type diff) {
+            const_iterator operator - (difference_type diff) {
                 return const_iterator(container, offset - diff);
             }
 
-            inline const_iterator operator + (difference_type diff) {
+            const_iterator operator + (difference_type diff) {
                 return const_iterator(container, offset + diff);
             }
 
-            inline const_iterator operator += (difference_type diff) {
+            const_iterator operator += (difference_type diff) {
                 return const_iterator(container, offset += diff);
             }
 
-            inline const_iterator operator -= (difference_type diff) {
+            const_iterator operator -= (difference_type diff) {
                 return const_iterator(container, offset -= diff);
             }
 
-            inline const value_type& operator * () const {
+            const value_type& operator * () const {
                 return container->get(offset);
             }
 
@@ -407,11 +406,11 @@ namespace np::ndarray::array_static::internal {
             std::size_t offset;
         };
 
-        inline const_iterator cbegin() const {
+        const_iterator cbegin() const {
             return const_iterator{this, 0};
         }
 
-        inline const_iterator cend() const {
+        const_iterator cend() const {
             return const_iterator{this, SizeT};
         }
 
@@ -437,46 +436,45 @@ namespace np::ndarray::array_static::internal {
         using StdArrayType = std::array<ReducedStdArrayType, SizeT>;
         using StdVectorType = std::vector<ReducedStdVectorType>;
 
-        inline NDArrayStaticInternal() noexcept {
-        }
+        NDArrayStaticInternal() noexcept = default;
 
-        inline NDArrayStaticInternal(const DType &value) {
+        NDArrayStaticInternal(const DType &value) {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = value;
             }
         }
 
-        inline NDArrayStaticInternal(const NDArrayStaticInternal &another) noexcept {
+        NDArrayStaticInternal(const NDArrayStaticInternal &another) noexcept {
             for (std::size_t i = 0; i < SizeT; ++i) {
                 m_Impl[i] = another[i];
             }
         }
 
-        inline NDArrayStaticInternal(NDArrayStaticInternal &&another) noexcept {
+        NDArrayStaticInternal(NDArrayStaticInternal &&another) noexcept {
             for (std::size_t i = 0; i < SizeT; ++i) {
                 m_Impl[i] = std::move(another[i]);
             }
         }
 
-        inline NDArrayStaticInternal(ReducedCArrayType data[SizeT]) noexcept {
+        NDArrayStaticInternal(ReducedCArrayType data[SizeT]) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = data[index];
             }
         }
 
-        inline NDArrayStaticInternal(const std::array<ReducedStdArrayType, SizeT> &array) noexcept {
+        NDArrayStaticInternal(const std::array<ReducedStdArrayType, SizeT> &array) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = array[index];
             }
         }
 
-        inline NDArrayStaticInternal(std::array<ReducedStdArrayType, SizeT> &&array) noexcept {
+        NDArrayStaticInternal(std::array<ReducedStdArrayType, SizeT> &&array) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = std::move(array.m_Impl[index]);
             }
         }
 
-        inline NDArrayStaticInternal(const std::vector<ReducedStdVectorType> &vector) noexcept {
+        NDArrayStaticInternal(const std::vector<ReducedStdVectorType> &vector) noexcept {
             assert(SizeT == vector.size());
 
             for (std::size_t index = 0; index < vector.size(); ++index) {
@@ -484,7 +482,7 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal(std::vector<ReducedStdVectorType> &&vector) noexcept {
+        NDArrayStaticInternal(std::vector<ReducedStdVectorType> &&vector) noexcept {
             assert(SizeT == vector.size());
 
             for (std::size_t index = 0; index < vector.size(); ++index) {
@@ -492,7 +490,7 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal(std::initializer_list<DType> init_list) noexcept {
+        NDArrayStaticInternal(std::initializer_list<DType> init_list) noexcept {
             if (init_list.size() == 1 && SizeT > 1) {
                 // fill
                 for (std::size_t index = 0; index < SizeT; ++index) {
@@ -506,28 +504,28 @@ namespace np::ndarray::array_static::internal {
             }
         }
 
-        inline NDArrayStaticInternal &operator=(const DType &value) noexcept {
+        NDArrayStaticInternal &operator=(const DType &value) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = value;
             }
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(ReducedCArrayType data[SizeT]) noexcept {
+        NDArrayStaticInternal &operator=(ReducedCArrayType data[SizeT]) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = data[index];
             }
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const std::array<ReducedStdArrayType, SizeT> &array) noexcept {
+        NDArrayStaticInternal &operator=(const std::array<ReducedStdArrayType, SizeT> &array) noexcept {
             for (std::size_t index = 0; index < SizeT; ++index) {
                 m_Impl[index] = array[index];
             }
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const std::vector<ReducedStdVectorType> &vector) noexcept {
+        NDArrayStaticInternal &operator=(const std::vector<ReducedStdVectorType> &vector) noexcept {
             assert(SizeT == vector.size());
 
             for (std::size_t index = 0; index < vector.size(); ++index) {
@@ -536,40 +534,40 @@ namespace np::ndarray::array_static::internal {
             return *this;
         }
 
-        inline NDArrayStaticInternal &operator=(const NDArrayStaticInternal &another) noexcept {
+        NDArrayStaticInternal &operator=(const NDArrayStaticInternal &another) noexcept {
             if (this != &another) {
                 m_Impl = another.m_Impl;
             }
             return *this;
         }
 
-        inline ReducedType &operator[](std::size_t i) {
+        ReducedType &operator[](std::size_t i) {
             return m_Impl[i];
         }
 
-        inline const ReducedType &operator[](std::size_t i) const {
+        const ReducedType &operator[](std::size_t i) const {
             return m_Impl[i];
         }
 
-        inline void set(std::size_t i, const ReducedType &array) {
+        void set(std::size_t i, const ReducedType &array) {
             m_Impl.set(i, array);
         }
 
-        inline const DType& get(std::size_t i) const {
+        const DType& get(std::size_t i) const {
             static constexpr Size size = (SizeT * ... * SizeTs);
             auto index1 = i / (size / SizeT);
             auto index2 = i % (size / SizeT);
             return m_Impl[index1].get(index2);
         }
 
-        inline DType& get(std::size_t i) {
+        DType& get(std::size_t i) {
             static constexpr Size size = (SizeT * ... * SizeTs);
             auto index1 = i / (size / SizeT);
             auto index2 = i % (size / SizeT);
             return m_Impl[index1].get(index2);
         }
 
-        inline void set(std::size_t i, const DType& value) {
+        void set(std::size_t i, const DType& value) {
             static constexpr Size size = (SizeT * ... * SizeTs);
             auto index1 = i / (size / SizeT);
             auto& subArray = m_Impl[index1];
@@ -600,17 +598,17 @@ namespace np::ndarray::array_static::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline iterator(NDArrayStaticInternal* container_, std::size_t offset_)
+            iterator(NDArrayStaticInternal* container_, std::size_t offset_)
                 : container{container_}
                 , offset{offset_}{
             }
 
-            inline iterator(const iterator& it)
+            iterator(const iterator& it)
                 : container{it.container}
                 , offset{it.offset}{
             }
 
-            inline iterator& operator = (const iterator& it) {
+            iterator& operator = (const iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -618,72 +616,72 @@ namespace np::ndarray::array_static::internal {
                 return *this;
             }
 
-            inline bool operator == (const iterator& it) const {
+            bool operator == (const iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const iterator& it) const {
+            bool operator != (const iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const iterator& it) const {
+            bool operator > (const iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const iterator& it) const {
+            bool operator >= (const iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const iterator& it) const {
+            bool operator < (const iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const iterator& it) const {
+            bool operator <= (const iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline iterator operator ++ () {
+            iterator operator ++ () {
                 return iterator(container, ++offset);
             }
 
-            inline iterator operator ++ (int) {
+            iterator operator ++ (int) {
                 return iterator(container, offset++);
             }
 
-            inline iterator operator -- () {
+            iterator operator -- () {
                 return iterator(container, --offset);
             }
 
-            inline iterator operator -- (int) {
+            iterator operator -- (int) {
                 return iterator(container, offset--);
             }
 
-            inline iterator operator - (difference_type diff) {
+            iterator operator - (difference_type diff) {
                 return iterator(container, offset - diff);
             }
 
-            inline iterator operator + (difference_type diff) {
+            iterator operator + (difference_type diff) {
                 return iterator(container, offset + diff);
             }
 
-            inline iterator operator += (difference_type diff) {
+            iterator operator += (difference_type diff) {
                 return iterator(container, offset += diff);
             }
 
-            inline iterator operator -= (difference_type diff) {
+            iterator operator -= (difference_type diff) {
                 return iterator(container, offset -= diff);
             }
 
-            inline difference_type operator - (const iterator& it) const {
+            difference_type operator - (const iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline value_type& operator * () {
+            value_type& operator * () {
                 return container->get(offset);
             }
 
@@ -692,11 +690,11 @@ namespace np::ndarray::array_static::internal {
             std::size_t offset;
         };
 
-        inline iterator begin() {
+        iterator begin() {
             return iterator{this, 0};
         }
 
-        inline iterator end() {
+        iterator end() {
             static constexpr Size size = (SizeT * ... * SizeTs);
             return iterator{this, size};
         }
@@ -709,17 +707,17 @@ namespace np::ndarray::array_static::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
+            const_iterator(const NDArrayStaticInternal* container_, std::size_t offset_)
                     : container{container_}
                     , offset{offset_}{
             }
 
-            inline const_iterator(const const_iterator& it)
+            const_iterator(const const_iterator& it)
                     : container{it.container}
                     , offset{it.offset}{
             }
 
-            inline const_iterator& operator = (const const_iterator& it) {
+            const_iterator& operator = (const const_iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -727,72 +725,72 @@ namespace np::ndarray::array_static::internal {
                 return *this;
             }
 
-            inline bool operator == (const const_iterator& it) const {
+            bool operator == (const const_iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const const_iterator& it) const {
+            bool operator != (const const_iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const const_iterator& it) const {
+            bool operator > (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const const_iterator& it) const {
+            bool operator >= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const const_iterator& it) const {
+            bool operator < (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const const_iterator& it) const {
+            bool operator <= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline const_iterator operator ++ () {
+            const_iterator operator ++ () {
                 return const_iterator(container, ++offset);
             }
 
-            inline const_iterator operator ++ (int) {
+            const_iterator operator ++ (int) {
                 return const_iterator(container, offset++);
             }
 
-            inline const_iterator operator -- () {
+            const_iterator operator -- () {
                 return const_iterator(container, --offset);
             }
 
-            inline const_iterator operator -- (int) {
+            const_iterator operator -- (int) {
                 return const_iterator(container, offset--);
             }
 
-            inline const_iterator operator - (difference_type diff) {
+            const_iterator operator - (difference_type diff) {
                 return const_iterator(container, offset - diff);
             }
 
-            inline const_iterator operator + (difference_type diff) {
+            const_iterator operator + (difference_type diff) {
                 return const_iterator(container, offset + diff);
             }
 
-            inline const_iterator operator += (difference_type diff) {
+            const_iterator operator += (difference_type diff) {
                 return const_iterator(container, offset += diff);
             }
 
-            inline const_iterator operator -= (difference_type diff) {
+            const_iterator operator -= (difference_type diff) {
                 return const_iterator(container, offset -= diff);
             }
 
-            inline difference_type operator - (const const_iterator& it) const {
+            difference_type operator - (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline const value_type& operator * () const {
+            const value_type& operator * () const {
                 return container->get(offset);
             }
 
@@ -801,11 +799,11 @@ namespace np::ndarray::array_static::internal {
             std::size_t offset;
         };
 
-        inline const_iterator cbegin() const {
+        const_iterator cbegin() const {
             return const_iterator{this, 0};
         }
 
-        inline const_iterator cend() const {
+        const_iterator cend() const {
             static constexpr Size size = (SizeT * ... * SizeTs);
             return const_iterator{this, size};
         }
