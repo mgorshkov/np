@@ -169,7 +169,8 @@ namespace np::ndarray::array_static {
             return concatenate(array);
         }
         if constexpr(size > 2) {
-            Size SizeT2 = std::get<1>(std::tuple(SizeT, SizeTs...));
+            auto v = internal::to_vector(std::tuple(SizeT, SizeTs...));
+            Size SizeT2 = v[1];
             NDArrayDynamic<DType> result{Shape{size}};
             std::size_t destOffset = 0;
             for (Size y = 0; y < SizeT; ++y) {

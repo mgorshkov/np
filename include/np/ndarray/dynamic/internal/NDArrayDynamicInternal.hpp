@@ -244,7 +244,7 @@ namespace np::ndarray::array_dynamic::internal {
         {
         }
 
-        inline explicit NDArrayDynamicInternal(Shape shape) noexcept
+        explicit NDArrayDynamicInternal(Shape shape) noexcept
             : m_Shape{std::move(shape)}
             , m_Impl{}
         {
@@ -252,66 +252,66 @@ namespace np::ndarray::array_dynamic::internal {
             m_Impl.resize(size);
         }
 
-        inline explicit NDArrayDynamicInternal(Shape shape, const DType &value)
+        explicit NDArrayDynamicInternal(Shape shape, const DType &value)
             : m_Shape{std::move(shape)}
         {
             std::size_t size = np::ndarray::internal::calcSizeByShape(m_Shape);
             m_Impl = std::move(std::vector(size, value));
         }
 
-        inline explicit NDArrayDynamicInternal(const DType &value)
+        explicit NDArrayDynamicInternal(const DType &value)
             : m_Shape{1}
             , m_Impl{1, value}
         {
         }
 
         template <typename InternalStorage>
-        inline NDArrayDynamicInternal(const NDArrayDynamicInternal<DType, InternalStorage> &another) noexcept
+        NDArrayDynamicInternal(const NDArrayDynamicInternal<DType, InternalStorage> &another) noexcept
             : m_Shape{another.m_Shape}
             , m_Impl{another.m_Impl}
         {
         }
 
         template <typename InternalStorage>
-        inline NDArrayDynamicInternal(NDArrayDynamicInternal<DType, InternalStorage> &&another) noexcept
+        NDArrayDynamicInternal(NDArrayDynamicInternal<DType, InternalStorage> &&another) noexcept
             : m_Shape{std::move(another.m_Shape)}
             , m_Impl{std::move(another.m_Impl)}
         {
         }
 
         // create 1D array
-        inline NDArrayDynamicInternal(const Storage& impl, Size size) noexcept
+        NDArrayDynamicInternal(const Storage& impl, Size size) noexcept
             : m_Shape{size}
             , m_Impl{impl}
         {
         }
 
-        inline NDArrayDynamicInternal(typename Storage::const_iterator it, Size size) noexcept
+        NDArrayDynamicInternal(typename Storage::const_iterator it, Size size) noexcept
             : m_Shape{size}
             , m_Impl(it, size)
         {
         }
 
-        inline NDArrayDynamicInternal(const Storage& impl, Shape shape) noexcept
+        NDArrayDynamicInternal(const Storage& impl, Shape shape) noexcept
             : m_Shape{std::move(shape)}
             , m_Impl{impl}
         {
         }
 
-        inline NDArrayDynamicInternal(typename Storage::const_iterator it, Shape shape) noexcept
+        NDArrayDynamicInternal(typename Storage::const_iterator it, Shape shape) noexcept
             : m_Shape{std::move(shape)}
             , m_Impl(it, np::ndarray::internal::calcSizeByShape(m_Shape))
         {
         }
 
         template <std::size_t Size1T>
-        inline NDArrayDynamicInternal(const CArray1DType<Size1T>& array) noexcept
+        NDArrayDynamicInternal(const CArray1DType<Size1T>& array) noexcept
             : m_Shape{Size1T}
             , m_Impl{std::begin(array), std::end(array)} {
         }
 
         template<std::size_t Size1T>
-        inline NDArrayDynamicInternal(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept
+        NDArrayDynamicInternal(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept
             : NDArrayDynamicInternal{array}
         {
             if (isColumnVector) {
@@ -320,7 +320,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template <std::size_t Size1T, std::size_t Size2T>
-        inline NDArrayDynamicInternal(const CArray2DType<Size1T, Size2T>& array) noexcept
+        NDArrayDynamicInternal(const CArray2DType<Size1T, Size2T>& array) noexcept
              : m_Shape{Size2T, Size1T}
         {
             for (std::size_t i = 0; i < Size2T; ++i) {
@@ -329,7 +329,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline NDArrayDynamicInternal(const CArray3DType<Size1T, Size2T, Size3T>& array) noexcept
+        NDArrayDynamicInternal(const CArray3DType<Size1T, Size2T, Size3T>& array) noexcept
             : m_Shape{Size3T, Size2T, Size1T}
         {
             for (std::size_t i = 0; i < Size3T; ++i) {
@@ -340,7 +340,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline NDArrayDynamicInternal(const CArray4DType<Size1T, Size2T, Size3T, Size4T>& array) noexcept
+        NDArrayDynamicInternal(const CArray4DType<Size1T, Size2T, Size3T, Size4T>& array) noexcept
             : m_Shape{Size4T, Size3T, Size2T, Size1T}
         {
             for (std::size_t i = 0; i < Size4T; ++i) {
@@ -353,13 +353,13 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T>
-        inline explicit NDArrayDynamicInternal(const StdArray1DType<Size1T> &array) noexcept
+        explicit NDArrayDynamicInternal(const StdArray1DType<Size1T> &array) noexcept
             : m_Shape{Size1T}
             , m_Impl{std::begin(array), std::end(array)} {
         }
 
         template<std::size_t Size1T>
-        inline NDArrayDynamicInternal(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept
+        NDArrayDynamicInternal(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept
             : NDArrayDynamicInternal{array}
         {
             if (isColumnVector) {
@@ -368,7 +368,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T>
-        inline explicit NDArrayDynamicInternal(const StdArray2DType<Size1T, Size2T> &array) noexcept {
+        explicit NDArrayDynamicInternal(const StdArray2DType<Size1T, Size2T> &array) noexcept {
             m_Shape = {Size2T, Size1T};
 
             for (std::size_t i = 0; i < Size2T; ++i) {
@@ -377,7 +377,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline explicit NDArrayDynamicInternal(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
+        explicit NDArrayDynamicInternal(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
             m_Shape = {Size3T, Size2T, Size1T};
 
             for (std::size_t i = 0; i < Size3T; ++i) {
@@ -388,7 +388,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline explicit
+        explicit
         NDArrayDynamicInternal(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
             m_Shape = {Size4T, Size3T, Size2T, Size1T};
 
@@ -401,13 +401,13 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline explicit NDArrayDynamicInternal(const StdVector1DType &vector) noexcept
+        explicit NDArrayDynamicInternal(const StdVector1DType &vector) noexcept
             : m_Shape{static_cast<Size>(vector.size())}
             , m_Impl{vector}
         {
         }
 
-        inline explicit NDArrayDynamicInternal(const StdVector1DType &vector, bool isColumnVector) noexcept
+        explicit NDArrayDynamicInternal(const StdVector1DType &vector, bool isColumnVector) noexcept
             : NDArrayDynamicInternal{vector}
         {
             if (isColumnVector) {
@@ -415,7 +415,7 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline explicit NDArrayDynamicInternal(const StdVector2DType &vector) noexcept
+        explicit NDArrayDynamicInternal(const StdVector2DType &vector) noexcept
         {
             m_Shape = {static_cast<Size>(vector.size())};
             if (!vector.empty()) {
@@ -427,7 +427,7 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline explicit NDArrayDynamicInternal(const StdVector3DType &vector) noexcept
+        explicit NDArrayDynamicInternal(const StdVector3DType &vector) noexcept
         {
             m_Shape = {static_cast<Size>(vector.size())};
             if (!vector.empty()) {
@@ -444,7 +444,7 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline explicit NDArrayDynamicInternal(const StdVector4DType &vector) noexcept {
+        explicit NDArrayDynamicInternal(const StdVector4DType &vector) noexcept {
             m_Shape = {static_cast<Size>(vector.size())};
             if (!vector.empty()) {
                 m_Shape.push_back(vector[0].size());
@@ -465,12 +465,12 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline NDArrayDynamicInternal(std::initializer_list<DType> init_list) noexcept
+        NDArrayDynamicInternal(std::initializer_list<DType> init_list) noexcept
             : m_Shape{static_cast<Size>(init_list.size())}
             , m_Impl{init_list} {
         }
 
-        inline NDArrayDynamicInternal &operator=(const DType &value) noexcept {
+        NDArrayDynamicInternal &operator=(const DType &value) noexcept {
             m_Shape = {1};
             m_Impl.reserve(1);
             m_Impl.fill(value);
@@ -478,13 +478,13 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T>
-        inline NDArrayDynamicInternal &operator=(CArray1DType<Size1T> array) noexcept {
+        NDArrayDynamicInternal &operator=(CArray1DType<Size1T> array) noexcept {
             m_Shape = {Size1T};
             m_Impl = std::vector{array, Size1T * sizeof(DType)};
         }
 
         template<std::size_t Size1T, std::size_t Size2T>
-        inline NDArrayDynamicInternal &operator=(CArray2DType<Size1T, Size2T> array) noexcept {
+        NDArrayDynamicInternal &operator=(CArray2DType<Size1T, Size2T> array) noexcept {
             m_Shape = {Size2T, Size1T};
 
             for (std::size_t i = 0; i < Size2T; ++i) {
@@ -493,7 +493,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline NDArrayDynamicInternal &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept {
+        NDArrayDynamicInternal &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept {
             m_Shape = {Size3T, Size2T, Size1T};
             for (std::size_t i = 0; i < Size3T; ++i) {
                 for (std::size_t j = 0; j < Size2T; ++j) {
@@ -503,7 +503,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline NDArrayDynamicInternal &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept {
+        NDArrayDynamicInternal &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept {
             m_Shape = {Size4T, Size3T, Size2T, Size1T};
             for (std::size_t i = 0; i < Size4T; ++i) {
                 for (std::size_t j = 0; j < Size3T; ++j) {
@@ -515,14 +515,14 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T>
-        inline NDArrayDynamicInternal &operator=(const StdArray1DType<Size1T> &array) noexcept {
+        NDArrayDynamicInternal &operator=(const StdArray1DType<Size1T> &array) noexcept {
             m_Shape = {Size1T};
             m_Impl = std::vector{array.data(), Size1T};
             return *this;
         }
 
         template<std::size_t Size1T, std::size_t Size2T>
-        inline NDArrayDynamicInternal &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept {
+        NDArrayDynamicInternal &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept {
             m_Shape = {Size2T, Size1T};
 
             for (std::size_t i = 0; i < Size2T; ++i) {
@@ -531,7 +531,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline NDArrayDynamicInternal &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
+        NDArrayDynamicInternal &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
             m_Shape = {Size3T, Size2T, Size1T};
             for (std::size_t i = 0; i < Size3T; ++i) {
                 for (std::size_t j = 0; j < Size2T; ++j) {
@@ -541,7 +541,7 @@ namespace np::ndarray::array_dynamic::internal {
         }
 
         template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline NDArrayDynamicInternal &
+        NDArrayDynamicInternal &
         operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
             m_Shape = {Size4T, Size3T, Size2T, Size1T};
             for (std::size_t i = 0; i < Size4T; ++i) {
@@ -553,13 +553,13 @@ namespace np::ndarray::array_dynamic::internal {
             }
         }
 
-        inline NDArrayDynamicInternal &operator=(const StdVector1DType &vector) noexcept {
+        NDArrayDynamicInternal &operator=(const StdVector1DType &vector) noexcept {
             m_Shape = {vector.size()};
             m_Impl = vector;
             return *this;
         }
 
-        inline NDArrayDynamicInternal &operator=(const StdVector2DType &vector) noexcept {
+        NDArrayDynamicInternal &operator=(const StdVector2DType &vector) noexcept {
             m_Shape = {vector.size()};
             if (!vector.empty()) {
                 m_Shape.push_back(vector[0].size());
@@ -571,7 +571,7 @@ namespace np::ndarray::array_dynamic::internal {
             return *this;
         }
 
-        inline NDArrayDynamicInternal &operator=(const StdVector3DType &vector) noexcept {
+        NDArrayDynamicInternal &operator=(const StdVector3DType &vector) noexcept {
             m_Shape = {vector.size()};
             if (!vector.empty()) {
                 m_Shape.push_back(vector[0].size());
@@ -588,7 +588,7 @@ namespace np::ndarray::array_dynamic::internal {
             return *this;
         }
 
-        inline NDArrayDynamicInternal &operator=(const StdVector4DType &vector) noexcept {
+        NDArrayDynamicInternal &operator=(const StdVector4DType &vector) noexcept {
             m_Shape = {vector.size()};
             if (!vector.empty()) {
                 m_Shape.push_back(vector[0].size());
@@ -610,15 +610,16 @@ namespace np::ndarray::array_dynamic::internal {
             return *this;
         }
 
-        inline NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>> operator[](std::size_t i) const {
+        NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>> operator[](std::size_t i) const {
             if (m_Shape.empty()) {
                 throw std::runtime_error("Index " + std::to_string(i) + " of an empty array requested");
             }
             auto itBeginImpl = m_Impl.cbegin();
             if (m_Shape.size() == 1) {
-                if (i != 0) {
+                if (static_cast<Size>(i) >= m_Shape[0]) {
                     throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
                 }
+                std::advance(itBeginImpl, i);
                 return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>>(itBeginImpl, Shape{1});
             }
 
@@ -630,63 +631,63 @@ namespace np::ndarray::array_dynamic::internal {
             return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>>(itBeginImpl, shape);
         }
 
-        inline const DType& get(std::size_t i) const {
+        const DType& get(std::size_t i) const {
             return m_Impl[i];
         }
 
-        inline DType& get(std::size_t i) {
+        DType& get(std::size_t i) {
             return m_Impl[i];
         }
 
-        inline void set(std::size_t i, const DType& value) {
+        void set(std::size_t i, const DType& value) {
             m_Impl[i] = value;
         }
 
         friend std::ostream & operator<< <DType, Storage>(std::ostream &stream, const NDArrayDynamicInternal<DType, Storage> &array);
 
-        inline Shape getShape() const {
+        Shape getShape() const {
             return m_Shape;
         }
 
-        inline void setShape(const Shape& shape) {
+        void setShape(const Shape& shape) {
             m_Shape = shape;
         }
 
-        inline std::size_t size() const {
+        std::size_t size() const {
             return m_Impl.size();
         }
 
-        inline void dumpToStreamAsBinary(std::ostream &stream) {
+        void dumpToStreamAsBinary(std::ostream &stream) {
             for (std::size_t index = 0; index < size(); ++index) {
                 stream.write(reinterpret_cast<const char*>(&m_Impl[index]), sizeof(m_Impl[index]));
             }
         }
 
-        inline bool operator == (const DType& value) const {
+        bool operator == (const DType& value) const {
             return size() == 1 && m_Impl[0] == value;
         }
 
-        inline bool operator != (const DType& value) const {
+        bool operator != (const DType& value) const {
             return !operator == (value);
         }
 
-        inline bool operator == (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>& other) const {
+        bool operator == (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>& other) const {
             return m_Shape == other.m_Shape && m_Impl == other.m_Impl;
         }
 
-        inline bool operator == (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageVector<DType>>& other) const {
+        bool operator == (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageVector<DType>>& other) const {
             return m_Shape == other.m_Shape && m_Impl == other.m_Impl;
         }
 
-        inline bool operator != (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>& other) const {
+        bool operator != (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageSpan<DType>>& other) const {
             return !operator == (other);
         }
 
-        inline bool operator != (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageVector<DType>>& other) const {
+        bool operator != (const NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageVector<DType>>& other) const {
             return !operator == (other);
         }
 
-        inline void sort() {
+        void sort() {
             std::sort(m_Impl.begin(), m_Impl.end());
         }
 
@@ -698,17 +699,17 @@ namespace np::ndarray::array_dynamic::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline iterator(NDArrayDynamicInternal* container_, std::size_t offset_)
+            iterator(NDArrayDynamicInternal* container_, std::size_t offset_)
                 : container{container_}
                 , offset{offset_}{
             }
 
-            inline iterator(const iterator& it)
+            iterator(const iterator& it)
                 : container{it.container}
                 , offset{it.offset}{
             }
 
-            inline iterator& operator = (const iterator& it) {
+            iterator& operator = (const iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -716,72 +717,72 @@ namespace np::ndarray::array_dynamic::internal {
                 return *this;
             }
 
-            inline bool operator == (const iterator& it) const {
+            bool operator == (const iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const iterator& it) const {
+            bool operator != (const iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const iterator& it) const {
+            bool operator > (const iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const iterator& it) const {
+            bool operator >= (const iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const iterator& it) const {
+            bool operator < (const iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const iterator& it) const {
+            bool operator <= (const iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline iterator operator ++ () {
+            iterator operator ++ () {
                 return iterator(container, ++offset);
             }
 
-            inline iterator operator ++ (int) {
+            iterator operator ++ (int) {
                 return iterator(container, offset++);
             }
 
-            inline iterator operator -- () {
+            iterator operator -- () {
                 return iterator(container, --offset);
             }
 
-            inline iterator operator -- (int) {
+            iterator operator -- (int) {
                 return iterator(container, offset--);
             }
 
-            inline iterator operator - (difference_type diff) {
+            iterator operator - (difference_type diff) {
                 return iterator(container, offset - diff);
             }
 
-            inline iterator operator + (difference_type diff) {
+            iterator operator + (difference_type diff) {
                 return iterator(container, offset + diff);
             }
 
-            inline iterator operator += (difference_type diff) {
+            iterator operator += (difference_type diff) {
                 return iterator(container, offset += diff);
             }
 
-            inline iterator operator -= (difference_type diff) {
+            iterator operator -= (difference_type diff) {
                 return iterator(container, offset -= diff);
             }
 
-            inline difference_type operator - (const iterator& it) const {
+            difference_type operator - (const iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline value_type& operator * () {
+            value_type& operator * () {
                 return container->get(offset);
             }
 
@@ -790,11 +791,11 @@ namespace np::ndarray::array_dynamic::internal {
             std::size_t offset;
         };
 
-        inline iterator begin() {
+        iterator begin() {
             return iterator{this, 0};
         }
 
-        inline iterator end() {
+        iterator end() {
             return iterator{this, m_Impl.size()};
         }
 
@@ -806,17 +807,17 @@ namespace np::ndarray::array_dynamic::internal {
             typedef DType& reference;
             typedef std::random_access_iterator_tag iterator_category;
 
-            inline const_iterator(const NDArrayDynamicInternal* container_, std::size_t offset_)
+            const_iterator(const NDArrayDynamicInternal* container_, std::size_t offset_)
                 : container{container_}
                 , offset{offset_}{
             }
 
-            inline const_iterator(const const_iterator& it)
+            const_iterator(const const_iterator& it)
                 : container{it.container}
                 , offset{it.offset}{
             }
 
-            inline const_iterator& operator = (const const_iterator& it) {
+            const_iterator& operator = (const const_iterator& it) {
                 if (this != &it) {
                     container = it.container;
                     offset = it.offset;
@@ -824,72 +825,72 @@ namespace np::ndarray::array_dynamic::internal {
                 return *this;
             }
 
-            inline bool operator == (const const_iterator& it) const {
+            bool operator == (const const_iterator& it) const {
                 return container == it.container && offset == it.offset;
             }
 
-            inline bool operator != (const const_iterator& it) const {
+            bool operator != (const const_iterator& it) const {
                 return !(*this == it);
             }
 
-            inline bool operator > (const const_iterator& it) const {
+            bool operator > (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset > it.offset;
             }
 
-            inline bool operator >= (const const_iterator& it) const {
+            bool operator >= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset >= it.offset;
             }
 
-            inline bool operator < (const const_iterator& it) const {
+            bool operator < (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset < it.offset;
             }
 
-            inline bool operator <= (const const_iterator& it) const {
+            bool operator <= (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset <= it.offset;
             }
 
-            inline const_iterator operator ++ () {
+            const_iterator operator ++ () {
                 return const_iterator(container, ++offset);
             }
 
-            inline const_iterator operator ++ (int) {
+            const_iterator operator ++ (int) {
                 return const_iterator(container, offset++);
             }
 
-            inline const_iterator operator -- () {
+            const_iterator operator -- () {
                 return const_iterator(container, --offset);
             }
 
-            inline const_iterator operator -- (int) {
+            const_iterator operator -- (int) {
                 return const_iterator(container, offset--);
             }
 
-            inline const_iterator operator - (difference_type diff) {
+            const_iterator operator - (difference_type diff) {
                 return const_iterator(container, offset - diff);
             }
 
-            inline const_iterator operator + (difference_type diff) {
+            const_iterator operator + (difference_type diff) {
                 return const_iterator(container, offset + diff);
             }
 
-            inline const_iterator operator += (difference_type diff) {
+            const_iterator operator += (difference_type diff) {
                 return const_iterator(container, offset += diff);
             }
 
-            inline const_iterator operator -= (difference_type diff) {
+            const_iterator operator -= (difference_type diff) {
                 return const_iterator(container, offset -= diff);
             }
 
-            inline difference_type operator - (const const_iterator& it) const {
+            difference_type operator - (const const_iterator& it) const {
                 assert(container == it.container);
                 return offset - it.offset;
             }
 
-            inline auto operator * () const {
+            auto operator * () const {
                 return container->get(offset);
             }
 
@@ -898,11 +899,11 @@ namespace np::ndarray::array_dynamic::internal {
             std::size_t offset;
         };
 
-        inline const_iterator cbegin() const {
+        const_iterator cbegin() const {
             return const_iterator{this, 0};
         }
 
-        inline const_iterator cend() const {
+        const_iterator cend() const {
             return const_iterator{this, m_Impl.size()};
         }
 
