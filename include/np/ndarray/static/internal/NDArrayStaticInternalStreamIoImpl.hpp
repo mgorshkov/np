@@ -30,78 +30,87 @@ SOFTWARE.
 
 #include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
 
-namespace np::ndarray::array_static::internal {
-    template<typename DType, Size SizeT, Size... SizeTs>
-    std::ostream &
-    operator<<(std::ostream &stream, const NDArrayStaticInternal<DType, SizeT, SizeTs...> &array) {
-        stream << "[";
-        for (Size index = 0; index < SizeT; ++index) {
-            if (index > 0) {
-                if constexpr (sizeof...(SizeTs) != 0) {
-                    stream << std::endl;
-                }
-                stream << " ";
-            }
-            if constexpr (sizeof...(SizeTs) != 0) {
-                stream << array[index];
-            } else {
-                if constexpr(std::is_floating_point<DType>::value) {
-                    stream << std::setprecision(8);
-                }
-                if constexpr(std::is_same<DType, std::string>::value) {
-                    stream << "\"";
-                }
-                stream << array.m_Impl[index];
-                if constexpr(std::is_same<DType, std::string>::value) {
-                    stream << "\"";
-                }
-            }
-        }
-        stream << "]";
-        return stream;
-    }
+namespace np {
+	namespace ndarray {
+		namespace array_static {
+			namespace internal {
+				template<typename DType, Size SizeT, Size... SizeTs>
+				std::ostream &
+					operator<<(std::ostream &stream, const NDArrayStaticInternal<DType, SizeT, SizeTs...> &array) {
+					stream << "[";
+					for (Size index = 0; index < SizeT; ++index) {
+						if (index > 0) {
+							if constexpr (sizeof...(SizeTs) != 0) {
+								stream << std::endl;
+							}
+							stream << " ";
+						}
+						if constexpr (sizeof...(SizeTs) != 0) {
+							stream << array[index];
+						}
+						else {
+							if constexpr(std::is_floating_point<DType>::value) {
+								stream << std::setprecision(8);
+							}
+							if constexpr(std::is_same<DType, std::string>::value) {
+								stream << "\"";
+							}
+							stream << array.m_Impl[index];
+							if constexpr(std::is_same<DType, std::string>::value) {
+								stream << "\"";
+							}
+						}
+					}
+					stream << "]";
+					return stream;
+				}
 
-    template<Size SizeT, Size... SizeTs>
-    std::ostream &
-    operator<<(std::ostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array) {
-        stream << "[";
-        for (Size index = 0; index < SizeT; ++index) {
-            if (index > 0) {
-                if constexpr (sizeof...(SizeTs) != 0) {
-                    stream << std::endl;
-                }
-                stream << " ";
-            }
-            if constexpr (sizeof...(SizeTs) != 0) {
-                stream << array[index];
-            } else {
-                const auto& wstr = array.m_Impl[index];
-                std::string str(wstr.begin(), wstr.end());
-                stream << "\"" << str << "\"";
-            }
-        }
-        stream << "]";
-        return stream;
-    }
+				template<Size SizeT, Size... SizeTs>
+				std::ostream &
+					operator<<(std::ostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array) {
+					stream << "[";
+					for (Size index = 0; index < SizeT; ++index) {
+						if (index > 0) {
+							if constexpr (sizeof...(SizeTs) != 0) {
+								stream << std::endl;
+							}
+							stream << " ";
+						}
+						if constexpr (sizeof...(SizeTs) != 0) {
+							stream << array[index];
+						}
+						else {
+							const auto& wstr = array.m_Impl[index];
+							std::string str(wstr.begin(), wstr.end());
+							stream << "\"" << str << "\"";
+						}
+					}
+					stream << "]";
+					return stream;
+				}
 
-    template<Size SizeT, Size... SizeTs>
-    std::wostream &
-    operator<<(std::wostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array) {
-        stream << "[";
-        for (Size index = 0; index < SizeT; ++index) {
-            if (index > 0) {
-                if constexpr (sizeof...(SizeTs) != 0) {
-                    stream << std::endl;
-                }
-                stream << " ";
-            }
-            if constexpr (sizeof...(SizeTs) != 0) {
-                stream << array[index];
-            } else {
-                stream << "\"" << array.m_Impl[index] << "\"";
-            }
-        }
-        stream << "]";
-        return stream;
-    }
+				template<Size SizeT, Size... SizeTs>
+				std::wostream &
+					operator<<(std::wostream &stream, const NDArrayStaticInternal<std::wstring, SizeT, SizeTs...> &array) {
+					stream << "[";
+					for (Size index = 0; index < SizeT; ++index) {
+						if (index > 0) {
+							if constexpr (sizeof...(SizeTs) != 0) {
+								stream << std::endl;
+							}
+							stream << " ";
+						}
+						if constexpr (sizeof...(SizeTs) != 0) {
+							stream << array[index];
+						}
+						else {
+							stream << "\"" << array.m_Impl[index] << "\"";
+						}
+					}
+					stream << "]";
+					return stream;
+				}
+			}
+		}
+	}
 }

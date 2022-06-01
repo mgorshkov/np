@@ -58,7 +58,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error& ex) {
+        } catch (const std::runtime_error&) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<DType, SizeT, SizeTs...>(array);
@@ -87,7 +87,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error& ex) {
+        } catch (const std::runtime_error&) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<float_, SizeT, SizeTs...>(array);
@@ -116,7 +116,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error& ex) {
+        } catch (const std::runtime_error&) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<DType>(array);
@@ -145,7 +145,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error& ex) {
+        } catch (const std::runtime_error&) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<float_>(array);

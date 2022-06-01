@@ -26,54 +26,58 @@ SOFTWARE.
 
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
-namespace np::ndarray::array_static {
-    // Elementwise comparison
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<bool_, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator==(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) == array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+namespace np {
+	namespace ndarray {
+		namespace array_static {
+			// Elementwise comparison
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline NDArrayStatic<bool_, SizeT, SizeTs...>
+				NDArrayStatic<DType, SizeT, SizeTs...>::operator==(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+				NDArrayStatic<bool_, SizeT, SizeTs...> result;
+				for (Size i = 0; i < size(); ++i) {
+					auto equals = get(i) == array.get(i);
+					result.set(i, equals);
+				}
+				return result;
+			}
 
-    // Elementwise comparison
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<bool_, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator<(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < size(); ++i) {
-            auto less = get(i) < array.get(i);
-            result.set(i, less);
-        }
-        return result;
-    }
+			// Elementwise comparison
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline NDArrayStatic<bool_, SizeT, SizeTs...>
+				NDArrayStatic<DType, SizeT, SizeTs...>::operator<(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+				NDArrayStatic<bool_, SizeT, SizeTs...> result;
+				for (Size i = 0; i < size(); ++i) {
+					auto less = get(i) < array.get(i);
+					result.set(i, less);
+				}
+				return result;
+			}
 
-    // Elementwise comparison
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<bool_, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator>(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<bool_, SizeT, SizeTs...> result;
-        for (Size i = 0; i < size(); ++i) {
-            auto more = get(i) > array.get(i);
-            result.set(i, more);
-        }
-        return result;
-    }
+			// Elementwise comparison
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline NDArrayStatic<bool_, SizeT, SizeTs...>
+				NDArrayStatic<DType, SizeT, SizeTs...>::operator>(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+				NDArrayStatic<bool_, SizeT, SizeTs...> result;
+				for (Size i = 0; i < size(); ++i) {
+					auto more = get(i) > array.get(i);
+					result.set(i, more);
+				}
+				return result;
+			}
 
-    // Array-wise comparison
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline bool NDArrayStatic<DType, SizeT, SizeTs...>::array_equal(const DType& element) const {
-        if (shape().size() != 1 || shape()[0] != 1)
-            return false;
-        return element == m_ArrayImpl[0];
-    }
+			// Array-wise comparison
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline bool NDArrayStatic<DType, SizeT, SizeTs...>::array_equal(const DType& element) const {
+				if (shape().size() != 1 || shape()[0] != 1)
+					return false;
+				return element == m_ArrayImpl[0];
+			}
 
-    // Array-wise comparison
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline bool NDArrayStatic<DType, SizeT, SizeTs...>::array_equal(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        return m_ArrayImpl == array.m_ArrayImpl;
-    }
+			// Array-wise comparison
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline bool NDArrayStatic<DType, SizeT, SizeTs...>::array_equal(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+				return m_ArrayImpl == array.m_ArrayImpl;
+			}
+		}
+	}
 }

@@ -12,6 +12,7 @@ endif()
 
 if (MSVC)
     add_compile_options(/W4 /WX)
+	add_definitions(-DNOMINMAX) # allow using min/max in the project
 else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
