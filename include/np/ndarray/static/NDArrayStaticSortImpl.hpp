@@ -26,19 +26,23 @@ SOFTWARE.
 
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
-namespace np::ndarray::array_static {
+namespace np {
+	namespace ndarray {
+		namespace array_static {
 
-    // Sort an array
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort() {
+			// Sort an array
+			template<typename DType, Size SizeT, Size... SizeTs>
+			inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort() {
 
-    }
+			}
 
-    // // Sort the elements of an array's axis
-    // template<typename DType, Size SizeT, Size... SizeTs>
-    // template<Size N>
-    // inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort(Axis <N> axis) {
+			// // Sort the elements of an array's axis
+			// template<typename DType, Size SizeT, Size... SizeTs>
+			// template<Size N>
+			// inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort(Axis <N> axis) {
 
-    // }
-} //  namespace np::ndarray::array_static
+			// }
+		} //  namespace np::ndarray::array_static
+	}
+}
 
