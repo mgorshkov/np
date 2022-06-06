@@ -36,15 +36,16 @@ namespace np {
 				static constexpr auto types = np::internal::ReverseAppendToArgList<SizeT, SizeTs...>::type;
 				NDArrayDynamic<DType> result{ Shape{np::ndarray::array_static::internal::to_vector(types)} };
 				static constexpr Size size = (SizeT * ... * SizeTs);
-				Size offset = 0;
-				std::size_t column = 0;
+				Size row = 0;
+				Size column = 0;
+                Size last = std::get<0>(types);
 				for (Size i = 0; i < size; ++i) {
-					result.set(i, get(offset + column));
-					offset += SizeT;
-					if (offset >= size) {
-						offset = 0;
-						column++;
-					}
+                    if (row * last + column >= size) {
+                        ++column;
+                        row = 0;
+                    }
+					result.set(i, get(row * last + column));
+					++row;
 				}
 				return result;
 			}
@@ -64,7 +65,7 @@ namespace np {
 			template<typename DType, Size SizeT, Size... SizeTs>
 			inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::reshape(const Shape& shape) const {
 				static constexpr Size size = (SizeT * ... * SizeTs);
-				auto newSize = shape.size();
+				auto newSize = calcSizeByShape(shape);
 				if (size != newSize) {
 					throw std::runtime_error("New size does not equal to the old one");
 				}
@@ -79,12 +80,12 @@ namespace np {
 			template<typename DType, Size SizeT, Size... SizeTs>
 			inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::resize(const Shape& shape) const {
 				static constexpr Size size = (SizeT * ... * SizeTs);
-				Size newSize = static_cast<Size>(shape.size());
+				Size newSize = calcSizeByShape(shape);
 				auto copySize = std::min(size, newSize);
-				NDArrayDynamic<DType> result(shape);
+				NDArrayDynamic<DType> result{shape};
 				for (Size offset = 0; offset < newSize; offset += copySize) {
-					for (auto i = 0; i < size; ++i) {
-						result.set(i + offset, get(i + copySize));
+					for (auto i = 0; i < copySize && i + offset < newSize; ++i) {
+						result.set(i + offset, get(i));
 					}
 				}
 				return result;
@@ -113,8 +114,8 @@ namespace np {
 				for (auto i = 0; i < size; ++i) {
 					result.set(i + index, array.get(i));
 				}
-				for (auto i = 0; i < size - index; ++i) {
-					result.set(i + index + size, array.get(i + index));
+				for (auto i = index; i < size; ++i) {
+					result.set(i + size, get(i));
 				}
 				return result;
 			}
@@ -128,8 +129,8 @@ namespace np {
 					result.set(i, get(i));
 				}
 				if (index < size - 1) {
-					for (auto i = 0; i < size - index; ++i) {
-						result.set(i + index, get(i));
+					for (auto i = index + 1; i < size; ++i) {
+						result.set(i - 1, get(i));
 					}
 				}
 				return result;
@@ -166,15 +167,23 @@ namespace np {
 			template<typename DType, Size SizeT, Size... SizeTs>
 			inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::hstack(
 				const NDArrayStatic<DType, SizeT, SizeTs...>& array) const {
-				static constexpr Size size = 2 * (SizeT * ... * SizeTs);
-				if constexpr(size == 2) {
-					return concatenate(array);
+				static constexpr Size size = (SizeT * ... * SizeTs);
+                if constexpr(sizeof...(SizeTs) == 0) {
+                    NDArrayDynamic<DType> result{ Shape{2 * size} };
+                    for (auto i = 0; i < size; ++i) {
+                        result.set(i, get(i));
+                    }
+                    for (auto i = 0; i < size; ++i) {
+                        result.set(i + size, array.get(i));
+                    }
+                    return result;
 				}
-				if constexpr(size > 2) {
+				if constexpr(sizeof...(SizeTs) > 0) {
 					auto v = internal::to_vector(std::tuple(SizeT, SizeTs...));
-					Size SizeT2 = v[1];
-					NDArrayDynamic<DType> result{ Shape{size} };
-					std::size_t destOffset = 0;
+                    Size SizeT2 = v[1];
+                    v[1] = 2 * v[1];
+                    NDArrayDynamic<DType> result{Shape{v}};
+                    std::size_t destOffset = 0;
 					for (Size y = 0; y < SizeT; ++y) {
 						for (auto i = 0; i < SizeT2; ++i) {
 							result.set(i + destOffset, get(i + y * SizeT2));
@@ -185,7 +194,7 @@ namespace np {
 						}
 						destOffset += SizeT2;
 					}
-					return result;
+                    return result;
 				}
 			}
 
@@ -251,10 +260,9 @@ namespace np {
 				return{ result1, result2 };
 			}
 
-			// Split the array vertically at the 2nd index
+			// Split the array vertically
 			template<typename DType, Size SizeT, Size... SizeTs>
 			inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::vsplit(Size index) const {
-				std::vector<NDArrayDynamic<DType>> result;
 				Shape sh{ SizeT, SizeTs... };
 				Shape sh1{ sh };
 				sh1[0] = index;
@@ -271,11 +279,10 @@ namespace np {
 				std::copy(cbegin() + i,
 					cbegin() + i + sh[1] * rest,
 					result2.begin());
-				return result;
+				return {result1, result2};
 			}
 		}
 	}
 }
 
-// namespace np::ndarray::array_static
 

@@ -405,6 +405,19 @@ namespace np {
 			private:
 				inline void save(std::ostream& stream);
 
+                std::size_t getMaxElementSize() const {
+                    std::size_t size = sizeof(DType);
+                    if constexpr(std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value){
+                        size = 1;
+                        for (auto it = m_ArrayImpl.cbegin(); it != m_ArrayImpl.cend(); ++it) {
+                            if ((*it).size() > size) {
+                                size = (*it).size();
+                            }
+                        }
+                    }
+                    return size;
+                }
+
 				internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
 			};
 		}

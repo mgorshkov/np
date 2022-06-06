@@ -42,7 +42,7 @@ namespace np {
 			// inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort(Axis <N> axis) {
 
 			// }
-		} //  namespace np::ndarray::array_static
+		}
 	}
 }
 

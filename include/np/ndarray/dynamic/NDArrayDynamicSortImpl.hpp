@@ -26,23 +26,27 @@ SOFTWARE.
 
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
 
-namespace np::ndarray::array_dynamic {
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
 
-    // Sort an array
-    template<typename DType, typename Storage>
-    inline void NDArrayDynamic<DType, Storage>::sort() {
-        m_ArrayImpl.sort();
-        auto shape = m_ArrayImpl.shape();
-        shape.flatten();
-        m_ArrayImpl.setShape(shape);
+            // Sort an array
+            template<typename DType, typename Storage>
+            inline void NDArrayDynamic<DType, Storage>::sort() {
+                m_ArrayImpl.sort();
+                auto shape = m_ArrayImpl.shape();
+                shape.flatten();
+                m_ArrayImpl.setShape(shape);
+            }
+
+            // Sort the elements of an array's axis
+            // TODO
+            // template<typename DType, typename Storage>
+            // template<std::size_t N>
+            // inline void NDArrayDynamic<DType, Storage>::sort(std::optional<Axis<N>> axis) {
+
+            // }
+        }
     }
-
-    // Sort the elements of an array's axis
-    // TODO
-    // template<typename DType, typename Storage>
-    // template<std::size_t N>
-    // inline void NDArrayDynamic<DType, Storage>::sort(std::optional<Axis<N>> axis) {
-
-    // }
-} //  namespace np::ndarray::array_dynamic
+}
 

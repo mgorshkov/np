@@ -95,19 +95,27 @@ TEST_F(ArrayIoTest, dynamicEmptyFloatArraySaveLoadTest) {
 }
 
 TEST_F(ArrayIoTest, dynamicEmptyStringArraySaveLoadTest) {
+    /*
+    >>> np.array([], dtype='string_')
+     */
     Array<string_> array{};
     const char* filename = "empty_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamicEmptyUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array([], dtype='str')
+     */
     Array<unicode_> array{};
     const char* filename = "empty_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
-    ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
+    ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static1DIntArraySaveLoadTest) {
@@ -133,7 +141,7 @@ TEST_F(ArrayIoTest, dynamic1DIntArraySaveLoadTest) {
     array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
-    ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
+    ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static1DFloatArraySaveLoadTest) {
@@ -149,44 +157,63 @@ TEST_F(ArrayIoTest, static1DFloatArraySaveLoadTest) {
 }
 
 TEST_F(ArrayIoTest, dynamic1DFloatArraySaveLoadTest) {
+    /*
+    >>> np.array([1.1, 2.2, 3.3, 4.4])
+     */
     Array<float_> array{1.1, 2.2, 3.3, 4.4};
     const char* filename = "1D_float";
     array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<float_>(filename);
-    ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
+    ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static1DStringArraySaveLoadTest) {
+    /*
+    >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='string_')
+     */
     Array<string_, 4> array{"str1", "str2", "str3", "str4"};
     static const char* filename = "1D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic1DStringArraySaveLoadTest) {
+    /*
+    >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='string_')
+     */
     Array<string_> array{"str1", "str2", "str3", "str4"};
     static const char* filename = "1D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
-    ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
+    ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static1DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='str')
+     */
     Array<unicode_, 4> array{L"str1", L"str2", L"str3", L"str4"};
-    static const char* filename = "1D_string";
+    static const char* filename = "1D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic1DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='str')
+     */
     Array<unicode_> array{L"str1", L"str2", L"str3", L"str4"};
     static const char* filename = "1D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
-    ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
+    ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static2DIntArraySaveLoadTest) {
@@ -241,41 +268,57 @@ TEST_F(ArrayIoTest, dynamic2DFloatArraySaveLoadTest) {
 }
 
 TEST_F(ArrayIoTest, static2DStringArraySaveLoadTest) {
+    /*
+    >>> np.array([['str1', 'str2', 'str3', 'str4'], ['str5', 'str6', 'str7', 'str8']], dtype='string_')
+     */
     string_ arr[2][4] = {{"str1", "str2", "str3", "str4"},
                              {"str5", "str6", "str7", "str8"}};
     Array<string_, 2, 4> array{arr};
     static const char* filename = "2D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic2DStringArraySaveLoadTest) {
+    /*
+    >>> np.array([['str1', 'str2', 'str3', 'str4'], ['str5', 'str6', 'str7', 'str8']], dtype='string_')
+     */
     string_ arr[2][4] = {{"str1", "str2", "str3", "str4"},
                              {"str5", "str6", "str7", "str8"}};
     Array<string_> array{arr};
     static const char* filename = "2D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static2DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array([['str1', 'str2', 'str3', 'str4'], ['str5', 'str6', 'str7', 'str8']], dtype='str')
+     */
     unicode_ arr[2][4] = {{L"str1", L"str2", L"str3", L"str4"},
                               {L"str5", L"str6", L"str7", L"str8"}};
     Array<unicode_, 2, 4> array{arr};
     static const char* filename = "2D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic2DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array([['str1', 'str2', 'str3', 'str4'], ['str5', 'str6', 'str7', 'str8']], dtype='str')
+     */
     unicode_ arr[2][4] = {{L"str1", L"str2", L"str3", L"str4"},
                               {L"str5", L"str6", L"str7", L"str8"}};
     Array<unicode_> array{arr};
     static const char* filename = "2D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
@@ -387,6 +430,16 @@ TEST_F(ArrayIoTest, dynamic3DFloatArraySaveLoadTest) {
 }
 
 TEST_F(ArrayIoTest, static3DStringArraySaveLoadTest) {
+    /*
+    >>> np.array([[['str1_1', 'str1_2', 'str1_3'],
+        ['str2_1', 'str2_2', 'str2_3'],
+        ['str3_1', 'str3_2', 'str3_3'],
+        ['str4_1', 'str4_2', 'str4_3']],
+        [['str5_1', 'str5_2', 'str5_3'],
+        ['str6_1', 'str6_2', 'str6_3'],
+        ['str7_1', 'str7_2', 'str7_3'],
+        ['str8_1', 'str8_2', 'str8_3']]], dtype='string_')
+     */
     string_ arr[2][4][3] = {
         {
             {"str1_1", "str1_2", "str1_3"},
@@ -404,11 +457,22 @@ TEST_F(ArrayIoTest, static3DStringArraySaveLoadTest) {
     Array<string_, 2, 4, 3> array{arr};
     static const char* filename = "3D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic3DStringArraySaveLoadTest) {
+    /*
+    >>> np.array([[['str1_1', 'str1_2', 'str1_3'],
+        ['str2_1', 'str2_2', 'str2_3'],
+        ['str3_1', 'str3_2', 'str3_3'],
+        ['str4_1', 'str4_2', 'str4_3']],
+        [['str5_1', 'str5_2', 'str5_3'],
+        ['str6_1', 'str6_2', 'str6_3'],
+        ['str7_1', 'str7_2', 'str7_3'],
+        ['str8_1', 'str8_2', 'str8_3']]], dtype='string_')
+     */
     string_ arr[2][4][3] = {
         {
             {"str1_1", "str1_2", "str1_3"},
@@ -426,11 +490,22 @@ TEST_F(ArrayIoTest, dynamic3DStringArraySaveLoadTest) {
     Array<string_> array{arr};
     static const char* filename = "3D_string";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<string_>(filename);
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, static3DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array([[['str1_1', 'str1_2', 'str1_3'],
+        ['str2_1', 'str2_2', 'str2_3'],
+        ['str3_1', 'str3_2', 'str3_3'],
+        ['str4_1', 'str4_2', 'str4_3']],
+        [['str5_1', 'str5_2', 'str5_3'],
+        ['str6_1', 'str6_2', 'str6_3'],
+        ['str7_1', 'str7_2', 'str7_3'],
+        ['str8_1', 'str8_2', 'str8_3']]], dtype='string_')
+     */
     unicode_ arr[2][4][3] = {{
         {L"str1_1", L"str1_2", L"str1_3"},
         {L"str2_1", L"str2_2", L"str2_3"},
@@ -446,11 +521,22 @@ TEST_F(ArrayIoTest, static3DUnicodeArraySaveLoadTest) {
     Array<unicode_, 2, 4, 3> array{arr};
     static const char* filename = "3D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic3DUnicodeArraySaveLoadTest) {
+    /*
+    >>> np.array([[['str1_1', 'str1_2', 'str1_3'],
+        ['str2_1', 'str2_2', 'str2_3'],
+        ['str3_1', 'str3_2', 'str3_3'],
+        ['str4_1', 'str4_2', 'str4_3']],
+        [['str5_1', 'str5_2', 'str5_3'],
+        ['str6_1', 'str6_2', 'str6_3'],
+        ['str7_1', 'str7_2', 'str7_3'],
+        ['str8_1', 'str8_2', 'str8_3']]], dtype='string_')
+     */
     unicode_ arr[2][4][3] = {{
      {L"str1_1", L"str1_2", L"str1_3"},
      {L"str2_1", L"str2_2", L"str2_3"},
@@ -466,6 +552,7 @@ TEST_F(ArrayIoTest, dynamic3DUnicodeArraySaveLoadTest) {
     Array<unicode_> array{arr};
     static const char* filename = "3D_unicode";
     array.save(filename);
+    compareFileWithTestData(filename);
     auto arrayLoaded = load<unicode_>(filename);
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
