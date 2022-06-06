@@ -375,7 +375,7 @@ TEST_F(ArrayManipTest, static1DIntArrayTest) {
         Array<int_> result_sample = c_array_2d;
         Shape shape{3, 1};
         auto result = array.reshape(shape);
-        bool equals = array_equal<int_>(result, array);
+        bool equals = array_equal<int_>(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1310,25 +1310,34 @@ TEST_F(ArrayManipTest, static2DFloatArrayTest) {
 }
 
 TEST_F(ArrayManipTest, static2DStringArrayTest) {
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
+    string_ c_array_2d[2][3] = {
+        {"str1", "str2", "str3"},
+        {"str4", "str5", "str6"}
+    };
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_result_2d[3][2] = {{"str1", "str4"}, {"str2", "str5"}, {"str3", "str6"}};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_result_2d[3][2] = {{"str1", "str4"},
+                                           {"str2", "str5"},
+                                           {"str3", "str6"}};
         Array<string_> result_sample = c_array_result_2d;
-        auto result = transpose<string_>(array);
+        auto result = transpose<string_, 2, 3>(array);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
+        Array<string_, 2, 3> array = c_array_2d;
         auto result = array.ravel();
         Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
         bool equals = array_equal<string_>(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_2d_result[3][2] = {{"str1", "str2"}, {"str3", "str4"}, {"str5", "str6"}};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_2d_result[3][2] = {
+            {"str1", "str2"},
+            {"str3", "str4"},
+            {"str5", "str6"}
+        };
         Array<string_> result_sample = c_array_2d_result;
         Shape shape{3, 2};
         auto result = array.reshape(shape);
@@ -1336,8 +1345,12 @@ TEST_F(ArrayManipTest, static2DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_2d_result[3][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str1", "str2", "str3"}};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_2d_result[3][3] = {
+            {"str1", "str2", "str3"},
+            {"str4", "str5", "str6"},
+            {"str1", "str2", "str3"}
+        };
         Array<string_> result_sample = c_array_2d_result;
         Shape shape{3, 3};
         auto result = array.resize(shape);
@@ -1345,77 +1358,96 @@ TEST_F(ArrayManipTest, static2DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        Array<string_> array_append{"str7", "str8", "str9"};
-        Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7","str8", "str9"};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_2d_append[2][3] = {
+            {"str7", "str8", "str9"},
+            {"str10", "str11", "str12"}
+        };
+        Array<string_, 2, 3> array_append = c_array_2d_append;
+        Array<string_, 12> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7","str8", "str9", "str10", "str11", "str12"};
         auto result = array.append(array_append);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        Array<string_> array_insert{"str7", "str8", "str9"};
-        Array<string_> result_sample{"str1", "str7", "str8", "str9", "str2", "str3", "str4", "str5", "str6"};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_2d_insert[2][3] = {
+                {"str7", "str8", "str9"},
+                {"str10", "str11", "str12"}
+        };
+        Array<string_, 2, 3> array_insert = c_array_2d_insert;
+        Array<string_, 12> result_sample{"str1", "str7", "str8", "str9", "str10", "str11", "str12", "str2", "str3", "str4", "str5", "str6"};
         auto result = array.insert(1, array_insert);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
+        Array<string_, 2, 3> array = c_array_2d;
         Array<string_> result_sample{"str1", "str3", "str4", "str5", "str6"};
         auto result = array.del(1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        Array<string_> array_concatenate{"str7", "str8", "str9"};
+        Array<string_, 2, 3> array = c_array_2d;
+        Array<string_, 2, 3> array_concatenate{"str7", "str8", "str9"};
         Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7","str8", "str9"};
         auto result = array.concatenate(array_concatenate);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_vstack_2d[1][3] = {{"str7", "str8", "str9"}};
-        Array<string_> array_vstack{c_array_vstack_2d};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_vstack_2d[2][3] = {
+            {"str7", "str8", "str9"},
+            {"str10", "str11", "str12"}
+        };
+        Array<string_, 2, 3> array_vstack{c_array_vstack_2d};
+        Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7", "str8", "str9", "str10", "str11", "str12"};
+        auto result = vstack<string_, 2, 3>(array, array_vstack);
+        bool equals = array_equal(result, result_sample);
+        EXPECT_TRUE(equals);
+    }
+    {
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_r_2d[2][3] = {
+            {"str7", "str8", "str9"},
+            {"str10", "str11", "str12"}
+        };
+        Array<string_, 2, 3> array_r_{c_array_r_2d};
         Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7","str8", "str9"};
-        auto result = vstack<string_>(array, array_vstack);
+        auto result = r_<string_, 2, 3>(array, array_r_);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_r_2d[1][3] = {{"str7", "str8", "str9"}};
-        Array<string_> array_r_{c_array_r_2d};
-        Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7","str8", "str9"};
-        auto result = r_<string_>(array, array_r_);
-        bool equals = array_equal(result, result_sample);
-        EXPECT_TRUE(equals);
-    }
-    {
-        Array<string_> array = c_array_2d;
-        string_ c_array_hstack[2][2] = {{ "str7", "str8"}, {"str9", "str10"}};
-        Array<string_> array_hstack{c_array_hstack};
-        string_ c_array_result[2][5] = {{ "str1", "str2", "str3", "str7", "str8"}, {"str4", "str5", "str6", "str9","str10"}};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_hstack[2][3] = {{"str7", "str8", "str9"},
+                                        {"str10", "str11", "str12"}
+        };;
+        Array<string_, 2, 3> array_hstack{c_array_hstack};
+        string_ c_array_result[2][6] = {{ "str1", "str2", "str3", "str7", "str8", "str9"},
+                                        {"str4", "str5", "str6", "str10","str11", "str12"}};
         Array<string_> result_sample = c_array_result;
-        auto result = hstack<string_>(array, array_hstack);
+        auto result = hstack<string_, 2, 3>(array, array_hstack);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        string_ c_array_hstack[2][2] = {{ "str7", "str8"}, {"str9", "str10"}};
-        Array<string_> array_c_{c_array_hstack};
-        string_ c_array_result[2][5] = {{ "str1", "str2", "str3", "str7", "str8"}, {"str4", "str5", "str6", "str9","str10"}};
+        Array<string_, 2, 3> array = c_array_2d;
+        string_ c_array_c_[2][3] = {{ "str7", "str8", "str9"},
+                                        {"str10", "str11", "str12"}};
+        Array<string_, 2, 3> array_c_{c_array_c_};
+        string_ c_array_result[2][6] = {{ "str1", "str2", "str3", "str7", "str8", "str9"},
+                                        {"str4", "str5", "str6", "str10","str11", "str12"}};
         Array<string_> result_sample = c_array_result;
-        auto result = c_<string_>(array, array_c_);
+        auto result = c_<string_, 2, 3>(array, array_c_);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        auto result = hsplit<string_>(array, 1);
+        Array<string_, 2, 3> array = c_array_2d;
+        auto result = hsplit<string_, 2, 3>(array, 1);
         string_ c_array_2d_1[2][1] = {{"str1"}, {"str4"}};
         Array<string_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
@@ -1426,8 +1458,8 @@ TEST_F(ArrayManipTest, static2DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array = c_array_2d;
-        auto result = vsplit<string_>(array, 1);
+        Array<string_, 2, 3> array = c_array_2d;
+        auto result = vsplit<string_, 2, 3>(array, 1);
         string_ c_array_2d_1[1][3] = {{"str1", "str2", "str3"}};
         Array<string_> result0_sample{c_array_2d_1};
         bool equals = array_equal(result[0], result0_sample);

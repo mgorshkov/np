@@ -32,6 +32,7 @@ SOFTWARE.
 #include <string>
 
 #include <np/Constants.hpp>
+#include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
 	namespace ndarray {
@@ -194,7 +195,7 @@ namespace np {
 
 					inline friend void dumpToStreamAsBinary(std::ostream &stream, const NDArrayStaticInternal<DType, SizeT> &array) {
 						for (auto i = 0; i < SizeT; ++i) {
-							stream.write(reinterpret_cast<const char*>(&array.m_Impl[i]), sizeof(array.m_Impl[i]));
+                            ndarray::internal::dumpObject(stream, array.m_Impl[i]);
 						}
 					}
 

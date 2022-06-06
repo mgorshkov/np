@@ -102,7 +102,6 @@ namespace np {
 
 			template<typename DType, Size SizeT, Size... SizeTs>
 			inline NDArrayStatic<DType, SizeT, SizeTs...>::~NDArrayStatic() noexcept {
-
 			}
 
 			template<typename DType, Size SizeT, Size... SizeTs>

@@ -34,41 +34,44 @@ SOFTWARE.
 
 // For static arrays, only save is implemented
 // They are loaded as dynamic arrays
-namespace np::ndarray::array_static {
-    using namespace np::ndarray::internal;
-    using std::filesystem::path;
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline void NDArrayStatic<DType, SizeT, SizeTs...>::save(const char* filename) {
-        path path = adjustNep1Path(filename);
-        std::ofstream output(path, std::ios::binary);
-        NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
-        save(output);
+namespace np {
+    namespace ndarray {
+        namespace array_static {
+            using namespace np::ndarray::internal;
+            using std::filesystem::path;
+
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline void NDArrayStatic<DType, SizeT, SizeTs...>::save(const char *filename) {
+                path path = adjustNep1Path(filename);
+                std::ofstream output(path, std::ios::binary);
+                NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
+                save(output);
+            }
+
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline void NDArrayStatic<DType, SizeT, SizeTs...>::save(std::ostream &stream) {
+                DTypeToDescrConvertor<DType> convertor{getMaxElementSize()};
+                auto descr = convertor.DTypeToDescr();
+                writeNep1Header(stream, descr, static_cast<std::string>(shape()));
+                dumpToStreamAsBinary(stream, m_ArrayImpl);
+            }
+
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline void NDArrayStatic<DType, SizeT, SizeTs...>::savez(const char *filename) {
+                path path = adjustNep1Path(filename);
+                std::ofstream output(path, std::ios::binary);
+                NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
+                save(output);
+            }
+
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline void NDArrayStatic<DType, SizeT, SizeTs...>::savetxt(const char *filename, const char *delimiter) {
+                path path = adjustNep1Path(filename);
+                std::ofstream output(path);
+                NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
+                save(output, delimiter);
+            }
+        }
     }
-
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline void NDArrayStatic<DType, SizeT, SizeTs...>::save(std::ostream& stream) {
-        DTypeToCharCodeConvertor<DType> convertor{};
-        std::string dType = convertor.DTypeToCharCode();
-        writeNep1Header(stream, dType, static_cast<std::string>(shape()));
-        dumpToStreamAsBinary(stream, m_ArrayImpl);
-    }
-
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline void NDArrayStatic<DType, SizeT, SizeTs...>::savez(const char* filename) {
-        path path = adjustNep1Path(filename);
-        std::ofstream output(path, std::ios::binary);
-        NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
-        save(output);
-    }
-
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline void NDArrayStatic<DType, SizeT, SizeTs...>::savetxt(const char* filename, const char* delimiter) {
-        path path = adjustNep1Path(filename);
-        std::ofstream output(path);
-        NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
-        save(output, delimiter);
-    }
-
-} // namespace np::array_static
-
+}

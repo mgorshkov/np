@@ -28,52 +28,43 @@ SOFTWARE.
 
 #include <np/Shape.hpp>
 
-namespace np::ndarray::array_dynamic::internal {
-    enum class Operator {
-        More,
-        MoreOrEqual,
-        Equal,
-        LessOrEqual,
-        Less,
-        None
-    };
-    using OperatorWithArg = std::pair<Operator, double>;
-    inline static OperatorWithArg getOperatorWithArg(const std::string& cond) {
-        struct Pattern {
-            Operator op;
-            std::string str;
-        };
-        Pattern patterns[] = {
-        {Operator::MoreOrEqual, ">="}, // important! first go longer patterns!!
-        {Operator::LessOrEqual, "<="},
-        {Operator::More,        ">"},
-        {Operator::Equal,       "="},
-        {Operator::Less,        "<"}
-        };
-        for (const auto &pattern: patterns) {
-            auto pos = cond.find(pattern.str);
-            if (pos != std::string::npos) {
-                auto arg = cond.substr(pos + std::size(pattern.str), cond.length() - pos - std::size(pattern.str));
-                return {pattern.op, std::stod(arg)};
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
+            namespace internal {
+                enum class Operator {
+                    More,
+                    MoreOrEqual,
+                    Equal,
+                    LessOrEqual,
+                    Less,
+                    None
+                };
+                using OperatorWithArg = std::pair<Operator, double>;
+
+                inline static OperatorWithArg getOperatorWithArg(const std::string &cond) {
+                    struct Pattern {
+                        Operator op;
+                        std::string str;
+                    };
+                    Pattern patterns[] = {
+                            {Operator::MoreOrEqual, ">="}, // important! first go longer patterns!!
+                            {Operator::LessOrEqual, "<="},
+                            {Operator::More,        ">"},
+                            {Operator::Equal,       "="},
+                            {Operator::Less,        "<"}
+                    };
+                    for (const auto &pattern: patterns) {
+                        auto pos = cond.find(pattern.str);
+                        if (pos != std::string::npos) {
+                            auto arg = cond.substr(pos + std::size(pattern.str),
+                                                   cond.length() - pos - std::size(pattern.str));
+                            return {pattern.op, std::stod(arg)};
+                        }
+                    }
+                    throw std::runtime_error("Invalid condition: " + cond);
+                }
             }
         }
-        throw std::runtime_error("Invalid condition: " + cond);
     }
-
-    template <typename DType, typename Storage1, typename Storage2>
-    static inline bool array_equal(const internal::NDArrayDynamicInternal<DType, Storage1>& array1, const internal::NDArrayDynamicInternal<DType, Storage2>& array2) {
-        return array1 == array2;
-    }
-
-    template <typename Storage1, typename Storage2>
-    static inline bool array_equal(const internal::NDArrayDynamicInternal<float_, Storage1>& array1, const internal::NDArrayDynamicInternal<float_, Storage2>& array2) {
-        if (array1.size() != array2.size())
-            return false;
-        for (std::size_t i = 0 ; i < array1.size(); ++i) {
-            if (!np::internal::almost_equal(array1.get(i), array2.get(i), ULP_TOLERANCE))
-                return false;
-        }
-        return true;
-    }
-
 }
