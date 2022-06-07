@@ -23,6 +23,8 @@ SOFTWARE.
 */
 
 #include <iostream>
+#include <filesystem>
+
 #include <gtest/gtest.h>
 
 #include <np/Array.hpp>
@@ -33,7 +35,7 @@ using namespace np;
 
 class ArrayIoTest : public ::testing::Test {
 protected:
-    static void compareFiles(const std::string& file1, const std::string& file2) {
+    static void compareFiles(const std::filesystem::path& file1, const std::filesystem::path& file2) {
         std::ifstream input1(file1, std::ios::binary);
         ASSERT_TRUE(input1.is_open());
 
@@ -66,9 +68,12 @@ protected:
     }
 
     static void compareFileWithTestData(const std::string &filename) {
-        std::string full_filename{filename};
-        full_filename += ".npy";
-        compareFiles(full_filename,"../test_data/" + full_filename);
+		auto one_filename = std::filesystem::absolute(filename);
+		one_filename.replace_extension(".npy");
+		auto another_filename{ one_filename };
+		auto fname = another_filename.filename();
+		another_filename = another_filename.parent_path().parent_path() / "unit_tests" / "test_data" / fname;
+		compareFiles(one_filename, another_filename);
     }
 };
 
@@ -78,8 +83,12 @@ TEST_F(ArrayIoTest, dynamicEmptyIntArraySaveLoadTest) {
      */
     // dynamic
     Array<intc> array{};
-    const char* filename = "empty_int";
-    array.save(filename);
+#ifdef _MSC_VER
+    const char* filename = "empty_int_msvc";
+#else // !MSVC
+	const char* filename = "empty_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<intc>(filename);
     ASSERT_TRUE(array_equal<intc>(array, arrayLoaded));
@@ -124,8 +133,12 @@ TEST_F(ArrayIoTest, static1DIntArraySaveLoadTest) {
      */
     // static
     Array<int_, 4> array{1, 2, 3, 4};
-    const char* filename = "1D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "1D_int_msvc";
+#else // !MSVC
+	const char* filename = "1D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
@@ -137,8 +150,12 @@ TEST_F(ArrayIoTest, dynamic1DIntArraySaveLoadTest) {
      */
     // dynamic
     Array<int_> array{1, 2, 3, 4};
-    const char* filename = "1D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "1D_int_msvc";
+#else // !MSVC
+	const char* filename = "1D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
@@ -223,8 +240,12 @@ TEST_F(ArrayIoTest, static2DIntArraySaveLoadTest) {
     // static
     long arr[2][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
     Array<int_, 2, 4> array{arr};
-    static const char* filename = "2D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "2D_int_msvc";
+#else // !MSVC
+	const char* filename = "2D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
@@ -237,8 +258,12 @@ TEST_F(ArrayIoTest, dynamic2DIntArraySaveLoadTest) {
     // dynamic
     long arr[2][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
     Array<int_> array{arr};
-    static const char* filename = "2D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "2D_int_msvc";
+#else // !MSVC
+	const char* filename = "2D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
@@ -344,8 +369,12 @@ TEST_F(ArrayIoTest, static3DIntArraySaveLoadTest) {
         }
     };
     Array<int_, 2, 4, 3> array{arr};
-    static const char* filename = "3D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "3D_int_msvc";
+#else // !MSVC
+	const char* filename = "3D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal(array, arrayLoaded));
@@ -372,8 +401,12 @@ TEST_F(ArrayIoTest, dynamic3DIntArraySaveLoadTest) {
         }
     };
     Array<int_> array{arr};
-    static const char* filename = "3D_int";
-    array.save(filename);
+#ifdef _MSC_VER
+	const char* filename = "3D_int_msvc";
+#else // !MSVC
+	const char* filename = "3D_int";
+#endif // MSVC
+	array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<int_>(filename);
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));

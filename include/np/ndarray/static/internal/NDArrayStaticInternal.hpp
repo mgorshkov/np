@@ -812,7 +812,7 @@ namespace np {
 
 					const_iterator cend() const {
 						static constexpr Size size = (SizeT * ... * SizeTs);
-						return const_iterator{ this, size };
+						return const_iterator{ this, static_cast<size_t>(size) };
 					}
 
 				private:
