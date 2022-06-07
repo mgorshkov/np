@@ -156,7 +156,7 @@ namespace np {
             inline static void
             writeNep1Header(std::ostream &stream, const Descr& descr, const std::string& shape) {
                 // The first 6 bytes are a magic string: exactly “x93NUMPY”.
-                static const char *magic = "\x93NUMPY";
+                static const char magic[] = "\x93NUMPY";
                 static const uint32_t magicLen = sizeof(magic) - 1;
                 stream << magic;
                 // The next 1 byte is an unsigned byte: the major version number of the file format, e.g. x01.
@@ -177,8 +177,7 @@ namespace np {
 
                 dTypeStr += R"('fortran_order': False, 'shape': ()" + shape + "), }";
                 // The next 2 bytes form a little-endian unsigned short int: the length of the header data HEADER_LEN.
-                uint16_t headerLen = 0x80 - magicLen - sizeof(major) - sizeof(minor) - sizeof(uint16_t) +
-                                     1; // version 2 format if needed
+                uint16_t headerLen = 0x80 - magicLen - sizeof(major) - sizeof(minor) - sizeof(uint16_t); // version 2 format if needed
                 stream.write((char *) &headerLen, sizeof(headerLen));
                 // The next HEADER_LEN bytes form the header data describing the array’s format.
                 // It is an ASCII string which contains a Python literal expression of a dictionary.
