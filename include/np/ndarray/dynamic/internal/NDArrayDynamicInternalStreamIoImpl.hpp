@@ -25,8 +25,8 @@ SOFTWARE.
 #pragma once
 
 #include <cstddef>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
 
@@ -37,9 +37,8 @@ namespace np {
 
                 class SquareBracketsInserter {
                 public:
-                    explicit SquareBracketsInserter(std::ostream & stream) noexcept
-                    : m_Stream{stream}
-                    {
+                    explicit SquareBracketsInserter(std::ostream &stream) noexcept
+                        : m_Stream{stream} {
                         m_Stream << "[";
                     }
 
@@ -48,11 +47,11 @@ namespace np {
                     }
 
                 private:
-                    std::ostream& m_Stream;
+                    std::ostream &m_Stream;
                 };
 
-                template <typename DType, typename Storage>
-                std::ostream & operator<<(std::ostream &stream, const NDArrayDynamicInternal<DType, Storage> &array) {
+                template<typename DType, typename Storage>
+                std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicInternal<DType, Storage> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
 
                     if (!array.m_Shape.empty()) {
@@ -60,21 +59,22 @@ namespace np {
                             for (Size index = 0; index < array.m_Shape[0]; ++index) {
                                 if (index > 0)
                                     stream << " ";
-                                if constexpr(std::is_floating_point<DType>::value) {
+                                if constexpr (std::is_floating_point<DType>::value) {
                                     stream << std::setprecision(8);
                                 }
-                                if constexpr(std::is_same<DType, std::string>::value) {
+                                if constexpr (std::is_same<DType, std::string>::value) {
                                     stream << "\"";
                                 }
                                 stream << array.m_Impl[index];
-                                if constexpr(std::is_same<DType, std::string>::value) {
+                                if constexpr (std::is_same<DType, std::string>::value) {
                                     stream << "\"";
                                 }
                             }
                         } else {
                             for (Size index = 0; index < array.m_Shape[0]; ++index) {
                                 if (index > 0) {
-                                    stream << std::endl << " ";
+                                    stream << std::endl
+                                           << " ";
                                 }
                                 stream << array[index];
                             }
@@ -83,7 +83,7 @@ namespace np {
                     return stream;
                 }
 
-            }
-        }
-    }
-}
+            }// namespace internal
+        }    // namespace array_dynamic
+    }        // namespace ndarray
+}// namespace np

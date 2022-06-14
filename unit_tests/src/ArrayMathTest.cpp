@@ -22,18 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include <np/Array.hpp>
-#include <np/Math.hpp>
 #include <np/Comp.hpp>
+#include <np/Math.hpp>
 
 using namespace np;
 
 class ArrayMathTest : public ::testing::Test {
 protected:
-
 };
 
 TEST_F(ArrayMathTest, dynamicEmptyIntArraysTest) {

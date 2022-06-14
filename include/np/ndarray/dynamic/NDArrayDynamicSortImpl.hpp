@@ -46,7 +46,6 @@ namespace np {
             // inline void NDArrayDynamic<DType, Storage>::sort(std::optional<Axis<N>> axis) {
 
             // }
-        }
-    }
-}
-
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

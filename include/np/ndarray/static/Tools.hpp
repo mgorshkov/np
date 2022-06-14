@@ -27,98 +27,94 @@ SOFTWARE.
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
 namespace np {
-	namespace ndarray {
-		namespace array_static {
+    namespace ndarray {
+        namespace array_static {
 
-			template<typename DType, Size SizeT, Size... SizeTs>
-			inline static DType vectorCorr(const NDArrayStatic<DType, SizeT, SizeTs...>& v1,
-				const NDArrayStatic<DType, SizeT, SizeTs...>& v2) {
-				auto sh1 = v1.shape();
-				if (sh1.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline static DType vectorCorr(const NDArrayStatic<DType, SizeT, SizeTs...> &v1,
+                                           const NDArrayStatic<DType, SizeT, SizeTs...> &v2) {
+                auto sh1 = v1.shape();
+                if (sh1.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				auto sh2 = v2.shape();
-				if (sh2.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+                auto sh2 = v2.shape();
+                if (sh2.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				if (v1.len() != v2.len()) {
-					throw std::runtime_error("Sizes are different");
-				}
+                if (v1.len() != v2.len()) {
+                    throw std::runtime_error("Sizes are different");
+                }
 
-				DType sum1 = 0;
-				DType sum2 = 0;
-				DType sum12 = 0;
-				DType squareSum1 = 0;
-				DType squareSum2 = 0;
+                DType sum1 = 0;
+                DType sum2 = 0;
+                DType sum12 = 0;
+                DType squareSum1 = 0;
+                DType squareSum2 = 0;
 
-				Size n = v1.len();
+                Size n = v1.len();
 
-				for (Size i = 0; i < n; i++) {
-					sum1 += v1.get(i);
-					sum2 += v2.get(i);
-					sum12 += sum12 + v1.get(i) * v2.get(i);
+                for (Size i = 0; i < n; i++) {
+                    sum1 += v1.get(i);
+                    sum2 += v2.get(i);
+                    sum12 += sum12 + v1.get(i) * v2.get(i);
 
-					squareSum1 += v1.get(i) * v1.get(i);
-					squareSum2 += v2.get(i) * v2.get(i);
-				}
+                    squareSum1 += v1.get(i) * v1.get(i);
+                    squareSum2 += v2.get(i) * v2.get(i);
+                }
 
-				DType corr = static_cast<DType>(n * sum12 - sum1 * sum2)
-					/ static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1)
-						* (n * squareSum2 - sum2 * sum2)));
+                DType corr = static_cast<DType>(n * sum12 - sum1 * sum2) / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1) * (n * squareSum2 - sum2 * sum2)));
 
-				return corr;
-			}
+                return corr;
+            }
 
-			template<typename DType>
-			inline static DType vectorCorr(const NDArrayStaticStub<DType>& v1,
-				const NDArrayStaticStub<DType>& v2) {
-				auto sh1 = v1.shape();
-				if (sh1.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+            template<typename DType>
+            inline static DType vectorCorr(const NDArrayStaticStub<DType> &v1,
+                                           const NDArrayStaticStub<DType> &v2) {
+                auto sh1 = v1.shape();
+                if (sh1.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				auto sh2 = v2.shape();
-				if (sh2.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+                auto sh2 = v2.shape();
+                if (sh2.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				DType sum1 = v1;
-				DType sum2 = v2;
-				DType sum12 = v1 * v2;
-				DType squareSum1 = v1 * v1;
-				DType squareSum2 = v2 * v2;
+                DType sum1 = v1;
+                DType sum2 = v2;
+                DType sum12 = v1 * v2;
+                DType squareSum1 = v1 * v1;
+                DType squareSum2 = v2 * v2;
 
-				DType corr = static_cast<DType>(sum12 - sum1 * sum2)
-					/ static_cast<DType>(sqrt((squareSum1 - sum1 * sum1)
-						* (squareSum2 - sum2 * sum2)));
+                DType corr = static_cast<DType>(sum12 - sum1 * sum2) / static_cast<DType>(sqrt((squareSum1 - sum1 * sum1) * (squareSum2 - sum2 * sum2)));
 
-				return corr;
-			}
+                return corr;
+            }
 
-			template<typename DType, Size SizeT, Size... SizeTs>
-			inline static DType vectorCov(const NDArrayStatic<DType, SizeT, SizeTs...>& v1,
-				const NDArrayStatic<DType, SizeT, SizeTs...>& v2) {
-				auto sh1 = v1.shape();
-				if (sh1.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline static DType vectorCov(const NDArrayStatic<DType, SizeT, SizeTs...> &v1,
+                                          const NDArrayStatic<DType, SizeT, SizeTs...> &v2) {
+                auto sh1 = v1.shape();
+                if (sh1.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				auto sh2 = v2.shape();
-				if (sh2.size() != 1)
-					throw std::runtime_error("Only 1D arrays supported");
+                auto sh2 = v2.shape();
+                if (sh2.size() != 1)
+                    throw std::runtime_error("Only 1D arrays supported");
 
-				if (v1.len() != v2.len()) {
-					throw std::runtime_error("Sizes are different");
-				}
+                if (v1.len() != v2.len()) {
+                    throw std::runtime_error("Sizes are different");
+                }
 
-				auto v1_mean = v1.mean();
-				auto v2_mean = v2.mean();
+                auto v1_mean = v1.mean();
+                auto v2_mean = v2.mean();
 
-				DType sum = 0;
+                DType sum = 0;
 
-				for (Size i = 0; i < v1.len(); ++i) {
-					sum += ((v1[i] - v1_mean) * (v2[i] - v2_mean));
-				}
+                for (Size i = 0; i < v1.len(); ++i) {
+                    sum += ((v1[i] - v1_mean) * (v2[i] - v2_mean));
+                }
 
-				return sum / (v1.len() - 1);
-			}
-		}
-	}
-}
+                return sum / (v1.len() - 1);
+            }
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

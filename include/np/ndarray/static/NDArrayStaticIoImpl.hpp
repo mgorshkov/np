@@ -24,13 +24,13 @@ SOFTWARE.
 
 #pragma once
 
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 #include <string>
 
 #include <np/Exception.hpp>
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
 #include <np/ndarray/internal/Nep1.hpp>
+#include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
 // For static arrays, only save is implemented
 // They are loaded as dynamic arrays
@@ -72,6 +72,6 @@ namespace np {
                 NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
                 save(output, delimiter);
             }
-        }
-    }
-}
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

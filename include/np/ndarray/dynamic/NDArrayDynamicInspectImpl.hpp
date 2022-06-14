@@ -68,7 +68,7 @@ namespace np {
 
             template<typename DType, typename Storage>
             template<typename DTypeNew>
-            inline NDArrayDynamic <DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>>
+            inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>>
             NDArrayDynamic<DType, Storage>::astype() {
                 internal::NDArrayDynamicInternal<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> inter(
                         shape());
@@ -80,6 +80,6 @@ namespace np {
 
                 return result;
             }
-        }
-    }
-}
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

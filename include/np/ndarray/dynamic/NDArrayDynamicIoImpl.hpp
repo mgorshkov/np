@@ -66,7 +66,7 @@ namespace np {
             inline void NDArrayDynamic<DType, Storage>::save(std::ostream &stream) {
                 ndarray::internal::DTypeToDescrConvertor<DType> convertor{getMaxElementSize()};
                 ndarray::internal::writeNep1Header(stream, convertor.DTypeToDescr(),
-                                                       static_cast<std::string>(shape()));
+                                                   static_cast<std::string>(shape()));
                 m_ArrayImpl.dumpToStreamAsBinary(stream);
             }
 
@@ -78,7 +78,7 @@ namespace np {
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage> NDArrayDynamic<DType, Storage>::load(std::istream &stream) {
+            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::load(std::istream &stream) {
                 ndarray::internal::Descr descr;
                 Shape shape;
                 std::tie(descr, shape) = ndarray::internal::readNep1Header(stream);
@@ -90,7 +90,7 @@ namespace np {
                 std::vector<DType> data{};
                 for (std::size_t i = 0; i < size; ++i) {
                     DType element{};
-                    if constexpr(std::is_same<DType, std::string>::value) {
+                    if constexpr (std::is_same<DType, std::string>::value) {
                         element = ndarray::internal::readStr(stream, descr.size);
                     } else if constexpr (std::is_same<DType, std::wstring>::value) {
                         element = ndarray::internal::readUnicode(stream, descr.size);
@@ -103,7 +103,7 @@ namespace np {
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage>
+            inline NDArrayDynamic<DType, Storage>
             NDArrayDynamic<DType, Storage>::load(const char *filename) {
                 std::filesystem::path path = ndarray::internal::adjustNep1Path(filename);
                 std::ifstream input(path, std::ios::binary);
@@ -113,14 +113,14 @@ namespace np {
 
             // Saving & Loading Text Files
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage> NDArrayDynamic<DType, Storage>::loadtxt(const char *filename) {
+            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::loadtxt(const char *filename) {
                 std::filesystem::path path = ndarray::internal::adjustNep1Path(filename);
                 std::ofstream output(path, std::ios::binary);
                 NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage> NDArrayDynamic<DType, Storage>::genfromtxt(const char *filename) {
+            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::genfromtxt(const char *filename) {
                 std::filesystem::path path = ndarray::internal::adjustNep1Path(filename);
                 std::ofstream output(path, std::ios::binary);
                 NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
@@ -132,7 +132,6 @@ namespace np {
                 std::ofstream output(path, std::ios::binary);
                 NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
             }
-        }
-    }
-}
-
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

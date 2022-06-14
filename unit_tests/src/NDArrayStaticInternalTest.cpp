@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <sstream>
 #include <gtest/gtest.h>
+#include <sstream>
 
 #include <np/Constants.hpp>
 
@@ -35,15 +35,15 @@ using np::Size;
 
 class NDArrayStaticInternalTest : public ::testing::Test {
 protected:
-    template <typename DType, Size SizeT, Size... SizeTs>
-    static void checkArrayRepr(const NDArrayStaticInternal<DType, SizeT, SizeTs...>& array, const char* repr) {
+    template<typename DType, Size SizeT, Size... SizeTs>
+    static void checkArrayRepr(const NDArrayStaticInternal<DType, SizeT, SizeTs...> &array, const char *repr) {
         std::ostringstream ss;
         ss << array;
         EXPECT_EQ(ss.str(), repr);
     }
 
-    template <typename DType, Size SizeT, Size... SizeTs>
-    static void checkArrayRepr(const NDArrayStaticInternal<DType, SizeT, SizeTs...>& array, const wchar_t* repr) {
+    template<typename DType, Size SizeT, Size... SizeTs>
+    static void checkArrayRepr(const NDArrayStaticInternal<DType, SizeT, SizeTs...> &array, const wchar_t *repr) {
         std::wostringstream ss;
         ss << array;
         EXPECT_EQ(ss.str(), repr);
@@ -128,7 +128,7 @@ TEST_F(NDArrayStaticInternalTest, from2DStringCArrayCreationTest) {
      ["str4" "str5" "str6"]]
     */
     std::string c_array_2d[2][3] = {{"str1", "str2", "str3"},
-                         {"str4", "str5", "str6"}};
+                                    {"str4", "str5", "str6"}};
     NDArrayStaticInternal<std::string, 2, 3> array_2d{c_array_2d};
     checkArrayRepr(array_2d, R"([["str1" "str2" "str3"]
  ["str4" "str5" "str6"]])");
@@ -141,7 +141,7 @@ TEST_F(NDArrayStaticInternalTest, from2DUnicodeCArrayCreationTest) {
      ["str4" "str5" "str6"]]
     */
     std::wstring c_array_2d[2][3] = {{L"str1", L"str2", L"str3"},
-                                    {L"str4", L"str5", L"str6"}};
+                                     {L"str4", L"str5", L"str6"}};
     NDArrayStaticInternal<std::wstring, 2, 3> array_2d{c_array_2d};
     checkArrayRepr(array_2d, R"([["str1" "str2" "str3"]
  ["str4" "str5" "str6"]])");
@@ -174,43 +174,35 @@ TEST_F(NDArrayStaticInternalTest, from3DFloatCArrayCreationTest) {
        [10.1 11.11 12.12]]]
      */
     float c_array_3d[2][2][3] = {{{1.1f, 2.2f, 3.3f},
-                                       {4.4f, 5.5f, 6.6f}},
-                               {{7.7f, 8.8f, 9.9f},
-                                       {10.1f, 11.11f, 12.12f}}};
+                                  {4.4f, 5.5f, 6.6f}},
+                                 {{7.7f, 8.8f, 9.9f},
+                                  {10.1f, 11.11f, 12.12f}}};
     NDArrayStaticInternal<float, 2, 2, 3> array_3d{c_array_3d};
     checkArrayRepr(array_3d, "[[[1.1 2.2 3.3]\n [4.4000001 5.5 6.5999999]]\n [[7.6999998 8.8000002 9.8999996]\n [10.1 11.11 12.12]]]");
 }
 
 TEST_F(NDArrayStaticInternalTest, from3DStringCArrayCreationTest) {
-    std::string c_array_3d[2][4][3] = {{
-                {"str1_1", "str1_2", "str1_3"},
-                {"str2_1", "str2_2", "str2_3"},
-                {"str3_1", "str3_2", "str3_3"},
-                {"str4_1", "str4_2", "str4_3"}
-        },{
-                { "str5_1", "str5_2", "str5_3" },
-                { "str6_1", "str6_2", "str6_3" },
-                { "str7_1", "str7_2", "str7_3" },
-                { "str8_1", "str8_2", "str8_3" }
-        }
-    };
+    std::string c_array_3d[2][4][3] = {{{"str1_1", "str1_2", "str1_3"},
+                                        {"str2_1", "str2_2", "str2_3"},
+                                        {"str3_1", "str3_2", "str3_3"},
+                                        {"str4_1", "str4_2", "str4_3"}},
+                                       {{"str5_1", "str5_2", "str5_3"},
+                                        {"str6_1", "str6_2", "str6_3"},
+                                        {"str7_1", "str7_2", "str7_3"},
+                                        {"str8_1", "str8_2", "str8_3"}}};
     NDArrayStaticInternal<std::string, 2, 4, 3> array_3d{c_array_3d};
     checkArrayRepr(array_3d, "[[[\"str1_1\" \"str1_2\" \"str1_3\"]\n [\"str2_1\" \"str2_2\" \"str2_3\"]\n [\"str3_1\" \"str3_2\" \"str3_3\"]\n [\"str4_1\" \"str4_2\" \"str4_3\"]]\n [[\"str5_1\" \"str5_2\" \"str5_3\"]\n [\"str6_1\" \"str6_2\" \"str6_3\"]\n [\"str7_1\" \"str7_2\" \"str7_3\"]\n [\"str8_1\" \"str8_2\" \"str8_3\"]]]");
 }
 
 TEST_F(NDArrayStaticInternalTest, from3DUnicodeCArrayCreationTest) {
-    std::wstring c_array_3d[2][4][3] = {{
-         {L"str1_1", L"str1_2", L"str1_3"},
-         {L"str2_1", L"str2_2", L"str2_3"},
-         {L"str3_1", L"str3_2", L"str3_3"},
-         {L"str4_1", L"str4_2", L"str4_3"}
-        },{
-         { L"str5_1", L"str5_2", L"str5_3" },
-         { L"str6_1", L"str6_2", L"str6_3" },
-         { L"str7_1", L"str7_2", L"str7_3" },
-         { L"str8_1", L"str8_2", L"str8_3" }
-        }
-    };
+    std::wstring c_array_3d[2][4][3] = {{{L"str1_1", L"str1_2", L"str1_3"},
+                                         {L"str2_1", L"str2_2", L"str2_3"},
+                                         {L"str3_1", L"str3_2", L"str3_3"},
+                                         {L"str4_1", L"str4_2", L"str4_3"}},
+                                        {{L"str5_1", L"str5_2", L"str5_3"},
+                                         {L"str6_1", L"str6_2", L"str6_3"},
+                                         {L"str7_1", L"str7_2", L"str7_3"},
+                                         {L"str8_1", L"str8_2", L"str8_3"}}};
     NDArrayStaticInternal<std::wstring, 2, 4, 3> array_3d{c_array_3d};
     checkArrayRepr(array_3d, "[[[\"str1_1\" \"str1_2\" \"str1_3\"]\n [\"str2_1\" \"str2_2\" \"str2_3\"]\n [\"str3_1\" \"str3_2\" \"str3_3\"]\n [\"str4_1\" \"str4_2\" \"str4_3\"]]\n [[\"str5_1\" \"str5_2\" \"str5_3\"]\n [\"str6_1\" \"str6_2\" \"str6_3\"]\n [\"str7_1\" \"str7_2\" \"str7_3\"]\n [\"str8_1\" \"str8_2\" \"str8_3\"]]]");
     // check wostream

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <sstream>
 #include <gtest/gtest.h>
+#include <sstream>
 
 #include <np/Shape.hpp>
 
@@ -34,8 +34,8 @@ using namespace np::ndarray::array_dynamic::internal;
 
 class NDArrayDynamicInternalTest : public ::testing::Test {
 protected:
-    template <typename DType>
-    static void checkArrayRepr(const NDArrayDynamicInternal<DType>& array, const char* repr) {
+    template<typename DType>
+    static void checkArrayRepr(const NDArrayDynamicInternal<DType> &array, const char *repr) {
         std::ostringstream ss;
         ss << array;
         EXPECT_EQ(ss.str(), repr);

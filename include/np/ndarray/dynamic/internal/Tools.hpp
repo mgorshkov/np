@@ -48,12 +48,11 @@ namespace np {
                         std::string str;
                     };
                     Pattern patterns[] = {
-                            {Operator::MoreOrEqual, ">="}, // important! first go longer patterns!!
+                            {Operator::MoreOrEqual, ">="},// important! first go longer patterns!!
                             {Operator::LessOrEqual, "<="},
-                            {Operator::More,        ">"},
-                            {Operator::Equal,       "="},
-                            {Operator::Less,        "<"}
-                    };
+                            {Operator::More, ">"},
+                            {Operator::Equal, "="},
+                            {Operator::Less, "<"}};
                     for (const auto &pattern: patterns) {
                         auto pos = cond.find(pattern.str);
                         if (pos != std::string::npos) {
@@ -64,7 +63,7 @@ namespace np {
                     }
                     throw std::runtime_error("Invalid condition: " + cond);
                 }
-            }
-        }
-    }
-}
+            }// namespace internal
+        }    // namespace array_dynamic
+    }        // namespace ndarray
+}// namespace np

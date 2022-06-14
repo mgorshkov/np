@@ -162,6 +162,6 @@ namespace np {
                 }
                 return result;
             }
-        }
-    }
-}
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

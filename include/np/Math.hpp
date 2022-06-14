@@ -24,12 +24,12 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
-    using ndarray::array_static::NDArrayStatic;
     using ndarray::array_dynamic::NDArrayDynamic;
+    using ndarray::array_static::NDArrayStatic;
 
     //////////////////////////////////////////////////////////////
     /// \brief Arrays sum
@@ -42,8 +42,8 @@ namespace np {
     /// \return The sum of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> add(const Array<DType, SizeTs, Sizes...>& array1, const Array<DType, SizeTs, Sizes...>& array2) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> add(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
         return array1.add(array2);
     }
 
@@ -58,8 +58,8 @@ namespace np {
     /// \return The difference of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> subtract(const Array<DType, SizeTs, Sizes...>& array1, const Array<DType, SizeTs, Sizes...>& array2) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> subtract(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
         return array1.subtract(array2);
     }
 
@@ -74,8 +74,8 @@ namespace np {
     /// \return The product of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> multiply(const Array<DType, SizeTs, Sizes...>& array1, const Array<DType, SizeTs, Sizes...>& array2) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> multiply(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
         return array1.multiply(array2);
     }
 
@@ -92,8 +92,8 @@ namespace np {
     /// \return The ratio of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> divide(const Array<DType, SizeTs, Sizes...>& array1, const Array<DType, SizeTs, Sizes...>& array2) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> divide(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
         return array1.divide(array2);
     }
 
@@ -108,8 +108,8 @@ namespace np {
     /// \return The exponent of an array1
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> exp(const Array<DType, SizeTs, Sizes...>& array1, const Array<DType, SizeTs, Sizes...>& array2) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> exp(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
         return array1.exp(array2);
     }
 
@@ -123,8 +123,8 @@ namespace np {
     /// \return The square root of an array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> sqrt(const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> sqrt(const Array<DType, SizeTs, Sizes...> &array) {
         return array.sqrt();
     }
 
@@ -138,8 +138,8 @@ namespace np {
     /// \return The sine of an array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> sin(const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> sin(const Array<DType, SizeTs, Sizes...> &array) {
         return array.sin();
     }
 
@@ -153,8 +153,8 @@ namespace np {
     /// \return The cosine of an array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> cos(const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> cos(const Array<DType, SizeTs, Sizes...> &array) {
         return array.cos();
     }
 
@@ -168,9 +168,8 @@ namespace np {
     /// \return The log of an array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> log(const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Array<DType, SizeTs, Sizes...> log(const Array<DType, SizeTs, Sizes...> &array) {
         return array.log();
     }
-} // namespace np
-
+}// namespace np

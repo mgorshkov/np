@@ -22,24 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
-#include <np/Array.hpp>
 #include <np/Agg.hpp>
+#include <np/Array.hpp>
 #include <np/Comp.hpp>
 
 using namespace np;
 
-using np::ndarray::array_static::NDArrayStatic;
 using np::ndarray::array_dynamic::NDArrayDynamic;
+using np::ndarray::array_static::NDArrayStatic;
 
 class ArrayAggregationTest : public ::testing::Test {
 protected:
     // static arrays
-    template <typename DType, Size SizeCumSum, Size SizeT, Size... SizeTs>
-    inline void checkArrayAggregation(const NDArrayStatic<DType, SizeT, SizeTs...>& array,
-        DType sum_, DType min_, DType max_, NDArrayStatic<DType, SizeCumSum> cumsum_, DType mean_, DType median_, const NDArrayDynamic<DType>& corrcoef_, DType std__, bool corrException = false) {
+    template<typename DType, Size SizeCumSum, Size SizeT, Size... SizeTs>
+    inline void checkArrayAggregation(const NDArrayStatic<DType, SizeT, SizeTs...> &array,
+                                      DType sum_, DType min_, DType max_, NDArrayStatic<DType, SizeCumSum> cumsum_, DType mean_, DType median_, const NDArrayDynamic<DType> &corrcoef_, DType std__, bool corrException = false) {
         auto sum__ = sum<DType, SizeT, SizeTs...>(array);
         EXPECT_EQ(sum_, sum__);
         auto min__ = min<DType, SizeT, SizeTs...>(array);
@@ -58,17 +58,17 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error&) {
+        } catch (const std::runtime_error &) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<DType, SizeT, SizeTs...>(array);
         EXPECT_EQ(std__, std___);
     }
 
-    template <Size SizeCumSum, Size SizeT, Size... SizeTs>
-    inline void checkArrayAggregation(const NDArrayStatic<float_, SizeT, SizeTs...>& array,
+    template<Size SizeCumSum, Size SizeT, Size... SizeTs>
+    inline void checkArrayAggregation(const NDArrayStatic<float_, SizeT, SizeTs...> &array,
                                       float_ sum_, float_ min_, float_ max_, NDArrayStatic<float_, SizeCumSum> cumsum_, float_ mean_, float_ median_,
-                                      const NDArrayDynamic<float_>& corrcoef_, float_ std__, bool corrException = false) {
+                                      const NDArrayDynamic<float_> &corrcoef_, float_ std__, bool corrException = false) {
         auto sum__ = sum<float_, SizeT, SizeTs...>(array);
         EXPECT_DOUBLE_EQ(sum_, sum__);
         auto min__ = min<float_, SizeT, SizeTs...>(array);
@@ -87,7 +87,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error&) {
+        } catch (const std::runtime_error &) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<float_, SizeT, SizeTs...>(array);
@@ -95,9 +95,9 @@ protected:
     }
 
     // dynamic arrays
-    template <typename DType>
-    inline void checkArrayAggregation(const NDArrayDynamic<DType>& array,
-        DType sum_, DType min_, DType max_, NDArrayDynamic<DType> cumsum_, DType mean_, DType median_, const NDArrayDynamic<DType>& corrcoef_, DType std__, bool corrException = false) {
+    template<typename DType>
+    inline void checkArrayAggregation(const NDArrayDynamic<DType> &array,
+                                      DType sum_, DType min_, DType max_, NDArrayDynamic<DType> cumsum_, DType mean_, DType median_, const NDArrayDynamic<DType> &corrcoef_, DType std__, bool corrException = false) {
         auto sum__ = sum<DType>(array);
         EXPECT_EQ(sum_, sum__);
         auto min__ = min<DType>(array);
@@ -116,17 +116,17 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error&) {
+        } catch (const std::runtime_error &) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<DType>(array);
         EXPECT_EQ(std__, std___);
     }
 
-    template <>
-    inline void checkArrayAggregation<float_>(const NDArrayDynamic<float_>& array,
+    template<>
+    inline void checkArrayAggregation<float_>(const NDArrayDynamic<float_> &array,
                                               float_ sum_, float_ min_, float_ max_, NDArrayDynamic<float_> cumsum_,
-                                              float_ mean_, float_ median_, const NDArrayDynamic<float_>& corrcoef_, float_ std__, bool corrException) {
+                                              float_ mean_, float_ median_, const NDArrayDynamic<float_> &corrcoef_, float_ std__, bool corrException) {
         auto sum__ = sum<float_>(array);
         EXPECT_DOUBLE_EQ(sum_, sum__);
         auto min__ = min<float_>(array);
@@ -145,7 +145,7 @@ protected:
             equal = array_equal(corrcoef_, corrcoef__);
             EXPECT_TRUE(equal);
             EXPECT_FALSE(corrException);
-        } catch (const std::runtime_error&) {
+        } catch (const std::runtime_error &) {
             EXPECT_TRUE(corrException);
         }
         auto std___ = std_<float_>(array);

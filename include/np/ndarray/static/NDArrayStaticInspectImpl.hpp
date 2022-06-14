@@ -52,10 +52,7 @@ namespace np {
             // Number of array elements
             template<typename DType, Size SizeT, Size... SizeTs>
             Size NDArrayStatic<DType, SizeT, SizeTs...>::size() const {
-                size_t result{SizeT};
-                if constexpr ((sizeof...(SizeTs)) != 0)
-                    for (auto i: {SizeTs...}) result *= i;
-                return result;
+                return (SizeT * ... * SizeTs);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
@@ -70,6 +67,6 @@ namespace np {
             NDArrayStatic<DType, SizeT, SizeTs...>::astype() const {
                 return NDArrayStatic<DTypeNew, SizeT, SizeTs...>{};
             }
-        }
-    }
-}
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

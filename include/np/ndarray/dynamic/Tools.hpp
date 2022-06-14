@@ -32,7 +32,7 @@ namespace np {
 
             template<typename DType, typename Storage>
             inline static DType
-            vectorCorr(const NDArrayDynamic <DType, Storage> &v1, const NDArrayDynamic <DType, Storage> &v2) {
+            vectorCorr(const NDArrayDynamic<DType, Storage> &v1, const NDArrayDynamic<DType, Storage> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
                     throw std::runtime_error("Only 1D arrays supported");
@@ -62,16 +62,14 @@ namespace np {
                     squareSum2 += v2.get(i) * v2.get(i);
                 }
 
-                DType corr = static_cast<DType>(n * sum12 - sum1 * sum2)
-                             / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1)
-                                                       * (n * squareSum2 - sum2 * sum2)));
+                DType corr = static_cast<DType>(n * sum12 - sum1 * sum2) / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1) * (n * squareSum2 - sum2 * sum2)));
 
                 return corr;
             }
 
             template<typename DType, typename Storage>
             inline static DType
-            vectorCov(const NDArrayDynamic <DType, Storage> &v1, const NDArrayDynamic <DType, Storage> &v2) {
+            vectorCov(const NDArrayDynamic<DType, Storage> &v1, const NDArrayDynamic<DType, Storage> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
                     throw std::runtime_error("Only 1D arrays supported");
@@ -95,6 +93,6 @@ namespace np {
 
                 return sum / (v1.len() - 1);
             }
-        }
-    }
-}
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

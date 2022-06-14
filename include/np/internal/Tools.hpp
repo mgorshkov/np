@@ -30,51 +30,26 @@ SOFTWARE.
 #include <type_traits>
 
 namespace np {
-	namespace internal {
-		template<class T>
-		typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type almost_equal(T x, T y, int ulp)
-		{
-			// the machine epsilon has to be scaled to the magnitude of the values used
-			// and multiplied by the desired precision in ULPs (units in the last place)
-			// unless the result is subnormal
-			return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y) * ulp ||
-				std::fabs(x - y) < std::numeric_limits<T>::min();
-		}
+    namespace internal {
+        template<class T>
+        typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type almost_equal(T x, T y, int ulp) {
+            // the machine epsilon has to be scaled to the magnitude of the values used
+            // and multiplied by the desired precision in ULPs (units in the last place)
+            // unless the result is subnormal
+            return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y) * ulp ||
+                   std::fabs(x - y) < std::numeric_limits<T>::min();
+        }
+    }// namespace internal
+}// namespace np
 
-		// Append parameter to seq to the tail
-		template<Size...>
-		struct ReverseAppendToArgList {};
+namespace np {
+    static const constexpr int ULP_TOLERANCE = 7;
+    template<typename DType>
+    inline static bool array_equal(const DType &value1, const DType &value2) {
+        return value1 == value2;
+    }
 
-		template<Size SizeT, Size... SizeTs>
-		struct ReverseAppendToArgList<SizeT, SizeTs...> {
-			static constexpr auto type = std::make_tuple(SizeTs..., SizeT);
-		};
-
-		template<Size...>
-		struct RevertArgList {
-			static constexpr auto type = std::make_tuple();
-		};
-
-		template<Size SizeT>
-		struct RevertArgList<SizeT> {
-			static constexpr auto type = SizeT;
-		};
-
-		template<Size SizeT, Size... SizeTs>
-		struct RevertArgList<SizeT, SizeTs...> {
-			static constexpr auto type = ReverseAppendToArgList<SizeT,
-				RevertArgList<SizeTs...>::type>::type;
-		};
-	}
-}
-	namespace np {
-		static const constexpr int ULP_TOLERANCE = 7;
-		template<typename DType>
-		inline static bool array_equal(const DType &value1, const DType &value2) {
-			return value1 == value2;
-		}
-
-		inline static bool array_equal(const double &value1, const double &value2) {
-			return internal::almost_equal(value1, value2, ULP_TOLERANCE);
-		}
-	}
+    inline static bool array_equal(const double &value1, const double &value2) {
+        return internal::almost_equal(value1, value2, ULP_TOLERANCE);
+    }
+}// namespace np

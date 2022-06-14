@@ -24,11 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
-#include <cctype>
-#include <numeric>
 #include <algorithm>
+#include <cctype>
+#include <cstddef>
+#include <numeric>
+#include <vector>
 
 #include <np/Constants.hpp>
 #include <np/Exception.hpp>
@@ -64,7 +64,7 @@ namespace np {
         /// \param initList vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline explicit Shape(const std::vector<Size>& v)
+        inline explicit Shape(const std::vector<Size> &v)
             : std::vector<Size>{v} {
         }
 
@@ -80,13 +80,13 @@ namespace np {
         /// \param shapeTupleStr string with dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline explicit Shape(const std::string& shapeTupleStr) {
+        inline explicit Shape(const std::string &shapeTupleStr) {
             // 0,
             // 1,
             // 1, 2
             // 1, 2, 3
             if (shapeTupleStr == "0,")
-                return; // empty
+                return;// empty
             Size prevCommaIndex = 0;
             auto push_number = [this, &shapeTupleStr](Size commaIndex, Size prevCommaIndex) {
                 if (commaIndex == prevCommaIndex)
@@ -159,4 +159,4 @@ namespace np {
             std::reverse(begin(), end());
         }
     };
-}
+}// namespace np

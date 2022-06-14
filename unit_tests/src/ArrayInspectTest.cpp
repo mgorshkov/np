@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include <np/Array.hpp>
 #include <np/Inspect.hpp>
@@ -32,7 +32,6 @@ using namespace np;
 
 class ArrayInspectTest : public ::testing::Test {
 protected:
-
 };
 
 TEST_F(ArrayInspectTest, dynamicEmptyIntArrayTest) {
@@ -328,19 +327,14 @@ TEST_F(ArrayInspectTest, static3DFloatArrayTest) {
 
 TEST_F(ArrayInspectTest, static3DStringArrayTest) {
     string_ c_array_3d[2][4][3] = {
-        {
-            {"str1_1", "str1_2", "str1_3"},
-            {"str2_1", "str2_2", "str2_3"},
-            {"str3_1", "str3_2", "str3_3"},
-            {"str4_1", "str4_2", "str4_3"}
-        },
-        {
-            { "str5_1", "str5_2", "str5_3" },
-            { "str6_1", "str6_2", "str6_3" },
-            { "str7_1", "str7_2", "str7_3" },
-            { "str8_1", "str8_2", "str8_3" }
-        }
-    };
+            {{"str1_1", "str1_2", "str1_3"},
+             {"str2_1", "str2_2", "str2_3"},
+             {"str3_1", "str3_2", "str3_3"},
+             {"str4_1", "str4_2", "str4_3"}},
+            {{"str5_1", "str5_2", "str5_3"},
+             {"str6_1", "str6_2", "str6_3"},
+             {"str7_1", "str7_2", "str7_3"},
+             {"str8_1", "str8_2", "str8_3"}}};
     Array<string_, 2, 4, 3> array{c_array_3d};
     std::vector<Size> sh{2, 4, 3};
     EXPECT_EQ(sh, array.shape());

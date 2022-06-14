@@ -42,9 +42,8 @@ namespace np {
     /// \return The length of an array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Size len(const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline Size len(const Array<DType, SizeTs, Sizes...> &array) {
         return array.len();
     }
-} // namespace np
-
+}// namespace np

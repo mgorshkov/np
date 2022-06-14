@@ -26,13 +26,13 @@ SOFTWARE.
 
 #include <optional>
 
+#include <np/Array.hpp>
+#include <np/Axis.hpp>
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
-#include <np/Axis.hpp>
-#include <np/Array.hpp>
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Aggregate functions
@@ -49,7 +49,7 @@ namespace np {
     /// \return Sum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto sum(const Array<DType, SizeT, SizeTs...> &array) {
         return array.sum();
     }
@@ -66,7 +66,7 @@ namespace np {
     /// \return Minimum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto min(const Array<DType, SizeT, SizeTs...> &array) {
         return array.min();
     }
@@ -81,7 +81,7 @@ namespace np {
     /// \return Maximum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto max(const Array<DType, SizeT, SizeTs...> &array) {
         return array.max();
     }
@@ -96,7 +96,7 @@ namespace np {
     /// \return Cumulative sum of array elements as a 1D array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto cumsum(const Array<DType, SizeT, SizeTs...> &array) {
         return array.cumsum();
     }
@@ -111,7 +111,7 @@ namespace np {
     /// \return Mean of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto mean(const Array<DType, SizeT, SizeTs...> &array) {
         return array.mean();
     }
@@ -128,7 +128,7 @@ namespace np {
     /// \return Median of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto median(const Array<DType, SizeT, SizeTs...> &array) {
         return array.median();
     }
@@ -143,7 +143,7 @@ namespace np {
     /// \return Covariance of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto cov(const Array<DType, SizeT, SizeTs...> &array) {
         return array.cov();
     }
@@ -159,7 +159,7 @@ namespace np {
     /// \return Correlation coefficients of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto corrcoef(const Array<DType, SizeT, SizeTs...> &array) {
         return array.corrcoef();
     }
@@ -175,9 +175,8 @@ namespace np {
     /// \return Standard deviation of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto std_(const Array<DType, SizeT, SizeTs...> &array) {
         return array.std_();
     }
-}
-
+}// namespace np
