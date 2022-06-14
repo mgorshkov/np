@@ -26,16 +26,16 @@ SOFTWARE.
 
 #include <np/Constants.hpp>
 
-#include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
-#include <np/ndarray/dynamic/internal/NDArrayDynamicInternalStreamIoImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicAggImpl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicCompImpl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicCopyImpl.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicIndexImpl.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicInspectImpl.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicIoImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicMathImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicCompImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicAggImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicCopyImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicSortImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicIndexImpl.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicManipImpl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicMathImpl.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicSortImpl.hpp>
+#include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
+#include <np/ndarray/dynamic/internal/NDArrayDynamicInternalStreamIoImpl.hpp>

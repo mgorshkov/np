@@ -33,26 +33,31 @@ namespace np {
         namespace array_dynamic {
             // Returns a new Array with axes transposed.
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::transpose() const {
-                auto shapeTransposed = shape();
-                if (shapeTransposed.empty()) {
-                    return *this;
+            NDArrayDynamic<DType> NDArrayDynamic<DType, Storage>::transpose() const {
+                auto sh = shape();
+                if (sh.empty()) {
+                    return NDArrayDynamic<DType>{};
                 }
-                shapeTransposed.transpose();
-                NDArrayDynamic<DType, Storage> result{shapeTransposed};
-
-                Size row = 0;
-                Size column = 0;
-                Size last = shapeTransposed[0];
-                for (Size i = 0; i < size(); ++i) {
-                    if (row * last + column >= size()) {
-                        ++column;
-                        row = 0;
+                sh.transpose();
+                NDArrayDynamic<DType> result{sh};
+                if (sh.size() == 1) {
+                    for (Size i = 0; i < size(); ++i) {
+                        result.set(i, get(i));
                     }
-                    result.set(i, get(row * last + column));
-                    ++row;
+                } else if (sh.size() > 1) {
+                    Size dim1 = shape()[0];
+                    std::vector<NDArrayDynamic<DType>> subarrays;
+                    for (Size i = 0; i < dim1; ++i) {
+                        auto tr = at(i);
+                        subarrays.push_back(tr.transpose());
+                    }
+                    std::size_t index = 0;
+                    for (Size i = 0; i < subarrays[0].size(); ++i) {
+                        for (Size d = 0; d < dim1; ++d) {
+                            result.set(index++, subarrays[d].get(i));
+                        }
+                    }
                 }
-
                 return result;
             }
 
@@ -66,7 +71,7 @@ namespace np {
 
             // Reshape, but don’t change data
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::reshape(const Shape& shape) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::reshape(const Shape &shape) const {
                 if (size() != ndarray::internal::calcSizeByShape(shape))
                     throw std::runtime_error("Sizes of new and current arrays must be equal");
                 auto result = copy();
@@ -76,7 +81,7 @@ namespace np {
 
             // Return a new array with new size
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::resize(const Shape& shape) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::resize(const Shape &shape) const {
                 Size newSize = ndarray::internal::calcSizeByShape(shape);
                 Size copySize = std::min(size(), newSize);
                 NDArrayDynamic<DType, Storage> result{shape};
@@ -88,7 +93,7 @@ namespace np {
 
             // Append items to an array
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::append(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::append(const NDArrayDynamic<DType, Storage> &array) const {
                 if (array.size() == 0)
                     return *this;
                 auto size1 = ndarray::internal::calcSizeByShape(shape());
@@ -102,7 +107,7 @@ namespace np {
 
             // Insert items in an array
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::insert(Size index, const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::insert(Size index, const NDArrayDynamic<DType, Storage> &array) const {
                 auto size1 = size();
                 if (index > size1) {
                     throw std::runtime_error("Index exceeds array bounds");
@@ -138,7 +143,7 @@ namespace np {
 
             // Concatenate arrays
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::concatenate(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::concatenate(const NDArrayDynamic<DType, Storage> &array) const {
                 if (array.size() == 0)
                     return *this;
                 auto size1 = ndarray::internal::calcSizeByShape(shape());
@@ -152,7 +157,7 @@ namespace np {
 
             // Stack arrays vertically (rowwise)
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::vstack(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::vstack(const NDArrayDynamic<DType, Storage> &array) const {
                 if (size() == 0) {
                     return array;
                 }
@@ -178,13 +183,13 @@ namespace np {
 
             // Stack arrays vertically (rowwise)
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::r_(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::r_(const NDArrayDynamic<DType, Storage> &array) const {
                 return vstack(array);
             }
 
             // Stack arrays horizontally (columnwise)
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::hstack(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::hstack(const NDArrayDynamic<DType, Storage> &array) const {
                 if (size() == 0) {
                     return array;
                 }
@@ -224,7 +229,7 @@ namespace np {
 
             // Create stacked columnwise arrays
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::column_stack(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::column_stack(const NDArrayDynamic<DType, Storage> &array) const {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != 1 || sh2.size() != 1)
@@ -246,7 +251,7 @@ namespace np {
 
             // Stack arrays horizontally (columnwise)
             template<typename DType, typename Storage>
-            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::c_(const NDArrayDynamic<DType, Storage>& array) const {
+            NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::c_(const NDArrayDynamic<DType, Storage> &array) const {
                 return hstack(array);
             }
 
@@ -314,14 +319,14 @@ namespace np {
                 NDArrayDynamic<DType, Storage> result2{sh2};
                 Size i = 0;
                 std::copy(m_ArrayImpl.cbegin(),
-                    m_ArrayImpl.cbegin() + sh[1] * index,
-                    result1.m_ArrayImpl.begin());
+                          m_ArrayImpl.cbegin() + sh[1] * index,
+                          result1.m_ArrayImpl.begin());
                 i += sh[1] * index;
                 std::copy(m_ArrayImpl.cbegin() + i,
-                    m_ArrayImpl.cbegin() + i + sh[1] * rest,
-                    result2.m_ArrayImpl.begin());
+                          m_ArrayImpl.cbegin() + i + sh[1] * rest,
+                          result2.m_ArrayImpl.begin());
                 return {result1, result2};
             }
-        }
-    }
-}
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

@@ -22,39 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 using namespace np;
 
 class ArrayTest : public ::testing::Test {
 protected:
     // dynamic arrays
-    template <typename DType, typename Storage>
-    inline void checkArrayRepr(const ndarray::array_dynamic::NDArrayDynamic<DType, Storage>& array, const char* repr) {
+    template<typename DType, typename Storage>
+    inline void checkArrayRepr(const ndarray::array_dynamic::NDArrayDynamic<DType, Storage> &array, const char *repr) {
         std::ostringstream ss;
         ss << array;
         EXPECT_EQ(repr, ss.str());
     }
 
-    template <typename DType, typename Storage>
-    inline void checkArrayShape(const ndarray::array_dynamic::NDArrayDynamic<DType, Storage>& array, const Shape& shape) {
+    template<typename DType, typename Storage>
+    inline void checkArrayShape(const ndarray::array_dynamic::NDArrayDynamic<DType, Storage> &array, const Shape &shape) {
         EXPECT_EQ(shape, array.shape());
     }
 
     // static arrays
-    template <typename DType, Size SizeT, Size... SizeTs>
-    inline void checkArrayRepr(const ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...>& array, const char* repr) {
+    template<typename DType, Size SizeT, Size... SizeTs>
+    inline void checkArrayRepr(const ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...> &array, const char *repr) {
         std::ostringstream ss;
         ss << array;
         EXPECT_EQ(ss.str(), repr);
     }
 
-    template <typename DType, Size SizeT, Size... SizeTs>
-    inline void checkArrayShape(const ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...>& array, const Shape& shape) {
+    template<typename DType, Size SizeT, Size... SizeTs>
+    inline void checkArrayShape(const ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...> &array, const Shape &shape) {
         EXPECT_EQ(shape, array.shape());
     }
 };

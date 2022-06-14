@@ -103,7 +103,6 @@ namespace np {
             inline void NDArrayStatic<DType, SizeT, SizeTs...>::set(std::size_t i, const DType &value) {
                 return m_ArrayImpl.set(i, value);
             }
-        }
-    }
-}
-
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

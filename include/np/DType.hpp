@@ -24,9 +24,9 @@ SOFTWARE.
 
 #pragma once
 
+#include <any>
 #include <array>
 #include <complex>
-#include <any>
 #include <string>
 
 namespace np {
@@ -57,7 +57,7 @@ namespace np {
     using longdouble = long double;
 
     // Complex numbers represented by 128 floats
-    template <typename T>
+    template<typename T>
     using complex_ = std::complex<T>;
 
     // Boolean type storing TRUE and FALSE values
@@ -85,4 +85,4 @@ namespace np {
     using unicode_ = std::wstring;
 
     using DTypeDefault = float_;
-}
+}// namespace np

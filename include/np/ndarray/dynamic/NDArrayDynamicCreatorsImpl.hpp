@@ -24,8 +24,8 @@ SOFTWARE.
 
 #pragma once
 
-#include <random>
 #include <algorithm>
+#include <random>
 
 #include <np/Shape.hpp>
 
@@ -37,110 +37,107 @@ namespace np {
             // Dynamic array creators
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic() noexcept
-                    : m_ArrayImpl{} {
+                : m_ArrayImpl{} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const DType &value) noexcept
-                    : m_ArrayImpl{value} {
+                : m_ArrayImpl{value} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const Shape &shape) noexcept
-                    : m_ArrayImpl{shape} {
+                : m_ArrayImpl{shape} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray1DType <Size1T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray1DType<Size1T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray1DType <Size1T> &array,
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray1DType<Size1T> &array,
                                                                   bool isColumnVector) noexcept
-                    : m_ArrayImpl{array, isColumnVector} {
+                : m_ArrayImpl{array, isColumnVector} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray2DType <Size1T, Size2T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray2DType<Size1T, Size2T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-            inline
-            NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray3DType <Size1T, Size2T, Size3T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
-                    const CArray4DType <Size1T, Size2T, Size3T, Size4T> &array) noexcept
-                    : m_ArrayImpl{array} {
+                    const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray1DType <Size1T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray1DType<Size1T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray1DType <Size1T> &array,
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray1DType<Size1T> &array,
                                                                   bool isColumnVector) noexcept
-                    : m_ArrayImpl{array, isColumnVector} {
+                : m_ArrayImpl{array, isColumnVector} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray2DType <Size1T, Size2T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdArray2DType<Size1T, Size2T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
-                    const StdArray3DType <Size1T, Size2T, Size3T> &array) noexcept
-                    : m_ArrayImpl{array} {
+                    const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-            inline
-            NDArrayDynamic<DType, Storage>::NDArrayDynamic(
-                    const StdArray4DType <Size1T, Size2T, Size3T, Size4T> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
+                    const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
+                : m_ArrayImpl{array} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector1DType &vector) noexcept
-                    : m_ArrayImpl{vector} {
+                : m_ArrayImpl{vector} {
             }
 
             template<typename DType, typename Storage>
-            inline
-            NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept
-                    : m_ArrayImpl{vector, isColumnVector} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept
+                : m_ArrayImpl{vector, isColumnVector} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector2DType &vector) noexcept
-                    : m_ArrayImpl{vector} {
+                : m_ArrayImpl{vector} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector3DType &vector) noexcept
-                    : m_ArrayImpl{vector} {
+                : m_ArrayImpl{vector} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const StdVector4DType &vector) noexcept
-                    : m_ArrayImpl{vector} {
+                : m_ArrayImpl{vector} {
             }
 
             template<typename DType, typename Storage>
@@ -149,52 +146,50 @@ namespace np {
             }
 
             template<typename DType, typename Storage>
-            inline
-            NDArrayDynamic<DType, Storage>::NDArrayDynamic(const NDArrayDynamic <DType, Storage> &another) noexcept
-                    : m_ArrayImpl{another.m_ArrayImpl} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const NDArrayDynamic<DType, Storage> &another) noexcept
+                : m_ArrayImpl{another.m_ArrayImpl} {
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(NDArrayDynamic <DType, Storage> &&another) noexcept
-                    : m_ArrayImpl{std::move(another.m_ArrayImpl)} {
-            }
-
-            template<typename DType, typename Storage>
-            template<typename InternalStorage>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
-                    const internal::NDArrayDynamicInternal <DType, InternalStorage> &array) noexcept
-                    : m_ArrayImpl{array} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(NDArrayDynamic<DType, Storage> &&another) noexcept
+                : m_ArrayImpl{std::move(another.m_ArrayImpl)} {
             }
 
             template<typename DType, typename Storage>
             template<typename InternalStorage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
-                    internal::NDArrayDynamicInternal <DType, InternalStorage> &&array) noexcept
-                    : m_ArrayImpl{std::move(array)} {
+                    const internal::NDArrayDynamicInternal<DType, InternalStorage> &array) noexcept
+                : m_ArrayImpl{array} {
+            }
+
+            template<typename DType, typename Storage>
+            template<typename InternalStorage>
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(
+                    internal::NDArrayDynamicInternal<DType, InternalStorage> &&array) noexcept
+                : m_ArrayImpl{std::move(array)} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(std::initializer_list<DType> init_list) noexcept
-                    : m_ArrayImpl{init_list} {
+                : m_ArrayImpl{init_list} {
             }
 
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::~NDArrayDynamic() noexcept = default;
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage> &
-            NDArrayDynamic<DType, Storage>::operator=(const NDArrayDynamic <DType, Storage> &another) noexcept {
+            inline NDArrayDynamic<DType, Storage> &
+            NDArrayDynamic<DType, Storage>::operator=(const NDArrayDynamic<DType, Storage> &another) noexcept {
                 m_ArrayImpl = another.m_ArrayImpl;
                 return *this;
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic <DType, Storage> &
-            NDArrayDynamic<DType, Storage>::operator=(NDArrayDynamic <DType, Storage> &&another) noexcept {
+            inline NDArrayDynamic<DType, Storage> &
+            NDArrayDynamic<DType, Storage>::operator=(NDArrayDynamic<DType, Storage> &&another) noexcept {
                 m_ArrayImpl = std::move(another.m_ArrayImpl);
                 return *this;
             }
-        }
-    }
-}
-
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

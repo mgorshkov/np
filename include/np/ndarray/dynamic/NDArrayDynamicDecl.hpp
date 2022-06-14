@@ -24,11 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
 #include <array>
-#include <ostream>
+#include <cstddef>
 #include <optional>
+#include <ostream>
+#include <vector>
 
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
@@ -77,12 +77,10 @@ namespace np {
                 inline NDArrayDynamic(NDArrayDynamic &&another) noexcept;
 
                 template<typename InternalStorage>
-                inline explicit
-                NDArrayDynamic(const internal::NDArrayDynamicInternal<DType, InternalStorage> &array) noexcept;
+                inline explicit NDArrayDynamic(const internal::NDArrayDynamicInternal<DType, InternalStorage> &array) noexcept;
 
                 template<typename InternalStorage>
-                inline explicit
-                NDArrayDynamic(internal::NDArrayDynamicInternal<DType, InternalStorage> &&array) noexcept;
+                inline explicit NDArrayDynamic(internal::NDArrayDynamicInternal<DType, InternalStorage> &&array) noexcept;
 
                 template<std::size_t Size1T>
                 inline NDArrayDynamic(const CArray1DType<Size1T> &array) noexcept;
@@ -306,7 +304,7 @@ namespace np {
                 // inline void sort(std::optional<Axis<N>> axis=std::optional<Axis<N>>{});
 
                 // Permute array dimensions
-                inline NDArrayDynamic<DType, Storage> transpose() const;
+                inline NDArrayDynamic<DType> transpose() const;
 
                 // Flatten the array
                 inline NDArrayDynamic<DType, Storage> ravel() const;
@@ -374,7 +372,7 @@ namespace np {
 
                 std::size_t getMaxElementSize() const {
                     std::size_t size = sizeof(DType);
-                    if constexpr(std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value){
+                    if constexpr (std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value) {
                         size = 1;
                         for (auto it = m_ArrayImpl.cbegin(); it != m_ArrayImpl.cend(); ++it) {
                             if ((*it).size() > size) {
@@ -388,10 +386,8 @@ namespace np {
                 internal::NDArrayDynamicInternal<DType, Storage> m_ArrayImpl;
 
                 template<typename DTypeOther, typename StorageOther>
-                friend
-                class NDArrayDynamic;
+                friend class NDArrayDynamic;
             };
-        }
-    }
-}
-
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

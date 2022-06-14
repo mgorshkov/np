@@ -24,11 +24,10 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
 
 
 }
-

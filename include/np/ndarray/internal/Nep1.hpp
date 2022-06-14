@@ -24,10 +24,10 @@ SOFTWARE.
 
 #pragma once
 
-#include <iostream>
 #include <cstddef>
 #include <cstring>
 #include <filesystem>
+#include <iostream>
 
 #include <np/ndarray/internal/Tools.hpp>
 
@@ -48,7 +48,7 @@ namespace np {
                 std::size_t size;
             };
 
-            inline std::ostream& operator >> (const Descr& descr, std::ostream& stream) {
+            inline std::ostream &operator>>(const Descr &descr, std::ostream &stream) {
                 stream << "\'descr\': \'" << descr.byteOrder << descr.name << descr.size << "\'";
                 return stream;
             }
@@ -77,12 +77,11 @@ namespace np {
                 return descr;
             }
 
-            template <typename DType>
+            template<typename DType>
             class DTypeToDescrConvertor {
             public:
                 inline DTypeToDescrConvertor(std::size_t size = sizeof(DType))
-                    : m_Size{size}
-                {}
+                    : m_Size{size} {}
 
                 inline Descr DTypeToDescr() {
                     char c = DTypeToChar();
@@ -101,60 +100,73 @@ namespace np {
                 std::size_t m_Size;
             };
 
-            template<> inline char DTypeToDescrConvertor<byte>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<byte>::DTypeToChar() {
                 return 'b';
             }
 
-            template<> inline char DTypeToDescrConvertor<short_>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<short_>::DTypeToChar() {
                 return 'h';
             }
 
-            template<> inline char DTypeToDescrConvertor<intc>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<intc>::DTypeToChar() {
                 return 'i';
             }
 
-            template<> inline char DTypeToDescrConvertor<int_>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<int_>::DTypeToChar() {
                 return 'i';
             }
 
-            template<> inline char DTypeToDescrConvertor<longlong>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<longlong>::DTypeToChar() {
                 return 'i';
             }
 
-            template<> inline char DTypeToDescrConvertor<ubyte>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<ubyte>::DTypeToChar() {
                 return 'B';
             }
 
-            template<> inline char DTypeToDescrConvertor<ushort>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<ushort>::DTypeToChar() {
                 return 'H';
             }
 
-            template<> inline char DTypeToDescrConvertor<uintc>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<uintc>::DTypeToChar() {
                 return 'I';
             }
 
-            template<> inline char DTypeToDescrConvertor<uint>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<uint>::DTypeToChar() {
                 return 'I';
             }
 
-            template<> inline char DTypeToDescrConvertor<ulonglong>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<ulonglong>::DTypeToChar() {
                 return 'I';
             }
 
-            template<> inline char DTypeToDescrConvertor<float_>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<float_>::DTypeToChar() {
                 return 'f';
             }
 
-            template<> inline char DTypeToDescrConvertor<string_>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<string_>::DTypeToChar() {
                 return 'S';
             }
 
-            template<> inline char DTypeToDescrConvertor<unicode_>::DTypeToChar() {
+            template<>
+            inline char DTypeToDescrConvertor<unicode_>::DTypeToChar() {
                 return 'U';
             }
 
             inline static void
-            writeNep1Header(std::ostream &stream, const Descr& descr, const std::string& shape) {
+            writeNep1Header(std::ostream &stream, const Descr &descr, const std::string &shape) {
                 // The first 6 bytes are a magic string: exactly “x93NUMPY”.
                 static const char magic[] = "\x93NUMPY";
                 static const uint32_t magicLen = sizeof(magic) - 1;
@@ -177,7 +189,7 @@ namespace np {
 
                 dTypeStr += R"('fortran_order': False, 'shape': ()" + shape + "), }";
                 // The next 2 bytes form a little-endian unsigned short int: the length of the header data HEADER_LEN.
-                uint16_t headerLen = 0x80 - magicLen - sizeof(major) - sizeof(minor) - sizeof(uint16_t); // version 2 format if needed
+                uint16_t headerLen = 0x80 - magicLen - sizeof(major) - sizeof(minor) - sizeof(uint16_t);// version 2 format if needed
                 stream.write((char *) &headerLen, sizeof(headerLen));
                 // The next HEADER_LEN bytes form the header data describing the array’s format.
                 // It is an ASCII string which contains a Python literal expression of a dictionary.
@@ -244,6 +256,6 @@ namespace np {
 
                 return std::make_tuple(descr, shape);
             }
-        }
-    }
-}
+        }// namespace internal
+    }    // namespace ndarray
+}// namespace np

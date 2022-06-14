@@ -25,17 +25,16 @@ SOFTWARE.
 #pragma once
 
 #include <np/Constants.hpp>
-#include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
-#include <np/ndarray/static/internal/NDArrayStaticInternalStreamIoImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <np/ndarray/static/NDArrayStaticAggImpl.hpp>
+#include <np/ndarray/static/NDArrayStaticComp.hpp>
+#include <np/ndarray/static/NDArrayStaticCopyImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
+#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <np/ndarray/static/NDArrayStaticIndexImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticInspectImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticIoImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticMathImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticComp.hpp>
-#include <np/ndarray/static/NDArrayStaticAggImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticCopyImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticSortImpl.hpp>
-#include <np/ndarray/static/NDArrayStaticIndexImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticManipImpl.hpp>
-
+#include <np/ndarray/static/NDArrayStaticMathImpl.hpp>
+#include <np/ndarray/static/NDArrayStaticSortImpl.hpp>
+#include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
+#include <np/ndarray/static/internal/NDArrayStaticInternalStreamIoImpl.hpp>

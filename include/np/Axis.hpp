@@ -24,13 +24,12 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstddef>
 #include <array>
+#include <cstddef>
 
 namespace np {
 
-template <Size N = 0>
-using Axis = std::array<std::size_t, N>;
+    template<Size N = 0>
+    using Axis = std::array<std::size_t, N>;
 
 }
-

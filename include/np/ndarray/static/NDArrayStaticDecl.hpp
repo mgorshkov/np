@@ -24,390 +24,393 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
-#include <tuple>
 #include <array>
-#include <ostream>
+#include <cstddef>
 #include <optional>
+#include <ostream>
+#include <tuple>
 #include <type_traits>
+#include <vector>
 
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 
 #include <np/internal/Tools.hpp>
 
-#include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
 
 namespace np {
-	namespace ndarray {
-		namespace array_static {
-
-			using np::ndarray::array_dynamic::NDArrayDynamic;
+    namespace ndarray {
+        namespace array_static {
 
-			template <typename DType, Size... SizeTs>
-			class NDArrayStatic;
+            using np::ndarray::array_dynamic::NDArrayDynamic;
 
-			template <typename DType, Size SizeT, Size... SizeTs>
-			void set(NDArrayStatic<DType, SizeT, SizeTs...> &array, Size i, const typename NDArrayStatic<DType, SizeT, SizeTs...>::ReducedType& data);
-
-			// Termination template
-			template <typename DType>
-			class NDArrayStaticStub {
-			public:
-				using CArrayType = DType[1]; // ISO C++ forbids zero-size array [-Werror=pedantic]
-				using StdArrayType = std::array<DType, 1>;
-				using StdVectorType = std::vector<DType>;
+            template<typename DType, Size... SizeTs>
+            class NDArrayStatic;
 
-				NDArrayStaticStub() noexcept = default;
+            template<typename DType, Size SizeT, Size... SizeTs>
+            void set(NDArrayStatic<DType, SizeT, SizeTs...> &array, Size i, const typename NDArrayStatic<DType, SizeT, SizeTs...>::ReducedType &data);
 
-				NDArrayStaticStub(const DType& data)
-					: m_ArrayImpl{ data }
-				{
-				}
-
-				// Array dimensions
-				Shape shape() const {
-					return Shape{ 1 };
-				}
-
-				bool array_equal(const DType& element) const {
-					return np::array_equal(m_ArrayImpl, element);
-				}
-
-				bool array_equal(const NDArrayStaticStub &array) const {
-					return np::array_equal(m_ArrayImpl, array.m_ArrayImpl);
-				}
-
-				DType sum() const {
-					return m_ArrayImpl;
-				}
-
-				DType min() const {
-					return m_ArrayImpl;
-				}
-
-				DType max() const {
-					return m_ArrayImpl;
-				}
-
-				auto cumsum() const {
-					return m_ArrayImpl;
-				}
-
-				DType mean() const {
-					return m_ArrayImpl;
-				}
+            // Termination template
+            template<typename DType>
+            class NDArrayStaticStub {
+            public:
+                using CArrayType = DType[1];// ISO C++ forbids zero-size array [-Werror=pedantic]
+                using StdArrayType = std::array<DType, 1>;
+                using StdVectorType = std::vector<DType>;
 
-				DType median() const {
-					return m_ArrayImpl;
-				}
+                NDArrayStaticStub() noexcept = default;
 
-				DType corrcoef() const {
-					return m_ArrayImpl;
-				}
+                NDArrayStaticStub(const DType &data)
+                    : m_ArrayImpl{data} {
+                }
 
-				DType std_() const {
-					return m_ArrayImpl;
-				}
+                // Array dimensions
+                Shape shape() const {
+                    return Shape{1};
+                }
 
-				operator DType() const {
-					return m_ArrayImpl;
-				}
+                bool array_equal(const DType &element) const {
+                    return np::array_equal(m_ArrayImpl, element);
+                }
+
+                bool array_equal(const NDArrayStaticStub &array) const {
+                    return np::array_equal(m_ArrayImpl, array.m_ArrayImpl);
+                }
+
+                DType sum() const {
+                    return m_ArrayImpl;
+                }
+
+                DType min() const {
+                    return m_ArrayImpl;
+                }
+
+                DType max() const {
+                    return m_ArrayImpl;
+                }
+
+                auto cumsum() const {
+                    return m_ArrayImpl;
+                }
+
+                DType mean() const {
+                    return m_ArrayImpl;
+                }
+
+                DType median() const {
+                    return m_ArrayImpl;
+                }
 
-				DType get(Size) const {
-					return m_ArrayImpl;
-				}
+                DType corrcoef() const {
+                    return m_ArrayImpl;
+                }
 
-				DType ravel() const {
-					return m_ArrayImpl;
-				}
+                DType std_() const {
+                    return m_ArrayImpl;
+                }
 
-				bool operator == (const NDArrayStaticStub& other) const {
-					return m_ArrayImpl == other.m_ArrayImpl;
-				}
+                operator DType() const {
+                    return m_ArrayImpl;
+                }
 
-				bool operator > (const NDArrayStaticStub& other) const {
-					return m_ArrayImpl > other.m_ArrayImpl;
-				}
+                DType get(Size) const {
+                    return m_ArrayImpl;
+                }
 
-				bool operator < (const NDArrayStaticStub& other) const {
-					return m_ArrayImpl < other.m_ArrayImpl;
-				}
+                NDArrayDynamic<DType> transpose() const {
+                    return NDArrayDynamic<DType>{m_ArrayImpl};
+                }
 
-				inline friend NDArrayStaticStub operator + (const NDArrayStaticStub& stub1, const NDArrayStaticStub& stub2) {
-					return NDArrayStaticStub{ stub1.m_ArrayImpl + stub2.m_ArrayImpl };
-				}
+                DType ravel() const {
+                    return m_ArrayImpl;
+                }
 
-				NDArrayStaticStub add(const NDArrayStaticStub& stub) {
-					return NDArrayStaticStub{ m_ArrayImpl + stub.m_ArrayImpl };
-				}
+                bool operator==(const NDArrayStaticStub &other) const {
+                    return m_ArrayImpl == other.m_ArrayImpl;
+                }
 
-				void set(Size, const DType& element) {
-					m_ArrayImpl = element;
-				}
+                bool operator>(const NDArrayStaticStub &other) const {
+                    return m_ArrayImpl > other.m_ArrayImpl;
+                }
 
-				template <typename DTypeOther, Size SizeTOther, Size... SizeTsOther>
-				friend inline void set(NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...> &array, Size i,
-					const typename NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...>::ReducedType& data);
+                bool operator<(const NDArrayStaticStub &other) const {
+                    return m_ArrayImpl < other.m_ArrayImpl;
+                }
 
-				friend inline bool array_equal(const NDArrayStaticStub<double> &value1, const NDArrayStaticStub<double> &value2);
+                inline friend NDArrayStaticStub operator+(const NDArrayStaticStub &stub1, const NDArrayStaticStub &stub2) {
+                    return NDArrayStaticStub{stub1.m_ArrayImpl + stub2.m_ArrayImpl};
+                }
 
-			private:
-				DType m_ArrayImpl;
-			};
+                NDArrayStaticStub add(const NDArrayStaticStub &stub) {
+                    return NDArrayStaticStub{m_ArrayImpl + stub.m_ArrayImpl};
+                }
 
-			inline bool array_equal(const NDArrayStaticStub<double> &value1, const NDArrayStaticStub<double> &value2) {
-				return np::internal::almost_equal(value1.m_ArrayImpl, value2.m_ArrayImpl, ULP_TOLERANCE);
-			}
+                void set(Size, const DType &element) {
+                    m_ArrayImpl = element;
+                }
 
-			template <typename DType, Size SizeT, Size... SizeTs>
-			class NDArrayStatic<DType, SizeT, SizeTs...> {
-			public:
-				using ReducedNDArray = NDArrayStatic<DType, SizeTs...>;
+                template<typename DTypeOther, Size SizeTOther, Size... SizeTsOther>
+                friend inline void set(NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...> &array, Size i,
+                                       const typename NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...>::ReducedType &data);
 
-				using ReducedType = typename std::conditional<
-					sizeof...(SizeTs) == 0,
-					NDArrayStaticStub<DType>,
-					ReducedNDArray>::type;
+                friend inline bool array_equal(const NDArrayStaticStub<double> &value1, const NDArrayStaticStub<double> &value2);
 
-				using ReducedCArrayType = typename std::conditional<
-					sizeof...(SizeTs) == 0,
-					DType,
-					typename ReducedType::CArrayType>::type;
+            private:
+                DType m_ArrayImpl;
+            };
 
-				using ReducedStdArrayType = typename std::conditional<
-					sizeof...(SizeTs) == 0,
-					DType,
-					typename ReducedType::StdArrayType>::type;
+            inline bool array_equal(const NDArrayStaticStub<double> &value1, const NDArrayStaticStub<double> &value2) {
+                return np::internal::almost_equal(value1.m_ArrayImpl, value2.m_ArrayImpl, ULP_TOLERANCE);
+            }
 
-				using ReducedStdVectorType = typename std::conditional<
-					sizeof...(SizeTs) == 0,
-					DType,
-					typename ReducedType::StdVectorType>::type;
+            template<typename DType, Size SizeT, Size... SizeTs>
+            class NDArrayStatic<DType, SizeT, SizeTs...> {
+            public:
+                using ReducedNDArray = NDArrayStatic<DType, SizeTs...>;
 
-				using CArrayType = ReducedCArrayType[SizeT];
-				using StdArrayType = std::array<ReducedStdArrayType, SizeT>;
-				using StdVectorType = std::vector<ReducedStdVectorType>;
+                using ReducedType = typename std::conditional<
+                        sizeof...(SizeTs) == 0,
+                        NDArrayStaticStub<DType>,
+                        ReducedNDArray>::type;
 
-				// Creating arrays
-				inline NDArrayStatic() noexcept;
+                using ReducedCArrayType = typename std::conditional<
+                        sizeof...(SizeTs) == 0,
+                        DType,
+                        typename ReducedType::CArrayType>::type;
 
-				inline explicit NDArrayStatic(const DType &value) noexcept;
+                using ReducedStdArrayType = typename std::conditional<
+                        sizeof...(SizeTs) == 0,
+                        DType,
+                        typename ReducedType::StdArrayType>::type;
 
-				inline NDArrayStatic(CArrayType data) noexcept;
+                using ReducedStdVectorType = typename std::conditional<
+                        sizeof...(SizeTs) == 0,
+                        DType,
+                        typename ReducedType::StdVectorType>::type;
 
-				inline NDArrayStatic(const NDArrayStatic &another) noexcept;
+                using CArrayType = ReducedCArrayType[SizeT];
+                using StdArrayType = std::array<ReducedStdArrayType, SizeT>;
+                using StdVectorType = std::vector<ReducedStdVectorType>;
 
-				inline NDArrayStatic(NDArrayStatic &&another) noexcept;
+                // Creating arrays
+                inline NDArrayStatic() noexcept;
 
-				inline explicit NDArrayStatic(const internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &array) noexcept;
+                inline explicit NDArrayStatic(const DType &value) noexcept;
 
-				inline explicit NDArrayStatic(internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &&array) noexcept;
+                inline NDArrayStatic(CArrayType data) noexcept;
 
-				inline explicit NDArrayStatic(const StdArrayType &array) noexcept;
+                inline NDArrayStatic(const NDArrayStatic &another) noexcept;
 
-				inline explicit NDArrayStatic(StdArrayType &&array) noexcept;
+                inline NDArrayStatic(NDArrayStatic &&another) noexcept;
 
-				inline explicit NDArrayStatic(const StdVectorType &vector) noexcept;
+                inline explicit NDArrayStatic(const internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &array) noexcept;
 
-				inline explicit NDArrayStatic(StdVectorType &&vector) noexcept;
+                inline explicit NDArrayStatic(internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &&array) noexcept;
 
-				inline explicit NDArrayStatic(std::initializer_list<DType> init_list) noexcept;
+                inline explicit NDArrayStatic(const StdArrayType &array) noexcept;
 
-				inline ~NDArrayStatic() noexcept;
+                inline explicit NDArrayStatic(StdArrayType &&array) noexcept;
 
-				inline NDArrayStatic &operator=(const NDArrayStatic &another) noexcept;
+                inline explicit NDArrayStatic(const StdVectorType &vector) noexcept;
 
-				inline NDArrayStatic &operator=(NDArrayStatic &&another) noexcept;
+                inline explicit NDArrayStatic(StdVectorType &&vector) noexcept;
 
-				inline NDArrayStatic &operator=(const StdVectorType &vector) noexcept;
+                inline explicit NDArrayStatic(std::initializer_list<DType> init_list) noexcept;
 
-				// Indexing arrays
-				template <typename DTypeOther, Size SizeTOther, Size... SizeTsOther>
-				friend inline void set(NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...> &array, Size i,
-					const typename NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...>::ReducedType& data);
+                inline ~NDArrayStatic() noexcept;
 
-				inline ReducedType operator[](Size i) const;
+                inline NDArrayStatic &operator=(const NDArrayStatic &another) noexcept;
 
-				//TODO
-				// inline ReducedType& operator[](const std::string& i);
-				// inline ReducedType operator[](const std::string& i) const;
+                inline NDArrayStatic &operator=(NDArrayStatic &&another) noexcept;
 
-				inline ReducedType at(Size i) const;
+                inline NDArrayStatic &operator=(const StdVectorType &vector) noexcept;
 
-				//TODO
-				//inline ReducedType& at(const std::string& i);
-				//inline ReducedType at(const std::string& i) const;
+                // Indexing arrays
+                template<typename DTypeOther, Size SizeTOther, Size... SizeTsOther>
+                friend inline void set(NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...> &array, Size i,
+                                       const typename NDArrayStatic<DTypeOther, SizeTOther, SizeTsOther...>::ReducedType &data);
 
-				inline DType get(std::size_t i) const;
-				inline void set(std::size_t i, const DType& value);
+                inline ReducedType operator[](Size i) const;
 
-				// Stream output
-				inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayStatic &array) {
-					return stream << array.m_ArrayImpl;
-				}
+                //TODO
+                // inline ReducedType& operator[](const std::string& i);
+                // inline ReducedType operator[](const std::string& i) const;
 
-				// Save data
-				// For static arrays only save is implemented, they are loaded as dynamic arras
-				inline void save(const char* filename);
+                inline ReducedType at(Size i) const;
 
-				inline void savez(const char* filename);
+                //TODO
+                //inline ReducedType& at(const std::string& i);
+                //inline ReducedType at(const std::string& i) const;
 
-				inline void savetxt(const char* filename, const char* delimiter);
+                inline DType get(std::size_t i) const;
+                inline void set(std::size_t i, const DType &value);
 
-				// Array dimensions
-				Shape shape() const;
+                // Stream output
+                inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayStatic &array) {
+                    return stream << array.m_ArrayImpl;
+                }
 
-				// Array length
-				Size len() const;
+                // Save data
+                // For static arrays only save is implemented, they are loaded as dynamic arras
+                inline void save(const char *filename);
 
-				// Number of array dimensions
-				inline Size ndim() const;
+                inline void savez(const char *filename);
 
-				// Number of array elements
-				inline Size size() const;
+                inline void savetxt(const char *filename, const char *delimiter);
 
-				// Data type of array elements
-				inline constexpr DType dtype() const;
+                // Array dimensions
+                Shape shape() const;
 
-				// Convert an array to a different type
-				template<typename DTypeNew>
-				inline NDArrayStatic<DTypeNew, SizeT, SizeTs...> astype() const;
+                // Array length
+                Size len() const;
 
-				// Array mathematics
-				inline NDArrayStatic<DType, SizeT, SizeTs...> operator + (const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> add(const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> operator - (const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> subtract(const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> operator * (const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> multiply(const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> operator / (const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> divide(const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> exp(const NDArrayStatic& array) const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> sqrt() const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> sin() const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> cos() const;
-				inline NDArrayStatic<DType, SizeT, SizeTs...> log() const;
-				// Dot product
-				inline DType dot(const NDArrayStatic &array) const;
+                // Number of array dimensions
+                inline Size ndim() const;
 
-				// Elementwise comparison
-				inline NDArrayStatic<bool_, SizeT, SizeTs...> operator==(const NDArrayStatic &array) const;
-				inline NDArrayStatic<bool_, SizeT, SizeTs...> operator<(const NDArrayStatic &array) const;
-				inline NDArrayStatic<bool_, SizeT, SizeTs...> operator>(const NDArrayStatic &array) const;
+                // Number of array elements
+                inline Size size() const;
 
-				// Array-wise comparison
-				inline bool array_equal(const DType& element) const;
-				inline bool array_equal(const NDArrayStatic &array) const;
-				// Aggregate functions
-				// Array-wise sum
-				inline DType sum() const;
+                // Data type of array elements
+                inline constexpr DType dtype() const;
 
-				// Array-wise minimum value
-				inline DType min() const;
+                // Convert an array to a different type
+                template<typename DTypeNew>
+                inline NDArrayStatic<DTypeNew, SizeT, SizeTs...> astype() const;
 
-				// Maximum value of an Array row
-				inline DType max() const;
+                // Array mathematics
+                inline NDArrayStatic<DType, SizeT, SizeTs...> operator+(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> add(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> operator-(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> subtract(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> operator*(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> multiply(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> operator/(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> divide(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> exp(const NDArrayStatic &array) const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> sqrt() const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> sin() const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> cos() const;
+                inline NDArrayStatic<DType, SizeT, SizeTs...> log() const;
+                // Dot product
+                inline DType dot(const NDArrayStatic &array) const;
 
-				// Cumulative sum of the elements
-				inline auto cumsum() const;
+                // Elementwise comparison
+                inline NDArrayStatic<bool_, SizeT, SizeTs...> operator==(const NDArrayStatic &array) const;
+                inline NDArrayStatic<bool_, SizeT, SizeTs...> operator<(const NDArrayStatic &array) const;
+                inline NDArrayStatic<bool_, SizeT, SizeTs...> operator>(const NDArrayStatic &array) const;
 
-				// Mean
-				inline DType mean() const;
+                // Array-wise comparison
+                inline bool array_equal(const DType &element) const;
+                inline bool array_equal(const NDArrayStatic &array) const;
+                // Aggregate functions
+                // Array-wise sum
+                inline DType sum() const;
 
-				// Median
-				inline DType median() const;
+                // Array-wise minimum value
+                inline DType min() const;
 
-				// Covariance
-				inline NDArrayDynamic<DType> cov() const;
+                // Maximum value of an Array row
+                inline DType max() const;
 
-				// Correlation coefficient
-				inline NDArrayDynamic<DType> corrcoef() const;
+                // Cumulative sum of the elements
+                inline auto cumsum() const;
 
-				// Compute the standard deviation along the specified axis.
-				inline DType std_() const;
+                // Mean
+                inline DType mean() const;
 
-				// Create a view of the array with the same data
-				inline NDArrayStatic<DType, SizeT, SizeTs...> view() const;
+                // Median
+                inline DType median() const;
 
-				// Create a deep copy of the array
-				inline NDArrayStatic<DType, SizeT, SizeTs...> copy() const;
+                // Covariance
+                inline NDArrayDynamic<DType> cov() const;
 
-				// Sort an array
-				inline void sort();
+                // Correlation coefficient
+                inline NDArrayDynamic<DType> corrcoef() const;
 
-				// template<Size N>
-				// inline void sort(Axis<N> axis = Axis<0>{});
+                // Compute the standard deviation along the specified axis.
+                inline DType std_() const;
 
-				// Permute array dimensions
-				NDArrayDynamic<DType> transpose() const;
+                // Create a view of the array with the same data
+                inline NDArrayStatic<DType, SizeT, SizeTs...> view() const;
 
-				// Flatten the array
-				inline NDArrayStatic<DType, (SizeT * ... * SizeTs)> ravel() const;
+                // Create a deep copy of the array
+                inline NDArrayStatic<DType, SizeT, SizeTs...> copy() const;
 
-				// Reshape, but don’t change data
-				inline NDArrayDynamic<DType> reshape(const Shape& shape) const;
+                // Sort an array
+                inline void sort();
 
-				// Resize
-				inline NDArrayDynamic<DType> resize(const Shape& shape) const;
+                // template<Size N>
+                // inline void sort(Axis<N> axis = Axis<0>{});
 
-				// Append items to the array
-				inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> append(const NDArrayStatic& array) const;
+                // Permute array dimensions
+                NDArrayDynamic<DType> transpose() const;
 
-				// Insert items in the array
-				inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> insert(Size index, const NDArrayStatic& array) const;
+                // Flatten the array
+                inline NDArrayStatic<DType, (SizeT * ... * SizeTs)> ravel() const;
 
-				// Delete items from the array
-				inline NDArrayStatic<DType, (SizeT * ... * SizeTs) - 1> del(Size index) const;
+                // Reshape, but don’t change data
+                inline NDArrayDynamic<DType> reshape(const Shape &shape) const;
 
-				// Concatenate arrays
-				inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> concatenate(const NDArrayStatic& array) const;
+                // Resize
+                inline NDArrayDynamic<DType> resize(const Shape &shape) const;
 
-				// Stack arrays vertically (row-wise)
-				inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> vstack(const NDArrayStatic& array) const;
+                // Append items to the array
+                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> append(const NDArrayStatic &array) const;
 
-				// Stack arrays vertically (row-wise)
-				inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> r_(const NDArrayStatic& array) const;
+                // Insert items in the array
+                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> insert(Size index, const NDArrayStatic &array) const;
 
-				// Stack arrays horizontally (column-wise)
-				inline NDArrayDynamic<DType> hstack(const NDArrayStatic& array) const;
+                // Delete items from the array
+                inline NDArrayStatic<DType, (SizeT * ... * SizeTs) - 1> del(Size index) const;
 
-				// Create stacked column-wise arrays
-				inline NDArrayDynamic<DType> column_stack(const NDArrayStatic& array) const;
+                // Concatenate arrays
+                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> concatenate(const NDArrayStatic &array) const;
 
-				// Create stacked column-wise arrays
-				inline NDArrayDynamic<DType> c_(const NDArrayStatic& array) const;
+                // Stack arrays vertically (row-wise)
+                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> vstack(const NDArrayStatic &array) const;
 
-				// Split the array horizontally
-				inline std::vector<NDArrayDynamic<DType>> hsplit(Size index) const;
+                // Stack arrays vertically (row-wise)
+                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> r_(const NDArrayStatic &array) const;
 
-				// Split the array vertically
-				inline std::vector<NDArrayDynamic<DType>> vsplit(Size index) const;
+                // Stack arrays horizontally (column-wise)
+                inline NDArrayDynamic<DType> hstack(const NDArrayStatic &array) const;
 
-				inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator begin() {
-					return m_ArrayImpl.begin();
-				}
+                // Create stacked column-wise arrays
+                inline NDArrayDynamic<DType> column_stack(const NDArrayStatic &array) const;
 
-				inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator end() {
-					return m_ArrayImpl.end();
-				}
+                // Create stacked column-wise arrays
+                inline NDArrayDynamic<DType> c_(const NDArrayStatic &array) const;
 
-				inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cbegin() const {
-					return m_ArrayImpl.cbegin();
-				}
+                // Split the array horizontally
+                inline std::vector<NDArrayDynamic<DType>> hsplit(Size index) const;
 
-				inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cend() const {
-					return m_ArrayImpl.cend();
-				}
+                // Split the array vertically
+                inline std::vector<NDArrayDynamic<DType>> vsplit(Size index) const;
 
-			private:
-				inline void save(std::ostream& stream);
+                inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator begin() {
+                    return m_ArrayImpl.begin();
+                }
+
+                inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator end() {
+                    return m_ArrayImpl.end();
+                }
+
+                inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cbegin() const {
+                    return m_ArrayImpl.cbegin();
+                }
+
+                inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::const_iterator cend() const {
+                    return m_ArrayImpl.cend();
+                }
+
+            private:
+                inline void save(std::ostream &stream);
 
                 std::size_t getMaxElementSize() const {
                     std::size_t size = sizeof(DType);
-                    if constexpr(std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value){
+                    if constexpr (std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value) {
                         size = 1;
                         for (auto it = m_ArrayImpl.cbegin(); it != m_ArrayImpl.cend(); ++it) {
                             if ((*it).size() > size) {
@@ -418,8 +421,8 @@ namespace np {
                     return size;
                 }
 
-				internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
-			};
-		}
-	}
-}
+                internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
+            };
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

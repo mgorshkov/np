@@ -27,21 +27,19 @@ SOFTWARE.
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
 namespace np {
-	namespace ndarray {
-		namespace array_static
-		{
-			// Create a view of the array with the same data
-			template<typename DType, Size SizeT, Size... SizeTs>
-			inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::view() const {
-				return *this;
-			}
+    namespace ndarray {
+        namespace array_static {
+            // Create a view of the array with the same data
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::view() const {
+                return *this;
+            }
 
-			// Create a copy of the array
-			template<typename DType, Size SizeT, Size... SizeTs>
-			inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::copy() const {
-				return *this;
-			}
-		}
-	}
-}
-
+            // Create a copy of the array
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::copy() const {
+                return *this;
+            }
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

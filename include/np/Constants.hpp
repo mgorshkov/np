@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace np {
 
-using Size = long;
-static const Size constexpr SIZE_DEFAULT = -1;
+    using Size = long;
+    static const Size constexpr SIZE_DEFAULT = -1;
 
-}
+}// namespace np

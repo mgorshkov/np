@@ -203,6 +203,6 @@ namespace np {
                 }
                 return static_cast<DType>(std::sqrt(x.mean()));
             }
-        } // array_dynamic
-    } // ndarray
-} // np
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

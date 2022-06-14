@@ -43,41 +43,41 @@ namespace np {
                 return size;
             }
 
-            template <typename Class>
-            inline void dumpObject(std::ostream& stream, const Class& object) {
-                stream.write(reinterpret_cast<const char*>(&object), sizeof(object));
+            template<typename Class>
+            inline void dumpObject(std::ostream &stream, const Class &object) {
+                stream.write(reinterpret_cast<const char *>(&object), sizeof(object));
             }
 
-            inline void dumpObject(std::ostream& stream, const std::string& object) {
+            inline void dumpObject(std::ostream &stream, const std::string &object) {
                 for (uint8_t symbol: object) {
                     stream << symbol;
                 }
             }
 
-            inline void dumpObject(std::ostream& stream, const std::wstring& object) {
+            inline void dumpObject(std::ostream &stream, const std::wstring &object) {
                 for (uint32_t symbol: object) {
-                    stream.write(reinterpret_cast<char*>(&symbol), sizeof(symbol));
+                    stream.write(reinterpret_cast<char *>(&symbol), sizeof(symbol));
                 }
             }
 
-            template <typename Class>
-            inline Class readObject(std::istream& stream) {
+            template<typename Class>
+            inline Class readObject(std::istream &stream) {
                 Class object{};
-                stream.read(reinterpret_cast<char*>(&object), sizeof(object));
+                stream.read(reinterpret_cast<char *>(&object), sizeof(object));
                 return object;
             }
 
-            inline std::string readStr(std::istream& stream, std::size_t size) {
+            inline std::string readStr(std::istream &stream, std::size_t size) {
                 std::string object{};
                 uint8_t value;
                 for (std::size_t i = 0; i < size; ++i) {
-                    stream.read(reinterpret_cast<char*>(&value), sizeof(value));
+                    stream.read(reinterpret_cast<char *>(&value), sizeof(value));
                     object += static_cast<char>(value);
                 }
                 return object;
             }
 
-            inline std::wstring readUnicode(std::istream& stream, std::size_t size) {
+            inline std::wstring readUnicode(std::istream &stream, std::size_t size) {
                 std::wstring object{};
                 uint32_t value;
                 for (std::size_t i = 0; i < size; ++i) {
@@ -86,6 +86,6 @@ namespace np {
                 }
                 return object;
             }
-        }
-    }
-}
+        }// namespace internal
+    }    // namespace ndarray
+}// namespace np
