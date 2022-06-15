@@ -70,7 +70,7 @@ namespace np {
 
                 inline explicit NDArrayDynamic(const DType &value) noexcept;
 
-                inline explicit NDArrayDynamic(const Shape &shape) noexcept;
+                inline explicit NDArrayDynamic(Shape shape) noexcept;
 
                 inline NDArrayDynamic(const NDArrayDynamic &another) noexcept;
 
@@ -389,5 +389,5 @@ namespace np {
                 friend class NDArrayDynamic;
             };
         }// namespace array_dynamic
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

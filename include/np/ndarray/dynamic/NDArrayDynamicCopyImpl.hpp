@@ -39,8 +39,8 @@ namespace np {
             // Create a copy of the array
             template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::copy() const {
-                return NDArrayDynamic<DType, Storage>(*this);
+                return *this;
             }
         }// namespace array_dynamic
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

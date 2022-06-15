@@ -36,11 +36,7 @@ namespace np {
                 if (shape.empty())
                     return 0;
 
-                Size size = 1;
-                for (auto i: shape) {
-                    size *= i;
-                }
-                return size;
+                return std::accumulate(shape.cbegin(), shape.cend(), 1, std::multiplies<Size>());
             }
 
             template<typename Class>
@@ -87,5 +83,5 @@ namespace np {
                 return object;
             }
         }// namespace internal
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

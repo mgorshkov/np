@@ -129,5 +129,5 @@ namespace np {
                 return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
             }
         }// namespace array_dynamic
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

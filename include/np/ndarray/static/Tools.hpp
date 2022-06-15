@@ -116,5 +116,5 @@ namespace np {
                 return sum / (v1.len() - 1);
             }
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

@@ -32,11 +32,9 @@ SOFTWARE.
 
 // Multidimensional, homogeneous array of fixed-size items.
 namespace np {
-
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     using Array = typename std::conditional<
             SizeT == SIZE_DEFAULT,
             ndarray::array_dynamic::NDArrayDynamic<DType>,
             ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...>>::type;
-
-}
+}// namespace np

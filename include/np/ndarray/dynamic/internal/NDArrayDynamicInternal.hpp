@@ -235,9 +235,7 @@ namespace np {
                     }
 
                     explicit NDArrayDynamicInternal(Shape shape) noexcept
-                        : m_Shape{std::move(shape)}, m_Impl{} {
-                        std::size_t size = np::ndarray::internal::calcSizeByShape(m_Shape);
-                        m_Impl.resize(size);
+                        : m_Shape{std::move(shape)}, m_Impl(np::ndarray::internal::calcSizeByShape(m_Shape)) {
                     }
 
                     explicit NDArrayDynamicInternal(Shape shape, const DType &value)
