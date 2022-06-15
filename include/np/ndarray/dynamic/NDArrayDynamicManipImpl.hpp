@@ -86,7 +86,9 @@ namespace np {
                 Size copySize = std::min(size(), newSize);
                 NDArrayDynamic<DType, Storage> result{shape};
                 for (Size offset = 0; offset < newSize; offset += copySize) {
-                    std::copy(m_ArrayImpl.cbegin(), m_ArrayImpl.cbegin() + copySize, result.m_ArrayImpl.begin() + offset);
+                    for (auto i = 0; i < copySize && i + offset < newSize; ++i) {
+                        result.set(i + offset, get(i));
+                    }
                 }
                 return result;
             }
@@ -100,8 +102,12 @@ namespace np {
                 auto size2 = ndarray::internal::calcSizeByShape(array.shape());
                 Shape sh{size1 + size2};
                 NDArrayDynamic<DType, Storage> result{sh};
-                std::copy(m_ArrayImpl.cbegin(), m_ArrayImpl.cend(), result.m_ArrayImpl.begin());
-                std::copy(array.m_ArrayImpl.cbegin(), array.m_ArrayImpl.cend(), result.m_ArrayImpl.begin() + m_ArrayImpl.size());
+                for (auto i = 0; i < size(); ++i) {
+                    result.set(i, get(i));
+                }
+                for (auto i = 0; i < array.size(); ++i) {
+                    result.set(i + size(), array.get(i));
+                }
                 return result;
             }
 
@@ -117,9 +123,15 @@ namespace np {
                 auto size2 = array.size();
                 Shape sh{size1 + size2};
                 NDArrayDynamic<DType, Storage> result(sh);
-                std::copy(m_ArrayImpl.cbegin(), m_ArrayImpl.cbegin() + index, result.m_ArrayImpl.begin());
-                std::copy(array.m_ArrayImpl.cbegin(), array.m_ArrayImpl.cend(), result.m_ArrayImpl.begin() + index);
-                std::copy(m_ArrayImpl.cbegin() + index, m_ArrayImpl.cend(), result.m_ArrayImpl.begin() + index + array.m_ArrayImpl.size());
+                for (auto i = 0; i < index; ++i) {
+                    result.set(i, get(i));
+                }
+                for (auto i = 0; i < array.size(); ++i) {
+                    result.set(i + index, array.get(i));
+                }
+                for (auto i = index; i < size(); ++i) {
+                    result.set(i + array.size(), get(i));
+                }
                 return result;
             }
 
@@ -134,9 +146,13 @@ namespace np {
                 }
                 Shape sh{sz - 1};
                 NDArrayDynamic<DType, Storage> result(sh);
-                std::copy(m_ArrayImpl.cbegin(), m_ArrayImpl.cbegin() + index, result.begin());
+                for (auto i = 0; i < index; ++i) {
+                    result.set(i, get(i));
+                }
                 if (index < sz - 1) {
-                    std::copy(m_ArrayImpl.cbegin() + index + 1, m_ArrayImpl.cend(), result.begin() + index);
+                    for (auto i = index + 1; i < size(); ++i) {
+                        result.set(i - 1, get(i));
+                    }
                 }
                 return result;
             }
@@ -150,8 +166,12 @@ namespace np {
                 auto size2 = ndarray::internal::calcSizeByShape(array.shape());
                 Shape sh{size1 + size2};
                 NDArrayDynamic<DType, Storage> result(sh);
-                std::copy(m_ArrayImpl.cbegin(), m_ArrayImpl.cend(), result.m_ArrayImpl.begin());
-                std::copy(array.m_ArrayImpl.cbegin(), array.m_ArrayImpl.cend(), result.m_ArrayImpl.begin() + m_ArrayImpl.size());
+                for (auto i = 0; i < size(); ++i) {
+                    result.set(i, get(i));
+                }
+                for (auto i = 0; i < size(); ++i) {
+                    result.set(i + size(), array.get(i));
+                }
                 return result;
             }
 
@@ -215,13 +235,13 @@ namespace np {
                 NDArrayDynamic<DType, Storage> result{sh};
                 std::size_t destOffset = 0;
                 for (Size y = 0; y < sh[0]; ++y) {
-                    std::copy(m_ArrayImpl.cbegin() + y * sh1[1],
-                              m_ArrayImpl.cbegin() + (y + 1) * sh1[1],
-                              result.m_ArrayImpl.begin() + destOffset);
+                    for (auto i = 0; i < sh1[1]; ++i) {
+                        result.set(i + destOffset, get(i + y * sh1[1]));
+                    }
                     destOffset += sh1[1];
-                    std::copy(array.m_ArrayImpl.cbegin() + y * sh2[1],
-                              array.m_ArrayImpl.cbegin() + (y + 1) * sh2[1],
-                              result.m_ArrayImpl.begin() + destOffset);
+                    for (auto i = 0; i < sh2[1]; ++i) {
+                        result.set(i + destOffset, array.get(i + y * sh2[1]));
+                    }
                     destOffset += sh2[1];
                 }
                 return result;
@@ -283,14 +303,14 @@ namespace np {
                 Size i1 = 0;
                 Size i2 = 0;
                 while (i < size()) {
-                    std::copy(m_ArrayImpl.cbegin() + i,
-                              m_ArrayImpl.cbegin() + i + index,
-                              result1.m_ArrayImpl.begin() + i1);
+                    for (int j = 0; j < index; ++j) {
+                        result1.set(j + i1, get(i + j));
+                    }
                     i1 += index;
                     i += index;
-                    std::copy(m_ArrayImpl.cbegin() + i,
-                              m_ArrayImpl.cbegin() + i + rest,
-                              result2.m_ArrayImpl.begin() + i2);
+                    for (int j = 0; j < rest; ++j) {
+                        result2.set(j + i2, get(i + j));
+                    }
                     i2 += rest;
                     i += rest;
                 }
@@ -318,13 +338,13 @@ namespace np {
                 NDArrayDynamic<DType, Storage> result1{sh1};
                 NDArrayDynamic<DType, Storage> result2{sh2};
                 Size i = 0;
-                std::copy(m_ArrayImpl.cbegin(),
-                          m_ArrayImpl.cbegin() + sh[1] * index,
-                          result1.m_ArrayImpl.begin());
+                for (int j = 0; j < sh[1] * index; ++j) {
+                    result1.set(j, get(j));
+                }
                 i += sh[1] * index;
-                std::copy(m_ArrayImpl.cbegin() + i,
-                          m_ArrayImpl.cbegin() + i + sh[1] * rest,
-                          result2.m_ArrayImpl.begin());
+                for (int j = 0; j < sh[1] * rest; ++j) {
+                    result2.set(j, get(j + i));
+                }
                 return {result1, result2};
             }
         }// namespace array_dynamic

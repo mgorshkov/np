@@ -255,14 +255,14 @@ namespace np {
                 Size i1 = 0;
                 Size i2 = 0;
                 while (i < size()) {
-                    std::copy(cbegin() + i,
-                              cbegin() + i + index,
-                              result1.begin() + i1);
+                    for (int j = 0; j < index; ++j) {
+                        result1.set(j + i1, get(i + j));
+                    }
                     i1 += index;
                     i += index;
-                    std::copy(cbegin() + i,
-                              cbegin() + i + rest,
-                              result2.begin() + i2);
+                    for (int j = 0; j < rest; ++j) {
+                        result2.set(j + i2, get(i + j));
+                    }
                     i2 += rest;
                     i += rest;
                 }
@@ -281,13 +281,13 @@ namespace np {
                 NDArrayDynamic<DType> result1{sh1};
                 NDArrayDynamic<DType> result2{sh2};
                 Size i = 0;
-                std::copy(cbegin(),
-                          cbegin() + sh[1] * index,
-                          result1.begin());
+                for (int j = 0; j < sh[1] * index; ++j) {
+                    result1.set(j, get(j));
+                }
                 i += sh[1] * index;
-                std::copy(cbegin() + i,
-                          cbegin() + i + sh[1] * rest,
-                          result2.begin());
+                for (int j = 0; j < sh[1] * rest; ++j) {
+                    result2.set(j, get(j + i));
+                }
                 return {result1, result2};
             }
         }// namespace array_static
