@@ -403,7 +403,7 @@ TEST_F(ArrayManipTest, static1DIntArrayTest) {
     }
     {
         Array<int_, 3> array{1, 2, 3};
-        Array<int_> result_sample{1, 3};
+        Array<int_, 2> result_sample{1, 3};
         auto result = array.del(1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
@@ -411,7 +411,7 @@ TEST_F(ArrayManipTest, static1DIntArrayTest) {
     {
         Array<int_, 3> array{1, 2, 3};
         Array<int_, 3> array_concatenate{4, 5, 6};
-        Array<int_> result_sample{1, 2, 3, 4, 5, 6};
+        Array<int_, 6> result_sample{1, 2, 3, 4, 5, 6};
         auto result = array.concatenate(array_concatenate);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
@@ -419,7 +419,7 @@ TEST_F(ArrayManipTest, static1DIntArrayTest) {
     {
         Array<int_, 3> array{1, 2, 3};
         Array<int_, 3> array_vstack{4, 5, 6};
-        Array<int_> result_sample{1, 2, 3, 4, 5, 6};
+        Array<int_, 6> result_sample{1, 2, 3, 4, 5, 6};
         auto result = vstack<int_, 3>(array, array_vstack);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
@@ -534,7 +534,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayTest) {
     {
         Array<float_, 3> array{1.1, 2.2, 3.3};
         Array<float_, 3> array_vstack{4.4, 5.5, 6.6};
-        Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+        Array<float_, 6> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
         auto result = vstack<float_, 3>(array, array_vstack);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
@@ -649,7 +649,7 @@ TEST_F(ArrayManipTest, static1DStringArrayTest) {
     {
         Array<string_, 3> array{"str1", "str2", "str3"};
         Array<string_, 3> array_vstack{"str4", "str5", "str6"};
-        Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
+        Array<string_, 6> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
         auto result = vstack<string_, 3>(array, array_vstack);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
@@ -657,7 +657,7 @@ TEST_F(ArrayManipTest, static1DStringArrayTest) {
     {
         Array<string_, 3> array{"str1", "str2", "str3"};
         Array<string_, 3> array_r_{"str4", "str5", "str6"};
-        Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
+        Array<string_, 6> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
         auto result = r_<string_, 3>(array, array_r_);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);

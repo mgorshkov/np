@@ -79,5 +79,5 @@ namespace np {
                 return m_ArrayImpl == array.m_ArrayImpl;
             }
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

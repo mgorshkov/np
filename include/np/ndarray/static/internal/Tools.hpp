@@ -41,6 +41,6 @@ namespace np {
                                       std::forward<Tuple>(tuple));
                 }
             }// namespace internal
-        }    // namespace array_static
-    }        // namespace ndarray
+        }// namespace array_static
+    }// namespace ndarray
 }// namespace np

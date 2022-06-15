@@ -115,5 +115,5 @@ namespace np {
             }
 
         }// namespace array_dynamic
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

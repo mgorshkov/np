@@ -42,7 +42,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     class Shape : public std::vector<Size> {
     public:
-        inline Shape() = default;
+        Shape() = default;
 
         //////////////////////////////////////////////////////////////
         /// \brief Initializer constructor
@@ -52,7 +52,7 @@ namespace np {
         /// \param initList list of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline Shape(std::initializer_list<Size> initList)
+        Shape(std::initializer_list<Size> initList)
             : std::vector<Size>{initList} {
         }
 
@@ -61,11 +61,43 @@ namespace np {
         ///
         /// Initialize shape with a vector of dimensions.
         ///
+        /// \param v vector of dimensions
+        ///
+        //////////////////////////////////////////////////////////////
+        explicit Shape(const std::vector<Size> &v)
+            : std::vector<Size>{v} {
+        }
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Move constructor
+        ///
+        /// Initialize shape with a vector of dimensions.
+        ///
         /// \param initList vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline explicit Shape(const std::vector<Size> &v)
-            : std::vector<Size>{v} {
+        explicit Shape(std::vector<Size> &&v)
+             : std::vector<Size>{std::move(v)} {
+        }
+
+        Shape(const Shape& another)
+            : std::vector<Size>{another} {
+        }
+
+        Shape(Shape&& another) = default;
+
+        Shape& operator = (const Shape& another) {
+            if (this != &another) {
+                std::vector<Size>::operator=(another);
+            }
+            return *this;
+        }
+
+        Shape& operator = (Shape&& another)  {
+            if (this != &another) {
+                std::vector<Size>::operator=(another);
+            }
+            return *this;
         }
 
         //////////////////////////////////////////////////////////////
@@ -80,7 +112,7 @@ namespace np {
         /// \param shapeTupleStr string with dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline explicit Shape(const std::string &shapeTupleStr) {
+        explicit Shape(const std::string &shapeTupleStr) {
             // 0,
             // 1,
             // 1, 2
@@ -119,7 +151,7 @@ namespace np {
         /// \return A string with dimensions
         ///
         //////////////////////////////////////////////////////////////
-        inline explicit operator std::string() const {
+        explicit operator std::string() const {
             if (empty()) {
                 return "0,";
             } else if (size() == 1) {
@@ -141,7 +173,7 @@ namespace np {
         /// (2, 3, 4) -> (24,).
         ///
         //////////////////////////////////////////////////////////////
-        inline void flatten() {
+        void flatten() {
             if (empty()) {
                 return;
             }
@@ -155,7 +187,7 @@ namespace np {
         /// (2, 3, 4) -> (4, 3, 2).
         ///
         //////////////////////////////////////////////////////////////
-        inline void transpose() {
+        void transpose() {
             std::reverse(begin(), end());
         }
     };

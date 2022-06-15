@@ -424,5 +424,5 @@ namespace np {
                 internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
             };
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

@@ -73,5 +73,5 @@ namespace np {
                 save(output, delimiter);
             }
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

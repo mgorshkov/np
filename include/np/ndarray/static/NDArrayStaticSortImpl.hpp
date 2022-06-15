@@ -33,6 +33,10 @@ namespace np {
             // Sort an array
             template<typename DType, Size SizeT, Size... SizeTs>
             inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort() {
+                m_ArrayImpl.sort();
+                auto shape = m_ArrayImpl.shape();
+                shape.flatten();
+                m_ArrayImpl.setShape(shape);
             }
 
             // // Sort the elements of an array's axis
@@ -42,5 +46,5 @@ namespace np {
 
             // }
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

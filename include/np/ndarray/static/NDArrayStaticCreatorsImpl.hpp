@@ -125,5 +125,5 @@ namespace np {
                 return *this;
             }
         }// namespace array_static
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

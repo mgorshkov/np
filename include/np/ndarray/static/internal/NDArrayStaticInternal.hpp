@@ -806,6 +806,6 @@ namespace np {
                     NDArrayStaticInternal<ReducedType, SizeT> m_Impl;
                 };
             }// namespace internal
-        }    // namespace array_static
-    }        // namespace ndarray
+        }// namespace array_static
+    }// namespace ndarray
 }// namespace np

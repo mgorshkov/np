@@ -46,8 +46,8 @@ namespace np {
             }
 
             template<typename DType, typename Storage>
-            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const Shape &shape) noexcept
-                : m_ArrayImpl{shape} {
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(Shape shape) noexcept
+                : m_ArrayImpl{std::move(shape)} {
             }
 
             template<typename DType, typename Storage>
@@ -191,5 +191,5 @@ namespace np {
                 return *this;
             }
         }// namespace array_dynamic
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np
