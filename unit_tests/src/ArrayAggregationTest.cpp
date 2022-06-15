@@ -123,10 +123,9 @@ protected:
         EXPECT_EQ(std__, std___);
     }
 
-    template<>
-    inline void checkArrayAggregation<float_>(const NDArrayDynamic<float_> &array,
-                                              float_ sum_, float_ min_, float_ max_, NDArrayDynamic<float_> cumsum_,
-                                              float_ mean_, float_ median_, const NDArrayDynamic<float_> &corrcoef_, float_ std__, bool corrException) {
+    inline void checkArrayAggregation(const NDArrayDynamic<float_> &array,
+                                      float_ sum_, float_ min_, float_ max_, NDArrayDynamic<float_> cumsum_,
+                                      float_ mean_, float_ median_, const NDArrayDynamic<float_> &corrcoef_, float_ std__, bool corrException) {
         auto sum__ = sum<float_>(array);
         EXPECT_DOUBLE_EQ(sum_, sum__);
         auto min__ = min<float_>(array);
