@@ -384,7 +384,7 @@ namespace np {
                 inline NDArrayDynamic<DType> c_(const NDArrayStatic &array) const;
 
                 // Split the array horizontally
-                inline std::vector<NDArrayDynamic<DType>> hsplit(Size index) const;
+                inline std::vector<NDArrayDynamic<DType>> hsplit(std::size_t sections) const;
 
                 // Split the array vertically
                 inline std::vector<NDArrayDynamic<DType>> vsplit(Size index) const;

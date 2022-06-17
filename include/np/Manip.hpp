@@ -154,7 +154,8 @@ namespace np {
     //////////////////////////////////////////////////////////////
     /// \brief Stack arrays horizontally
     ///
-    /// Stack arrays horizontally (column wise)
+    /// Stack arrays in sequence horizontally (column wise).
+    /// This is equivalent to concatenation along the second axis, except for 1-D arrays where it concatenates along the first axis.
     /// The arrays must have the same shape along all but the second axis.
     /// 1D arrays must have the same length.
     ///
@@ -210,16 +211,17 @@ namespace np {
     /// \brief Split an array horizontally
     ///
     /// Split an array into multiple sub-arrays horizontally (column-wise).
+    /// The array is always split along the second axis regardless of the array dimension.
     ///
     /// \param array Array to split
-    /// \param index Split point
+    /// \param sections Number of sections
     ///
     /// \return Vector of split array parts
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType>> hsplit(const Array<DType, SizeT, SizeTs...> &array, Size index) {
-        return array.hsplit(index);
+    std::vector<Array<DType>> hsplit(const Array<DType, SizeT, SizeTs...> &array, std::size_t sections) {
+        return array.hsplit(sections);
     }
 
     //////////////////////////////////////////////////////////////
