@@ -458,12 +458,12 @@ TEST_F(ArrayManipTest, static1DIntArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<int_, 3> array{1, 2, 3};
-        auto result = hsplit<int_, 3>(array, 1);
-        Array<int_> result0_sample{1};
+        Array<int_, 4> array{1, 2, 3, 4};
+        auto result = hsplit<int_, 4>(array, 2);
+        Array<int_> result0_sample{1, 2};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<int_> result1_sample{2, 3};
+        Array<int_> result1_sample{3, 4};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -573,12 +573,12 @@ TEST_F(ArrayManipTest, static1DFloatArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<float_, 3> array{1.1, 2.2, 3.3};
-        auto result = hsplit<float_, 3>(array, 1);
-        Array<float_> result0_sample{1.1};
+        Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
+        auto result = hsplit<float_, 4>(array, 2);
+        Array<float_> result0_sample{1.1, 2.2};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<float_> result1_sample{2.2, 3.3};
+        Array<float_> result1_sample{3.3, 4.4};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -688,12 +688,12 @@ TEST_F(ArrayManipTest, static1DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_, 3> array{"str1", "str2", "str3"};
-        auto result = hsplit<string_, 3>(array, 1);
-        Array<string_> result0_sample{"str1"};
+        Array<string_, 4> array{"str1", "str2", "str3", "str4"};
+        auto result = hsplit<string_, 4>(array, 2);
+        Array<string_> result0_sample{"str1", "str2"};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<string_> result1_sample{"str2", "str3"};
+        Array<string_> result1_sample{"str3", "str4"};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -804,12 +804,12 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<int_> array{1, 2, 3};
-        auto result = hsplit<int_>(array, 1);
-        Array<int_> result0_sample{1};
+        Array<int_> array{1, 2, 3, 4};
+        auto result = hsplit<int_>(array, 2);
+        Array<int_> result0_sample{1, 2};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<int_> result1_sample{2, 3};
+        Array<int_> result1_sample{3, 4};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -919,12 +919,12 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<float_> array{1.1, 2.2, 3.3};
-        auto result = hsplit<float_>(array, 1);
-        Array<float_> result0_sample{1.1};
+        Array<float_> array{1.1, 2.2, 3.3, 4.4};
+        auto result = hsplit<float_>(array, 2);
+        Array<float_> result0_sample{1.1, 2.2};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<float_> result1_sample{2.2, 3.3};
+        Array<float_> result1_sample{3.3, 4.4};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -1034,12 +1034,12 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        Array<string_> array{"str1", "str2", "str3"};
-        auto result = hsplit<string_>(array, 1);
-        Array<string_> result0_sample{"str1"};
+        Array<string_> array{"str1", "str2", "str3", "str4"};
+        auto result = hsplit<string_>(array, 2);
+        Array<string_> result0_sample{"str1", "str2"};
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        Array<string_> result1_sample{"str2", "str3"};
+        Array<string_> result1_sample{"str3", "str4"};
         equals = array_equal(result[1], result1_sample);
         EXPECT_TRUE(equals);
     }
@@ -1154,14 +1154,18 @@ TEST_F(ArrayManipTest, static2DIntArrayTest) {
     }
     {
         Array<int_, 2, 3> array = c_array_2d;
-        auto result = hsplit<int_, 2, 3>(array, 1);
+        auto result = hsplit<int_, 2, 3>(array, 3);
         int_ c_array_2d_1[2][1] = {{1}, {4}};
         Array<int_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        int_ c_array_2d_2[2][2] = {{2, 3}, {5, 6}};
+        int_ c_array_2d_2[2][1] = {{2}, {5}};
         Array<int_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        int_ c_array_2d_3[2][1] ={{3}, {6}};
+        Array<int_> result2_sample = c_array_2d_3;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1287,14 +1291,18 @@ TEST_F(ArrayManipTest, static2DFloatArrayTest) {
     }
     {
         Array<float_, 2, 3> array = c_array_2d;
-        auto result = hsplit<float_, 2, 3>(array, 1);
+        auto result = hsplit<float_, 2, 3>(array, 3);
         float_ c_array_2d_1[2][1] = {{1.1}, {4.4}};
-        Array<float_, 2, 1> result0_sample = c_array_2d_1;
+        Array<float_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        float_ c_array_2d_2[2][2] = {{2.2, 3.3}, {5.5, 6.6}};
-        Array<float_, 2, 2> result1_sample = c_array_2d_2;
+        float_ c_array_2d_2[2][1] = {{2.2}, {5.5}};
+        Array<float_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        float_ c_array_2d_3[2][1] ={{3.3}, {6.6}};
+        Array<float_> result2_sample = c_array_2d_3;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1443,14 +1451,18 @@ TEST_F(ArrayManipTest, static2DStringArrayTest) {
     }
     {
         Array<string_, 2, 3> array = c_array_2d;
-        auto result = hsplit<string_, 2, 3>(array, 1);
+        auto result = hsplit<string_, 2, 3>(array, 3);
         string_ c_array_2d_1[2][1] = {{"str1"}, {"str4"}};
         Array<string_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        string_ c_array_2d_2[2][2] = {{"str2", "str3"}, {"str5", "str6"}};
+        string_ c_array_2d_2[2][1] = {{"str2"}, {"str5"}};
         Array<string_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        string_ c_array_2d_3[2][1] = {{"str3"}, {"str6"}};
+        Array<string_> result2_sample = c_array_2d_2;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1576,14 +1588,18 @@ TEST_F(ArrayManipTest, dynamic2DIntArrayTest) {
     }
     {
         Array<int_> array = c_array_2d;
-        auto result = hsplit<int_>(array, 1);
+        auto result = hsplit<int_>(array, 3);
         int_ c_array_2d_1[2][1] = {{1}, {4}};
         Array<int_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        int_ c_array_2d_2[2][2] = {{2, 3}, {5, 6}};
+        int_ c_array_2d_2[2][1] = {{2}, {5}};
         Array<int_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        int_ c_array_2d_3[2][1] = {{3}, {6}};
+        Array<int_> result2_sample = c_array_2d_2;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1709,14 +1725,18 @@ TEST_F(ArrayManipTest, dynamic2DFloatArrayTest) {
     }
     {
         Array<float_> array = c_array_2d;
-        auto result = hsplit<float_>(array, 1);
+        auto result = hsplit<float_>(array, 3);
         float_ c_array_2d_1[2][1] = {{1.1}, {4.4}};
         Array<float_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        float_ c_array_2d_2[2][2] = {{2.2, 3.3}, {5.5, 6.6}};
+        float_ c_array_2d_2[2][1] = {{2.2}, {5.5}};
         Array<float_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        float_ c_array_2d_3[2][1] = {{3.3}, {6.6}};
+        Array<float_> result2_sample = c_array_2d_2;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1842,14 +1862,18 @@ TEST_F(ArrayManipTest, dynamic2DStringArrayTest) {
     }
     {
         Array<string_> array = c_array_2d;
-        auto result = hsplit<string_>(array, 1);
+        auto result = hsplit<string_>(array, 3);
         string_ c_array_2d_1[2][1] = {{"str1"}, {"str4"}};
         Array<string_> result0_sample = c_array_2d_1;
         bool equals = array_equal(result[0], result0_sample);
         EXPECT_TRUE(equals);
-        string_ c_array_2d_2[2][2] = {{"str2", "str3"}, {"str5", "str6"}};
+        string_ c_array_2d_2[2][1] = {{"str2"}, {"str5"}};
         Array<string_> result1_sample = c_array_2d_2;
         equals = array_equal(result[1], result1_sample);
+        EXPECT_TRUE(equals);
+        string_ c_array_2d_3[2][1] = {{"str3"}, {"str6"}};
+        Array<string_> result2_sample = c_array_2d_2;
+        equals = array_equal(result[2], result2_sample);
         EXPECT_TRUE(equals);
     }
     {
@@ -1910,7 +1934,7 @@ TEST_F(ArrayManipTest, static3DIntArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
         auto result = array.append(array1);
         Array<int_, 24> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
@@ -1918,79 +1942,77 @@ TEST_F(ArrayManipTest, static3DIntArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        int_ c_array_1d[24] = {1, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         Array<int_, 24> result_sample{c_array_1d};
         auto result = array.insert(1, array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_1d[11] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        int_ c_array_1d[11] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         Array<int_, 11> array1{c_array_1d};
         auto result = array.del(1);
         bool equals = array_equal(result, array1);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+        int_ c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         Array<int_, 24> result_sample{c_array_1d};
         auto result = array.concatenate(array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+        int_ c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         Array<int_, 24> result_sample{c_array_1d};
         auto result = vstack<int_, 2, 2, 3>(array, array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+        int_ c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         Array<int_, 24> result_sample{c_array_1d};
         auto result = r_<int_, 2, 2, 3>(array, array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<int_, 24> result_sample{c_array_1d};
+        int_ c_array_1d[2][2][6] = {{{1, 2, 3, 13, 14, 15}, {4, 5, 6, 16, 17, 18}}, {{7, 8, 9, 19, 20, 21}, {10, 11, 12,22, 23, 24}}};
+        Array<int_> result_sample{c_array_1d};
         auto result = c_<int_, 2, 2, 3>(array, array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-        Array<int_, 2, 2, 3> array1{c_array_3d1};
-        long c_array_result_sample_1[2][1][3] = {{{2, 4,  6}},  {{8,  10,  12}}};
+        int_ c_array_result_sample_1[2][1][3] = {{{1, 2,  3}},  {{7,  8,  9}}};
         Array<int_, 2, 1, 3> result_sample_1{c_array_result_sample_1};
-        auto result = hsplit<int_, 2, 2, 3>(array, 1);
+        auto result = hsplit<int_, 2, 2, 3>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        long c_array_result_sample_2[2][1][3] = {{{2, 4,  6}},  {{8,  10,  12}}};
+        int_ c_array_result_sample_2[2][1][3] = {{{4, 5,  6}},  {{10,  11,  12}}};
         Array<int_, 2, 1, 3> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
+        int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_, 2, 2, 3> array1{c_array_3d1};
         long c_array_1d_1[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         Array<int_, 24> result_sample_1{c_array_1d_1};
         auto result = vsplit<int_, 2, 2, 3>(array, 1);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        long c_array_1d_2[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+        int_ c_array_1d_2[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         Array<int_, 24> result_sample_2{c_array_1d_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
@@ -2126,15 +2148,13 @@ TEST_F(ArrayManipTest, static3DFloatArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        float_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-        Array<float_, 2, 2, 3> array1{c_array_3d1};
-        float_ c_array_1d_1[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<float_, 24> result_sample_1{c_array_1d_1};
-        auto result = hsplit<float_, 2, 2, 3>(array, 1);
+        float_ c_array_result_sample_1[2][1][3] = {{{1, 2,  3}},  {{7,  8,  9}}};
+        Array<float_, 2, 1, 3> result_sample_1{c_array_result_sample_1};
+        auto result = hsplit<float_, 2, 2, 3>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        float_ c_array_1d_2[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<float_, 24> result_sample_2{c_array_1d_2};
+        float_ c_array_result_sample_2[2][1][3] = {{{4, 5,  6}},  {{10,  11,  12}}};
+        Array<float_, 2, 1, 3> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }
@@ -2372,31 +2392,13 @@ TEST_F(ArrayManipTest, static3DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        string_ c_array_3d1[2][2][3] = {
-                {{"str9_1", "str9_2", "str9_3"},
-                 {"str10_1", "str10_2", "str10_3"}},
-                {{"str13_1", "str13_2", "str13_3"},
-                 {"str14_1", "str14_2", "str14_3"}}};
-        Array<string_, 2, 2, 3> array1{c_array_3d1};
-        Array<string_, 24> result_sample_1{"str1", "str2", "str3",
-                                           "str4", "str5", "str6",
-                                           "str7", "str8", "str9",
-                                           "str10", "str11", "str12",
-                                           "str13", "str14", "str15",
-                                           "str16", "str17", "str18",
-                                           "str19", "str20", "str21",
-                                           "str22", "str23", "str24"};
-        auto result = hsplit<string_, 2, 2, 3>(array, 1);
+        string_ c_array_result_sample_1[2][1][3] = {{{"str1", "str2",  "str3"}},  {{"str7", "str8", "str9"}}};
+        Array<string_, 2, 1, 3> result_sample_1{c_array_result_sample_1};
+        auto result = hsplit<string_, 2, 2, 3>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        Array<string_, 24> result_sample_2{"str1", "str2", "str3",
-                                           "str4", "str5", "str6",
-                                           "str7", "str8", "str9",
-                                           "str10", "str11", "str12",
-                                           "str13", "str14", "str15",
-                                           "str16", "str17", "str18",
-                                           "str19", "str20", "str21",
-                                           "str22", "str23", "str24"};
+        string_ c_array_result_sample_2[2][1][3] = {{{"str4", "str5", "str6"}},  {{"str10", "str11", "str12"}}};
+        Array<string_, 2, 1, 3> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }
@@ -2527,22 +2529,20 @@ TEST_F(ArrayManipTest, dynamic3DIntArrayTest) {
     {
         long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
         Array<int_> array1{c_array_3d1};
-        long c_array_1d[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+        long c_array_1d[24] = {1, 2, 3, 13, 14, 15, 4, 5, 6, 16, 17, 18, 7, 8, 9, 19, 20, 21, 10, 11, 12,22, 23, 24};
         Array<int_> result_sample{c_array_1d};
         auto result = c_<int_>(array, array1);
         bool equals = array_equal(result, result_sample);
         EXPECT_TRUE(equals);
     }
     {
-        long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-        Array<int_> array1{c_array_3d1};
-        long c_array_1d_1[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<int_> result_sample_1{c_array_1d_1};
-        auto result = hsplit<int_>(array, 1);
+        int_ c_array_result_sample_1[2][1][3] = {{{1, 2, 3}},  {{7, 8, 9}}};
+        Array<int_> result_sample_1{c_array_result_sample_1};
+        auto result = hsplit<int_>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        long c_array_1d_2[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<int_> result_sample_2{c_array_1d_2};
+        int_ c_array_result_sample_2[2][1][3] = {{{4, 5, 6}},  {{10, 11, 12}}};
+        Array<int_> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }
@@ -2690,15 +2690,13 @@ TEST_F(ArrayManipTest, dynamic3DFloatArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        float_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-        Array<float_, 2, 2, 3> array1{c_array_3d1};
-        float_ c_array_1d_1[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<float_, 24> result_sample_1{c_array_1d_1};
-        auto result = hsplit<float_, 2, 2, 3>(array, 1);
+        float_ c_array_result_sample_1[2][1][3] = {{{1.1, 2.2, 3.3}},  {{7.7, 8.8, 9.9}}};
+        Array<float_> result_sample_1{c_array_result_sample_1};
+        auto result = hsplit<float_, 2, 2, 3>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        float_ c_array_1d_2[24] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-        Array<float_, 24> result_sample_2{c_array_1d_2};
+        float_ c_array_result_sample_2[2][1][3] = {{{4.4, 5.5, 6.6}},  {{10.1, 11.11, 12.12}}};
+        Array<float_> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }
@@ -2917,31 +2915,13 @@ TEST_F(ArrayManipTest, dynamic3DStringArrayTest) {
         EXPECT_TRUE(equals);
     }
     {
-        string_ c_array_3d1[2][2][3] = {
-                {{"str9_1", "str9_2", "str9_3"},
-                 {"str10_1", "str10_2", "str10_3"}},
-                {{"str13_1", "str13_2", "str13_3"},
-                 {"str14_1", "str14_2", "str14_3"}}};
-        Array<string_> array1{c_array_3d1};
-        Array<string_> result_sample_1{"str1", "str2", "str3",
-                                       "str4", "str5", "str6",
-                                       "str7", "str8", "str9",
-                                       "str10", "str11", "str12",
-                                       "str13", "str14", "str15",
-                                       "str16", "str17", "str18",
-                                       "str19", "str20", "str21",
-                                       "str22", "str23", "str24"};
-        auto result = hsplit<string_>(array, 1);
+        string_ c_array_result_sample_1[2][1][3] = {{{"str1", "str2", "str3"}},  {{"str7", "str8", "str9"}}};
+        Array<string_> result_sample_1{c_array_result_sample_1};
+        auto result = hsplit<string_>(array, 2);
         bool equals = array_equal(result[0], result_sample_1);
         EXPECT_TRUE(equals);
-        Array<string_> result_sample_2{"str1", "str2", "str3",
-                                       "str4", "str5", "str6",
-                                       "str7", "str8", "str9",
-                                       "str10", "str11", "str12",
-                                       "str13", "str14", "str15",
-                                       "str16", "str17", "str18",
-                                       "str19", "str20", "str21",
-                                       "str22", "str23", "str24"};
+        string_ c_array_result_sample_2[2][1][3] = {{{"str4", "str5", "str6"}},  {{"str10", "str11", "str12"}}};
+        Array<string_> result_sample_2{c_array_result_sample_2};
         equals = array_equal(result[1], result_sample_2);
         EXPECT_TRUE(equals);
     }

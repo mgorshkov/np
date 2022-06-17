@@ -143,7 +143,6 @@ namespace np {
                 return result;
             }
 
-            // Concatenate arrays
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::concatenate(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
                 static constexpr Size size = (SizeT * ... * SizeTs);
@@ -157,20 +156,17 @@ namespace np {
                 return result;
             }
 
-            // Stack arrays vertically (rowwise)
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::vstack(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
                 auto result = array.ravel();
                 return result.insert(0, ravel());
             }
 
-            // Stack arrays vertically (rowwise)
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::r_(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
                 return vstack(array);
             }
 
-            // Stack arrays horizontally (columnwise)
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::hstack(
                     const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
@@ -205,7 +201,6 @@ namespace np {
                 }
             }
 
-            // Create stacked columnwise arrays
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::column_stack(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
                 Shape sh1 = shape();
@@ -227,16 +222,39 @@ namespace np {
                 return result;
             }
 
-            // Stack arrays horizontally (columnwise)
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::c_(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                return hstack(array);
+                Shape sh1 = shape();
+                Shape sh2 = array.shape();
+                if (sh1.size() != sh2.size())
+                    throw std::runtime_error("Number of dims should be equal");
+                // All the dims except the last should be equal
+                Size last = sh1.size() - 1;
+                Size sizes = 1;
+                for (auto i = 0; i < last; ++i) {
+                    if (sh1[i] != sh2[i])
+                        throw std::runtime_error("All the dims except the last should be equal");
+                    sizes *= sh1[i];
+                }
+                Shape sh = shape();
+                sh[last] = sh1[last] + sh2[last];
+                NDArrayDynamic<DType> result{sh};
+                std::size_t destOffset = 0;
+                for (Size y = 0; y < sizes; ++y) {
+                    for (auto i = 0; i < sh1[last]; ++i) {
+                        result.set(i + destOffset, get(i + y * sh1[last]));
+                    }
+                    destOffset += sh1[last];
+                    for (auto i = 0; i < sh2[last]; ++i) {
+                        result.set(i + destOffset, array.get(i + y * sh2[last]));
+                    }
+                    destOffset += sh2[last];
+                }
+                return result;
             }
 
-            // Splitting arrays
-            // Split the array horizontally
             template<typename DType, Size SizeT, Size... SizeTs>
-            inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::hsplit(Size index) const {
+            inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::hsplit(std::size_t sections) const {
                 std::size_t splitIndex;
                 if constexpr (sizeof...(SizeTs) == 0) {
                     splitIndex = 0;
