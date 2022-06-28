@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['genfromtxt_0',['genfromtxt',['../namespacenp.html#a03a9f66617e5b995206365ba3e4a7de0',1,'np']]]
+  ['genfromtxt_24',['genfromtxt',['../namespacenp.html#abf8efa3b01b21821be527d0792a7460b',1,'np']]]
 ];

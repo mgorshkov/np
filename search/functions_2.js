@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['del_0',['del',['../namespacenp.html#a5f85e5bcb0d0298ea7b035ce03d7db13',1,'np']]],
-  ['divide_1',['divide',['../namespacenp.html#a41747d26758e49478ae88c8a96e951b2',1,'np']]]
+  ['del_109',['del',['../namespacenp.html#a265549adfdeca6dc6a84750cb14f36ee',1,'np']]],
+  ['divide_110',['divide',['../namespacenp.html#ab2af08a52768cb4556b916d3f2fa939c',1,'np']]]
 ];

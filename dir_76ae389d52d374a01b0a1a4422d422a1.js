@@ -12,5 +12,6 @@ var dir_76ae389d52d374a01b0a1a4422d422a1 =
     [ "NDArrayDynamicIoImpl.hpp", "_n_d_array_dynamic_io_impl_8hpp_source.html", null ],
     [ "NDArrayDynamicManipImpl.hpp", "_n_d_array_dynamic_manip_impl_8hpp_source.html", null ],
     [ "NDArrayDynamicMathImpl.hpp", "_n_d_array_dynamic_math_impl_8hpp_source.html", null ],
-    [ "NDArrayDynamicSortImpl.hpp", "_n_d_array_dynamic_sort_impl_8hpp_source.html", null ]
+    [ "NDArrayDynamicSortImpl.hpp", "_n_d_array_dynamic_sort_impl_8hpp_source.html", null ],
+    [ "Tools.hpp", "ndarray_2dynamic_2_tools_8hpp_source.html", null ]
 ];

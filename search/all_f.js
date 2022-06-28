@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['vsplit_0',['vsplit',['../namespacenp.html#add88f1be85c7c0980e44166dbaa2bd52',1,'np']]],
-  ['vstack_1',['vstack',['../namespacenp.html#ab31aa22305efd447d324b4e8430290d4',1,'np']]]
+  ['vsplit_70',['vsplit',['../namespacenp.html#acdbff584dbca21d83567aa8d62e912a4',1,'np']]],
+  ['vstack_71',['vstack',['../namespacenp.html#a1bca00b1a89e8db1df1f6b0f4bb386e3',1,'np']]]
 ];

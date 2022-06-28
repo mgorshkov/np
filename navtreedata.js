@@ -30,11 +30,13 @@ var NAVTREE =
         [ "Static array", "index.html#autotoc_md2", null ],
         [ "Dynamic array", "index.html#autotoc_md3", null ]
       ] ],
-      [ "Repo", "index.html#autotoc_md4", null ],
-      [ "Build unit tests and sample", "index.html#autotoc_md5", null ],
-      [ "Build docs", "index.html#autotoc_md6", null ],
-      [ "Install", "index.html#autotoc_md7", null ],
-      [ "Usage example", "index.html#autotoc_md8", null ]
+      [ "Requirements", "index.html#autotoc_md4", null ],
+      [ "Repo", "index.html#autotoc_md5", null ],
+      [ "Build unit tests and sample", "index.html#autotoc_md6", null ],
+      [ "Build docs", "index.html#autotoc_md7", null ],
+      [ "Install", "index.html#autotoc_md8", null ],
+      [ "Usage example (samples/monte-carlo)", "index.html#autotoc_md9", null ],
+      [ "How to build the sample", "index.html#autotoc_md10", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -60,7 +62,10 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_agg_8hpp_source.html"
+"_agg_8hpp_source.html",
+"classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_n_d_array_dynamic_internal.html#a854be1625d4199b87cdaf3aa1c8225c7",
+"classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_internal_3_01_d_type_00_01_90286c9cfa2efc5f5e8f94718b405d04.html#aefc0a58184d91415ca72ce418612f42d",
+"namespacenp.html#a9a37e644db7e9e3d02ae31d4ad7c0d7b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -12,5 +12,6 @@ var dir_1a88e3e3ca38fc7f96bd84fbdf50608c =
     [ "NDArrayStaticIoImpl.hpp", "_n_d_array_static_io_impl_8hpp_source.html", null ],
     [ "NDArrayStaticManipImpl.hpp", "_n_d_array_static_manip_impl_8hpp_source.html", null ],
     [ "NDArrayStaticMathImpl.hpp", "_n_d_array_static_math_impl_8hpp_source.html", null ],
-    [ "NDArrayStaticSortImpl.hpp", "_n_d_array_static_sort_impl_8hpp_source.html", null ]
+    [ "NDArrayStaticSortImpl.hpp", "_n_d_array_static_sort_impl_8hpp_source.html", null ],
+    [ "Tools.hpp", "ndarray_2static_2_tools_8hpp_source.html", null ]
 ];
