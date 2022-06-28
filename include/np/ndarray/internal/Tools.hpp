@@ -83,5 +83,5 @@ namespace np {
                 return object;
             }
         }// namespace internal
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

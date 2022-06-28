@@ -108,6 +108,6 @@ namespace np {
                     return stream;
                 }
             }// namespace internal
-        }// namespace array_static
-    }// namespace ndarray
+        }    // namespace array_static
+    }        // namespace ndarray
 }// namespace np

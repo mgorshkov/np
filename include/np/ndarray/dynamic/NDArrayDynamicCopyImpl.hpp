@@ -42,5 +42,5 @@ namespace np {
                 return *this;
             }
         }// namespace array_dynamic
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

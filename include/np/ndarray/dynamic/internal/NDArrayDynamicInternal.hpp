@@ -888,7 +888,7 @@ namespace np {
                 template<typename Storage1, typename Storage2>
                 static inline bool array_equal(const internal::NDArrayDynamicInternal<double, Storage1> &array1,
                                                const internal::NDArrayDynamicInternal<double, Storage2> &array2) {
-                    if (array1.size() != array2.size())
+                    if (array1.getShape() != array2.getShape())
                         return false;
                     for (std::size_t i = 0; i < array1.size(); ++i) {
                         if (!np::internal::almost_equal(array1.get(i), array2.get(i), ULP_TOLERANCE))

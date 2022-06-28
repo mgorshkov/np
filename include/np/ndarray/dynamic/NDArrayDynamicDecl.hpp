@@ -326,7 +326,7 @@ namespace np {
                 inline NDArrayDynamic<DType, Storage> del(Size index) const;
 
                 // Concatenate arrays
-                inline NDArrayDynamic<DType, Storage> concatenate(const NDArrayDynamic &array) const;
+                inline NDArrayDynamic<DType, Storage> concatenate(const NDArrayDynamic &array, std::optional<std::size_t> axis = std::nullopt) const;
 
                 // Stack arrays vertically (row-wise)
                 inline NDArrayDynamic<DType, Storage> vstack(const NDArrayDynamic &array) const;
@@ -347,7 +347,7 @@ namespace np {
                 inline std::vector<NDArrayDynamic<DType, Storage>> hsplit(std::size_t sections) const;
 
                 // Split the array vertically
-                inline std::vector<NDArrayDynamic<DType, Storage>> vsplit(Size index) const;
+                inline std::vector<NDArrayDynamic<DType, Storage>> vsplit(std::size_t sections) const;
 
                 typename internal::NDArrayDynamicInternal<DType, Storage>::iterator begin() {
                     return m_ArrayImpl.begin();
@@ -389,5 +389,5 @@ namespace np {
                 friend class NDArrayDynamic;
             };
         }// namespace array_dynamic
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

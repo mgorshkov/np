@@ -100,18 +100,18 @@ namespace np {
     //////////////////////////////////////////////////////////////
     /// \brief Concatenate arrays
     ///
-    /// Concatenate items to an array from another array
-    /// Both arrays are flattened before concatenation
+    /// Join a sequence of arrays along an existing axis.
     ///
     /// \param array1 Array to concatenate
     /// \param array2 Array to concatenate
+    /// \param axis   Axis to use
     ///
-    /// \return The 1D resulting array
+    /// \return The resulting array
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> concatenate(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
-        return array1.concatenate(array2);
+    Array<DType, SizeT, SizeTs...> concatenate(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2, std::optional<std::size_t> axis = std::nullopt) {
+        return array1.concatenate(array2, axis);
     }
 
     //////////////////////////////////////////////////////////////
@@ -138,7 +138,6 @@ namespace np {
     /// Stack arrays vertically (row wise)
     /// The arrays must have the same shape along all but the first axis.
     /// 1D arrays must have the same length.
-    /// Currently it's the same as vstack
     ///
     /// \param array1 Array to stack
     /// \param array2 Array to stack
@@ -228,16 +227,17 @@ namespace np {
     /// \brief Split the array vertically
     ///
     /// Split an array into multiple sub-arrays vertically (row-wise).
+    /// The array is always split along the first axis regardless of the array dimension.
     ///
     /// \param array Array to split
-    /// \param index Split point
+    /// \param sections Number of sections
     ///
     /// \return Vector of split array parts
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType>> vsplit(const Array<DType, SizeT, SizeTs...> &array, Size index) {
-        return array.vsplit(index);
+    std::vector<Array<DType>> vsplit(const Array<DType, SizeT, SizeTs...> &array, std::size_t sections) {
+        return array.vsplit(sections);
     }
 
 }// namespace np

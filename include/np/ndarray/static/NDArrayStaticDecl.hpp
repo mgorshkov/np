@@ -366,13 +366,13 @@ namespace np {
                 inline NDArrayStatic<DType, (SizeT * ... * SizeTs) - 1> del(Size index) const;
 
                 // Concatenate arrays
-                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> concatenate(const NDArrayStatic &array) const;
+                inline NDArrayDynamic<DType> concatenate(const NDArrayStatic &array, std::optional<std::size_t> axis = std::nullopt) const;
 
                 // Stack arrays vertically (row-wise)
-                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> vstack(const NDArrayStatic &array) const;
+                inline NDArrayDynamic<DType> vstack(const NDArrayStatic &array) const;
 
                 // Stack arrays vertically (row-wise)
-                inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> r_(const NDArrayStatic &array) const;
+                inline NDArrayDynamic<DType> r_(const NDArrayStatic &array) const;
 
                 // Stack arrays horizontally (column-wise)
                 inline NDArrayDynamic<DType> hstack(const NDArrayStatic &array) const;
@@ -387,7 +387,7 @@ namespace np {
                 inline std::vector<NDArrayDynamic<DType>> hsplit(std::size_t sections) const;
 
                 // Split the array vertically
-                inline std::vector<NDArrayDynamic<DType>> vsplit(Size index) const;
+                inline std::vector<NDArrayDynamic<DType>> vsplit(std::size_t sections) const;
 
                 inline typename internal::NDArrayStaticInternal<DType, SizeT, SizeTs...>::iterator begin() {
                     return m_ArrayImpl.begin();
@@ -424,5 +424,5 @@ namespace np {
                 internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
             };
         }// namespace array_static
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np
