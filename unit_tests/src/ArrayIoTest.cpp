@@ -82,11 +82,7 @@ TEST_F(ArrayIoTest, dynamicEmptyIntArraySaveLoadTest) {
      */
     // dynamic
     Array<intc> array{};
-#ifdef _MSC_VER
-    const char *filename = "empty_int_msvc";
-#else // !MSVC
     const char *filename = "empty_int";
-#endif// MSVC
     array.save(filename);
     compareFileWithTestData(filename);
     auto arrayLoaded = load<intc>(filename);

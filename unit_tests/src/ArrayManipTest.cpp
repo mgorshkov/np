@@ -142,7 +142,7 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayC_Test) {
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayHSplitTest) {
     Array<int_> array{};
     auto result = hsplit<int_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -152,7 +152,7 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayHSplitTest) {
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayVSplitTest) {
     Array<int_> array{};
     auto result = vsplit<int_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -273,7 +273,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayHSplitTest) {
     // dynamic
     Array<float_> array{};
     auto result = hsplit<float_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -284,7 +284,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVSplitTest) {
     // dynamic
     Array<float_> array{};
     auto result = vsplit<float_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -405,7 +405,7 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayHSplitTest) {
     // dynamic
     Array<string_> array{};
     auto result = hsplit<string_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -416,7 +416,7 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayVSplitTest) {
     // dynamic
     Array<string_> array{};
     auto result = vsplit<string_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -535,7 +535,7 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayHSplitTest) {
     // dynamic
     Array<unicode_> array{};
     auto result = hsplit<unicode_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
@@ -546,7 +546,7 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayVSplitTest) {
     // dynamic
     Array<unicode_> array{};
     auto result = vsplit<unicode_>(array, 2);
-    EXPECT_EQ(result.size(), 2);
+    EXPECT_EQ(result.size(), 2U);
     bool equals = array_equal(result[0], array);
     EXPECT_TRUE(equals);
     equals = array_equal(result[1], array);
