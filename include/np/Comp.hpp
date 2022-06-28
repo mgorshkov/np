@@ -26,20 +26,20 @@ SOFTWARE.
 
 #include <math.h>
 
-#include <np/DType.hpp>
 #include <np/Constants.hpp>
+#include <np/DType.hpp>
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 #include <np/ndarray/internal/Tools.hpp>
 
 #include <np/internal/Tools.hpp>
 
 namespace np {
+    using ndarray::array_dynamic::NDArrayDynamic;
     using ndarray::array_static::NDArrayStatic;
     using ndarray::array_static::NDArrayStaticStub;
-    using ndarray::array_dynamic::NDArrayDynamic;
 
     // Static arrays
     // Single element vs a static array
@@ -80,25 +80,35 @@ namespace np {
     // Dynamic arrays
     // Single element vs a dynamic array
     template<typename DType>
-    inline static bool array_equal(const DType &value, const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &array) {
+    inline static bool array_equal(const DType &value, const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &array) {
         return array.array_equal(value);
     }
 
     // Single element vs a dynamic array
     template<typename DType>
-    inline static bool array_equal(const DType &value, const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &array) {
+    inline static bool array_equal(const DType &value, const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &array) {
+        return array.array_equal(value);
+    }
+
+    template<typename DType>
+    inline static bool array_equal(const DType &value, const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array) {
         return array.array_equal(value);
     }
 
     // Dynamic array vs a single element
     template<typename DType>
-    inline static bool array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &array, const DType &value) {
+    inline static bool array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &array, const DType &value) {
         return array.array_equal(value);
     }
 
     // Dynamic array vs a single element
     template<typename DType>
-    inline static bool array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &array, const DType &value) {
+    inline static bool array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &array, const DType &value) {
+        return array.array_equal(value);
+    }
+
+    template<typename DType>
+    inline static bool array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array, const DType &value) {
         return array.array_equal(value);
     }
 
@@ -106,48 +116,83 @@ namespace np {
     // Arraywise comparison
     template<typename DType>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &a, 
-        const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &b) {
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &b) {
         return a.array_equal(b);
     }
 
     // Arraywise comparison
     template<typename DType>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &a, 
-        const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &b) {
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &b) {
+        return a.array_equal(b);
+    }
+
+    template<typename DType>
+    inline static bool
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &b) {
         return a.array_equal(b);
     }
 
     // Arraywise comparison
     template<typename DType>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &a, 
-        const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &b) {
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &b) {
+        return a.array_equal(b);
+    }
+
+    template<typename DType>
+    inline static bool
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>> &b) {
         return a.array_equal(b);
     }
 
     // Arraywise comparison
     template<typename DType>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &a, 
-        const NDArrayDynamic <DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &b) {
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &b) {
+        return a.array_equal(b);
+    }
+
+    template<typename DType>
+    inline static bool
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &b) {
+        return a.array_equal(b);
+    }
+
+    template<typename DType>
+    inline static bool
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &b) {
+        return a.array_equal(b);
+    }
+
+    template<typename DType>
+    inline static bool
+    array_equal(const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageConstSpan<DType>> &a,
+                const NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageSpan<DType>> &b) {
         return a.array_equal(b);
     }
 
     // Static vs dynamic arrays
     // Arraywise comparison
     template<typename DType, typename Storage>
-    inline static bool array_equal(const NDArrayStaticStub<DType> &a, const NDArrayDynamic <DType, Storage> &b) {
+    inline static bool array_equal(const NDArrayStaticStub<DType> &a, const NDArrayDynamic<DType, Storage> &b) {
         auto shape1 = a.shape();
         auto shape2 = b.shape();
         if (a.shape() != b.shape())
             return false;
-        return a.get() == b.get(0);
+        return a.get(0) == b.get(0);
     }
 
     template<typename DType, typename Storage, Size SizeT, Size... SizeTs>
-    inline static bool array_equal(const NDArrayStatic<DType, SizeT, SizeTs...> &a, const NDArrayDynamic <DType, Storage> &b) {
+    inline static bool array_equal(const NDArrayStatic<DType, SizeT, SizeTs...> &a, const NDArrayDynamic<DType, Storage> &b) {
         auto shape1 = a.shape();
         auto shape2 = b.shape();
         if (a.shape() != b.shape())
@@ -163,14 +208,14 @@ namespace np {
     // Arraywise comparison
     template<typename DType, typename Storage>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, Storage> &a, const NDArrayStaticStub<DType> &b) {
+    array_equal(const NDArrayDynamic<DType, Storage> &a, const NDArrayStaticStub<DType> &b) {
         return array_equal(b, a);
     }
 
     template<typename DType, typename Storage, Size SizeT, Size... SizeTs>
     inline static bool
-    array_equal(const NDArrayDynamic <DType, Storage> &a, const NDArrayStatic<DType, SizeT, SizeTs...> &b) {
+    array_equal(const NDArrayDynamic<DType, Storage> &a, const NDArrayStatic<DType, SizeT, SizeTs...> &b) {
         return array_equal(b, a);
     }
 
-}
+}// namespace np

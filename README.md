@@ -5,7 +5,6 @@ C++ numpy-like template-based array implementation.
 Implements two flavours of N-dimensional array in a minimalistic way.
 
 ## Static array
-
 std::array-based implementation, in which the element type and all the dimensions are fixed and determined at compile time.
 This implies stack array storage.
 
@@ -13,22 +12,38 @@ This implies stack array storage.
 std::vector-based implementation in which only the element type is known at compile time.
 This implies heap array storage.
 
+# Requirements
+Any C++17-compatible compiler:
+* gcc 8 or higher
+* clang 6 or higher
+* Visual Studio 2017 or higher
+
 # Repo
 ```
 git clone https://github.com/mgorshkov/np.git
 ```
 
-# Docs
+# Build unit tests and sample
 ```
-cd doc
-mkdir -p build && cd build
+mkdir build && cd build
 cmake ..
-make doc
+cmake --build .
 ```
 
-Open np/doc/build/html/index.html in your browser.
+# Build docs
+```
+cmake --build . --target doc
+```
 
-# Usage example
+Open np/build/doc/html/index.html in your browser.
+
+# Install
+```
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=~/np_install
+cmake --build . --target install
+```
+
+# Usage example (samples/monte-carlo)
 ```
 #include <iostream>
 #include <np/Creators.hpp>
@@ -45,8 +60,16 @@ int main(int, char **) {
     return 0;
 }
 ```
+# How to build the sample
+
 1. Clone the repo
-2. Include the repo into user's project as CMake subproject
+```
+git clone https://github.com/mgorshkov/np.git
+```
+2. cd samples/monte-carlo
+```
+cd samples/monte-carlo
+```
 3. Make build dir
 ```
 mkdir -p build-release && cd build-release
@@ -57,7 +80,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 5. Build
 ```
-cmake --build.
+cmake --build .
 ```
 6. Run the app
 ```

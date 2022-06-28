@@ -24,17 +24,17 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/DType.hpp>
 #include <np/Constants.hpp>
-#include <np/Shape.hpp>
+#include <np/DType.hpp>
 #include <np/Exception.hpp>
+#include <np/Shape.hpp>
 
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
-    using ndarray::array_static::NDArrayStatic;
     using ndarray::array_dynamic::NDArrayDynamic;
+    using ndarray::array_static::NDArrayStatic;
 
     //////////////////////////////////////////////////////////////
     /// \brief Create a dynamic array of zeros
@@ -64,9 +64,9 @@ namespace np {
     /// \return A dynamic array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size ...SizeTs>
+    template<typename DType, Size SizeT, Size... SizeTs>
     auto zeros() {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{ 0 };
+        return NDArrayStatic<DType, SizeT, SizeTs...>{0};
     }
 
     //////////////////////////////////////////////////////////////
@@ -97,9 +97,9 @@ namespace np {
     /// \return A dynamic array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size ...SizeTs>
+    template<typename DType, Size SizeT, Size... SizeTs>
     auto ones() {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{ 1 };
+        return NDArrayStatic<DType, SizeT, SizeTs...>{1};
     }
 
     //////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType, DType start, DType stop, DType step = 1>
     auto arange() {
-        NP_THROW_UNLESS(step != 0, "Step must not be zero.");
+        NP_THROW_CONSTEXPR_UNLESS(step != 0, "Step must not be zero.");
 
         static DType const constexpr size = (stop - start) / step;
         NDArrayStatic<DType, size> array;
@@ -236,7 +236,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size num = 50>
     auto linspace(DType start, DType stop) {
-        NP_THROW_UNLESS(num > 0, "Number of samples must be non-negative.");
+        NP_THROW_CONSTEXPR_UNLESS(num > 0, "Number of samples must be non-negative.");
 
         NDArrayStatic<DType, num> array;
         Size i{0};
@@ -279,9 +279,9 @@ namespace np {
     /// \return A static array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size ...SizeTs>
+    template<typename DType, Size SizeT, Size... SizeTs>
     auto full(DType fillValue) {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{ fillValue };
+        return NDArrayStatic<DType, SizeT, SizeTs...>{fillValue};
     }
 
     //////////////////////////////////////////////////////////////
@@ -329,7 +329,7 @@ namespace np {
                 array[i][j] = i == j;
             }
         }
-        return NDArrayStatic<DType, SizeT, SizeT> {array};
+        return NDArrayStatic<DType, SizeT, SizeT>{array};
     }
 
     namespace random {
@@ -352,9 +352,9 @@ namespace np {
             std::vector<DType> vector;
             auto size = ndarray::internal::calcSizeByShape(shape);
             vector.resize(size);
-            std::generate(vector.begin(), vector.end(), [&]{ return distribution(generator); });
+            std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
 
-            auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal{vector, shape};
+            auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal<DType>{vector, shape};
             return NDArrayDynamic<DType>{internal};
         }
 
@@ -386,7 +386,7 @@ namespace np {
                 std::uniform_real_distribution<DType> distribution;
                 std::vector<DType> vector;
                 vector.resize(SizeT);
-                std::generate(vector.begin(), vector.end(), [&]{ return distribution(generator); });
+                std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
 
                 m_Array = vector;
             }
@@ -429,7 +429,7 @@ namespace np {
         auto rand() {
             return rand_helper<DType, SizeT, SizeTs...>{};
         }
-    }
+    }// namespace random
 
     //////////////////////////////////////////////////////////////
     /// \brief Create an empty dynamic array of values
@@ -463,4 +463,4 @@ namespace np {
     auto empty() {
         return NDArrayStatic<DType, SizeT, SizeTs...>{};
     }
-}
+}// namespace np

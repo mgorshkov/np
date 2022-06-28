@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include <np/Array.hpp>
 #include <np/Comp.hpp>
@@ -32,28 +32,27 @@ using namespace np;
 
 class ArrayIndexTest : public ::testing::Test {
 protected:
-
 };
 
 TEST_F(ArrayIndexTest, dynamicEmptyIntArrayTest) {
     // dynamic
     Array<int_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyFloatArrayTest) {
     Array<float_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyStringArrayTest) {
     Array<string_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyUnicodeArrayTest) {
     Array<unicode_> array{};
-    EXPECT_THROW(auto slice = array[0] , std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::runtime_error);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArrayTest) {
@@ -223,26 +222,20 @@ TEST_F(ArrayIndexTest, dynamic3DFloatArrayTest) {
 
 TEST_F(ArrayIndexTest, static3DStringArrayTest) {
     string_ c_array_3d[2][4][3] = {
-        {
+            {{"str1_1", "str1_2", "str1_3"},
+             {"str2_1", "str2_2", "str2_3"},
+             {"str3_1", "str3_2", "str3_3"},
+             {"str4_1", "str4_2", "str4_3"}},
+            {{"str5_1", "str5_2", "str5_3"},
+             {"str6_1", "str6_2", "str6_3"},
+             {"str7_1", "str7_2", "str7_3"},
+             {"str8_1", "str8_2", "str8_3"}}};
+    Array<string_, 2, 4, 3> array{c_array_3d};
+    string_ c_array_2d[4][3] = {
             {"str1_1", "str1_2", "str1_3"},
             {"str2_1", "str2_2", "str2_3"},
             {"str3_1", "str3_2", "str3_3"},
-            {"str4_1", "str4_2", "str4_3"}
-        },
-        {
-            { "str5_1", "str5_2", "str5_3" },
-            { "str6_1", "str6_2", "str6_3" },
-            { "str7_1", "str7_2", "str7_3" },
-            { "str8_1", "str8_2", "str8_3" }
-        }
-    };
-    Array<string_, 2, 4, 3> array{c_array_3d};
-    string_ c_array_2d[4][3] = {
-        {"str1_1", "str1_2", "str1_3"},
-        {"str2_1", "str2_2", "str2_3"},
-        {"str3_1", "str3_2", "str3_3"},
-        {"str4_1", "str4_2", "str4_3"}
-    };
+            {"str4_1", "str4_2", "str4_3"}};
     Array<string_, 4, 3> slice{c_array_2d};
     EXPECT_TRUE(array_equal(array[0], slice));
 }

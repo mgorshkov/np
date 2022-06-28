@@ -26,56 +26,60 @@ SOFTWARE.
 
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
 
-namespace np::ndarray::array_dynamic {
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
 
-    // Array dimensions
-    template<typename DType, typename Storage>
-    inline Shape NDArrayDynamic<DType, Storage>::shape() const {
-        return m_ArrayImpl.getShape();
-    }
+            // Array dimensions
+            template<typename DType, typename Storage>
+            inline Shape NDArrayDynamic<DType, Storage>::shape() const {
+                return m_ArrayImpl.getShape();
+            }
 
-    // Array length
-    template<typename DType, typename Storage>
-    inline Size NDArrayDynamic<DType, Storage>::len() const {
-        auto shape = m_ArrayImpl.getShape();
-        return shape.empty() ? 0 : shape[0];
-    }
+            // Array length
+            template<typename DType, typename Storage>
+            inline Size NDArrayDynamic<DType, Storage>::len() const {
+                auto shape = m_ArrayImpl.getShape();
+                return shape.empty() ? 0 : shape[0];
+            }
 
-    // Number of array dimensions
-    template<typename DType, typename Storage>
-    Size NDArrayDynamic<DType, Storage>::ndim() const {
-        return m_ArrayImpl.getShape().size();
-    }
+            // Number of array dimensions
+            template<typename DType, typename Storage>
+            Size NDArrayDynamic<DType, Storage>::ndim() const {
+                return m_ArrayImpl.getShape().size();
+            }
 
-    // Number of array elements
-    template<typename DType, typename Storage>
-    Size NDArrayDynamic<DType, Storage>::size() const {
-        return m_ArrayImpl.size();
-    }
+            // Number of array elements
+            template<typename DType, typename Storage>
+            Size NDArrayDynamic<DType, Storage>::size() const {
+                return m_ArrayImpl.size();
+            }
 
-    template<typename DType, typename Storage>
-    inline constexpr DType NDArrayDynamic<DType, Storage>::dtype() {
-        return DType{};
-    }
+            template<typename DType, typename Storage>
+            inline constexpr DType NDArrayDynamic<DType, Storage>::dtype() {
+                return DType{};
+            }
 
-    // Convert an array to a different type
-    template<typename DType, typename DTypeNew>
-    inline DTypeNew convertValue(DType& value) {
-        return static_cast<DTypeNew>(value);
-    }
+            // Convert an array to a different type
+            template<typename DType, typename DTypeNew>
+            inline DTypeNew convertValue(const DType &value) {
+                return static_cast<DTypeNew>(value);
+            }
 
-    template<typename DType, typename Storage>
-    template<typename DTypeNew>
-    inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> NDArrayDynamic<DType, Storage>::astype() {
-        internal::NDArrayDynamicInternal<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> inter(shape());
-        for (std::size_t i = 0; i < m_ArrayImpl.m_Impl.size(); ++i) {
-            inter.set(i, convertValue<DType, DTypeNew>(m_ArrayImpl.m_Impl[i]));
-        }
+            template<typename DType, typename Storage>
+            template<typename DTypeNew>
+            inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>>
+            NDArrayDynamic<DType, Storage>::astype() {
+                internal::NDArrayDynamicInternal<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> inter(
+                        shape());
+                for (std::size_t i = 0; i < m_ArrayImpl.size(); ++i) {
+                    inter.set(i, convertValue<DType, DTypeNew>(m_ArrayImpl.get(i)));
+                }
 
-        NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> result{inter};
+                NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> result{inter};
 
-        return result;
-    }
-
-}
-
+                return result;
+            }
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

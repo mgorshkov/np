@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include <np/Array.hpp>
 #include <np/Comp.hpp>
@@ -34,7 +34,6 @@ using namespace np;
 
 class ArrayComparisonTest : public ArrayTest {
 protected:
-
 };
 
 TEST_F(ArrayComparisonTest, dynamicEmptyIntArrayTest) {
@@ -451,7 +450,7 @@ TEST_F(ArrayComparisonTest, static3DIntArrayTest) {
 
 TEST_F(ArrayComparisonTest, static3DFloatArrayTest) {
     double c_array_3d_1[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
+                                    {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
     Array<float_, 2, 2, 3> array1{c_array_3d_1};
     double c_array_3d_2[2][2][3] = {{{1.1, 3.3, 2.2}, {5.5, 4.4, 6.6}},
                                     {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
@@ -478,34 +477,24 @@ TEST_F(ArrayComparisonTest, static3DFloatArrayTest) {
 
 TEST_F(ArrayComparisonTest, static3DStringArrayTest) {
     string_ c_array_3d_1[2][4][3] = {
-    {
-        {"str1_1", "str1_2", "str1_3"},
-        {"str2_1", "str2_2", "str2_3"},
-        {"str3_1", "str3_2", "str3_3"},
-        {"str4_1", "str4_2", "str4_3"}
-        },
-    {
-        { "str5_1", "str5_2", "str5_3" },
-        { "str6_1", "str6_2", "str6_3" },
-        { "str7_1", "str7_2", "str7_3" },
-        { "str8_1", "str8_2", "str8_3" }
-        }
-    };
+            {{"str1_1", "str1_2", "str1_3"},
+             {"str2_1", "str2_2", "str2_3"},
+             {"str3_1", "str3_2", "str3_3"},
+             {"str4_1", "str4_2", "str4_3"}},
+            {{"str5_1", "str5_2", "str5_3"},
+             {"str6_1", "str6_2", "str6_3"},
+             {"str7_1", "str7_2", "str7_3"},
+             {"str8_1", "str8_2", "str8_3"}}};
     Array<string_, 2, 4, 3> array1{c_array_3d_1};
     string_ c_array_3d_2[2][4][3] = {
-    {
-        {"str1_1", "str1_2", "str1_3"},
-        {"str2_1", "str2_3", "str2_2"},
-        {"str3_1", "str3_2", "str3_3"},
-        {"str4_1", "str4_2", "str4_3"}
-        },
-    {
-        { "str5_1", "str5_3", "str5_2" },
-        { "str6_1", "str6_2", "str6_3" },
-        { "str7_1", "str7_2", "str7_3" },
-        { "str8_1", "str8_2", "str8_3" }
-        }
-    };
+            {{"str1_1", "str1_2", "str1_3"},
+             {"str2_1", "str2_3", "str2_2"},
+             {"str3_1", "str3_2", "str3_3"},
+             {"str4_1", "str4_2", "str4_3"}},
+            {{"str5_1", "str5_3", "str5_2"},
+             {"str6_1", "str6_2", "str6_3"},
+             {"str7_1", "str7_2", "str7_3"},
+             {"str8_1", "str8_2", "str8_3"}}};
     Array<string_, 2, 4, 3> array2{c_array_3d_2};
     // Elementwise comparison
     {

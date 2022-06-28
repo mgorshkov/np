@@ -24,9 +24,9 @@ SOFTWARE.
 
 #pragma once
 
-#include "DType.hpp"
-#include "Constants.hpp"
 #include "Array.hpp"
+#include "Constants.hpp"
+#include "DType.hpp"
 
 namespace np {
 
@@ -40,10 +40,9 @@ namespace np {
     /// \return A copy of array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> copy(const Array<DType, SizeT, SizeTs...>& array) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    Array<DType, SizeT, SizeTs...> copy(const Array<DType, SizeT, SizeTs...> &array) {
         return array.copy();
     }
 
-}
-
+}// namespace np

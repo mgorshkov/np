@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include <np/Array.hpp>
-#include <np/Math.hpp>
 #include <np/Creators.hpp>
+#include <np/Math.hpp>
 
 #include <ArrayTest.hpp>
 
@@ -188,10 +188,10 @@ TEST_F(ArrayCreatorsTest, fillCreationTest) {
 TEST_F(ArrayCreatorsTest, testZeros) {
     auto array_1d = zeros<int_, 3>();
     checkArrayRepr<int_, 3>(array_1d, "[0 0 0]");
-    
+
     auto array_2d = zeros<int_, 2, 3>();
     checkArrayRepr<int_, 2, 3>(array_2d, "[[0 0 0]\n [0 0 0]]");
-    
+
     auto array_3d = zeros<int_, 2, 2, 3>();
     checkArrayRepr<int_, 2, 2, 3>(array_3d, "[[[0 0 0]\n [0 0 0]]\n [[0 0 0]\n [0 0 0]]]");
 }
@@ -200,10 +200,10 @@ TEST_F(ArrayCreatorsTest, testZeros) {
 TEST_F(ArrayCreatorsTest, testOnes) {
     auto array_1d = ones<int_, 3>();
     checkArrayRepr<int_, 3>(array_1d, "[1 1 1]");
-    
+
     auto array_2d = ones<int_, 2, 3>();
     checkArrayRepr<int_, 2, 3>(array_2d, "[[1 1 1]\n [1 1 1]]");
-    
+
     auto array_3d = ones<int_, 2, 2, 3>();
     checkArrayRepr<int_, 2, 2, 3>(array_3d, "[[[1 1 1]\n [1 1 1]]\n [[1 1 1]\n [1 1 1]]]");
 }
@@ -253,15 +253,15 @@ TEST_F(ArrayCreatorsTest, testEyeDynamic) {
 
 // Create an NDArray with random values
 TEST_F(ArrayCreatorsTest, testRandomStatic) {
-    auto array = static_cast<NDArrayStatic<int_, 2, 2>>(random::rand<int_, 2, 2>());
+    auto array = static_cast<NDArrayStatic<float_, 2, 2>>(random::rand<float_, 2, 2>());
     Shape shape{2, 2};
-    checkArrayShape<int_, 2, 2>(array, shape);
+    checkArrayShape<float_, 2, 2>(array, shape);
 }
 
 TEST_F(ArrayCreatorsTest, testRandomDynamic) {
     Shape shape{2, 2};
-    auto array = random::rand<int_>(shape);
-    checkArrayShape<int_>(array, shape);
+    auto array = random::rand<float_>(shape);
+    checkArrayShape<float_>(array, shape);
 }
 
 // Create an empty NDArray

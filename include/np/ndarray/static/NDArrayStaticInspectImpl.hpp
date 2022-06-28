@@ -27,45 +27,46 @@ SOFTWARE.
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 #include <np/ndarray/static/internal/Tools.hpp>
 
-namespace np::ndarray::array_static {
-    // Array dimensions
-    template<typename DType, Size SizeT, Size... SizeTs>
-    Shape NDArrayStatic<DType, SizeT, SizeTs...>::shape() const {
-        return {SizeT, SizeTs...};
-    }
 
-    // Length of array
-    template<typename DType, Size SizeT, Size... SizeTs>
-    Size NDArrayStatic<DType, SizeT, SizeTs...>::len() const {
-        return SizeT;
-    }
+namespace np {
+    namespace ndarray {
+        namespace array_static {
+            // Array dimensions
+            template<typename DType, Size SizeT, Size... SizeTs>
+            Shape NDArrayStatic<DType, SizeT, SizeTs...>::shape() const {
+                return {SizeT, SizeTs...};
+            }
 
-    // Number of array dimensions
-    template<typename DType, Size SizeT, Size... SizeTs>
-    Size NDArrayStatic<DType, SizeT, SizeTs...>::ndim() {
-        return 1 + sizeof...(SizeTs);
-    }
+            // Length of array
+            template<typename DType, Size SizeT, Size... SizeTs>
+            Size NDArrayStatic<DType, SizeT, SizeTs...>::len() const {
+                return SizeT;
+            }
 
-    // Number of array elements
-    template<typename DType, Size SizeT, Size... SizeTs>
-    Size NDArrayStatic<DType, SizeT, SizeTs...>::size() {
-        size_t result{SizeT};
-        if constexpr ((sizeof...(SizeTs)) != 0)
-            for (auto i : { SizeTs... }) result *= i;
-        return result;
-    }
+            // Number of array dimensions
+            template<typename DType, Size SizeT, Size... SizeTs>
+            Size NDArrayStatic<DType, SizeT, SizeTs...>::ndim() const {
+                return 1 + sizeof...(SizeTs);
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline constexpr DType NDArrayStatic<DType, SizeT, SizeTs...>::dtype() {
-        return DType{};
-    }
+            // Number of array elements
+            template<typename DType, Size SizeT, Size... SizeTs>
+            Size NDArrayStatic<DType, SizeT, SizeTs...>::size() const {
+                return (SizeT * ... * SizeTs);
+            }
 
-    // Convert an array to a different type
-    template<typename DType, Size SizeT, Size... SizeTs>
-    template<typename DTypeNew>
-    NDArrayStatic<DTypeNew, SizeT, SizeTs...> 
-    NDArrayStatic<DType, SizeT, SizeTs...>::astype() const {
-        return NDArrayStatic<DTypeNew, SizeT, SizeTs...>{};
-    }
-}
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline constexpr DType NDArrayStatic<DType, SizeT, SizeTs...>::dtype() const {
+                return DType{};
+            }
 
+            // Convert an array to a different type
+            template<typename DType, Size SizeT, Size... SizeTs>
+            template<typename DTypeNew>
+            NDArrayStatic<DTypeNew, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::astype() const {
+                return NDArrayStatic<DTypeNew, SizeT, SizeTs...>{};
+            }
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

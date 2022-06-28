@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(MONTE_CARLO monte_carlo)
 
-project($MONTE_CARLO)
+project(${MONTE_CARLO})
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -10,11 +10,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
 if (MSVC)
     add_compile_options(/W4 /WX)
+	add_definitions(-DNOMINMAX) # allow using min/max in the project
 else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
@@ -27,8 +25,10 @@ target_sources(${MONTE_CARLO} PUBLIC main.cpp)
 
 target_link_libraries(
     ${MONTE_CARLO}
-    ${PTHREAD}
-    stdc++)
+    ${PTHREAD})
 
-
-
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${MONTE_CARLO}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT ${MONTE_CARLO}
+)

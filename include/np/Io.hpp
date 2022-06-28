@@ -48,8 +48,8 @@ namespace np {
     /// \param array Array to save
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void save(const char* filename, const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline void save(const char *filename, const Array<DType, SizeTs, Sizes...> &array) {
         array.save(filename);
     }
 
@@ -64,8 +64,8 @@ namespace np {
     /// \param array Array to save
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void savez(const char* filename, const Array<DType, SizeTs, Sizes...>& array) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline void savez(const char *filename, const Array<DType, SizeTs, Sizes...> &array) {
         array.savez(filename);
     }
 
@@ -79,8 +79,8 @@ namespace np {
     /// \return Loaded dynamic array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault>
-    inline Array<DType> load(const char* filename) {
+    template<typename DType = DTypeDefault>
+    inline Array<DType> load(const char *filename) {
         return NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>>::load(filename);
     }
 
@@ -96,8 +96,8 @@ namespace np {
     /// \return Loaded dynamic array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault>
-    inline Array<DType> loadtxt(const char* filename) {
+    template<typename DType = DTypeDefault>
+    inline Array<DType> loadtxt(const char *filename) {
         return NDArrayDynamic<DType>::loadtxt(filename);
     }
 
@@ -114,8 +114,8 @@ namespace np {
     /// \return Loaded dynamic array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault>
-    inline Array<DType> genfromtxt(const char* filename, const char* delimiter) {
+    template<typename DType = DTypeDefault>
+    inline Array<DType> genfromtxt(const char *filename, const char *delimiter) {
         return NDArrayDynamic<DType>::genfromtxt(filename, delimiter);
     }
 
@@ -131,11 +131,10 @@ namespace np {
     /// \param delimiter String that delimits fields
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void savetxt(const char* filename, const Array<DType, SizeTs, Sizes...>& array, const char* delimiter) {
+    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
+    inline void savetxt(const char *filename, const Array<DType, SizeTs, Sizes...> &array, const char *delimiter) {
         //"Expected 1D or 2D array, got %dD array instead" % X.ndim)
         //ValueError: Expected 1D or 2D array, got 3D array instead
         array.savetxt(filename, delimiter);
     }
-} // namespace np
-
+}// namespace np

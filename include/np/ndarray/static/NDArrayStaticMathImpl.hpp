@@ -26,126 +26,142 @@ SOFTWARE.
 
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
 
-namespace np::ndarray::array_static {
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator + (const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        return add(array);
-    }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::add(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, ReducedType{m_ArrayImpl[i]} + ReducedType{array[i]});
-        }
-        return result;
-    }
+namespace np {
+    namespace ndarray {
+        namespace array_static {
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::operator+(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return add(array);
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator - (const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        return subtract(array);
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::add(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < size(); ++i) {
+                    result.set(i, get(i) + array.get(i));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::subtract(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, ReducedType{m_ArrayImpl[i]} - ReducedType{array[i]});
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::operator-(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return subtract(array);
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator * (const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        return multiply(array);
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::subtract(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < size(); ++i) {
+                    result.set(i, get(i) - array.get(i));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::multiply(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, ReducedType{m_ArrayImpl[i]} * ReducedType{array[i]});
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::operator*(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return multiply(array);
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::operator / (const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        return divide(array);
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::multiply(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < size(); ++i) {
+                    result.set(i, get(i) * array.get(i));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::divide(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, ReducedType{m_ArrayImpl[i]} / ReducedType{array[i]});
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::operator/(
+                    const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return divide(array);
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::exp(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, ReducedType{m_ArrayImpl[i]}.exp(ReducedType{array[i]}));
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::divide(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < size(); ++i) {
+                    result.set(i, get(i) / array.get(i));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::sqrt() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, sqrt(ReducedType{m_ArrayImpl[i]}));
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::exp(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < SizeT; ++i) {
+                    result.set(i, ReducedType{m_ArrayImpl[i]}.exp(ReducedType{array[i]}));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::sin() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, sin(ReducedType{m_ArrayImpl[i]}));
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::sqrt() const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < SizeT; ++i) {
+                    result.set(i, sqrt(ReducedType{m_ArrayImpl[i]}));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::cos() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, cos(ReducedType{m_ArrayImpl[i]}));
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::sin() const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < SizeT; ++i) {
+                    result.set(i, sin(ReducedType{m_ArrayImpl[i]}));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::log() const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        for (Size i = 0; i < SizeT; ++i) {
-            set(result, i, log(ReducedType{m_ArrayImpl[i]}));
-        }
-        return result;
-    }
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::cos() const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < SizeT; ++i) {
+                    result.set(i, cos(ReducedType{m_ArrayImpl[i]}));
+                }
+                return result;
+            }
 
-    template<typename DType, Size SizeT, Size... SizeTs>
-    inline NDArrayStatic<DType, SizeT, SizeTs...>
-    NDArrayStatic<DType, SizeT, SizeTs...>::dot(const NDArrayStatic<DType, SizeT, SizeTs...> &/*array*/) const {
-        NDArrayStatic<DType, SizeT, SizeTs...> result;
-        return result;
-    }
-}
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayStatic<DType, SizeT, SizeTs...>
+            NDArrayStatic<DType, SizeT, SizeTs...>::log() const {
+                NDArrayStatic<DType, SizeT, SizeTs...> result;
+                for (Size i = 0; i < SizeT; ++i) {
+                    result.set(i, log(ReducedType{m_ArrayImpl[i]}));
+                }
+                return result;
+            }
 
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline DType
+            NDArrayStatic<DType, SizeT, SizeTs...>::dot(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                if (shape().size() != 1 || array.shape().size() != 1 || shape() != array.shape()) {
+                    throw std::runtime_error("Shapes are different or arguments are not 1D arrays");
+                }
+                DType result{0};
+                for (Size i = 0; i < size(); ++i) {
+                    result += get(i) * array.get(i);
+                }
+                return result;
+            }
+        }// namespace array_static
+    }    // namespace ndarray
+}// namespace np

@@ -26,18 +26,21 @@ SOFTWARE.
 
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
 
-namespace np::ndarray::array_dynamic
-{
-    // Create a view of the array with the same data
-    template<typename DType, typename Storage>
-    inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::view() const {
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>(*this);
-    }
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
 
-    // Create a copy of the array
-    template<typename DType, typename Storage>
-    inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::copy() const {
-        return NDArrayDynamic<DType, Storage>(*this);
-    }
-}
+            // Create a view of the array with the same data
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::view() const {
+                return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>(*this);
+            }
 
+            // Create a copy of the array
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::copy() const {
+                return *this;
+            }
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

@@ -24,93 +24,110 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/dynamic/internal/Tools.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/dynamic/internal/Tools.hpp>
 
-namespace np::ndarray::array_dynamic {
-    // Elementwise comparison
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator==(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) == array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
+            // Elementwise comparison
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator==(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) == array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator==(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) == array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator==(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) == array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    // Elementwise comparison
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator<(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) < array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+            // Elementwise comparison
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator<(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) < array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator<(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) < array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator<(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) < array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    // Elementwise comparison
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator>(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) > array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+            // Elementwise comparison
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator>(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) > array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-    NDArrayDynamic<DType, Storage>::operator>(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
-        NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
-        for (Size i = 0; i < size(); ++i) {
-            auto equals = get(i) > array.get(i);
-            result.set(i, equals);
-        }
-        return result;
-    }
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+            NDArrayDynamic<DType, Storage>::operator>(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
+                NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
+                for (Size i = 0; i < size(); ++i) {
+                    auto equals = get(i) > array.get(i);
+                    result.set(i, equals);
+                }
+                return result;
+            }
 
-    template<typename DType, typename Storage>
-    inline bool NDArrayDynamic<DType, Storage>::array_equal(const DType& element) const {
-        if (shape().size() != 1 || shape()[0] != 1)
-            return false;
-        return m_ArrayImpl[0] == element;
-    }
+            template<typename DType, typename Storage>
+            inline bool NDArrayDynamic<DType, Storage>::array_equal(const DType &element) const {
+                auto sh = shape();
+                return sh.size() == 1 && sh[0] == 1 && m_ArrayImpl.get(0) == element;
+            }
 
-    template <typename DType, typename Storage>
-    inline bool NDArrayDynamic<DType, Storage>::array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
-        return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
-    }
+            template<typename DType, typename Storage>
+            inline bool NDArrayDynamic<DType, Storage>::array_equal(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
+                return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
+            }
 
-    template <typename DType, typename Storage>
-    inline bool NDArrayDynamic<DType, Storage>::array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
-        return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
-    }
-}
+            template<typename DType, typename Storage>
+            inline bool NDArrayDynamic<DType, Storage>::array_equal(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const {
+                return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
+            }
+
+            template<typename DType, typename Storage>
+            inline bool NDArrayDynamic<DType, Storage>::array_equal(
+                    const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array) const {
+                return internal::array_equal(m_ArrayImpl, array.m_ArrayImpl);
+            }
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

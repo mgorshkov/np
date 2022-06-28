@@ -27,79 +27,93 @@ SOFTWARE.
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
 #include <np/ndarray/dynamic/internal/Tools.hpp>
 
-namespace np::ndarray::array_dynamic {
-    // Subsetting
-    // Select an element at an index
-    // a[2]
-    template <typename DType, typename Storage>
-    inline void NDArrayDynamic<DType, Storage>::set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>& array) {
-        m_ArrayImpl[i] = array.m_ArrayImpl;
-    }
-
-    template <typename DType, typename Storage>
-    inline void NDArrayDynamic<DType, Storage>::set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>& array) {
-        m_ArrayImpl[i] = array.m_ArrayImpl;
-    }
-
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> NDArrayDynamic<DType, Storage>::operator[](std::size_t i) const {
-        auto subArray = m_ArrayImpl[i];
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
-    }
-
-    template <typename DType, typename Storage>
-    inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> NDArrayDynamic<DType, Storage>::at(std::size_t i) {
-        auto subArray = m_ArrayImpl[i];
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
-    }
-
-    template <typename DType, typename Storage>
-    inline const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> NDArrayDynamic<DType, Storage>::at(std::size_t i) const {
-        const auto subArray = m_ArrayImpl[i];
-        return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
-    }
-
-    // Boolean indexing
-    // a[a < 2]                             Select elements from a less than 2
-    template<typename DType, typename Storage>
-    inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::operator[](const std::string &cond) const {
-        internal::OperatorWithArg operatorWithArg = internal::getOperatorWithArg(cond);
-        auto pred = [&operatorWithArg](DType value) {
-            switch (operatorWithArg.first) {
-                case internal::Operator::More:
-                    return value > operatorWithArg.second;
-                case internal::Operator::MoreOrEqual:
-                    return value >= operatorWithArg.second;
-                case internal::Operator::Equal:
-                    return value == operatorWithArg.second;
-                case internal::Operator::LessOrEqual:
-                    return value <= operatorWithArg.second;
-                case internal::Operator::Less:
-                    return value < operatorWithArg.second;
-                default:
-                    std::runtime_error("Invalid operator");
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
+            // Subsetting
+            // Select an element at an index
+            // a[2]
+            template<typename DType, typename Storage>
+            inline void NDArrayDynamic<DType, Storage>::set(std::size_t i,
+                                                            const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) {
+                m_ArrayImpl[i] = array.m_ArrayImpl;
             }
-            return false;
-        };
-        std::vector<DType> result;
-        std::copy_if(m_ArrayImpl.m_Impl.begin(),
-                     m_ArrayImpl.m_Impl.end(),
-                     std::back_inserter(result),
-                     pred);
 
-        Shape shape{static_cast<Size>(result.size())};
-        return NDArrayDynamic<DType, Storage>{internal::NDArrayDynamicInternal{result, shape}};
-    }
+            template<typename DType, typename Storage>
+            inline void NDArrayDynamic<DType, Storage>::set(std::size_t i,
+                                                            const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) {
+                m_ArrayImpl[i] = array.m_ArrayImpl;
+            }
 
-    template<typename DType, typename Storage>
-    inline DType NDArrayDynamic<DType, Storage>::get(std::size_t i) const {
-        return m_ArrayImpl.get(i);
-    }
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>
+            NDArrayDynamic<DType, Storage>::operator[](std::size_t i) const {
+                auto subArray = m_ArrayImpl[i];
+                return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>{subArray};
+            }
 
-    template<typename DType, typename Storage>
-    inline void NDArrayDynamic<DType, Storage>::set(std::size_t i, const DType& value) {
-        m_ArrayImpl.set(i, value);
-    }
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>
+            NDArrayDynamic<DType, Storage>::at(std::size_t i) {
+                auto subArray = m_ArrayImpl[i];
+                return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>{subArray};
+            }
 
-} // np::ndarray::array_dynamic
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>
+            NDArrayDynamic<DType, Storage>::at(std::size_t i) const {
+                const auto subArray = m_ArrayImpl[i];
+                return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>{subArray};
+            }
 
+            // Boolean indexing
+            // a[a < 2]                             Select elements from a less than 2
+            template<typename DType, typename Storage>
+            inline NDArrayDynamic<DType, Storage>
+            NDArrayDynamic<DType, Storage>::operator[](const std::string &cond) const {
+                internal::OperatorWithArg operatorWithArg = internal::getOperatorWithArg(cond);
+                auto pred = [&operatorWithArg](DType value) {
+                    switch (operatorWithArg.first) {
+                        case internal::Operator::More:
+                            return value > operatorWithArg.second;
+                        case internal::Operator::MoreOrEqual:
+                            return value >= operatorWithArg.second;
+                        case internal::Operator::Equal:
+                            return value == operatorWithArg.second;
+                        case internal::Operator::LessOrEqual:
+                            return value <= operatorWithArg.second;
+                        case internal::Operator::Less:
+                            return value < operatorWithArg.second;
+                        default:
+                            std::runtime_error("Invalid operator");
+                    }
+                    return false;
+                };
+                std::vector<DType> result;
+                std::copy_if(m_ArrayImpl.cbegin(),
+                             m_ArrayImpl.cend(),
+                             std::back_inserter(result),
+                             pred);
+
+                Shape shape{static_cast<Size>(result.size())};
+                return NDArrayDynamic<DType, Storage>{internal::NDArrayDynamicInternal<DType>{result, shape}};
+            }
+
+            template<typename DType, typename Storage>
+            inline const DType &NDArrayDynamic<DType, Storage>::get(std::size_t i) const {
+                return m_ArrayImpl.get(i);
+            }
+
+            template<typename DType, typename Storage>
+            inline DType &NDArrayDynamic<DType, Storage>::get(std::size_t i) {
+                return m_ArrayImpl.get(i);
+            }
+
+            template<typename DType, typename Storage>
+            inline void NDArrayDynamic<DType, Storage>::set(std::size_t i, const DType &value) {
+                m_ArrayImpl.set(i, value);
+            }
+
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

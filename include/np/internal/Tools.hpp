@@ -26,18 +26,21 @@ SOFTWARE.
 
 #include <cstddef>
 #include <math.h>
+#include <tuple>
+#include <type_traits>
 
-namespace np::internal {
-    template<class T>
-    typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type almost_equal(T x, T y, int ulp)
-    {
-        // the machine epsilon has to be scaled to the magnitude of the values used
-        // and multiplied by the desired precision in ULPs (units in the last place)
-        return std::fabs(x-y) <= std::numeric_limits<T>::epsilon() * std::fabs(x+y) * ulp
-               // unless the result is subnormal
-               || std::fabs(x-y) < std::numeric_limits<T>::min();
-    }
-}
+namespace np {
+    namespace internal {
+        template<class T>
+        typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type almost_equal(T x, T y, int ulp) {
+            // the machine epsilon has to be scaled to the magnitude of the values used
+            // and multiplied by the desired precision in ULPs (units in the last place)
+            // unless the result is subnormal
+            return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y) * ulp ||
+                   std::fabs(x - y) < std::numeric_limits<T>::min();
+        }
+    }// namespace internal
+}// namespace np
 
 namespace np {
     static const constexpr int ULP_TOLERANCE = 7;
@@ -49,4 +52,4 @@ namespace np {
     inline static bool array_equal(const double &value1, const double &value2) {
         return internal::almost_equal(value1, value2, ULP_TOLERANCE);
     }
-}
+}// namespace np

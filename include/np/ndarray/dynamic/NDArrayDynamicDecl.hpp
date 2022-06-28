@@ -24,293 +24,370 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
 #include <array>
-#include <ostream>
+#include <cstddef>
 #include <optional>
+#include <ostream>
+#include <vector>
 
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 
 #include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
 
-namespace np::ndarray::array_dynamic {
-    // N-dimensional dynamic array
-    template <typename DType, typename Storage = internal::NDArrayDynamicInternalStorageVector<DType>>
-    class NDArrayDynamic {
-    public:
-        template<std::size_t Size1T>
-        using CArray1DType = DType[Size1T];
-        template<std::size_t Size1T, std::size_t Size2T>
-        using CArray2DType = CArray1DType<Size1T>[Size2T];
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
+            // N-dimensional dynamic array
+            template<typename DType, typename Storage = internal::NDArrayDynamicInternalStorageVector<DType>>
+            class NDArrayDynamic {
+            public:
+                template<std::size_t Size1T>
+                using CArray1DType = DType[Size1T];
+                template<std::size_t Size1T, std::size_t Size2T>
+                using CArray2DType = CArray1DType<Size1T>[Size2T];
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
 
-        template<std::size_t Size1T>
-        using StdArray1DType = std::array<DType, Size1T>;
-        template<std::size_t Size1T, std::size_t Size2T>
-        using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
+                template<std::size_t Size1T>
+                using StdArray1DType = std::array<DType, Size1T>;
+                template<std::size_t Size1T, std::size_t Size2T>
+                using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
 
-        using StdVector1DType = std::vector<DType>;
-        using StdVector2DType = std::vector<StdVector1DType>;
-        using StdVector3DType = std::vector<StdVector2DType>;
-        using StdVector4DType = std::vector<StdVector3DType>;
+                using StdVector1DType = std::vector<DType>;
+                using StdVector2DType = std::vector<StdVector1DType>;
+                using StdVector3DType = std::vector<StdVector2DType>;
+                using StdVector4DType = std::vector<StdVector3DType>;
 
-        // Creating Arrays
-        inline NDArrayDynamic() noexcept;
+                // Creating Arrays
+                inline NDArrayDynamic() noexcept;
 
-        inline explicit NDArrayDynamic(const DType &value) noexcept;
+                inline explicit NDArrayDynamic(const DType &value) noexcept;
 
-        inline explicit NDArrayDynamic(const Shape &shape) noexcept;
+                inline explicit NDArrayDynamic(Shape shape) noexcept;
 
-        inline NDArrayDynamic(const NDArrayDynamic &another) noexcept;
+                inline NDArrayDynamic(const NDArrayDynamic &another) noexcept;
 
-        inline NDArrayDynamic(NDArrayDynamic &&another) noexcept;
+                inline NDArrayDynamic(NDArrayDynamic &&another) noexcept;
 
-        template <typename InternalStorage>
-        inline explicit NDArrayDynamic(const internal::NDArrayDynamicInternal <DType, InternalStorage> &array) noexcept;
+                template<typename InternalStorage>
+                inline explicit NDArrayDynamic(const internal::NDArrayDynamicInternal<DType, InternalStorage> &array) noexcept;
 
-        template <typename InternalStorage>
-        inline explicit NDArrayDynamic(internal::NDArrayDynamicInternal <DType, InternalStorage> &&array) noexcept;
+                template<typename InternalStorage>
+                inline explicit NDArrayDynamic(internal::NDArrayDynamicInternal<DType, InternalStorage> &&array) noexcept;
 
-        template<std::size_t Size1T>
-        inline NDArrayDynamic(const CArray1DType<Size1T>& array) noexcept;
+                template<std::size_t Size1T>
+                inline NDArrayDynamic(const CArray1DType<Size1T> &array) noexcept;
 
-        template<std::size_t Size1T>
-        inline NDArrayDynamic(const CArray1DType<Size1T>& array, bool isColumnVector) noexcept;
+                template<std::size_t Size1T>
+                inline NDArrayDynamic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T>
-        inline NDArrayDynamic(const CArray2DType<Size1T, Size2T>& array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline NDArrayDynamic(const CArray2DType<Size1T, Size2T> &array) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline NDArrayDynamic(const CArray3DType<Size1T, Size2T, Size3T>& array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline NDArrayDynamic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline NDArrayDynamic(const CArray4DType<Size1T, Size2T, Size3T, Size4T>& array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline NDArrayDynamic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
-        template<std::size_t Size1T>
-        inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array) noexcept;
+                template<std::size_t Size1T>
+                inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array) noexcept;
 
-        template<std::size_t Size1T>
-        inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept;
+                template<std::size_t Size1T>
+                inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T>
-        inline explicit NDArrayDynamic(const StdArray2DType<Size1T, Size2T> &array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline explicit NDArrayDynamic(const StdArray2DType<Size1T, Size2T> &array) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
-        inline explicit NDArrayDynamic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline explicit NDArrayDynamic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-        template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
-        inline explicit NDArrayDynamic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline explicit NDArrayDynamic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
-        inline explicit NDArrayDynamic(const StdVector1DType &vector) noexcept;
+                inline explicit NDArrayDynamic(const StdVector1DType &vector) noexcept;
 
-        inline NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept;
+                inline explicit NDArrayDynamic(const StdVector1DType &vector, Shape shape) noexcept;
 
-        inline explicit NDArrayDynamic(const StdVector2DType &vector) noexcept;
+                inline NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept;
 
-        inline explicit NDArrayDynamic(const StdVector3DType &vector) noexcept;
+                inline explicit NDArrayDynamic(const StdVector2DType &vector) noexcept;
 
-        inline explicit NDArrayDynamic(const StdVector4DType &vector) noexcept;
+                inline explicit NDArrayDynamic(const StdVector3DType &vector) noexcept;
 
-        inline NDArrayDynamic(std::initializer_list<DType> init_list) noexcept;
+                inline explicit NDArrayDynamic(const StdVector4DType &vector) noexcept;
 
-        inline ~NDArrayDynamic() noexcept;
+                inline NDArrayDynamic(std::initializer_list<DType> init_list) noexcept;
 
-        inline NDArrayDynamic &operator=(const NDArrayDynamic &another) noexcept;
+                inline ~NDArrayDynamic() noexcept;
 
-        inline NDArrayDynamic &operator=(NDArrayDynamic &&another) noexcept;
+                inline NDArrayDynamic &operator=(const NDArrayDynamic &another) noexcept;
 
-        // Indexing
-        inline void set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>& array);
-        inline void set(std::size_t i, const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>& array);
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> operator[](std::size_t i) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> at(std::size_t i);
-        inline const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> at(std::size_t i) const;
+                inline NDArrayDynamic &operator=(NDArrayDynamic &&another) noexcept;
 
-        inline NDArrayDynamic<DType, Storage> operator[](const std::string &cond) const;
+                // Indexing arrays
+                inline void set(std::size_t i,
+                                const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array);
 
-        inline DType get(std::size_t i) const;
-        inline void set(std::size_t i, const DType& value);
+                inline void set(std::size_t i,
+                                const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array);
 
-        inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayDynamic &array) {
-            return stream << array.m_ArrayImpl;
-        }
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>
+                operator[](std::size_t i) const;
 
-        // Save and load
-        inline void save(const char* filename);
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> at(std::size_t i);
 
-        inline void savez(const char* filename);
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>
+                at(std::size_t i) const;
 
-        inline static NDArrayDynamic load(const char* filename);
+                inline NDArrayDynamic<DType, Storage> operator[](const std::string &cond) const;
 
-        // Saving & Loading Text Files
-        inline static NDArrayDynamic loadtxt(const char* filename);
+                inline const DType &get(std::size_t i) const;
 
-        inline NDArrayDynamic genfromtxt(const char* filename);
+                inline DType &get(std::size_t i);
 
-        inline void savetxt(const char* filename);
+                inline void set(std::size_t i, const DType &value);
 
-        // Array dimensions
-        inline Shape shape() const;
+                inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayDynamic &array) {
+                    return stream << array.m_ArrayImpl;
+                }
 
-        // Array length
-        inline Size len() const;
+                // Save and load
+                inline void save(const char *filename);
 
-        // Number of array dimensions
-        inline Size ndim() const;
+                inline void savez(const char *filename);
 
-        // Number of array elements
-        inline Size size() const;
+                inline static NDArrayDynamic load(const char *filename);
 
-        inline constexpr DType dtype();
+                // Saving & Loading Text Files
+                inline static NDArrayDynamic loadtxt(const char *filename);
 
-        template<typename DTypeNew>
-        inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> astype();
+                inline NDArrayDynamic genfromtxt(const char *filename);
 
-        // Array mathematics
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> operator + (const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> add(const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> operator - (const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> subtract(const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> operator * (const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> multiply(const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> operator / (const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> divide(const NDArrayDynamic& array) const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> exp() const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> sqrt() const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> sin() const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> cos() const;
-        inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> log() const;
+                inline void savetxt(const char *filename);
 
-        // Dot product
-        inline NDArrayDynamic dot(const NDArrayDynamic &array) const;
+                // Array dimensions
+                inline Shape shape() const;
 
-        // Elementwise comparison
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-            operator==(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-            operator<(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
-            operator>(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-            operator==(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> 
-            operator<(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
-        inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
-            operator>(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
+                // Array length
+                inline Size len() const;
 
-        // Array-wise comparison
-        inline bool array_equal(const DType& value) const;
-        inline bool array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
-        inline bool array_equal(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
+                // Number of array dimensions
+                inline Size ndim() const;
 
-        // Aggregate functions
-        // Array-wise sum
-        inline DType sum() const;
+                // Number of array elements
+                inline Size size() const;
 
-        // Array-wise minimum value
-        inline DType min() const;
+                inline constexpr DType dtype();
 
-        // Maximum value of an Array row
-        inline DType max() const;
+                template<typename DTypeNew>
+                inline NDArrayDynamic<DTypeNew, internal::NDArrayDynamicInternalStorageVector<DTypeNew>> astype();
 
-        // Cumulative sum of the elements
-        inline NDArrayDynamic<DType, Storage> cumsum() const;
+                // Array mathematics
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                operator+(const NDArrayDynamic &array) const;
 
-        // Mean
-        inline DType mean() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                add(const NDArrayDynamic &array) const;
 
-        // Median
-        inline DType median() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                operator-(const NDArrayDynamic &array) const;
 
-        // Covariance
-        inline NDArrayDynamic<DType, Storage> cov() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                subtract(const NDArrayDynamic &array) const;
 
-        // Correlation coefficient
-        inline NDArrayDynamic<DType, Storage> corrcoef() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                operator*(const NDArrayDynamic &array) const;
 
-        // Compute the standard deviation along the specified axis.
-        inline DType std_() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                multiply(const NDArrayDynamic &array) const;
 
-        // Create a view of the array with the same data
-        inline NDArrayDynamic<DType, Storage> view() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                operator/(const NDArrayDynamic &array) const;
 
-        // Create a deep copy of the array
-        inline NDArrayDynamic<DType, Storage> copy() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>
+                divide(const NDArrayDynamic &array) const;
 
-        // Sort an array
-        inline void sort();
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> exp() const;
 
-        // template<std::size_t N = -1>
-        // inline void sort(std::optional<Axis<N>> axis=std::optional<Axis<N>>{});
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> sqrt() const;
 
-        // Permute array dimensions
-        inline NDArrayDynamic<DType, Storage> transpose() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> sin() const;
 
-        // Permute array dimensions
-        void T();
-        
-        // Flatten the array
-        inline NDArrayDynamic<DType, Storage> ravel() const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> cos() const;
 
-        // Reshape, but don’t change data
-        inline NDArrayDynamic<DType, Storage> reshape(const Shape& shape) const;
+                inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> log() const;
 
-        // Adding and removing elements
-        // Return a new array with the given shape
-        inline NDArrayDynamic<DType, Storage> resize(const Shape& shape) const;
+                // Dot product
+                inline DType dot(const NDArrayDynamic &array) const;
 
-        // Append items to the array
-        inline NDArrayDynamic<DType, Storage> append(const NDArrayDynamic& array) const;
+                // Elementwise comparison
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator==(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
 
-        // Insert items in the array
-        inline NDArrayDynamic<DType, Storage> insert(Size index, const NDArrayDynamic& array) const;
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator<(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
 
-        // Delete items from the array
-        inline NDArrayDynamic<DType, Storage> del(Size index) const;
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator>(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
 
-        // Concatenate arrays
-        inline NDArrayDynamic<DType, Storage> concatenate(const NDArrayDynamic& array) const;
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator==(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
 
-        // Stack arrays vertically (row-wise)
-        inline NDArrayDynamic<DType, Storage> vstack(const NDArrayDynamic& array) const;
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator<(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
 
-        // Stack arrays vertically (row-wise)
-        inline NDArrayDynamic<DType, Storage> r_(const NDArrayDynamic& array) const;
+                inline NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>>
+                operator>(const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
 
-        // Stack arrays horizontally (column-wise)
-        inline NDArrayDynamic<DType, Storage> hstack(const NDArrayDynamic& array) const;
+                // Array-wise comparison
+                inline bool array_equal(const DType &value) const;
 
-        // Create stacked column-wise arrays
-        inline NDArrayDynamic<DType, Storage> column_stack(const NDArrayDynamic& array) const;
+                inline bool array_equal(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const;
 
-        // Create stacked column-wise arrays
-        inline NDArrayDynamic<DType, Storage> c_(const NDArrayDynamic& array) const;
+                inline bool array_equal(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>> &array) const;
 
-        // Split the array horizontally
-        inline std::vector<NDArrayDynamic<DType, Storage>> hsplit(Size index) const;
+                inline bool array_equal(
+                        const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>> &array) const;
 
-        // Split the array vertically
-        inline std::vector<NDArrayDynamic<DType, Storage>> vsplit(Size index) const;
+                // Aggregate functions
+                // Array-wise sum
+                inline DType sum() const;
 
-    private:
-        inline void save(std::ostream& stream);
+                // Array-wise minimum value
+                inline DType min() const;
 
-        inline static NDArrayDynamic load(std::istream& stream);
+                // Maximum value of an Array row
+                inline DType max() const;
 
-        internal::NDArrayDynamicInternal<DType, Storage> m_ArrayImpl;
+                // Cumulative sum of the elements
+                inline NDArrayDynamic<DType, Storage> cumsum() const;
 
-        friend class NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>>;
-        friend class NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>;
-    };
+                // Mean
+                inline DType mean() const;
 
-} // namespace np::ndarray::array_dynamic
+                // Median
+                inline DType median() const;
 
+                // Covariance
+                inline NDArrayDynamic<DType, Storage> cov() const;
+
+                // Correlation coefficient
+                inline NDArrayDynamic<DType, Storage> corrcoef() const;
+
+                // Compute the standard deviation along the specified axis.
+                inline DType std_() const;
+
+                // Create a view of the array with the same data
+                inline NDArrayDynamic<DType, Storage> view() const;
+
+                // Create a deep copy of the array
+                inline NDArrayDynamic<DType, Storage> copy() const;
+
+                // Sort an array
+                inline void sort();
+
+                // template<std::size_t N = -1>
+                // inline void sort(std::optional<Axis<N>> axis=std::optional<Axis<N>>{});
+
+                // Permute array dimensions
+                inline NDArrayDynamic<DType> transpose() const;
+
+                // Flatten the array
+                inline NDArrayDynamic<DType, Storage> ravel() const;
+
+                // Reshape, but don’t change data
+                inline NDArrayDynamic<DType, Storage> reshape(const Shape &shape) const;
+
+                // Adding and removing elements
+                // Return a new array with the given shape
+                inline NDArrayDynamic<DType, Storage> resize(const Shape &shape) const;
+
+                // Append items to the array
+                inline NDArrayDynamic<DType, Storage> append(const NDArrayDynamic &array) const;
+
+                // Insert items in the array
+                inline NDArrayDynamic<DType, Storage> insert(Size index, const NDArrayDynamic &array) const;
+
+                // Delete items from the array
+                inline NDArrayDynamic<DType, Storage> del(Size index) const;
+
+                // Concatenate arrays
+                inline NDArrayDynamic<DType, Storage> concatenate(const NDArrayDynamic &array, std::optional<std::size_t> axis = std::nullopt) const;
+
+                // Stack arrays vertically (row-wise)
+                inline NDArrayDynamic<DType, Storage> vstack(const NDArrayDynamic &array) const;
+
+                // Stack arrays vertically (row-wise)
+                inline NDArrayDynamic<DType, Storage> r_(const NDArrayDynamic &array) const;
+
+                // Stack arrays horizontally (column-wise)
+                inline NDArrayDynamic<DType, Storage> hstack(const NDArrayDynamic &array) const;
+
+                // Create stacked column-wise arrays
+                inline NDArrayDynamic<DType, Storage> column_stack(const NDArrayDynamic &array) const;
+
+                // Create stacked column-wise arrays
+                inline NDArrayDynamic<DType, Storage> c_(const NDArrayDynamic &array) const;
+
+                // Split the array horizontally
+                inline std::vector<NDArrayDynamic<DType, Storage>> hsplit(std::size_t sections) const;
+
+                // Split the array vertically
+                inline std::vector<NDArrayDynamic<DType, Storage>> vsplit(std::size_t sections) const;
+
+                typename internal::NDArrayDynamicInternal<DType, Storage>::iterator begin() {
+                    return m_ArrayImpl.begin();
+                }
+
+                typename internal::NDArrayDynamicInternal<DType, Storage>::iterator end() {
+                    return m_ArrayImpl.end();
+                }
+
+                typename internal::NDArrayDynamicInternal<DType, Storage>::const_iterator cbegin() const {
+                    return m_ArrayImpl.cbegin();
+                }
+
+                typename internal::NDArrayDynamicInternal<DType, Storage>::const_iterator cend() const {
+                    return m_ArrayImpl.cend();
+                }
+
+            private:
+                inline void save(std::ostream &stream);
+
+                inline static NDArrayDynamic load(std::istream &stream);
+
+                std::size_t getMaxElementSize() const {
+                    std::size_t size = sizeof(DType);
+                    if constexpr (std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value) {
+                        size = 1;
+                        for (auto it = m_ArrayImpl.cbegin(); it != m_ArrayImpl.cend(); ++it) {
+                            if ((*it).size() > size) {
+                                size = (*it).size();
+                            }
+                        }
+                    }
+                    return size;
+                }
+
+                internal::NDArrayDynamicInternal<DType, Storage> m_ArrayImpl;
+
+                template<typename DTypeOther, typename StorageOther>
+                friend class NDArrayDynamic;
+            };
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

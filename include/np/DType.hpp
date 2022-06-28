@@ -24,9 +24,9 @@ SOFTWARE.
 
 #pragma once
 
+#include <any>
 #include <array>
 #include <complex>
-#include <any>
 #include <string>
 
 namespace np {
@@ -57,7 +57,7 @@ namespace np {
     using longdouble = long double;
 
     // Complex numbers represented by 128 floats
-    template <typename T>
+    template<typename T>
     using complex_ = std::complex<T>;
 
     // Boolean type storing TRUE and FALSE values
@@ -84,73 +84,5 @@ namespace np {
     // Unicode type
     using unicode_ = std::wstring;
 
-    template <typename DType>
-    class DTypeToCharCodeConvertor {
-    public:
-        inline std::string DTypeToCharCode() {
-            return "<" + DTypeToChar() + DTypeToCharSize();
-        }
-
-        inline std::string DTypeToChar() {
-            return "";
-        };
-
-        inline std::string DTypeToCharSize() {
-            return std::to_string(sizeof(DType));
-        };
-    };
-
-    template<> inline std::string DTypeToCharCodeConvertor<byte>::DTypeToChar() {
-        return "b";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<short_>::DTypeToChar() {
-        return "h";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<intc>::DTypeToChar() {
-        return "i";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<int_>::DTypeToChar() {
-        return "i";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<longlong>::DTypeToChar() {
-        return "i";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<ubyte>::DTypeToChar() {
-        return "B";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<ushort>::DTypeToChar() {
-        return "H";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<uintc>::DTypeToChar() {
-        return "I";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<uint>::DTypeToChar() {
-        return "I";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<ulonglong>::DTypeToChar() {
-        return "I";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<float_>::DTypeToChar() {
-        return "f";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<string_>::DTypeToChar() {
-        return "S";
-    }
-
-    template<> inline std::string DTypeToCharCodeConvertor<unicode_>::DTypeToChar() {
-        return "U";
-    }
-
     using DTypeDefault = float_;
-}
+}// namespace np

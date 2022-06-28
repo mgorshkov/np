@@ -26,13 +26,13 @@ SOFTWARE.
 
 #include <optional>
 
+#include <np/Array.hpp>
+#include <np/Axis.hpp>
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
-#include <np/Axis.hpp>
-#include <np/Array.hpp>
 
-#include <np/ndarray/static/NDArrayStatic.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Aggregate functions
@@ -42,16 +42,14 @@ namespace np {
     //////////////////////////////////////////////////////////////
     /// \brief Sum of array elements
     ///
-    /// This function sums all elements of an array.
+    /// This function sums up all elements of an array.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the sum
+    /// \param array An array to calculate the sum
     ///
     /// \return Sum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto sum(const Array<DType, SizeT, SizeTs...> &array) {
         return array.sum();
     }
@@ -63,12 +61,12 @@ namespace np {
     ///
     /// \warning This function is currently implemented for dynamic arrays only
     ///
-    /// \param array Dynamic array to calculate the minimum
+    /// \param array An array to calculate the minimum
     ///
     /// \return Minimum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto min(const Array<DType, SizeT, SizeTs...> &array) {
         return array.min();
     }
@@ -78,14 +76,12 @@ namespace np {
     ///
     /// This function finds a maximum among all elements of an array.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the maximum
+    /// \param array An array to calculate the maximum
     ///
     /// \return Maximum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto max(const Array<DType, SizeT, SizeTs...> &array) {
         return array.max();
     }
@@ -95,14 +91,12 @@ namespace np {
     ///
     /// This function calculates a cumulative sum among all elements of an array.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the cumulative sum
+    /// \param array An array to calculate the cumulative sum
     ///
     /// \return Cumulative sum of array elements as a 1D array
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto cumsum(const Array<DType, SizeT, SizeTs...> &array) {
         return array.cumsum();
     }
@@ -112,14 +106,12 @@ namespace np {
     ///
     /// This function calculates mean among all elements of an array.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the mean
+    /// \param array An array to calculate the mean
     ///
     /// \return Mean of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto mean(const Array<DType, SizeT, SizeTs...> &array) {
         return array.mean();
     }
@@ -131,14 +123,12 @@ namespace np {
     /// Given an array A of length N, the median of A is the middle value of a sorted copy of A, A_sorted[(N-1)/2],
     /// when N is odd, and the average of the two middle values of A_sorted when N is even.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the median
+    /// \param array An array to calculate the median
     ///
     /// \return Median of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto median(const Array<DType, SizeT, SizeTs...> &array) {
         return array.median();
     }
@@ -148,14 +138,12 @@ namespace np {
     ///
     /// Covariance indicates the level to which two variables vary together.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the covariance
+    /// \param array An array to calculate the covariance
     ///
     /// \return Covariance of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto cov(const Array<DType, SizeT, SizeTs...> &array) {
         return array.cov();
     }
@@ -166,14 +154,12 @@ namespace np {
     /// The relationship between the correlation coefficient matrix, R, and the covariance matrix, C, is
     /// R_ij = C_ij / sqrt(C_ii * C_jj)
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the correlation coefficients
+    /// \param array An array to calculate the correlation coefficients
     ///
     /// \return Correlation coefficients of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto corrcoef(const Array<DType, SizeT, SizeTs...> &array) {
         return array.corrcoef();
     }
@@ -184,16 +170,13 @@ namespace np {
     /// Returns the standard deviation, a measure of the spread of a distribution, of the array elements.
     /// The standard deviation is computed for the flattened array
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
-    /// \param array Dynamic array to calculate the standard deviation
+    /// \param array An array to calculate the standard deviation
     ///
     /// \return Standard deviation of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template <typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
     inline auto std_(const Array<DType, SizeT, SizeTs...> &array) {
         return array.std_();
     }
-}
-
+}// namespace np
