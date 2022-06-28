@@ -198,10 +198,8 @@ namespace np {
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::hstack(
                     const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                if constexpr (sizeof...(SizeTs) == 0) {
-                    return concatenate(array);
-                }
-                return concatenate(array, 1);
+                return sizeof...(SizeTs) == 0 ?
+                    concatenate(array) : concatenate(array, 1U);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
@@ -227,7 +225,7 @@ namespace np {
                     return result;
                 }
                 //concatenation along 2nd axis
-                return concatenate(array, 1);
+                return concatenate(array, 1U);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
