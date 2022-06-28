@@ -144,82 +144,90 @@ namespace np {
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::concatenate(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                static constexpr Size size = (SizeT * ... * SizeTs);
-                NDArrayStatic<DType, 2 * size> result;
-                for (auto i = 0; i < size; ++i) {
-                    result.set(i, get(i));
+            inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::concatenate(const NDArrayStatic<DType, SizeT, SizeTs...> &array, std::optional<std::size_t> axis) const {
+                if (array.size() == 0)
+                    return NDArrayDynamic<DType>{};
+                if (axis == std::nullopt) {
+                    return concatenate(array, 0);
                 }
-                for (auto i = 0; i < size; ++i) {
-                    result.set(i + size, array.get(i));
+                auto v = internal::to_vector(std::tuple(SizeT, SizeTs...));
+                if (*axis >= v.size())
+                    throw std::runtime_error("axis : " + std::to_string(*axis) + " is out of bounds for array of dimension " + std::to_string(v.size()));
+                if (*axis == 0) {
+                    v[*axis] = 2 * v[*axis];
+                    NDArrayDynamic<DType> result{Shape{v}};
+                    for (Size i = 0; i < size(); ++i) {
+                        result.set(i, get(i));
+                    }
+                    for (Size i = 0; i < size(); ++i) {
+                        result.set(i + size(), array.get(i));
+                    }
+                    return result;
                 }
-                return result;
+                if (*axis == 1) {
+                    Size SizeT2 = std::accumulate(v.begin() + 1, v.end(), 1, std::multiplies<Size>());
+                    v[*axis] = 2 * v[*axis];
+                    NDArrayDynamic<DType> result{Shape{v}};
+                    Size destOffset = 0;
+                    Size src1Offset = 0;
+                    Size src2Offset = 0;
+                    for (Size x = 0; x < SizeT; ++x) {
+                        for (Size y = 0; y < SizeT2; ++y) {
+                            result.set(destOffset++, get(src1Offset++));
+                        }
+                        for (Size y = 0; y < SizeT2; ++y) {
+                            result.set(destOffset++, array.get(src2Offset++));
+                        }
+                    }
+                    return result;
+                }
+
+                throw std::runtime_error("axis > 1 are not supported");
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::vstack(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                auto result = array.ravel();
-                return result.insert(0, ravel());
+            inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::vstack(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return concatenate(array);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, 2 * (SizeT * ... * SizeTs)> NDArrayStatic<DType, SizeT, SizeTs...>::r_(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                return vstack(array);
+            inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::r_(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
+                return concatenate(array);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::hstack(
                     const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
-                static constexpr Size size = (SizeT * ... * SizeTs);
                 if constexpr (sizeof...(SizeTs) == 0) {
-                    NDArrayDynamic<DType> result{Shape{2 * size}};
-                    for (auto i = 0; i < size; ++i) {
-                        result.set(i, get(i));
-                    }
-                    for (auto i = 0; i < size; ++i) {
-                        result.set(i + size, array.get(i));
-                    }
-                    return result;
+                    return concatenate(array);
                 }
-                if constexpr (sizeof...(SizeTs) > 0) {
-                    auto v = internal::to_vector(std::tuple(SizeT, SizeTs...));
-                    Size SizeT2 = v[1];
-                    v[1] = 2 * v[1];
-                    NDArrayDynamic<DType> result{Shape{v}};
-                    std::size_t destOffset = 0;
-                    for (Size y = 0; y < SizeT; ++y) {
-                        for (auto i = 0; i < SizeT2; ++i) {
-                            result.set(i + destOffset, get(i + y * SizeT2));
-                        }
-                        destOffset += SizeT2;
-                        for (auto i = 0; i < SizeT2; ++i) {
-                            result.set(i + destOffset, array.get(i + y * SizeT2));
-                        }
-                        destOffset += SizeT2;
-                    }
-                    return result;
-                }
+                return concatenate(array, 1);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
             inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::column_stack(const NDArrayStatic<DType, SizeT, SizeTs...> &array) const {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
-                if (sh1.size() != 1 || sh2.size() != 1)
-                    throw std::runtime_error("Arrays must be 1D");
-                if (sh1[0] != sh2[0])
-                    throw std::runtime_error("Arrays have different dimensions");
-                Size length = sh1[0];
-                Shape sh{length, 2};
-                NDArrayDynamic<DType> result{sh};
-                std::size_t index1 = 0;
-                std::size_t index2 = 0;
-                Size i = 0;
-                while (i < size() + array.size()) {
-                    result.set(i++, get(index1++));
-                    result.set(i++, array.get(index2++));
+                if (sh1.size() != sh2.size())
+                    throw std::runtime_error("Number of dims should be equal");
+                if (sh1.size() == 0 && sh2.size() == 0) {
+                    return NDArrayDynamic<DType>{};
                 }
-                return result;
+                if (sh1.size() == 1) {
+                    Size length = sh1[0];
+                    Shape sh{length, 2};
+                    NDArrayDynamic<DType> result{sh};
+                    std::size_t index1 = 0;
+                    std::size_t index2 = 0;
+                    Size i = 0;
+                    while (i < size() + array.size()) {
+                        result.set(i++, get(index1++));
+                        result.set(i++, array.get(index2++));
+                    }
+                    return result;
+                }
+                //concatenation along 2nd axis
+                return concatenate(array, 1);
             }
 
             template<typename DType, Size SizeT, Size... SizeTs>
@@ -255,59 +263,122 @@ namespace np {
 
             template<typename DType, Size SizeT, Size... SizeTs>
             inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::hsplit(std::size_t sections) const {
-                std::size_t splitIndex;
-                if constexpr (sizeof...(SizeTs) == 0) {
-                    splitIndex = 0;
-                } else {
-                    splitIndex = 1;
+                if (sections == 0) {
+                    throw std::runtime_error("Sections must not be 0");
                 }
-                Shape sh{SizeT, SizeTs...};
-                Shape sh1{SizeT, SizeTs...};
-                sh1[splitIndex] = index;
-                Shape sh2{SizeT, SizeTs...};
-                auto rest = sh[splitIndex] - index;
-                sh2[splitIndex] = rest;
-                NDArrayDynamic<DType> result1{sh1};
-                NDArrayDynamic<DType> result2{sh2};
+                Shape sh = shape();
+                if (sh.size() == 0) {
+                    std::vector<NDArrayDynamic<DType>> results;
+                    for (std::size_t section = 0; section < sections; ++section) {
+                        results.push_back(NDArrayDynamic<DType>{});
+                    }
+                    return results;
+                } else if (sh.size() == 1) {
+                    Shape sh1{sh};
+                    if (sh[0] % sections != 0) {
+                        throw std::runtime_error("Array split does not result in an equal division");
+                    }
+                    Size sectionSize = sh[0] / sections;
+                    sh1[0] = sectionSize;
+                    std::vector<NDArrayDynamic<DType>> results;
+                    for (std::size_t section = 0; section < sections; ++section) {
+                        results.push_back(NDArrayDynamic<DType>{sh1});
+                    }
+                    std::vector<Size> sectionIndexes(sections);
+                    for (auto i = 0; i < size(); ++i) {
+                        Size section = i / sectionSize;
+                        results[section].set(sectionIndexes[section]++, get(i));
+                    }
+                    return results;
+                }
+                Shape sh1{sh};
+                if (sh[1] % sections != 0) {
+                    throw std::runtime_error("Array split does not result in an equal division");
+                }
+                Size rest = 1;
+                for (std::size_t i = 2; i < sh1.size(); ++i) {
+                    rest *= sh1[i];
+                }
+                Size sectionSize = sh[1] / sections;
+                sh1[1] = sectionSize;
+                std::vector<NDArrayDynamic<DType>> results;
+                for (std::size_t section = 0; section < sections; ++section) {
+                    results.push_back(NDArrayDynamic<DType>{sh1});
+                }
+                std::vector<Size> sectionIndexes(sections);
                 Size i = 0;
-                Size i1 = 0;
-                Size i2 = 0;
+                std::size_t section = 0;
                 while (i < size()) {
-                    for (int j = 0; j < index; ++j) {
-                        result1.set(j + i1, get(i + j));
+                    for (auto j = 0; j < rest; ++j) {
+                        results[section].set(sectionIndexes[section]++, get(i++));
                     }
-                    i1 += index;
-                    i += index;
-                    for (int j = 0; j < rest; ++j) {
-                        result2.set(j + i2, get(i + j));
+                    ++section;
+                    if (section >= sections) {
+                        section = 0;
                     }
-                    i2 += rest;
-                    i += rest;
                 }
-                return {result1, result2};
+                return results;
             }
 
             // Split the array vertically
             template<typename DType, Size SizeT, Size... SizeTs>
-            inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::vsplit(Size index) const {
-                Shape sh{SizeT, SizeTs...};
-                Shape sh1{sh};
-                sh1[0] = index;
-                Shape sh2{sh};
-                auto rest = sh[0] - index;
-                sh2[0] = rest;
-                NDArrayDynamic<DType> result1{sh1};
-                NDArrayDynamic<DType> result2{sh2};
+            inline std::vector<NDArrayDynamic<DType>> NDArrayStatic<DType, SizeT, SizeTs...>::vsplit(std::size_t sections) const {
+                if (sections == 0) {
+                    throw std::runtime_error("Sections must not be 0");
+                }
+                Shape sh = shape();
+                if (sh.size() == 0) {
+                    std::vector<NDArrayDynamic<DType>> results;
+                    for (std::size_t section = 0; section < sections; ++section) {
+                        results.push_back(NDArrayDynamic<DType>{});
+                    }
+                    return results;
+                } else if (sh.size() == 1) {
+                    Shape sh1{sh};
+                    if (sh[0] % sections != 0) {
+                        throw std::runtime_error("Array split does not result in an equal division");
+                    }
+                    Size sectionSize = sh[0] / sections;
+                    sh1[0] = sectionSize;
+                    std::vector<NDArrayDynamic<DType>> results;
+                    for (std::size_t section = 0; section < sections; ++section) {
+                        results.push_back(NDArrayDynamic<DType>{sh1});
+                    }
+                    std::vector<Size> sectionIndexes(sections);
+                    for (auto i = 0; i < size(); ++i) {
+                        Size section = i / sectionSize;
+                        results[section].set(sectionIndexes[section]++, get(i));
+                    }
+                    return results;
+                }
+                Shape sh0{sh};
+                if (sh[0] % sections != 0) {
+                    throw std::runtime_error("Array split does not result in an equal division");
+                }
+                Size rest = 1;
+                for (std::size_t i = 1; i < sh0.size(); ++i) {
+                    rest *= sh0[i];
+                }
+                Size sectionSize = sh[0] / sections;
+                sh0[0] = sectionSize;
+                std::vector<NDArrayDynamic<DType>> results;
+                for (std::size_t section = 0; section < sections; ++section) {
+                    results.push_back(NDArrayDynamic<DType>{sh0});
+                }
+                std::vector<Size> sectionIndexes(sections);
                 Size i = 0;
-                for (int j = 0; j < sh[1] * index; ++j) {
-                    result1.set(j, get(j));
+                std::size_t section = 0;
+                while (i < size()) {
+                    for (auto j = 0; j < rest; ++j) {
+                        results[section].set(sectionIndexes[section]++, get(i++));
+                    }
+                    ++section;
+                    if (section >= sections) {
+                        section = 0;
+                    }
                 }
-                i += sh[1] * index;
-                for (int j = 0; j < sh[1] * rest; ++j) {
-                    result2.set(j, get(j + i));
-                }
-                return {result1, result2};
+                return results;
             }
         }// namespace array_static
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

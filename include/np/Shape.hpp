@@ -77,23 +77,23 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         explicit Shape(std::vector<Size> &&v)
-             : std::vector<Size>{std::move(v)} {
+            : std::vector<Size>{std::move(v)} {
         }
 
-        Shape(const Shape& another)
+        Shape(const Shape &another)
             : std::vector<Size>{another} {
         }
 
-        Shape(Shape&& another) = default;
+        Shape(Shape &&another) = default;
 
-        Shape& operator = (const Shape& another) {
+        Shape &operator=(const Shape &another) {
             if (this != &another) {
                 std::vector<Size>::operator=(another);
             }
             return *this;
         }
 
-        Shape& operator = (Shape&& another)  {
+        Shape &operator=(Shape &&another) {
             if (this != &another) {
                 std::vector<Size>::operator=(another);
             }

@@ -257,5 +257,5 @@ namespace np {
                 return std::make_tuple(descr, shape);
             }
         }// namespace internal
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

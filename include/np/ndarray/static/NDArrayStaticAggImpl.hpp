@@ -200,5 +200,5 @@ namespace np {
                 return static_cast<DType>(std::sqrt(x.mean()));
             }
         }// namespace array_static
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

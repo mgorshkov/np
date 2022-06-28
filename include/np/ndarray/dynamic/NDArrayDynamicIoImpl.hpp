@@ -133,5 +133,5 @@ namespace np {
                 NP_THROW_UNLESS_WITH_ARG(output.is_open(), "Cannot open file for writing: ", filename);
             }
         }// namespace array_dynamic
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

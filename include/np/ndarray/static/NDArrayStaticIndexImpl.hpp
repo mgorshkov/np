@@ -104,5 +104,5 @@ namespace np {
                 return m_ArrayImpl.set(i, value);
             }
         }// namespace array_static
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np

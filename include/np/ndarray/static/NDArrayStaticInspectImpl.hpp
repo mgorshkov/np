@@ -68,5 +68,5 @@ namespace np {
                 return NDArrayStatic<DTypeNew, SizeT, SizeTs...>{};
             }
         }// namespace array_static
-    }// namespace ndarray
+    }    // namespace ndarray
 }// namespace np
