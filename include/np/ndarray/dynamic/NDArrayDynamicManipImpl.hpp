@@ -163,7 +163,7 @@ namespace np {
                     throw std::runtime_error("Number of dims should be equal");
                 // All the dims except the 'axis' should be equal
                 for (std::size_t i = 0; i < sh1.size(); ++i) {
-                    if (i != axis && sh1[i] != sh2[i])
+                    if (i != *axis && sh1[i] != sh2[i])
                         throw std::runtime_error("All the dims except the first should be equal");
                 }
                 if (*axis >= sh1.size())
@@ -171,7 +171,7 @@ namespace np {
                 Shape sh{sh1};
                 auto size1 = ndarray::internal::calcSizeByShape(sh1);
                 auto size2 = ndarray::internal::calcSizeByShape(sh2);
-                if (axis == 0) {
+                if (*axis == 0) {
                     sh[*axis] = sh1[*axis] + sh2[*axis];
                     NDArrayDynamic<DType, Storage> result{sh};
                     for (auto i = 0; i < size1; ++i) {
@@ -182,7 +182,7 @@ namespace np {
                     }
                     return result;
                 }
-                if (axis == 1) {
+                if (*axis == 1) {
                     Size SizeT2 = std::accumulate(sh.begin() + 1, sh.end(), 1, std::multiplies<Size>());
                     sh[*axis] = sh1[*axis] + sh2[*axis];
                     NDArrayDynamic<DType> result{sh};
