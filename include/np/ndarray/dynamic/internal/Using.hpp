@@ -24,11 +24,24 @@ SOFTWARE.
 
 #pragma once
 
+#include <vector>
+
+#include <np/ndarray/dynamic/internal/ConstSpan.hpp>
+#include <np/ndarray/dynamic/internal/Span.hpp>
+
 namespace np {
     namespace ndarray {
         namespace array_dynamic {
             namespace internal {
 
+                template<typename DType>
+                using NDArrayDynamicInternalStorageVector = std::vector<DType>;
+
+                template<typename DType>
+                using NDArrayDynamicInternalStorageSpan = Span<NDArrayDynamicInternalStorageVector<DType>>;
+
+                template<typename DType>
+                using NDArrayDynamicInternalStorageConstSpan = ConstSpan<NDArrayDynamicInternalStorageVector<DType>>;
             }// namespace internal
         }    // namespace array_dynamic
     }        // namespace ndarray

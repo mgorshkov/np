@@ -24,7 +24,11 @@ SOFTWARE.
 
 #pragma once
 
+#include <codecvt>
 #include <cstddef>
+#include <istream>
+#include <ostream>
+#include <string>
 
 #include <np/Constants.hpp>
 #include <np/Shape.hpp>
@@ -81,6 +85,16 @@ namespace np {
                     object += static_cast<wchar_t>(value);
                 }
                 return object;
+            }
+
+            inline std::wstring utf8_to_wstring(const std::string &str) {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                return conv.from_bytes(str);
+            }
+
+            inline std::string wstring_to_utf8(const std::wstring &str) {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                return conv.to_bytes(str);
             }
         }// namespace internal
     }    // namespace ndarray

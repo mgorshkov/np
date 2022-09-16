@@ -12,6 +12,9 @@ This implies stack array storage.
 std::vector-based implementation in which only the element type is known at compile time.
 This implies heap array storage.
 
+# Latest artifact
+https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.3.tgz
+
 # Requirements
 Any C++17-compatible compiler:
 * gcc 8 or higher
@@ -87,3 +90,6 @@ cmake --build .
 $./monte_carlo
 PI=3.14158
 ```
+
+# Links
+ML Methods on top of NP library: https://github.com/mgorshkov/ml

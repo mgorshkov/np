@@ -37,7 +37,7 @@ namespace np {
                     const NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageVector<DType>> &array) const {
                 NDArrayDynamic<bool_, internal::NDArrayDynamicInternalStorageVector<bool_>> result{shape()};
                 for (Size i = 0; i < size(); ++i) {
-                    auto equals = get(i) == array.get(i);
+                    const auto equals = get(i) == array.get(i);
                     result.set(i, equals);
                 }
                 return result;

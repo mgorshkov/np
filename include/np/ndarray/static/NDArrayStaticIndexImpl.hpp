@@ -26,8 +26,8 @@ SOFTWARE.
 
 #include <type_traits>
 
+#include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/static/NDArrayStaticDecl.hpp>
-
 
 namespace np {
     namespace ndarray {
@@ -48,51 +48,114 @@ namespace np {
                 return ReducedType{m_ArrayImpl[i]};
             }
 
-            // a[1,2]                               Select the element at row and column (same as a[1][2])
-            // Slicing
-            // a[0:2]                               Select items at index 0 and 1
-            // b[0:2,1]                             Select items at rows 0 and 1 in column 1
-            // b[:1]                                Select all items at row 0 (equivalent to b[0:1,:])
-            // c[1,...]                             Same as [1,:,:]
-            // a[::-1]                              Reversed array
+            // Subsetting
+            // a[2] Select the element at the 2nd index
+            // b[1,2] Select the element at row 1 column 2 (equivalent to b[1][2])
             // Boolean indexing
-            // a[a < 2]                             Select elements from a less than 2
-            // Fancy indexing
-            // b[[1, 0, 1, 0], [0, 1, 2, 0]]        Select elements (1,0),(0,1),(1,2) and (0,0)
-            // b[[1, 0, 1, 0]][: ,[0, 1, 2, 0]]     Select a subset of the matrix’s rows and columns
-            /* TODO
-            template <typename DType, Size SizeT, Size... SizeTs>
-            inline ReducedType&
-            NDArrayStatic<DType, SizeT, SizeTs...>::operator [] (const std::string& i) {
-                return ReducedType{m_ArrayImpl[i]};
+            // a[a < 2] Select elements from a less than 2
+            // Slicing
+            // a[0:2] Select items at index 0 and 1
+            // b[0:2,1] Select items at rows 0 and 1 in column 1
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline auto NDArrayStatic<DType, SizeT, SizeTs...>::operator[](const std::string &cond) const {
+                for (auto indexing: m_IndexingHandlers) {
+                    if (indexing.checker(cond)) {
+                        return indexing.worker(cond);
+                    }
+                }
+                throw std::runtime_error("Invalid operator[] argument");
             }
 
-            template <typename DType, Size SizeT, Size... SizeTs>
-            inline ReducedType
-            NDArrayStatic<DType, SizeT, SizeTs...>::operator [] (const std::string& i) const {
-                return ReducedType{m_ArrayImpl[i]};
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::booleanIndexing(const std::string &cond) const {
+                auto operatorWithArg = ndarray::internal::getOperatorWithArg<DType>(cond);
+                auto pred = [&operatorWithArg, &cond](DType value) {
+                    switch (operatorWithArg.first) {
+                        case ndarray::internal::Operator::More:
+                            return value > operatorWithArg.second;
+                        case ndarray::internal::Operator::MoreOrEqual:
+                            return value >= operatorWithArg.second;
+                        case ndarray::internal::Operator::Equal:
+                            return value == operatorWithArg.second;
+                        case ndarray::internal::Operator::LessOrEqual:
+                            return value <= operatorWithArg.second;
+                        case ndarray::internal::Operator::NotEqual:
+                            return value != operatorWithArg.second;
+                        case ndarray::internal::Operator::Less:
+                            return value < operatorWithArg.second;
+                        default:
+                            throw std::runtime_error("Invalid condition: " + cond);
+                    }
+                    return false;
+                };
+                std::vector<DType> result;
+                std::copy_if(m_ArrayImpl.cbegin(),
+                             m_ArrayImpl.cend(),
+                             std::back_inserter(result),
+                             pred);
+
+                Shape shape{static_cast<Size>(result.size())};
+                return NDArrayDynamic<DType>{result, shape};
             }
-            */
+
+            template<typename DType, Size SizeT, Size... SizeTs>
+            inline NDArrayDynamic<DType> NDArrayStatic<DType, SizeT, SizeTs...>::slicing(const std::string &cond) const {
+                std::size_t startPos = 0;
+                auto commaPos = cond.find(',', 0);
+                Size dim = 0;
+                auto sh{shape()};
+                auto sizeDim = size();
+                std::vector<DType> result{};
+                for (Size i = 0; i < size(); ++i) {
+                    result.push_back(get(i));
+                }
+                do {
+                    auto nextCommaPos = cond.find(',', commaPos + 1);
+                    auto dimCond = cond.substr(startPos,
+                                               nextCommaPos != std::string::npos ? nextCommaPos - startPos - 1 : cond.size() - startPos);
+                    auto colonPos = dimCond.find(':');
+                    if (colonPos == std::string::npos) {
+                        auto index = std::stoi(cond.substr(commaPos + 1, cond.size() - commaPos - 1));
+                        return static_cast<NDArrayDynamic<DType>>(operator[](index));
+                    }
+                    auto first = dimCond.substr(0, colonPos);
+                    int firstIndex = 0;
+                    try {
+                        firstIndex = std::stoi(first);
+                    } catch (std::invalid_argument const &ex) {
+                    } catch (std::out_of_range const &ex) {
+                    }
+                    auto last = dimCond.substr(colonPos + 1, dimCond.size() - colonPos - 1);
+                    int lastIndex = sh[0];
+                    try {
+                        lastIndex = std::stoi(last);
+                    } catch (std::invalid_argument const &ex) {
+                    } catch (std::out_of_range const &ex) {
+                    }
+                    auto length = lastIndex - firstIndex;
+                    if (length > sh[dim]) {
+                        throw std::runtime_error("Incorrect range");
+                    }
+                    sizeDim /= sh[dim];
+                    sh[dim] = length;
+                    std::vector<DType> resultNew{};
+                    for (Size i = firstIndex * sizeDim; i < lastIndex * sizeDim; ++i) {
+                        resultNew.push_back(result[i]);
+                    }
+                    result = resultNew;
+                    startPos = commaPos + 1;
+                    commaPos = nextCommaPos;
+                    ++dim;
+                } while (commaPos != std::string::npos);
+
+                return NDArrayDynamic<DType>{result, sh};
+            }
 
             template<typename DType, Size SizeT, Size... SizeTs>
             inline typename NDArrayStatic<DType, SizeT, SizeTs...>::ReducedType
             NDArrayStatic<DType, SizeT, SizeTs...>::at(Size i) const {
                 return ReducedType(m_ArrayImpl[i]);
             }
-
-            /* TODO
-            template <typename DType, Size SizeT, Size... SizeTs>
-            inline ReducedType&
-            NDArrayStatic<DType, SizeT, SizeTs...>::at(const std::string& i) {
-                return ReducedType{m_ArrayImpl[i]};
-            }
-
-            template <typename DType, Size SizeT, Size... SizeTs>
-            inline ReducedType
-            NDArrayStatic<DType, SizeT, SizeTs...>::at(const std::string& i) const {
-                return ReducedType{m_ArrayImpl[i]};
-            }
-            */
 
             template<typename DType, Size SizeT, Size... SizeTs>
             inline DType NDArrayStatic<DType, SizeT, SizeTs...>::get(std::size_t i) const {

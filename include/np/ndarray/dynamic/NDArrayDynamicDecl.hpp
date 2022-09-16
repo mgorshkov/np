@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <array>
 #include <cstddef>
+#include <functional>
 #include <optional>
 #include <ostream>
 #include <vector>
@@ -34,6 +35,7 @@ SOFTWARE.
 #include <np/Shape.hpp>
 
 #include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
+#include <np/ndarray/internal/Indexing.hpp>
 
 namespace np {
     namespace ndarray {
@@ -74,7 +76,13 @@ namespace np {
 
                 inline NDArrayDynamic(const NDArrayDynamic &another) noexcept;
 
+                template<typename StorageOther>
+                inline NDArrayDynamic(const NDArrayDynamic<DType, StorageOther> &another) noexcept;
+
                 inline NDArrayDynamic(NDArrayDynamic &&another) noexcept;
+
+                template<typename StorageOther>
+                inline NDArrayDynamic(NDArrayDynamic<DType, StorageOther> &&another) noexcept;
 
                 template<typename InternalStorage>
                 inline explicit NDArrayDynamic(const internal::NDArrayDynamicInternal<DType, InternalStorage> &array) noexcept;
@@ -147,13 +155,13 @@ namespace np {
                 inline NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageConstSpan<DType>>
                 at(std::size_t i) const;
 
-                inline NDArrayDynamic<DType, Storage> operator[](const std::string &cond) const;
+                inline NDArrayDynamic<DType> operator[](const std::string &cond) const;
 
-                inline const DType &get(std::size_t i) const;
+                inline typename Storage::const_reference get(std::size_t i) const;
 
-                inline DType &get(std::size_t i);
+                inline typename Storage::reference get(std::size_t i);
 
-                inline void set(std::size_t i, const DType &value);
+                inline void set(std::size_t i, typename Storage::value_type value);
 
                 inline friend std::ostream &operator<<(std::ostream &stream, const NDArrayDynamic &array) {
                     return stream << array.m_ArrayImpl;
@@ -383,7 +391,20 @@ namespace np {
                     return size;
                 }
 
+                inline NDArrayDynamic<DType> booleanIndexing(const std::string &cond) const;
+                inline NDArrayDynamic<DType> slicing(const std::string &cond) const;
+
                 internal::NDArrayDynamicInternal<DType, Storage> m_ArrayImpl;
+
+                static constexpr long kIndexingHandlersSize{static_cast<long>(ndarray::internal::IndexingMode::None)};
+
+                const ndarray::internal::IndexingHandler<NDArrayDynamic<DType>> m_IndexingHandlers[kIndexingHandlersSize] = {
+                        {ndarray::internal::IndexingMode::Slicing,
+                         ndarray::internal::isSlicing,
+                         std::bind(&NDArrayDynamic::slicing, this, std::placeholders::_1)},
+                        {ndarray::internal::IndexingMode::BooleanIndexing,
+                         ndarray::internal::isBooleanIndexing<DType>,
+                         std::bind(&NDArrayDynamic::booleanIndexing, this, std::placeholders::_1)}};
 
                 template<typename DTypeOther, typename StorageOther>
                 friend class NDArrayDynamic;
