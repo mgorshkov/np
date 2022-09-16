@@ -151,7 +151,19 @@ namespace np {
             }
 
             template<typename DType, typename Storage>
+            template<typename StorageOther>
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(const NDArrayDynamic<DType, StorageOther> &another) noexcept
+                : m_ArrayImpl{another.m_ArrayImpl} {
+            }
+
+            template<typename DType, typename Storage>
             inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(NDArrayDynamic<DType, Storage> &&another) noexcept
+                : m_ArrayImpl{std::move(another.m_ArrayImpl)} {
+            }
+
+            template<typename DType, typename Storage>
+            template<typename StorageOther>
+            inline NDArrayDynamic<DType, Storage>::NDArrayDynamic(NDArrayDynamic<DType, StorageOther> &&another) noexcept
                 : m_ArrayImpl{std::move(another.m_ArrayImpl)} {
             }
 

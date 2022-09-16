@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(NP np)
 
-project(${NP} VERSION 0.0.2 DESCRIPTION "C++ Numpy Implementation")
+project(${NP} VERSION 0.0.3 DESCRIPTION "C++ Numpy Implementation")
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -50,7 +50,6 @@ if (MAKE_SAMPLE)
 endif()
 
 install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    COMPONENT ${NP_UNIT_TESTS}
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/np
+    DESTINATION include
 )

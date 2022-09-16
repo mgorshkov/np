@@ -38,6 +38,7 @@ SOFTWARE.
 #include <np/internal/Tools.hpp>
 
 #include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/static/internal/NDArrayStaticInternal.hpp>
 
 namespace np {
@@ -157,6 +158,21 @@ namespace np {
 
                 friend inline bool array_equal(const NDArrayStaticStub<double> &value1, const NDArrayStaticStub<double> &value2);
 
+                explicit operator NDArrayDynamic<DType>() {
+                    return NDArrayDynamic<DType>{m_ArrayImpl};
+                }
+
+                DType &operator[](Size index) {
+                    if (index > 0) {
+                        throw std::runtime_error("Out of bounds");
+                    }
+                    return m_ArrayImpl;
+                }
+
+                DType &operator[](const std::string &) {
+                    return m_ArrayImpl;
+                }
+
             private:
                 DType m_ArrayImpl;
             };
@@ -234,15 +250,9 @@ namespace np {
 
                 inline ReducedType operator[](Size i) const;
 
-                //TODO
-                // inline ReducedType& operator[](const std::string& i);
-                // inline ReducedType operator[](const std::string& i) const;
+                inline auto operator[](const std::string &cond) const;
 
                 inline ReducedType at(Size i) const;
-
-                //TODO
-                //inline ReducedType& at(const std::string& i);
-                //inline ReducedType at(const std::string& i) const;
 
                 inline DType get(std::size_t i) const;
                 inline void set(std::size_t i, const DType &value);
@@ -405,6 +415,10 @@ namespace np {
                     return m_ArrayImpl.cend();
                 }
 
+                explicit operator NDArrayDynamic<DType>() {
+                    return NDArrayDynamic<DType>{std::vector<DType>{m_ArrayImpl.cbegin(), m_ArrayImpl.cend()}, shape()};
+                }
+
             private:
                 inline void save(std::ostream &stream);
 
@@ -421,7 +435,20 @@ namespace np {
                     return size;
                 }
 
+                inline NDArrayDynamic<DType> booleanIndexing(const std::string &cond) const;
+                inline NDArrayDynamic<DType> slicing(const std::string &cond) const;
+
                 internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> m_ArrayImpl;
+
+                static constexpr long kIndexingHandlersSize{static_cast<long>(ndarray::internal::IndexingMode::None)};
+
+                const ndarray::internal::IndexingHandler<NDArrayDynamic<DType>> m_IndexingHandlers[kIndexingHandlersSize] = {
+                        {ndarray::internal::IndexingMode::BooleanIndexing,
+                         ndarray::internal::isBooleanIndexing<DType>,
+                         std::bind(&NDArrayStatic::booleanIndexing, this, std::placeholders::_1)},
+                        {ndarray::internal::IndexingMode::Slicing,
+                         ndarray::internal::isSlicing,
+                         std::bind(&NDArrayStatic::slicing, this, std::placeholders::_1)}};
             };
         }// namespace array_static
     }    // namespace ndarray
