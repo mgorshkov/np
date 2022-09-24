@@ -31,11 +31,11 @@ SOFTWARE.
 #include <iostream>
 #include <iterator>
 #include <utility>
-#include <vector>
 
 #include <np/Shape.hpp>
 #include <np/internal/Tools.hpp>
 #include <np/ndarray/dynamic/internal/Tools.hpp>
+#include <np/ndarray/dynamic/internal/Using.hpp>
 #include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
@@ -51,157 +51,6 @@ namespace np {
 
                 template<typename DType, typename Storage>
                 inline std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicInternal<DType, Storage> &array);
-
-                template<typename DType>
-                using NDArrayDynamicInternalStorageVector = std::vector<DType>;
-
-                template<typename Storage>
-                class ConstSpan {
-                public:
-                    using iterator = typename Storage::iterator;
-                    using const_iterator = typename Storage::const_iterator;
-
-                    typedef ptrdiff_t difference_type;
-
-                    ConstSpan() = default;
-
-                    ConstSpan(const_iterator cbegin, const_iterator cend)
-                        : cbegin_{cbegin}, cend_{cend} {
-                    }
-
-                    ConstSpan(const_iterator cbegin, Size size)
-                        : cbegin_{cbegin}, cend_{cbegin + size} {
-                    }
-
-                    template<typename DType>
-                    ConstSpan(const std::vector<DType> &vector)
-                        : cbegin_{vector.cbegin()}, cend_{vector.cend()} {
-                    }
-
-                    std::size_t size() const {
-                        return cend_ - cbegin_;
-                    }
-
-                    const_iterator cbegin() const {
-                        return cbegin_;
-                    }
-
-                    const_iterator cend() const {
-                        return cend_;
-                    }
-
-                    typename const_iterator::reference operator[](std::size_t i) const {
-                        return *(cbegin_ + i);
-                    }
-
-                    bool operator==(const Storage &storage) const {
-                        auto it1 = storage.cbegin();
-                        auto it2 = cbegin_;
-                        while (it1 != storage.cend()) {
-                            if (*it1 != *it2)
-                                return false;
-                            ++it1;
-                            ++it2;
-                        }
-                        return it2 == cend_;
-                    }
-
-                    inline iterator operator+=(difference_type diff) {
-                        return iterator(cbegin_ += diff, cend_);
-                    }
-
-                    inline iterator operator-=(difference_type diff) {
-                        return iterator(cbegin_ -= diff, cend_);
-                    }
-
-                    template<typename StorageSpan>
-                    friend class Span;
-
-                private:
-                    const_iterator cbegin_;
-                    const_iterator cend_;
-                };
-
-                template<typename Storage>
-                class Span {
-                public:
-                    using iterator = typename Storage::iterator;
-                    using const_iterator = typename Storage::const_iterator;
-                    typedef ptrdiff_t difference_type;
-
-                    Span() = default;
-
-                    Span(iterator begin, iterator end)
-                        : begin_{begin}, end_{end} {
-                    }
-
-                    Span(iterator begin, Size size)
-                        : begin_{begin}, end_{begin + size} {
-                    }
-
-                    template<typename DType>
-                    Span(const std::vector<DType> &vector)
-                        : begin_{vector.begin()}, end_{vector.end()} {
-                    }
-
-                    std::size_t size() const {
-                        return end_ - begin_;
-                    }
-
-                    iterator begin() const {
-                        return begin_;
-                    }
-
-                    iterator end() const {
-                        return end_;
-                    }
-
-                    iterator cbegin() const {
-                        return begin_;
-                    }
-
-                    iterator cend() const {
-                        return end_;
-                    }
-
-                    typename const_iterator::reference operator[](std::size_t i) const {
-                        return *(begin_ + i);
-                    }
-
-                    typename iterator::reference operator[](std::size_t i) {
-                        return *(begin_ + i);
-                    }
-
-                    inline iterator operator+=(difference_type diff) {
-                        return iterator(begin_ += diff, end_);
-                    }
-
-                    inline iterator operator-=(difference_type diff) {
-                        return iterator(begin_ -= diff, end_);
-                    }
-
-                    bool operator==(const Storage &storage) const {
-                        auto it1 = storage.begin();
-                        auto it2 = begin_;
-                        while (it1 != storage.end()) {
-                            if (*it1 != *it2)
-                                return false;
-                            ++it1;
-                            ++it2;
-                        }
-                        return it2 == end_;
-                    }
-
-                private:
-                    iterator begin_;
-                    iterator end_;
-                };
-
-                template<typename DType>
-                using NDArrayDynamicInternalStorageSpan = Span<NDArrayDynamicInternalStorageVector<DType>>;
-
-                template<typename DType>
-                using NDArrayDynamicInternalStorageConstSpan = ConstSpan<NDArrayDynamicInternalStorageVector<DType>>;
 
                 template<typename DType, typename Storage = NDArrayDynamicInternalStorageVector<DType>>
                 class NDArrayDynamicInternal {
@@ -596,15 +445,15 @@ namespace np {
                         return NDArrayDynamicInternal<DType, NDArrayDynamicInternalStorageConstSpan<DType>>(itBeginImpl, shape);
                     }
 
-                    const DType &get(std::size_t i) const {
+                    typename Storage::const_reference get(std::size_t i) const {
                         return m_Impl[i];
                     }
 
-                    DType &get(std::size_t i) {
+                    typename Storage::reference get(std::size_t i) {
                         return m_Impl[i];
                     }
 
-                    void set(std::size_t i, const DType &value) {
+                    void set(std::size_t i, typename Storage::value_type value) {
                         m_Impl[i] = value;
                     }
 
@@ -851,7 +700,7 @@ namespace np {
                             return offset - it.offset;
                         }
 
-                        auto operator*() const {
+                        const value_type &operator*() const {
                             return container->get(offset);
                         }
 
@@ -866,6 +715,12 @@ namespace np {
 
                     const_iterator cend() const {
                         return const_iterator{this, m_Impl.size()};
+                    }
+
+                    template<typename InternalStorage>
+                    explicit operator NDArrayDynamicInternal<DType, InternalStorage>() {
+                        InternalStorage storage{m_Impl.cbegin(), m_Impl.cend()};
+                        return NDArrayDynamicInternal<DType, InternalStorage>{storage, m_Shape};
                     }
 
                     template<typename DTypeOther, typename StorageOther>
@@ -896,6 +751,7 @@ namespace np {
                     }
                     return true;
                 }
+
             }// namespace internal
         }    // namespace array_dynamic
     }        // namespace ndarray
