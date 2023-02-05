@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@ SOFTWARE.
 
 #include <any>
 #include <array>
-#include <complex>
 #include <string>
 
 namespace np {
@@ -55,10 +54,6 @@ namespace np {
     using float32 = float;
     using float64 = long double;
     using longdouble = long double;
-
-    // Complex numbers represented by 128 floats
-    template<typename T>
-    using complex_ = std::complex<T>;
 
     // Boolean type storing TRUE and FALSE values
     using bool_ = bool;

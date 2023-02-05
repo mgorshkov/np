@@ -1,3 +1,7 @@
+# Release 0.0.4
+## Changes
+* Subsetting and slicing optimized
+
 # Release 0.0.3
 ## Changes
 * Subsetting and slicing implemented

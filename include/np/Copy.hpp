@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,8 @@ SOFTWARE.
 
 #pragma once
 
-#include "Array.hpp"
-#include "Constants.hpp"
-#include "DType.hpp"
+#include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
 
@@ -40,8 +39,8 @@ namespace np {
     /// \return A copy of array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> copy(const Array<DType, SizeT, SizeTs...> &array) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    auto copy(const Array<DType, SizeT> &array) {
         return array.copy();
     }
 

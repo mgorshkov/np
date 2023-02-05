@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,60 @@ SOFTWARE.
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 
+#include <iostream>
+
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
 // Multidimensional, homogeneous array of fixed-size items.
 namespace np {
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     using Array = typename std::conditional<
             SizeT == SIZE_DEFAULT,
             ndarray::array_dynamic::NDArrayDynamic<DType>,
-            ndarray::array_static::NDArrayStatic<DType, SizeT, SizeTs...>>::type;
+            ndarray::array_static::NDArrayStatic<DType, SizeT>>::type;
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename... Args>
+    auto createArray(Args &&...args) {
+        return Array<DType, SizeT>{std::forward<Args>(args)...};
+    }
+
+    template<Size SizeT = SIZE_DEFAULT, typename... Args>
+    auto createIntArray(Args &&...args) {
+        return createArray<int_, SizeT>(std::forward<Args>(args)...);
+    }
+
+    template<Size SizeT = SIZE_DEFAULT, typename... Args>
+    auto createFloatArray(Args &&...args) {
+        return createArray<float_, SizeT>(std::forward<Args>(args)...);
+    }
+
+    template<Size SizeT = SIZE_DEFAULT, typename... Args>
+    auto createStringArray(Args &&...args) {
+        return createArray<string_, SizeT>(std::forward<Args>(args)...);
+    }
+
+    template<Size SizeT = SIZE_DEFAULT, typename... Args>
+    auto createUnicodeArray(Args &&...args) {
+        return createArray<unicode_, SizeT>(std::forward<Args>(args)...);
+    }
 }// namespace np
+
+#include "np/ndarray/internal/NDArrayBaseStreamIoImpl.hpp"
+#include <np/Agg.hpp>
+#include <np/Axis.hpp>
+#include <np/Comp.hpp>
+#include <np/Copy.hpp>
+#include <np/Creators.hpp>
+#include <np/Index.hpp>
+#include <np/Inspect.hpp>
+#include <np/Io.hpp>
+#include <np/Manip.hpp>
+#include <np/Math.hpp>
+#include <np/Sort.hpp>
+#include <np/ndarray/dynamic/internal/NDArrayDynamicStorageStreamIoImpl.hpp>
+#include <np/ndarray/internal/ConstIndexImpl.hpp>
+#include <np/ndarray/internal/IndexImpl.hpp>
+#include <np/ndarray/internal/NDArrayBaseImpl.hpp>
+#include <np/ndarray/internal/NDArrayShapedImpl.hpp>
+#include <np/ndarray/static/internal/NDArrayStaticStorageStreamIoImpl.hpp>

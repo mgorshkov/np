@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,8 +42,8 @@ namespace np {
     /// \return The sum of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> add(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto add(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.add(array2);
     }
 
@@ -58,8 +58,8 @@ namespace np {
     /// \return The difference of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> subtract(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto subtract(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.subtract(array2);
     }
 
@@ -74,8 +74,8 @@ namespace np {
     /// \return The product of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> multiply(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto multiply(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.multiply(array2);
     }
 
@@ -92,8 +92,8 @@ namespace np {
     /// \return The ratio of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> divide(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto divide(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.divide(array2);
     }
 
@@ -108,8 +108,8 @@ namespace np {
     /// \return The exponent of an array1
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> exp(const Array<DType, SizeTs, Sizes...> &array1, const Array<DType, SizeTs, Sizes...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto exp(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.exp(array2);
     }
 
@@ -123,8 +123,8 @@ namespace np {
     /// \return The square root of an array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> sqrt(const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType, typename Derived, typename Storage, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto sqrt(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.sqrt();
     }
 
@@ -138,8 +138,8 @@ namespace np {
     /// \return The sine of an array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> sin(const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType, typename Derived, typename Storage, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto sin(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.sin();
     }
 
@@ -153,8 +153,8 @@ namespace np {
     /// \return The cosine of an array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> cos(const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType, typename Derived, typename Storage, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto cos(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.cos();
     }
 
@@ -168,8 +168,23 @@ namespace np {
     /// \return The log of an array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Array<DType, SizeTs, Sizes...> log(const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType, typename Derived, typename Storage, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto log(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.log();
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Find the abs of the array
+    ///
+    /// Find array-wise absolute value element by element.
+    ///
+    /// \param array array to calculate abs
+    ///
+    /// \return The absolute value of an array
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType, typename Derived, typename Storage, typename = typename std::enable_if<std::is_arithmetic<DType>::value, DType>::type>
+    inline auto abs(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.abs();
     }
 }// namespace np

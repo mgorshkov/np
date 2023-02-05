@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ SOFTWARE.
 #include <np/Constants.hpp>
 
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 /* Saving & Loading On Disk
  >>> np.save('my_array' , a)
@@ -48,8 +49,8 @@ namespace np {
     /// \param array Array to save
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void save(const char *filename, const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline void save(const char *filename, const Array<DType, SizeT> &array) {
         array.save(filename);
     }
 
@@ -64,8 +65,8 @@ namespace np {
     /// \param array Array to save
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void savez(const char *filename, const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline void savez(const char *filename, const Array<DType, SizeT> &array) {
         array.savez(filename);
     }
 
@@ -80,8 +81,9 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
-    inline Array<DType> load(const char *filename) {
-        return NDArrayDynamic<DType, ndarray::array_dynamic::internal::NDArrayDynamicInternalStorageVector<DType>>::load(filename);
+    inline auto load(const char *filename) {
+        NDArrayDynamic<DType> array{};
+        return array.load(filename);
     }
 
     //////////////////////////////////////////////////////////////
@@ -97,8 +99,9 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
-    inline Array<DType> loadtxt(const char *filename) {
-        return NDArrayDynamic<DType>::loadtxt(filename);
+    inline auto loadtxt(const char *filename) {
+        NDArrayDynamic<DType> array{};
+        return array.loadtxt(filename);
     }
 
     //////////////////////////////////////////////////////////////
@@ -131,8 +134,8 @@ namespace np {
     /// \param delimiter String that delimits fields
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline void savetxt(const char *filename, const Array<DType, SizeTs, Sizes...> &array, const char *delimiter) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline void savetxt(const char *filename, const Array<DType, SizeT> &array, const char *delimiter) {
         //"Expected 1D or 2D array, got %dD array instead" % X.ndim)
         //ValueError: Expected 1D or 2D array, got 3D array instead
         array.savetxt(filename, delimiter);

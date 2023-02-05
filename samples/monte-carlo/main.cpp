@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022 Mikhail Gorshkov
+Copyright (c) 2023 Mikhail Gorshkov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include <iostream>
-#include <np/Creators.hpp>
+#include <np/Array.hpp>
 
 int main(int, char **) {
     // PI number calculation with Monte-Carlo method
@@ -34,5 +34,6 @@ int main(int, char **) {
     auto dist = rx * rx + ry * ry;
     auto inside = (dist["dist<1"]).size();
     std::cout << "PI=" << 4 * static_cast<double>(inside) / size;
+
     return 0;
 }

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,15 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <np/ndarray/internal/Math.hpp>
+#include <np/ndarray/internal/NDArrayBase.hpp>
 
 namespace np {
     namespace ndarray {
-        namespace array_static {
+        namespace internal {
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline static DType vectorCorr(const NDArrayStatic<DType, SizeT, SizeTs...> &v1,
-                                           const NDArrayStatic<DType, SizeT, SizeTs...> &v2) {
+            template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+            inline static float_ vectorCorr(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
                     throw std::runtime_error("Only 1D arrays supported");
@@ -45,53 +45,34 @@ namespace np {
                     throw std::runtime_error("Sizes are different");
                 }
 
-                DType sum1 = 0;
-                DType sum2 = 0;
-                DType sum12 = 0;
-                DType squareSum1 = 0;
-                DType squareSum2 = 0;
+                float_ sum1 = 0;
+                float_ sum2 = 0;
+                float_ sum12 = 0;
+                float_ squareSum1 = 0;
+                float_ squareSum2 = 0;
 
                 Size n = v1.len();
 
                 for (Size i = 0; i < n; i++) {
                     sum1 += v1.get(i);
                     sum2 += v2.get(i);
-                    sum12 += sum12 + v1.get(i) * v2.get(i);
+                    sum12 += v1.get(i) * v2.get(i);
 
                     squareSum1 += v1.get(i) * v1.get(i);
                     squareSum2 += v2.get(i) * v2.get(i);
                 }
 
-                DType corr = static_cast<DType>(n * sum12 - sum1 * sum2) / static_cast<DType>(sqrt((n * squareSum1 - sum1 * sum1) * (n * squareSum2 - sum2 * sum2)));
+                float_ minusResult1 = n * squareSum1 - sum1 * sum1;
+                float_ minusResult2 = n * squareSum2 - sum2 * sum2;
+                float_ mulResult = minusResult1 * minusResult2;
+                float_ sqrtResult = std::sqrt(mulResult);
+                float_ corr = (n * sum12 - sum1 * sum2) / sqrtResult;
 
                 return corr;
             }
 
-            template<typename DType>
-            inline static DType vectorCorr(const NDArrayStaticStub<DType> &v1,
-                                           const NDArrayStaticStub<DType> &v2) {
-                auto sh1 = v1.shape();
-                if (sh1.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
-
-                auto sh2 = v2.shape();
-                if (sh2.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
-
-                DType sum1 = v1;
-                DType sum2 = v2;
-                DType sum12 = v1 * v2;
-                DType squareSum1 = v1 * v1;
-                DType squareSum2 = v2 * v2;
-
-                DType corr = static_cast<DType>(sum12 - sum1 * sum2) / static_cast<DType>(sqrt((squareSum1 - sum1 * sum1) * (squareSum2 - sum2 * sum2)));
-
-                return corr;
-            }
-
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline static DType vectorCov(const NDArrayStatic<DType, SizeT, SizeTs...> &v1,
-                                          const NDArrayStatic<DType, SizeT, SizeTs...> &v2) {
+            template<typename Derived1, typename Storage1, typename Derived2, typename Storage2, typename DType>
+            inline static float_ vectorCov(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
                     throw std::runtime_error("Only 1D arrays supported");
@@ -104,17 +85,21 @@ namespace np {
                     throw std::runtime_error("Sizes are different");
                 }
 
-                auto v1_mean = v1.mean();
-                auto v2_mean = v2.mean();
-
-                DType sum = 0;
-
+                float_ sum{};
                 for (Size i = 0; i < v1.len(); ++i) {
-                    sum += ((v1[i] - v1_mean) * (v2[i] - v2_mean));
+                    float_ result1;
+                    ndarray::internal::subtract<float_>(v1.get(i), v1.mean(), result1);
+                    float_ result2;
+                    ndarray::internal::subtract<float_>(v2.get(i), v2.mean(), result2);
+                    float_ result3;
+                    ndarray::internal::multiply<float_>(result1, result2, result3);
+                    sum += result3;
                 }
 
-                return sum / (v1.len() - 1);
+                float_ result = sum / (v1.len() - 1);
+                return result;
             }
-        }// namespace array_static
+
+        }// namespace internal
     }    // namespace ndarray
 }// namespace np

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@ SOFTWARE.
 #pragma once
 
 #include <cctype>
-#include <codecvt>
 #include <functional>
 #include <string>
 
@@ -43,14 +42,6 @@ namespace np {
             public:
                 std::string operator()(const std::string &val) {
                     return val;
-                }
-            };
-
-            template<>
-            class AllToNumberConvertor<std::wstring> {
-            public:
-                std::wstring operator()(const std::string &val) {
-                    return utf8_to_wstring(val);
                 }
             };
 

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,11 @@ namespace np {
     /// Each dimension is represented by a vector element.
     ///
     //////////////////////////////////////////////////////////////
-    class Shape : public std::vector<Size> {
+    class Shape {
     public:
         Shape() = default;
+
+        using Storage = std::vector<Size>;
 
         //////////////////////////////////////////////////////////////
         /// \brief Initializer constructor
@@ -53,7 +55,7 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         Shape(std::initializer_list<Size> initList)
-            : std::vector<Size>{initList} {
+            : m_sizes{initList} {
         }
 
         //////////////////////////////////////////////////////////////
@@ -64,8 +66,8 @@ namespace np {
         /// \param v vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        explicit Shape(const std::vector<Size> &v)
-            : std::vector<Size>{v} {
+        explicit Shape(const Storage &v)
+            : m_sizes{v} {
         }
 
         //////////////////////////////////////////////////////////////
@@ -76,26 +78,23 @@ namespace np {
         /// \param initList vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        explicit Shape(std::vector<Size> &&v)
-            : std::vector<Size>{std::move(v)} {
+        explicit Shape(Storage &&v)
+            : m_sizes{std::move(v)} {
         }
 
-        Shape(const Shape &another)
-            : std::vector<Size>{another} {
-        }
-
+        Shape(const Shape &another) = default;
         Shape(Shape &&another) = default;
 
         Shape &operator=(const Shape &another) {
             if (this != &another) {
-                std::vector<Size>::operator=(another);
+                m_sizes = another.m_sizes;
             }
             return *this;
         }
 
-        Shape &operator=(Shape &&another) {
+        Shape &operator=(Shape &&another) noexcept {
             if (this != &another) {
-                std::vector<Size>::operator=(another);
+                m_sizes = std::move(another.m_sizes);
             }
             return *this;
         }
@@ -129,7 +128,7 @@ namespace np {
                     ++i;
                 }
                 auto numberStr{number.substr(i, number.length() - i)};
-                push_back(std::stoul(numberStr));
+                m_sizes.push_back(std::stoul(numberStr));
             };
             while (true) {
                 std::size_t commaIndex = shapeTupleStr.find(',', prevCommaIndex);
@@ -140,7 +139,7 @@ namespace np {
                 push_number(commaIndex, prevCommaIndex);
                 prevCommaIndex = commaIndex + 1;
             }
-            NP_THROW_UNLESS_WITH_ARG(!empty(), "Incorrect shape string format", shapeTupleStr);
+            NP_THROW_UNLESS_WITH_ARG(!m_sizes.empty(), "Incorrect shape string format", shapeTupleStr);
         }
 
         //////////////////////////////////////////////////////////////
@@ -152,17 +151,17 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         explicit operator std::string() const {
-            if (empty()) {
+            if (m_sizes.empty()) {
                 return "0,";
-            } else if (size() == 1) {
-                return std::to_string(at(0)) + ",";
+            } else if (m_sizes.size() == 1) {
+                return std::to_string(m_sizes.at(0)) + ",";
             }
 
             std::string shape;
-            for (std::size_t dim = 0; dim < size(); ++dim) {
+            for (std::size_t dim = 0; dim < m_sizes.size(); ++dim) {
                 if (dim > 0)
                     shape += ", ";
-                shape += std::to_string(at(dim));
+                shape += std::to_string(m_sizes.at(dim));
             }
             return shape;
         }
@@ -174,11 +173,11 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         void flatten() {
-            if (empty()) {
+            if (m_sizes.empty()) {
                 return;
             }
-            auto product = std::accumulate(begin(), end(), 1, std::multiplies<Size>());
-            *this = {product};
+            auto product = std::accumulate(m_sizes.begin(), m_sizes.end(), static_cast<Size>(1), std::multiplies<>());
+            m_sizes = {product};
         }
 
         //////////////////////////////////////////////////////////////
@@ -188,7 +187,95 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         void transpose() {
-            std::reverse(begin(), end());
+            std::reverse(m_sizes.begin(), m_sizes.end());
         }
+
+        [[nodiscard]] bool empty() const {
+            return m_sizes.empty();
+        }
+
+        void clear() {
+            m_sizes.clear();
+        }
+
+        [[nodiscard]] std::size_t size() const {
+            return m_sizes.size();
+        }
+
+        [[nodiscard]] Size calcSizeByShape() const {
+            if (empty())
+                return 0;
+
+            return std::accumulate(m_sizes.cbegin(), m_sizes.cend(), static_cast<Size>(1), std::multiplies<>());
+        }
+
+        void singleElement() {
+            m_sizes = {1};
+        }
+
+        void addDim(Size size) {
+            m_sizes.push_back(size);
+        }
+
+        void removeFirstDim() {
+            if (empty()) {
+                throw std::runtime_error("Empty shape, cannot remove first dim");
+            }
+            m_sizes.erase(m_sizes.begin());
+        }
+
+        const Size &operator[](const std::size_t index) const {
+            return m_sizes[index];
+        }
+
+        Size &operator[](const std::size_t index) {
+            return m_sizes[index];
+        }
+
+        [[nodiscard]] Storage::iterator begin() {
+            return m_sizes.begin();
+        }
+
+        [[nodiscard]] Storage::const_iterator cbegin() const {
+            return m_sizes.cbegin();
+        }
+
+        [[nodiscard]] Storage::iterator end() {
+            return m_sizes.end();
+        }
+
+        [[nodiscard]] Storage::const_iterator cend() const {
+            return m_sizes.cend();
+        }
+
+        [[nodiscard]] Size &back() {
+            return m_sizes.back();
+        }
+
+        [[nodiscard]] const Size &back() const {
+            return m_sizes.back();
+        }
+
+        inline friend bool operator==(const Shape &left, const Shape &right) {
+            return left.m_sizes == right.m_sizes;
+        }
+
+        inline friend bool operator!=(const Shape &left, const Shape &right) {
+            return !operator==(left, right);
+        }
+
+        inline friend std::ostream &operator<<(std::ostream &stream, const Shape &shape) {
+            stream << "{";
+            for (std::size_t index = 0; index < shape.m_sizes.size(); ++index) {
+                if (index > 0)
+                    stream << " ";
+                stream << shape.m_sizes[index];
+            }
+            stream << "}";
+            return stream;
+        }
+
+    private:
+        Storage m_sizes;
     };
 }// namespace np

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,99 +29,250 @@ SOFTWARE.
 
 #include <np/Shape.hpp>
 
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
     namespace ndarray {
         namespace array_static {
             // Array creators
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic() noexcept
-                : m_ArrayImpl{} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic() noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{SizeT}} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(const DType &value) noexcept
-                : m_ArrayImpl{value} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(Shape shape) noexcept
+                : NDArrayStaticBase<DType, SizeT>{std::move(shape)} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(CArrayType data) noexcept
-                : m_ArrayImpl{data} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const DType &value) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{SizeT}, value} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(
-                    const NDArrayStatic<DType, SizeT, SizeTs...> &another) noexcept
-                : m_ArrayImpl{another.m_ArrayImpl} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(Shape shape, const DType &value) noexcept
+                : NDArrayStaticBase<DType, SizeT>{std::move(shape), value} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(
-                    NDArrayStatic<DType, SizeT, SizeTs...> &&another) noexcept
-                : m_ArrayImpl{std::move(another.m_ArrayImpl)} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray1DType<Size1T> &data) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size1T}, data} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(
-                    const internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &array) noexcept
-                : m_ArrayImpl{array} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{isColumnVector, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(
-                    internal::NDArrayStaticInternal<DType, SizeT, SizeTs...> &&array) noexcept
-                : m_ArrayImpl{std::move(array)} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray2DType<Size1T, Size2T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size2T, Size1T}, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(const StdArrayType &array) noexcept
-                : m_ArrayImpl{array} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size3T, Size2T, Size1T}, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(StdArrayType &&array) noexcept
-                : m_ArrayImpl{std::move(array)} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size4T, Size3T, Size2T, Size1T}, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(const StdVectorType &vector) noexcept
-                : m_ArrayImpl{vector} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(
+                    const NDArrayStatic<DType, SizeT> &another) noexcept
+                : NDArrayStaticBase<DType, SizeT>{another} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(StdVectorType &&vector) noexcept
-                : m_ArrayImpl{std::move(vector)} {
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(
+                    NDArrayStatic<DType, SizeT> &&another) noexcept
+                : NDArrayStaticBase<DType, SizeT>{another} {
             }
 
-            template<typename DType,
-                     Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::NDArrayStatic(std::initializer_list<DType> init_list) noexcept
-                : m_ArrayImpl{init_list} {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray1DType<Size1T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size1T}, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...>::~NDArrayStatic() noexcept {
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{isColumnVector, array} {
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...> &NDArrayStatic<DType, SizeT, SizeTs...>::operator=(
-                    const NDArrayStatic<DType, SizeT, SizeTs...> &another) noexcept {
-                m_ArrayImpl = another.m_ArrayImpl;
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray2DType<Size1T, Size2T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size2T, Size1T}, array} {
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size3T, Size2T, Size1T}, array} {
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{Size4T, Size3T, Size2T, Size1T}, array} {
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector1DType &vector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector1DType &vector, const Shape &shape) noexcept
+                : NDArrayStaticBase<DType, SizeT>{shape, vector} {
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector1DType &vector, bool isColumnVector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{isColumnVector, vector} {
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector2DType &vector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                if (!vector.empty()) {
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                }
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector3DType &vector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                if (!vector.empty()) {
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                    if (!vector[0].empty()) {
+                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0].size());
+                    }
+                }
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector4DType &vector) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                if (!vector.empty()) {
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                    if (!vector[0].empty()) {
+                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0].size());
+                        if (!vector[0][0].empty()) {
+                            NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0][0].size());
+                        }
+                    }
+                }
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT>::NDArrayStatic(std::initializer_list<DType> init_list) noexcept
+                : NDArrayStaticBase<DType, SizeT>{Shape{init_list.size()}, init_list} {
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT> &NDArrayStatic<DType, SizeT>::operator=(const DType &another) noexcept {
+                if (this != &another) {
+                    NDArrayStaticBase<DType, SizeT>::operator=(another);
+                }
                 return *this;
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...> &
-            NDArrayStatic<DType, SizeT, SizeTs...>::operator=(NDArrayStatic<DType, SizeT, SizeTs...> &&another) noexcept {
-                m_ArrayImpl = std::move(another.m_ArrayImpl);
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT> &NDArrayStatic<DType, SizeT>::operator=(
+                    const NDArrayStatic<DType, SizeT> &another) noexcept {
+                if (this != &another) {
+                    NDArrayStaticBase<DType, SizeT>::operator=(another);
+                }
                 return *this;
             }
 
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...> &
-            NDArrayStatic<DType, SizeT, SizeTs...>::operator=(const NDArrayStatic<DType, SizeT, SizeTs...>::StdVectorType &vector) noexcept {
-                m_ArrayImpl = vector;
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(NDArrayStatic<DType, SizeT> &&another) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(another);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(CArray1DType<Size1T> array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(CArray2DType<Size1T, Size2T> array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(const StdArray1DType<Size1T> &array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::
+            operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(array);
+                return *this;
+            }
+
+            template<typename DType, Size SizeT>
+            inline NDArrayStatic<DType, SizeT> &
+            NDArrayStatic<DType, SizeT>::operator=(const NDArrayStatic<DType, SizeT>::StdVector1DType &vector) noexcept {
+                NDArrayStaticBase<DType, SizeT>::operator=(vector);
                 return *this;
             }
         }// namespace array_static
