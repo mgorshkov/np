@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,28 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <cstddef>
+#include <iomanip>
+#include <iostream>
+
+#include <np/ndarray/static/internal/NDArrayStaticStorage.hpp>
 
 namespace np {
     namespace ndarray {
         namespace array_static {
+            namespace internal {
+                template<typename DType, Size SizeT>
+                std::ostream &
+                operator<<(std::ostream &stream, const NDArrayStaticStorage<DType, SizeT> &array);
 
-            // Sort an array
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort() {
-                m_ArrayImpl.sort();
-                auto shape = m_ArrayImpl.shape();
-                shape.flatten();
-                m_ArrayImpl.setShape(shape);
-            }
+                template<Size SizeT>
+                std::ostream &
+                operator<<(std::ostream &stream, const NDArrayStaticStorage<std::wstring, SizeT> &array);
 
-            // // Sort the elements of an array's axis
-            // template<typename DType, Size SizeT, Size... SizeTs>
-            // template<Size N>
-            // inline void NDArrayStatic<DType, SizeT, SizeTs...>::sort(Axis <N> axis) {
-
-            // }
-        }// namespace array_static
-    }    // namespace ndarray
+                template<Size SizeT>
+                std::wostream &
+                operator<<(std::wostream &stream, const NDArrayStaticStorage<std::wstring, SizeT> &array);
+            }// namespace internal
+        }    // namespace array_static
+    }        // namespace ndarray
 }// namespace np

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@ SOFTWARE.
 #include <np/Exception.hpp>
 #include <np/Shape.hpp>
 
-#include <np/ndarray/dynamic/NDArrayDynamic.hpp>
-#include <np/ndarray/static/NDArrayStatic.hpp>
+#include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
+#include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
 
 namespace np {
     using ndarray::array_dynamic::NDArrayDynamic;
@@ -58,15 +58,16 @@ namespace np {
     /// Create a static array of zeros of a given shape.
     ///
     /// \param DType Type of array elements
-    /// \param SizeT 1st dimension of the array
-    /// \param SizeTs The rest dimentions of the array
+    /// \param SizeT First dim of the array
+    /// \param Sizes Rest dims of the array
     ///
     /// \return A dynamic array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... SizeTs>
+    template<typename DType, Size SizeT, Size... Sizes>
     auto zeros() {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{0};
+        const Shape shape{SizeT, Sizes...};
+        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, 0};
     }
 
     //////////////////////////////////////////////////////////////
@@ -91,15 +92,16 @@ namespace np {
     /// Create a static array of ones of a given shape.
     ///
     /// \param DType Type of array elements
-    /// \param SizeT 1st dimension of the array
-    /// \param SizeTs The rest dimensions of the array
+    /// \param SizeT First dim of the array
+    /// \param Sizes Rest dims of the array
     ///
     /// \return A dynamic array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... SizeTs>
+    template<typename DType, Size SizeT, Size... Sizes>
     auto ones() {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{1};
+        const Shape shape{SizeT, Sizes...};
+        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, 1};
     }
 
     //////////////////////////////////////////////////////////////
@@ -185,11 +187,11 @@ namespace np {
     auto arange() {
         NP_THROW_CONSTEXPR_UNLESS(step != 0, "Step must not be zero.");
 
-        static DType const constexpr size = (stop - start) / step;
-        NDArrayStatic<DType, size> array;
+        static Size const constexpr size = (stop - start) / step;
+        NDArrayStatic<DType, size> array{};
         Size i{0};
         for (DType value = start; value < stop; value += step) {
-            set(array, i++, value);
+            array.set(i++, value);
         }
         return array;
     }
@@ -238,11 +240,11 @@ namespace np {
     auto linspace(DType start, DType stop) {
         NP_THROW_CONSTEXPR_UNLESS(num > 0, "Number of samples must be non-negative.");
 
-        NDArrayStatic<DType, num> array;
+        NDArrayStatic<DType, num> array{};
         Size i{0};
         const DType delta = (stop - start) / (num - 1);
         for (DType value = start; value <= stop; value += delta) {
-            set(array, i++, value);
+            array.set(i++, value);
         }
         return array;
     }
@@ -259,10 +261,9 @@ namespace np {
     /// \return A dynamic array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault>
-    auto full(DType fillValue, Shape shape) {
-        auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal{shape, fillValue};
-        return NDArrayDynamic<DType>{internal};
+    template<typename DType>
+    auto full(DType fillValue, const Shape &shape) {
+        return NDArrayDynamic{shape, fillValue};
     }
 
     //////////////////////////////////////////////////////////////
@@ -271,17 +272,18 @@ namespace np {
     /// Create a static array filled with a fillValue.
     ///
     /// \param DType Type of array elements
-    /// \param SizeT 1st dimension of the array
-    /// \param SizeTs The rest dimensions of the array
+    /// \param SizeT First dim of the array
+    /// \param Sizes Rest dims of the array
     /// \param fillValue Value to fill the array
     /// \param shape Shape of the array
     ///
     /// \return A static array of zeros
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... SizeTs>
+    template<typename DType, Size SizeT, Size... Sizes>
     auto full(DType fillValue) {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{fillValue};
+        const Shape shape{SizeT, Sizes...};
+        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, fillValue};
     }
 
     //////////////////////////////////////////////////////////////
@@ -315,8 +317,7 @@ namespace np {
     /// Create an identity matrix.
     ///
     /// \param DType Type of array elements
-    /// \param SizeT 1st dimension of the array
-    /// \param SizeTs The rest dimensions of the array
+    /// \param SizeT Size of the array
     ///
     /// \return A static array of zeros
     ///
@@ -329,7 +330,7 @@ namespace np {
                 array[i][j] = i == j;
             }
         }
-        return NDArrayStatic<DType, SizeT, SizeT>{array};
+        return NDArrayStatic<DType, SizeT * 2>{array};
     }
 
     namespace random {
@@ -345,17 +346,16 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
-        auto rand(Shape shape) {
+        auto rand(const Shape &shape) {
             std::random_device device;
             std::mt19937 generator(device());
             std::uniform_real_distribution<DType> distribution;
             std::vector<DType> vector;
-            auto size = ndarray::internal::calcSizeByShape(shape);
+            auto size = shape.calcSizeByShape();
             vector.resize(size);
             std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
 
-            auto internal = ndarray::array_dynamic::internal::NDArrayDynamicInternal<DType>{vector, shape};
-            return NDArrayDynamic<DType>{internal};
+            return NDArrayDynamic<DType>{vector, shape};
         }
 
         //////////////////////////////////////////////////////////////
@@ -371,46 +371,30 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto rand(Size size) {
-            Shape shape{size};
+            const Shape shape{size};
             return rand<DType>(shape);
         }
 
-        template<typename DType, Size... SizeTs>
-        struct rand_helper;
+        template<typename DType, Size SizeT, Size... Sizes>
+        struct rand_helper {
+            static Size constexpr m_size = (SizeT * ... * Sizes);
 
-        template<typename DType, Size SizeT>
-        struct rand_helper<DType, SizeT> {
             rand_helper() {
                 std::random_device device;
                 std::mt19937 generator(device());
                 std::uniform_real_distribution<DType> distribution;
                 std::vector<DType> vector;
-                vector.resize(SizeT);
+                vector.resize(m_size);
                 std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
-
-                m_Array = vector;
+                const Shape shape{SizeT, Sizes...};
+                m_array = NDArrayStatic<DType, m_size>(vector, shape);
             }
 
-            explicit operator NDArrayStatic<DType, SizeT>() {
-                return static_cast<NDArrayStatic<DType, SizeT>>(m_Array);
+            explicit operator NDArrayStatic<DType, m_size>() {
+                return m_array;
             }
 
-            NDArrayStatic<DType, SizeT> m_Array;
-        };
-
-        template<typename DType, Size SizeT, Size... SizeTs>
-        struct rand_helper<DType, SizeT, SizeTs...> {
-            rand_helper() {
-                for (Size i = 0; i < SizeT; ++i) {
-                    set(m_Array, i, static_cast<NDArrayStatic<DType, SizeTs...>>(rand_helper<DType, SizeTs...>()));
-                }
-            }
-
-            explicit operator NDArrayStatic<DType, SizeT, SizeTs...>() {
-                return m_Array;
-            }
-
-            NDArrayStatic<DType, SizeT, SizeTs...> m_Array;
+            NDArrayStatic<DType, m_size> m_array;
         };
 
         //////////////////////////////////////////////////////////////
@@ -419,15 +403,15 @@ namespace np {
         /// Create a random static array with uniform distribution.
         ///
         /// \param DType Type of array elements
-        /// \param SizeT 1st dimension of the array
-        /// \param SizeTs The rest dimensions of the array
+        /// \param SizeT First dim of the array
+        /// \param Sizes Rest dims of the array
         ///
         /// \return A static array of zeros
         ///
         //////////////////////////////////////////////////////////////
-        template<typename DType, Size SizeT, Size... SizeTs>
-        auto rand() {
-            return rand_helper<DType, SizeT, SizeTs...>{};
+        template<typename DType, Size SizeT, Size... Sizes>
+        NDArrayStatic<DType, (SizeT * ... * Sizes)> rand() {
+            return static_cast<NDArrayStatic<DType, (SizeT * ... * Sizes)>>(rand_helper<DType, SizeT, Sizes...>());
         }
     }// namespace random
 
@@ -443,7 +427,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
-    auto empty(Shape shape) {
+    auto empty(const Shape &shape) {
         return NDArrayDynamic<DType>{shape};
     }
 
@@ -453,14 +437,15 @@ namespace np {
     /// Create an empty static array.
     ///
     /// \param DType Type of array elements
-    /// \param SizeT 1st dimension of the array
-    /// \param SizeTs The rest dimensions of the array
+    /// \param SizeT First dim of the array
+    /// \param Sizes Rest dims of the array
     ///
     /// \return An empty static array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... SizeTs>
+    template<typename DType, Size SizeT, Size... Sizes>
     auto empty() {
-        return NDArrayStatic<DType, SizeT, SizeTs...>{};
+        const Shape shape{SizeT, Sizes...};
+        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape};
     }
 }// namespace np

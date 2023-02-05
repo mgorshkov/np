@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,13 @@ SOFTWARE.
 
 #pragma once
 
+#include <ostream>
+
 namespace np {
     namespace ndarray {
         namespace array_static {
             namespace internal {
 
-                template<class Tuple,
-                         class T = std::decay_t<std::tuple_element_t<0, std::decay_t<Tuple>>>>
-                std::vector<T> to_vector(Tuple &&tuple) {
-                    return std::apply([](auto &&...elems) {
-                        std::vector<T> result;
-                        result.reserve(sizeof...(elems));
-                        (result.push_back(std::forward<decltype(elems)>(elems)), ...);
-                        return result;
-                    },
-                                      std::forward<Tuple>(tuple));
-                }
             }// namespace internal
         }    // namespace array_static
     }        // namespace ndarray

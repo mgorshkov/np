@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,5 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
-
-namespace np {
-    namespace ndarray {
-        namespace array_dynamic {
-
-            // Sort an array
-            template<typename DType, typename Storage>
-            inline void NDArrayDynamic<DType, Storage>::sort() {
-                m_ArrayImpl.sort();
-                auto shape = m_ArrayImpl.shape();
-                shape.flatten();
-                m_ArrayImpl.setShape(shape);
-            }
-
-            // Sort the elements of an array's axis
-            // TODO
-            // template<typename DType, typename Storage>
-            // template<std::size_t N>
-            // inline void NDArrayDynamic<DType, Storage>::sort(std::optional<Axis<N>> axis) {
-
-            // }
-        }// namespace array_dynamic
-    }    // namespace ndarray
-}// namespace np
+#include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>

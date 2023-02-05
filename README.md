@@ -13,7 +13,7 @@ std::vector-based implementation in which only the element type is known at comp
 This implies heap array storage.
 
 # Latest artifact
-https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.3.tgz
+https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.4.tgz
 
 # Requirements
 Any C++17-compatible compiler:
@@ -27,10 +27,17 @@ git clone https://github.com/mgorshkov/np.git
 ```
 
 # Build unit tests and sample
+## Linux/MacOS
 ```
 mkdir build && cd build
 cmake ..
 cmake --build .
+```
+## Windows
+```
+mkdir build && cd build
+cmake ..
+cmake --build . --config Release
 ```
 
 # Build docs
@@ -82,8 +89,13 @@ mkdir -p build-release && cd build-release
 cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 5. Build
+## Linux/MacOS
 ```
 cmake --build .
+```
+## Windows
+```
+cmake --build . --config Release
 ```
 6. Run the app
 ```
@@ -92,4 +104,5 @@ PI=3.14158
 ```
 
 # Links
-ML Methods on top of NP library: https://github.com/mgorshkov/ml
+* Scientific methods on top of NP library: https://github.com/mgorshkov/scipy
+* ML Methods from scikit-learn library: https://github.com/mgorshkov/sklearn

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ SOFTWARE.
 #pragma once
 
 #include <np/Constants.hpp>
+#include <np/ndarray/internal/NDArrayBaseImpl.hpp>
 
 /* Array inspection
  Length of array
@@ -42,8 +43,9 @@ namespace np {
     /// \return The length of an array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeTs = SIZE_DEFAULT, Size... Sizes>
-    inline Size len(const Array<DType, SizeTs, Sizes...> &array) {
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline Size len(const Array<DType, SizeT> &array) {
         return array.len();
     }
+
 }// namespace np

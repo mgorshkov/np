@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,20 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/static/NDArrayStaticDecl.hpp>
+#include <array>
 
 namespace np {
     namespace ndarray {
         namespace array_static {
-            // Create a view of the array with the same data
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::view() const {
-                return *this;
-            }
+            namespace internal {
 
-            // Create a copy of the array
-            template<typename DType, Size SizeT, Size... SizeTs>
-            inline NDArrayStatic<DType, SizeT, SizeTs...> NDArrayStatic<DType, SizeT, SizeTs...>::copy() const {
-                return *this;
-            }
-        }// namespace array_static
-    }    // namespace ndarray
+                //template<typename DType, std::size_t size>
+                //using NDArrayStaticStorage = std::array<DType, size>;
+
+                //template<std::size_t size>
+                //using NDArrayStaticStorageBool = std::array<bool, size>;
+
+            }// namespace internal
+        }    // namespace array_static
+    }        // namespace ndarray
 }// namespace np
