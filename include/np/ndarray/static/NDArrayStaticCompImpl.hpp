@@ -24,46 +24,42 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/dynamic/NDArrayDynamic.hpp>
-#include <np/ndarray/dynamic/internal/Tools.hpp>
+#include <np/DType.hpp>
+#include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {
     namespace ndarray {
-        namespace array_dynamic {
-            template<typename DType>
-            bool NDArrayDynamic<DType>::operator!=(const DType &value) const {
-                return !operator==(value);
-            }
-
-            template<typename DType>
-            NDArrayDynamic<bool_> NDArrayDynamic<DType>::operator==(const NDArrayDynamic<DType> &array) const {
-                NDArrayDynamic<bool_> result{this->shape()};
-                for (Size i = 0; i < this->size(); ++i) {
-                    const auto equals = this->get(i) == array.get(i);
+        namespace array_static {
+            template<typename DType, Size SizeT>
+            NDArrayStatic<bool_, SizeT> NDArrayStatic<DType, SizeT>::operator==(const NDArrayStatic<DType, SizeT> &array) const {
+                NDArrayStatic<bool_, SizeT> result{NDArrayStaticBase<DType, SizeT>::shape()};
+                for (Size i = 0; i < NDArrayStaticBase<DType, SizeT>::size(); ++i) {
+                    const auto equals = NDArrayStaticBase<DType, SizeT>::get(i) == array.get(i);
                     result.set(i, equals);
                 }
                 return result;
             }
 
-            template<typename DType>
-            NDArrayDynamic<bool_> NDArrayDynamic<DType>::operator<(const NDArrayDynamic<DType> &array) const {
-                NDArrayDynamic<bool_> result{this->shape()};
-                for (Size i = 0; i < this->size(); ++i) {
-                    auto equals = this->get(i) < array.get(i);
+            template<typename DType, Size SizeT>
+            NDArrayStatic<bool_, SizeT> NDArrayStatic<DType, SizeT>::operator<(const NDArrayStatic<DType, SizeT> &array) const {
+                NDArrayStatic<bool_, SizeT> result{NDArrayStaticBase<DType, SizeT>::shape()};
+                for (Size i = 0; i < NDArrayStaticBase<DType, SizeT>::size(); ++i) {
+                    auto equals = NDArrayStaticBase<DType, SizeT>::get(i) < array.get(i);
                     result.set(i, equals);
                 }
                 return result;
             }
 
-            template<typename DType>
-            NDArrayDynamic<bool_> NDArrayDynamic<DType>::operator>(const NDArrayDynamic<DType> &array) const {
-                NDArrayDynamic<bool_> result{this->shape()};
-                for (Size i = 0; i < this->size(); ++i) {
-                    auto equals = this->get(i) > array.get(i);
+            template<typename DType, Size SizeT>
+            NDArrayStatic<bool_, SizeT> NDArrayStatic<DType, SizeT>::operator>(const NDArrayStatic<DType, SizeT> &array) const {
+                NDArrayStatic<bool_, SizeT> result{NDArrayStaticBase<DType, SizeT>::shape()};
+                for (Size i = 0; i < NDArrayStaticBase<DType, SizeT>::size(); ++i) {
+                    auto equals = NDArrayStaticBase<DType, SizeT>::get(i) > array.get(i);
                     result.set(i, equals);
                 }
                 return result;
             }
-        }// namespace array_dynamic
+
+        }// namespace array_static
     }    // namespace ndarray
 }// namespace np

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,180 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/Constants.hpp>
+#include <cstddef>
+#include <functional>
+#include <optional>
+#include <ostream>
+#include <vector>
 
-#include <np/ndarray/dynamic/NDArrayDynamicAggImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicCompImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicCopyImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicIndexImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicInspectImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicIoImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicManipImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicMathImpl.hpp>
-#include <np/ndarray/dynamic/NDArrayDynamicSortImpl.hpp>
-#include <np/ndarray/dynamic/internal/NDArrayDynamicInternal.hpp>
-#include <np/ndarray/dynamic/internal/NDArrayDynamicInternalStreamIoImpl.hpp>
+#include <np/Axis.hpp>
+#include <np/Shape.hpp>
+
+#include <np/ndarray/internal/NDArrayShaped.hpp>
+
+#include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
+#include <np/ndarray/dynamic/internal/NDArrayDynamicStorageStreamIo.hpp>
+#include <np/ndarray/dynamic/internal/Using.hpp>
+
+namespace np {
+    namespace ndarray {
+        namespace array_dynamic {
+            // N-dimensional dynamic array
+            template<typename DType>
+            class NDArrayDynamic;
+
+            template<typename DType>
+            using NDArrayDynamicStorage = internal::NDArrayDynamicStorage<DType>;
+
+            template<typename DType>
+            using NDArrayDynamicBase = ndarray::internal::NDArrayShaped<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+
+            template<typename DType>
+            class NDArrayDynamic final : public NDArrayDynamicBase<DType> {
+            public:
+                template<std::size_t Size1T>
+                using CArray1DType = DType[Size1T];
+                template<std::size_t Size1T, std::size_t Size2T>
+                using CArray2DType = CArray1DType<Size1T>[Size2T];
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
+
+                template<std::size_t Size1T>
+                using StdArray1DType = std::array<DType, Size1T>;
+                template<std::size_t Size1T, std::size_t Size2T>
+                using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
+
+                using StdVector1DType = std::vector<DType>;
+                using StdVector2DType = std::vector<StdVector1DType>;
+                using StdVector3DType = std::vector<StdVector2DType>;
+                using StdVector4DType = std::vector<StdVector3DType>;
+
+                // Creating Arrays
+                inline NDArrayDynamic() noexcept;
+
+                inline explicit NDArrayDynamic(const Shape &shape, const DType &value = DType());
+
+                NDArrayDynamic(const NDArrayDynamic &another) noexcept = default;
+
+                NDArrayDynamic(NDArrayDynamic &&another) noexcept = default;
+
+                template<std::size_t Size1T>
+                inline explicit NDArrayDynamic(const CArray1DType<Size1T> &array) noexcept;
+
+                template<std::size_t Size1T>
+                inline NDArrayDynamic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline explicit NDArrayDynamic(const CArray2DType<Size1T, Size2T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline explicit NDArrayDynamic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline explicit NDArrayDynamic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
+
+                template<std::size_t Size1T>
+                inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array) noexcept;
+
+                template<std::size_t Size1T>
+                inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline explicit NDArrayDynamic(const StdArray2DType<Size1T, Size2T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline explicit NDArrayDynamic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline explicit NDArrayDynamic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
+
+                inline explicit NDArrayDynamic(const StdVector1DType &vector) noexcept;
+
+                inline explicit NDArrayDynamic(const StdVector1DType &vector, const Shape &shape) noexcept;
+
+                inline NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept;
+
+                inline explicit NDArrayDynamic(const StdVector2DType &vector) noexcept;
+
+                inline explicit NDArrayDynamic(const StdVector3DType &vector) noexcept;
+
+                inline explicit NDArrayDynamic(const StdVector4DType &vector) noexcept;
+
+                inline NDArrayDynamic(std::initializer_list<DType> init_list) noexcept;
+
+                inline ~NDArrayDynamic() noexcept;
+
+                inline NDArrayDynamic &operator=(const DType &value) noexcept;
+
+                inline NDArrayDynamic &operator=(const NDArrayDynamic &another) noexcept;
+
+                inline NDArrayDynamic &operator=(NDArrayDynamic &&another) noexcept;
+
+                template<std::size_t Size1T>
+                inline NDArrayDynamic &operator=(CArray1DType<Size1T> array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline NDArrayDynamic &operator=(CArray2DType<Size1T, Size2T> array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline NDArrayDynamic &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline NDArrayDynamic &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept;
+
+                template<std::size_t Size1T>
+                inline NDArrayDynamic &operator=(const StdArray1DType<Size1T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T>
+                inline NDArrayDynamic &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                inline NDArrayDynamic &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
+
+                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                inline NDArrayDynamic &
+                operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
+
+                inline NDArrayDynamic &operator=(const StdVector1DType &vector) noexcept;
+
+                inline NDArrayDynamic &operator=(const StdVector2DType &vector) noexcept;
+
+                inline NDArrayDynamic &operator=(const StdVector3DType &vector) noexcept;
+
+                inline NDArrayDynamic &operator=(const StdVector4DType &vector) noexcept;
+
+                inline bool operator!=(const DType &value) const;
+
+                NDArrayDynamic<bool_> operator==(const NDArrayDynamic &array) const;
+                NDArrayDynamic<bool_> operator<(const NDArrayDynamic &array) const;
+                NDArrayDynamic<bool_> operator>(const NDArrayDynamic &array) const;
+
+                // Sort an array
+                inline void sort();
+
+                template<typename DTypeNew>
+                inline NDArrayDynamic<DTypeNew> astype() {
+                    NDArrayDynamic<DTypeNew> result{NDArrayDynamicBase<DType>::shape()};
+                    for (std::size_t i = 0; i < result.size(); ++i) {
+                        result.set(i, static_cast<DTypeNew>(NDArrayDynamicBase<DType>::get(i)));
+                    }
+                    return result;
+                }
+
+            private:
+                using Base = ndarray::internal::NDArrayBase<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+                using BasePtr = ndarray::internal::NDArrayBasePtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+                using BaseBoolPtr = ndarray::internal::NDArrayBasePtr<bool_, NDArrayDynamic<bool_>, NDArrayDynamicStorage<bool_>>;
+                using BaseConstPtr = ndarray::internal::NDArrayBaseConstPtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+            };
+
+            using NDArrayDynamicBool = NDArrayDynamic<bool_>;
+        }// namespace array_dynamic
+    }    // namespace ndarray
+}// namespace np

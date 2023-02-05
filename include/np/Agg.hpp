@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -49,9 +49,21 @@ namespace np {
     /// \return Sum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto sum(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.sum();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> sumImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> sumImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.sum();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto sum(const Array<DType, SizeT> &array) {
+        float_ result{};
+        sumImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -59,16 +71,26 @@ namespace np {
     ///
     /// This function finds a minimum among all elements of an array.
     ///
-    /// \warning This function is currently implemented for dynamic arrays only
-    ///
     /// \param array An array to calculate the minimum
     ///
     /// \return Minimum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto min(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.min();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> minImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> minImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.min();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto min(const Array<DType, SizeT> &array) {
+        float_ result{};
+        minImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -81,9 +103,21 @@ namespace np {
     /// \return Maximum of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto max(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.max();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> maxImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> maxImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.max();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto max(const Array<DType, SizeT> &array) {
+        float_ result{};
+        maxImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -96,9 +130,21 @@ namespace np {
     /// \return Cumulative sum of array elements as a 1D array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto cumsum(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.cumsum();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> cumsumImpl(const Array<DType, SizeT> &, Array<DType> &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> cumsumImpl(const Array<DType, SizeT> &array, Array<DType> &result) {
+        result = array.cumsum();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto cumsum(const Array<DType, SizeT> &array) {
+        Array<DType> result{};
+        cumsumImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -111,9 +157,21 @@ namespace np {
     /// \return Mean of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto mean(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.mean();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> meanImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> meanImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.mean();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto mean(const Array<DType, SizeT> &array) {
+        float_ result{};
+        meanImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -128,9 +186,21 @@ namespace np {
     /// \return Median of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto median(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.median();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> medianImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> medianImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.median();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto median(const Array<DType, SizeT> &array) {
+        float_ result{};
+        medianImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -143,9 +213,21 @@ namespace np {
     /// \return Covariance of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto cov(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.cov();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> covImpl(const Array<DType, SizeT> &, Array<float_> &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> covImpl(const Array<DType, SizeT> &array, Array<float_> &result) {
+        result = array.cov();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto cov(const Array<DType, SizeT> &array) {
+        Array<float_> result{};
+        covImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -159,9 +241,21 @@ namespace np {
     /// \return Correlation coefficients of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto corrcoef(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.corrcoef();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> corrcoefImpl(const Array<DType, SizeT> &, Array<float_> &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> corrcoefImpl(const Array<DType, SizeT> &array, Array<float_> &result) {
+        result = array.corrcoef();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto corrcoef(const Array<DType, SizeT> &array) {
+        Array<float_> result{};
+        corrcoefImpl<DType, SizeT>(array, result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -175,8 +269,21 @@ namespace np {
     /// \return Standard deviation of array elements
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    inline auto std_(const Array<DType, SizeT, SizeTs...> &array) {
-        return array.std_();
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> stdImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
     }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> stdImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.std_();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto std_(const Array<DType, SizeT> &array) {
+        float_ result{};
+        stdImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
 }// namespace np

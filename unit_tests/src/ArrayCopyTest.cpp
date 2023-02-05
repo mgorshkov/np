@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <gtest/gtest.h>
-#include <iostream>
-
 #include <np/Array.hpp>
-#include <np/Comp.hpp>
-#include <np/Copy.hpp>
+
+#include <ArrayTest.hpp>
 
 using namespace np;
 
-class ArrayCopyTest : public ::testing::Test {
+class ArrayCopyTest : public ArrayTest {
 protected:
     // dynamic arrays
     template<typename DType>
     inline void checkArrayCopy(const Array<DType> &array) {
         auto c = copy<DType>(array);
-        bool equals = array_equal<DType>(c, array);
-        EXPECT_TRUE(equals);
+        compare(c, array);
     }
 
     // static arrays
-    template<typename DType, std::size_t SizeT, std::size_t... SizeTs>
-    inline void checkArrayCopy(const Array<DType, SizeT, SizeTs...> &array) {
-        auto c = copy<DType, SizeT, SizeTs...>(array);
-        bool equals = array_equal<DType, SizeT, SizeTs...>(c, array);
-        EXPECT_TRUE(equals);
+    template<typename DType, Size SizeT>
+    inline void checkArrayCopy(const Array<DType, SizeT> &array) {
+        auto c = copy<DType, SizeT>(array);
+        compare(c, array);
     }
 };
 
@@ -113,22 +108,22 @@ TEST_F(ArrayCopyTest, dynamic1DStringArrayTest) {
 TEST_F(ArrayCopyTest, static2DIntArrayTest) {
     // static
     long c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2, 3> array{c_array_2d};
-    checkArrayCopy<int_, 2, 3>(array);
+    Array<int_, 2 * 3> array{c_array_2d};
+    checkArrayCopy<int_, 2 * 3>(array);
 }
 
 TEST_F(ArrayCopyTest, static2DFloatArrayTest) {
     // static
     double c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2, 3> array{c_array_2d};
-    checkArrayCopy<float_, 2, 3>(array);
+    Array<float_, 2 * 3> array{c_array_2d};
+    checkArrayCopy<float_, 2 * 3>(array);
 }
 
 TEST_F(ArrayCopyTest, static2DStringArrayTest) {
     // static
     std::string c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_, 2, 3> array{c_array_2d};
-    checkArrayCopy<string_, 2, 3>(array);
+    Array<string_, 2 * 3> array{c_array_2d};
+    checkArrayCopy<string_, 2 * 3>(array);
 }
 
 TEST_F(ArrayCopyTest, dynamic2DIntArrayTest) {
@@ -155,16 +150,16 @@ TEST_F(ArrayCopyTest, dynamic2DStringArrayTest) {
 TEST_F(ArrayCopyTest, static3DIntArrayTest) {
     // static
     long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2, 2, 3> array{c_array_3d};
-    checkArrayCopy<int_, 2, 2, 3>(array);
+    Array<int_, 2 * 2 * 3> array{c_array_3d};
+    checkArrayCopy<int_, 2 * 2 * 3>(array);
 }
 
 TEST_F(ArrayCopyTest, static3DFloatArrayTest) {
     // static
     double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
                                   {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2, 2, 3> array{c_array_3d};
-    checkArrayCopy<float_, 2, 2, 3>(array);
+    Array<float_, 2 * 2 * 3> array{c_array_3d};
+    checkArrayCopy<float_, 2 * 2 * 3>(array);
 }
 
 TEST_F(ArrayCopyTest, static3DStringArrayTest) {
@@ -178,6 +173,6 @@ TEST_F(ArrayCopyTest, static3DStringArrayTest) {
              {"str6_1", "str6_2", "str6_3"},
              {"str7_1", "str7_2", "str7_3"},
              {"str8_1", "str8_2", "str8_3"}}};
-    Array<string_, 2, 4, 3> array{c_array_3d};
-    checkArrayCopy<string_, 2, 4, 3>(array);
+    Array<string_, 2 * 4 * 3> array{c_array_3d};
+    checkArrayCopy<string_, 2 * 4 * 3>(array);
 }

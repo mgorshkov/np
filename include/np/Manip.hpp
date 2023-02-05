@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,8 @@ namespace np {
     /// \return The transposed array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    auto transpose(const Array<DType, SizeT, SizeTs...> &array) {
+    template<typename DType, typename Derived, typename Storage>
+    auto transpose(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.transpose();
     }
 
@@ -58,8 +58,8 @@ namespace np {
     /// \return The 1D resulting array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> append(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto append(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.append(array2);
     }
 
@@ -75,8 +75,8 @@ namespace np {
     /// \return The 1D resulting array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> insert(const Array<DType, SizeT, SizeTs...> &array1, Size index, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto insert(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, Size index, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.insert(index, array2);
     }
 
@@ -92,8 +92,8 @@ namespace np {
     /// \return The 1D resulting array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> del(const Array<DType, SizeT, SizeTs...> &array, Size index) {
+    template<typename DType, typename Derived, typename Storage>
+    auto del(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, Size index) {
         return array.del(index);
     }
 
@@ -109,8 +109,8 @@ namespace np {
     /// \return The resulting array
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType, SizeT, SizeTs...> concatenate(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2, std::optional<std::size_t> axis = std::nullopt) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto concatenate(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2, std::optional<std::size_t> axis = std::nullopt) {
         return array1.concatenate(array2, axis);
     }
 
@@ -127,8 +127,8 @@ namespace np {
     /// \return The array formed by stacking the given arrays, will be at least 2-D.
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    auto vstack(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto vstack(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.vstack(array2);
     }
 
@@ -145,8 +145,8 @@ namespace np {
     /// \return The array formed by stacking the given arrays, will be at least 2-D.
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    auto r_(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto r_(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.r_(array2);
     }
 
@@ -164,8 +164,8 @@ namespace np {
     /// \return The array formed by stacking the given arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType> hstack(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto hstack(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.hstack(array2);
     }
 
@@ -182,8 +182,8 @@ namespace np {
     /// \return The array formed by stacking the given arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType> column_stack(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto column_stack(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.column_stack(array2);
     }
 
@@ -201,8 +201,8 @@ namespace np {
     /// \return The array formed by stacking the given arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    Array<DType> c_(const Array<DType, SizeT, SizeTs...> &array1, const Array<DType, SizeT, SizeTs...> &array2) {
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto c_(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
         return array1.c_(array2);
     }
 
@@ -218,8 +218,8 @@ namespace np {
     /// \return Vector of split array parts
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType>> hsplit(const Array<DType, SizeT, SizeTs...> &array, std::size_t sections) {
+    template<typename DType, typename Derived, typename Storage>
+    auto hsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, std::size_t sections) {
         return array.hsplit(sections);
     }
 
@@ -235,8 +235,8 @@ namespace np {
     /// \return Vector of split array parts
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, Size... SizeTs>
-    std::vector<Array<DType>> vsplit(const Array<DType, SizeT, SizeTs...> &array, std::size_t sections) {
+    template<typename DType, typename Derived, typename Storage>
+    auto vsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, std::size_t sections) {
         return array.vsplit(sections);
     }
 

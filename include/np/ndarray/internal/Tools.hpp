@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@ SOFTWARE.
 
 #pragma once
 
-#include <codecvt>
 #include <cstddef>
 #include <istream>
 #include <ostream>
@@ -36,12 +35,6 @@ SOFTWARE.
 namespace np {
     namespace ndarray {
         namespace internal {
-            inline static Size calcSizeByShape(const Shape &shape) {
-                if (shape.empty())
-                    return 0;
-
-                return std::accumulate(shape.cbegin(), shape.cend(), 1, std::multiplies<Size>());
-            }
 
             template<typename Class>
             inline void dumpObject(std::ostream &stream, const Class &object) {
@@ -87,15 +80,21 @@ namespace np {
                 return object;
             }
 
-            inline std::wstring utf8_to_wstring(const std::string &str) {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                return conv.from_bytes(str);
-            }
+            template<typename Stream>
+            class SquareBracketsInserter {
+            public:
+                explicit SquareBracketsInserter(Stream &stream) noexcept
+                    : m_stream{stream} {
+                    m_stream << "[";
+                }
 
-            inline std::string wstring_to_utf8(const std::wstring &str) {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                return conv.to_bytes(str);
-            }
+                ~SquareBracketsInserter() noexcept {
+                    m_stream << "]";
+                }
+
+            private:
+                Stream &m_stream;
+            };
         }// namespace internal
     }    // namespace ndarray
 }// namespace np

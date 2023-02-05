@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022 Mikhail Gorshkov
+Copyright (c) 2023 Mikhail Gorshkov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,17 +39,16 @@ namespace np {
             return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y) * ulp ||
                    std::fabs(x - y) < std::numeric_limits<T>::min();
         }
+
+        template<typename DType>
+        inline static bool element_equal(const DType &value1, const DType &value2) {
+            return value1 == value2;
+        }
+
+        static const constexpr int ULP_TOLERANCE = 7;
+
+        inline static bool element_equal(const double &value1, const double &value2) {
+            return internal::almost_equal(value1, value2, ULP_TOLERANCE);
+        }
     }// namespace internal
-}// namespace np
-
-namespace np {
-    static const constexpr int ULP_TOLERANCE = 7;
-    template<typename DType>
-    inline static bool array_equal(const DType &value1, const DType &value2) {
-        return value1 == value2;
-    }
-
-    inline static bool array_equal(const double &value1, const double &value2) {
-        return internal::almost_equal(value1, value2, ULP_TOLERANCE);
-    }
 }// namespace np

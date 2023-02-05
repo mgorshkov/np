@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,23 +24,25 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/ndarray/dynamic/NDArrayDynamicDecl.hpp>
+#include <cstddef>
+#include <iomanip>
+#include <iostream>
+
+#include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
 
 namespace np {
     namespace ndarray {
         namespace array_dynamic {
+            namespace internal {
+                template<typename DType>
+                std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicStorage<DType> &array);
 
-            // Create a view of the array with the same data
-            template<typename DType, typename Storage>
-            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::view() const {
-                return NDArrayDynamic<DType, internal::NDArrayDynamicInternalStorageSpan<DType>>(*this);
-            }
+                inline std::ostream &
+                operator<<(std::ostream &stream, const NDArrayDynamicStorage<std::wstring> &array);
 
-            // Create a copy of the array
-            template<typename DType, typename Storage>
-            inline NDArrayDynamic<DType, Storage> NDArrayDynamic<DType, Storage>::copy() const {
-                return *this;
-            }
-        }// namespace array_dynamic
-    }    // namespace ndarray
+                inline std::wostream &
+                operator<<(std::wostream &stream, const NDArrayDynamicStorage<std::wstring> &array);
+            }// namespace internal
+        }    // namespace array_dynamic
+    }        // namespace ndarray
 }// namespace np

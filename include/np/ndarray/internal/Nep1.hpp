@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2022 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ SOFTWARE.
 #include <cstring>
 #include <filesystem>
 #include <iostream>
+#include <sstream>
 
 #include <np/ndarray/internal/Tools.hpp>
 
@@ -197,7 +198,7 @@ namespace np {
                 // string + 4 + HEADER_LEN be evenly divisible by 16 for alignment purposes.
                 stream << dTypeStr;
                 // padding
-                uint32_t paddingLen = headerLen - dTypeStr.length() - 1;
+                std::size_t paddingLen = headerLen - dTypeStr.length() - 1;
                 for (std::size_t i = 0; i < paddingLen; ++i) {
                     stream << " ";
                 }
@@ -225,7 +226,7 @@ namespace np {
             inline static std::tuple<Descr, Shape> readNep1Header(std::istream &stream) {
                 // The first 6 bytes are a magic string: exactly “x93NUMPY”.
                 static const char magic[] = "\x93NUMPY";
-                static constexpr uint32_t magicLen = std::size(magic) - 1;
+                static constexpr auto magicLen = static_cast<uint32_t>(std::size(magic) - 1);
                 char magicRead[magicLen];
                 stream.read(magicRead, magicLen);
                 NP_THROW_UNLESS(std::memcmp(magic, magicRead, magicLen) == 0, "Invalid magic");
