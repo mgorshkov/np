@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['insert_119',['insert',['../namespacenp.html#afb34f449f3b7adfed87a03c5b97ea25c',1,'np']]]
+  ['insert_0',['insert',['../namespacenp.html#a7383a7ea5ec9f9d822bd873b955bfb8f',1,'np']]]
 ];

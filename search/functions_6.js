@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hsplit_117',['hsplit',['../namespacenp.html#a6f0a6f3849d8e1795bd792c896b28831',1,'np']]],
-  ['hstack_118',['hstack',['../namespacenp.html#a8dc6f3e3b38ad33f1a1d6aee1181d849',1,'np']]]
+  ['hsplit_0',['hsplit',['../namespacenp.html#a355bddba214faf5a09763243e3f4406f',1,'np']]],
+  ['hstack_1',['hstack',['../namespacenp.html#a1e0824401966f4a6ce1a1cf0d146604e',1,'np']]]
 ];

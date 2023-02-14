@@ -16,5 +16,6 @@ var dir_dcfe66fb44ef70898105b121bda5c83e =
     [ "Io.hpp", "_io_8hpp_source.html", null ],
     [ "Manip.hpp", "_manip_8hpp_source.html", null ],
     [ "Math.hpp", "_math_8hpp_source.html", null ],
-    [ "Shape.hpp", "_shape_8hpp_source.html", null ]
+    [ "Shape.hpp", "_shape_8hpp_source.html", null ],
+    [ "Sort.hpp", "_sort_8hpp_source.html", null ]
 ];

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['len_120',['len',['../namespacenp.html#a9a37e644db7e9e3d02ae31d4ad7c0d7b',1,'np']]],
-  ['linspace_121',['linspace',['../namespacenp.html#afe84cd603b0fff194c3770f5c166b8bd',1,'np::linspace(DType start, DType stop, Size num=50)'],['../namespacenp.html#a2dfcd923d40dbe8f476133969177e304',1,'np::linspace(DType start, DType stop)']]],
-  ['load_122',['load',['../namespacenp.html#a853a10ce8e1249cdcdcd166315ee72d1',1,'np']]],
-  ['loadtxt_123',['loadtxt',['../namespacenp.html#a15d4359ebe06e56bfd0c9863b820b7e0',1,'np']]],
-  ['log_124',['log',['../namespacenp.html#aa168075da46d60e52ef6fb99fbdbdeb2',1,'np']]]
+  ['len_0',['len',['../namespacenp.html#a81e60cf8fd893417ad84abb9709b2b81',1,'np']]],
+  ['linspace_1',['linspace',['../namespacenp.html#afe84cd603b0fff194c3770f5c166b8bd',1,'np::linspace(DType start, DType stop, Size num=50)'],['../namespacenp.html#a2dfcd923d40dbe8f476133969177e304',1,'np::linspace(DType start, DType stop)']]],
+  ['load_2',['load',['../namespacenp.html#a878ee12c3a6683b88243d39fd825f8c3',1,'np']]],
+  ['loadtxt_3',['loadtxt',['../namespacenp.html#a122f0bd6e15da891ee674a938be4d0e5',1,'np']]],
+  ['log_4',['log',['../namespacenp.html#aed14ca6512854c25217aba13d5149c2e',1,'np']]]
 ];

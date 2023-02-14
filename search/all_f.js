@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['vsplit_70',['vsplit',['../namespacenp.html#acdbff584dbca21d83567aa8d62e912a4',1,'np']]],
-  ['vstack_71',['vstack',['../namespacenp.html#a1bca00b1a89e8db1df1f6b0f4bb386e3',1,'np']]]
+  ['transpose_0',['transpose',['../classnp_1_1_shape.html#a5901573ecc6585e317b9753b932556eb',1,'np::Shape::transpose()'],['../namespacenp.html#ab1534250c31baca80d94eb322a480fba',1,'np::transpose()']]]
 ];

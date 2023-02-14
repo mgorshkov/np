@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['max_34',['max',['../namespacenp.html#afc5bf868c7e5c50aa2063f6f3fa8fbbd',1,'np']]],
-  ['mean_35',['mean',['../namespacenp.html#ad4860d058d00435aacc90d96129fe554',1,'np']]],
-  ['median_36',['median',['../namespacenp.html#a5662f4f5be0d86ae938e2d8f374c9c91',1,'np']]],
-  ['min_37',['min',['../namespacenp.html#adb6d920fec2400387e33a96b5a5fd4c3',1,'np']]],
-  ['multiply_38',['multiply',['../namespacenp.html#a2fba71ed0292e6ce4f490f634d4ca5a9',1,'np']]]
+  ['maximpl_0',['maxImpl',['../namespacenp.html#a1e979661455f18be30aafdbca1a12465',1,'np']]],
+  ['meanimpl_1',['meanImpl',['../namespacenp.html#acf5b142e60cd9501caf57a2436929c66',1,'np']]],
+  ['medianimpl_2',['medianImpl',['../namespacenp.html#a8985acf73efd00686279c6a58a8a49e6',1,'np']]],
+  ['minimpl_3',['minImpl',['../namespacenp.html#a6ddb98b6ea3961e2d148788e577bf7c4',1,'np']]],
+  ['multiply_4',['multiply',['../namespacenp.html#ada0d9445e6682fbfd63d3785b2519fe3',1,'np']]]
 ];

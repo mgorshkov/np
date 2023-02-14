@@ -1,6 +1,12 @@
 var searchData=
 [
-  ['rand_5fhelper_91',['rand_helper',['../structnp_1_1random_1_1rand__helper.html',1,'np::random']]],
-  ['rand_5fhelper_3c_20dtype_2c_20sizet_20_3e_92',['rand_helper&lt; DType, SizeT &gt;',['../structnp_1_1random_1_1rand__helper_3_01_d_type_00_01_size_t_01_4.html',1,'np::random']]],
-  ['rand_5fhelper_3c_20dtype_2c_20sizet_2c_20sizets_2e_2e_2e_20_3e_93',['rand_helper&lt; DType, SizeT, SizeTs... &gt;',['../structnp_1_1random_1_1rand__helper_3_01_d_type_00_01_size_t_00_01_size_ts_8_8_8_01_4.html',1,'np::random']]]
+  ['ndarraybase_0',['NDArrayBase',['../classnp_1_1ndarray_1_1internal_1_1_n_d_array_base.html',1,'np::ndarray::internal']]],
+  ['ndarraybase_3c_20dtype_2c_20parent_2c_20storage_20_3e_1',['NDArrayBase&lt; DType, Parent, Storage &gt;',['../classnp_1_1ndarray_1_1internal_1_1_n_d_array_base.html',1,'np::ndarray::internal']]],
+  ['ndarraydynamic_2',['NDArrayDynamic',['../classnp_1_1ndarray_1_1array__dynamic_1_1_n_d_array_dynamic.html',1,'np::ndarray::array_dynamic']]],
+  ['ndarraydynamicstorage_3',['NDArrayDynamicStorage',['../classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1_n_d_array_dynamic_storage.html',1,'np::ndarray::array_dynamic::internal']]],
+  ['ndarrayshaped_4',['NDArrayShaped',['../classnp_1_1ndarray_1_1internal_1_1_n_d_array_shaped.html',1,'np::ndarray::internal']]],
+  ['ndarrayshaped_3c_20dtype_2c_20parent_2c_20storage_20_3e_5',['NDArrayShaped&lt; DType, Parent, Storage &gt;',['../classnp_1_1ndarray_1_1internal_1_1_n_d_array_shaped.html',1,'np::ndarray::internal']]],
+  ['ndarraystatic_6',['NDArrayStatic',['../classnp_1_1ndarray_1_1array__static_1_1_n_d_array_static.html',1,'np::ndarray::array_static']]],
+  ['ndarraystatic_3c_20dtype_2c_20m_5fsize_20_3e_7',['NDArrayStatic&lt; DType, m_size &gt;',['../classnp_1_1ndarray_1_1array__static_1_1_n_d_array_static.html',1,'np::ndarray::array_static']]],
+  ['ndarraystaticstorage_8',['NDArrayStaticStorage',['../classnp_1_1ndarray_1_1array__static_1_1internal_1_1_n_d_array_static_storage.html',1,'np::ndarray::array_static::internal']]]
 ];

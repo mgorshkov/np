@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['zeros_72',['zeros',['../namespacenp.html#a9517db28c9167612abeb8cc648d76fb2',1,'np::zeros(Shape shape)'],['../namespacenp.html#a00fcd8de262c88427cc3327311b787de',1,'np::zeros()']]]
+  ['vsplit_0',['vsplit',['../namespacenp.html#a32e54066ef6778d37f46791eebb41aeb',1,'np']]],
+  ['vstack_1',['vstack',['../namespacenp.html#aaa4c7066d029f9726520111e88ae787c',1,'np']]]
 ];
