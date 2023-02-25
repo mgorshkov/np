@@ -19,7 +19,7 @@ function copy() {
 
     mkdir -p $dest
 
-    find -E $path -maxdepth 1 -type f -regex ".*.(hpp|cpp|md|csv|npy|sh|txt)$" -exec cp {} $dest \;
+    find $path -maxdepth 1 -type f -regex ".*\.\(hpp\|cpp\|md\|csv\|npy\|sh\|txt\)$" -exec cp {} $dest \;
 }
 
 function create_package() {

@@ -24,11 +24,14 @@ SOFTWARE.
 
 #pragma once
 
+#include <cmath>
 #include <cstddef>
 
 namespace np {
 
     using Size = std::size_t;
     static const Size constexpr SIZE_DEFAULT = static_cast<Size>(-1);
+
+    static const double constexpr NaN = NAN;
 
 }// namespace np
