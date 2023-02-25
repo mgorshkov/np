@@ -1,3 +1,7 @@
+# Release 0.0.5
+## Changes
+* NaN functions
+
 # Release 0.0.4
 ## Changes
 * Subsetting and slicing optimized

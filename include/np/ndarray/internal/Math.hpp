@@ -164,6 +164,26 @@ namespace np {
             std::enable_if_t<std::is_arithmetic_v<DType>> abs(DType arg, DType &result) {
                 result = std::abs(arg);
             }
+
+            template<typename DType>
+            std::enable_if_t<!std::is_floating_point_v<DType>> isNaN(DType, bool &result) {
+                result = false;
+            }
+
+            template<typename DType>
+            std::enable_if_t<std::is_floating_point_v<DType>> isNaN(DType arg, bool &result) {
+                result = std::isnan(arg);
+            }
+
+            template<typename DType>
+            std::enable_if_t<!std::is_floating_point_v<DType>> nanToZero(DType arg, DType &result) {
+                result = arg;
+            }
+
+            template<typename DType>
+            std::enable_if_t<std::is_floating_point_v<DType>> nanToZero(DType arg, DType &result) {
+                result = std::isnan(arg) ? 0 : arg;
+            }
         }// namespace internal
     }    // namespace ndarray
 }// namespace np

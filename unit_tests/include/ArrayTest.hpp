@@ -27,6 +27,15 @@ SOFTWARE.
 
 class ArrayTest : public ::testing::Test {
 protected:
+    template<typename DType>
+    static void compareValue(DType val1, DType val2) {
+        EXPECT_EQ(val1, val2);
+    }
+
+    static void compareValue(np::float_ val1, np::float_ val2) {
+        EXPECT_DOUBLE_EQ(val1, val2);
+    }
+
     template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
     static void compare(const np::ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &result, const np::ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &result_sample, bool shouldEqual = true) {
         bool equals = np::array_equal(result, result_sample);
