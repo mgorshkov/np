@@ -48,7 +48,7 @@ namespace np {
         static const constexpr int ULP_TOLERANCE = 7;
 
         inline static bool element_equal(const double &value1, const double &value2) {
-            return internal::almost_equal(value1, value2, ULP_TOLERANCE);
+            return (std::isnan(value1) && std::isnan(value2)) || almost_equal(value1, value2, ULP_TOLERANCE);
         }
     }// namespace internal
 }// namespace np

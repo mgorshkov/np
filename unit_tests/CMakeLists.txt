@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(NP_UNIT_TESTS np_unit_tests)
 
-project(${NP_UNIT_TESTS} VERSION 0.0.4 DESCRIPTION "C++ Numpy Unit Tests")
+project(${NP_UNIT_TESTS} VERSION 0.0.5 DESCRIPTION "C++ Numpy Unit Tests")
 
 set(CMAKE_CXX_STANDARD 17)
 

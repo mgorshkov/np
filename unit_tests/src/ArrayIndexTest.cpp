@@ -61,17 +61,15 @@ TEST_F(ArrayIndexTest, static1DIntArraySubsettingTest) {
     Array<int_, 3> array{1, 2, 3};
     auto subset = array[0];
     Array<int_> result{1};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArrayBooleanIndexingTest) {
     // static
-    Array<int_, 3> array{1, 2, 3};
+    const Array<int_, 3> array{1, 2, 3};
     auto booleanIndex = array["array <= 2"];
     Array<int_> result{1, 2};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArraySlicingTest) {
@@ -79,8 +77,7 @@ TEST_F(ArrayIndexTest, static1DIntArraySlicingTest) {
     Array<int_, 3> array{1, 2, 3};
     auto slice = array["0:1"];
     Array<int_> result{1};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static1DFloatArraySubsettingTest) {
@@ -88,8 +85,7 @@ TEST_F(ArrayIndexTest, static1DFloatArraySubsettingTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     auto subset = array[0];
     Array<float_> result{1.1};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static1DFloatArrayBooleanIndexingTest) {
@@ -97,8 +93,7 @@ TEST_F(ArrayIndexTest, static1DFloatArrayBooleanIndexingTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     auto booleanIndex = array["array <= 2.2"];
     Array<float_> result{1.1, 2.2};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static1DFloatArraySlicingTest) {
@@ -106,8 +101,7 @@ TEST_F(ArrayIndexTest, static1DFloatArraySlicingTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     auto slice = array["0:1"];
     Array<float_> result{1.1};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static1DStringArraySubsettingTest) {
@@ -115,17 +109,15 @@ TEST_F(ArrayIndexTest, static1DStringArraySubsettingTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     auto subset = array[0];
     Array<string_> result{"str1"};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static1DStringArrayBooleanIndexingTest) {
     // static
-    Array<string_, 3> array{"str1", "str2", "str3"};
+    const Array<string_, 3> array{"str1", "str2", "str3"};
     auto booleanIndex = array["array != str2"];
     Array<string_> result{"str1", "str3"};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static1DStringArraySlicingTest) {
@@ -133,8 +125,7 @@ TEST_F(ArrayIndexTest, static1DStringArraySlicingTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     auto slice = array["0:1"];
     Array<string_> result{"str1"};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DIntArraySubsettingTest) {
@@ -142,8 +133,7 @@ TEST_F(ArrayIndexTest, dynamic1DIntArraySubsettingTest) {
     Array<int_> array{1, 2, 3};
     auto subset = array[0];
     Array<int_> result{1};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DIntArrayBooleanIndexingTest) {
@@ -151,8 +141,7 @@ TEST_F(ArrayIndexTest, dynamic1DIntArrayBooleanIndexingTest) {
     Array<int_> array{1, 2, 3};
     auto booleanIndex = array["array <= 2"];
     Array<int_> result{1, 2};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DIntArraySlicingTest) {
@@ -160,8 +149,7 @@ TEST_F(ArrayIndexTest, dynamic1DIntArraySlicingTest) {
     Array<int_> array{1, 2, 3};
     auto slice = array["0:1"];
     Array<int_> result{1};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DFloatArraySubsettingTest) {
@@ -169,8 +157,7 @@ TEST_F(ArrayIndexTest, dynamic1DFloatArraySubsettingTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     auto subset = array[0];
     Array<float_> result{1.1};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DFloatArrayBooleanIndexingTest) {
@@ -178,8 +165,7 @@ TEST_F(ArrayIndexTest, dynamic1DFloatArrayBooleanIndexingTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     auto booleanIndex = array["array <= 2.2"];
     Array<float_> result{1.1, 2.2};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DFloatArraySlicingTest) {
@@ -187,8 +173,7 @@ TEST_F(ArrayIndexTest, dynamic1DFloatArraySlicingTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     auto slice = array["0:1"];
     Array<float_> result{1.1};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DStringArraySubsettingTest) {
@@ -196,8 +181,7 @@ TEST_F(ArrayIndexTest, dynamic1DStringArraySubsettingTest) {
     Array<string_> array{"str1", "str2", "str3"};
     auto subset = array[0];
     Array<string_> result{"str1"};
-    auto equal = array_equal(subset, result);
-    EXPECT_TRUE(equal);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DStringArrayBooleanIndexingTest) {
@@ -205,8 +189,7 @@ TEST_F(ArrayIndexTest, dynamic1DStringArrayBooleanIndexingTest) {
     Array<string_> array{"str1", "str2", "str3"};
     auto booleanIndex = array["array <= str2"];
     Array<string_> result{"str1", "str2"};
-    auto equal = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equal);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DStringArraySlicingTest) {
@@ -214,8 +197,7 @@ TEST_F(ArrayIndexTest, dynamic1DStringArraySlicingTest) {
     Array<string_> array{"str1", "str2", "str3"};
     auto slice = array["0:1"];
     Array<string_> result{"str1"};
-    auto equal = array_equal(slice, result);
-    EXPECT_TRUE(equal);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static2DIntArraySubsettingTest) {
@@ -224,8 +206,7 @@ TEST_F(ArrayIndexTest, static2DIntArraySubsettingTest) {
     Array<int_, 2 * 3> array{c_array_2d};
     auto subset = array[0];
     Array<int_> result{1, 2, 3};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static2DIntArrayBooleanIndexingTest) {
@@ -234,8 +215,7 @@ TEST_F(ArrayIndexTest, static2DIntArrayBooleanIndexingTest) {
     Array<int_, 2 * 3> array{c_array_2d};
     auto booleanIndex = array["array <= 2"];
     Array<int_> result{1, 2};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static2DIntArraySlicingTest) {
@@ -245,8 +225,7 @@ TEST_F(ArrayIndexTest, static2DIntArraySlicingTest) {
     auto slice = array["0:1,"];
     int_ c_array_result[1][3] = {{1, 2, 3}};
     Array<int_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static2DFloatArraySubsettingTest) {
@@ -255,8 +234,7 @@ TEST_F(ArrayIndexTest, static2DFloatArraySubsettingTest) {
     Array<float_, 2 * 3> array{c_array_2d};
     auto subset = array[0];
     Array<float_> result{1.1, 2.2, 3.3};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static2DFloatArrayBooleanIndexingTest) {
@@ -265,8 +243,7 @@ TEST_F(ArrayIndexTest, static2DFloatArrayBooleanIndexingTest) {
     Array<float_, 2 * 3> array{c_array_2d};
     auto booleanIndex = array["array <= 2.2"];
     Array<float_> result{1.1, 2.2};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static2DFloatArraySlicingTest) {
@@ -276,8 +253,7 @@ TEST_F(ArrayIndexTest, static2DFloatArraySlicingTest) {
     auto slice = array["0:1,"];
     float_ c_array_result[1][3] = {{1.1, 2.2, 3.3}};
     Array<float_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static2DFloatArraySlicingRangeTest) {
@@ -293,8 +269,7 @@ TEST_F(ArrayIndexTest, static2DFloatArraySlicingRangeTest) {
                                    {4.6, 3.1, 1.5, 0.2},
                                    {5., 3.6, 1.4, 0.2}};
     Array<float_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static2DStringArraySubsettingTest) {
@@ -303,8 +278,7 @@ TEST_F(ArrayIndexTest, static2DStringArraySubsettingTest) {
     Array<string_, 2 * 3> array{c_array_2d};
     auto subset = array[0];
     Array<string_> result{"str1", "str2", "str3"};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static2DStringArrayBooleanIndexingTest) {
@@ -313,8 +287,7 @@ TEST_F(ArrayIndexTest, static2DStringArrayBooleanIndexingTest) {
     Array<string_, 2 * 3> array{c_array_2d};
     auto booleanIndex = array["array <= str2"];
     Array<string_> result{"str1", "str2"};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static2DStringArraySlicingTest) {
@@ -324,8 +297,7 @@ TEST_F(ArrayIndexTest, static2DStringArraySlicingTest) {
     auto slice = array["0:1,"];
     string_ c_array_result[1][3] = {{"str1", "str2", "str3"}};
     Array<string_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DIntArraySubsettingTest) {
@@ -334,8 +306,7 @@ TEST_F(ArrayIndexTest, dynamic2DIntArraySubsettingTest) {
     Array<int_> array{c_array_2d};
     auto subset = array[0];
     Array<int_> result{1, 2, 3};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DIntArrayBooleanIndexingTest) {
@@ -344,8 +315,7 @@ TEST_F(ArrayIndexTest, dynamic2DIntArrayBooleanIndexingTest) {
     Array<int_> array{c_array_2d};
     auto booleanIndex = array["array <= 2"];
     Array<int_> result{1, 2};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DIntArraySlicingTest) {
@@ -355,8 +325,7 @@ TEST_F(ArrayIndexTest, dynamic2DIntArraySlicingTest) {
     auto slice = array["0:1,"];
     int_ c_array_result[1][3] = {{1, 2, 3}};
     Array<int_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DFloatArraySubsettingTest) {
@@ -365,8 +334,7 @@ TEST_F(ArrayIndexTest, dynamic2DFloatArraySubsettingTest) {
     Array<float_> array{c_array_2d};
     auto subset = array[0];
     Array<float_> result{1.1, 2.2, 3.3};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DFloatArrayBooleanIndexingTest) {
@@ -375,8 +343,7 @@ TEST_F(ArrayIndexTest, dynamic2DFloatArrayBooleanIndexingTest) {
     Array<float_> array{c_array_2d};
     auto booleanIndex = array["array <= 2.2"];
     Array<float_> result{1.1, 2.2};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DFloatArraySlicingTest) {
@@ -386,8 +353,7 @@ TEST_F(ArrayIndexTest, dynamic2DFloatArraySlicingTest) {
     auto slice = array["0:1,"];
     float_ c_array_result[1][3] = {{1.1, 2.2, 3.3}};
     Array<float_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DStringArraySubsettingTest) {
@@ -396,8 +362,7 @@ TEST_F(ArrayIndexTest, dynamic2DStringArraySubsettingTest) {
     Array<string_> array{c_array_2d};
     auto subset = array[0];
     Array<string_> result{"str1", "str2", "str3"};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DStringArrayBooleanIndexingTest) {
@@ -406,8 +371,7 @@ TEST_F(ArrayIndexTest, dynamic2DStringArrayBooleanIndexingTest) {
     Array<string_> array{c_array_2d};
     auto booleanIndex = array["array <= str2"];
     Array<string_> result{"str1", "str2"};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic2DStringArraySlicingTest) {
@@ -417,8 +381,7 @@ TEST_F(ArrayIndexTest, dynamic2DStringArraySlicingTest) {
     auto slice = array["0:1,"];
     string_ c_array_result[1][3] = {{"str1", "str2", "str3"}};
     Array<string_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static3DIntArraySubsettingTest) {
@@ -428,8 +391,7 @@ TEST_F(ArrayIndexTest, static3DIntArraySubsettingTest) {
     auto subset = array[0];
     int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
     Array<int_> result{c_array_2d};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static3DIntArrayBooleanIndexingTest) {
@@ -439,8 +401,7 @@ TEST_F(ArrayIndexTest, static3DIntArrayBooleanIndexingTest) {
     auto booleanIndex = array["array <= 2"];
     int_ c_array_2d[2] = {1, 2};
     Array<int_> result{c_array_2d};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static3DIntArraySlicingTest) {
@@ -450,8 +411,7 @@ TEST_F(ArrayIndexTest, static3DIntArraySlicingTest) {
     auto slice = array["0:1,1:2,"];
     int_ c_array_result[1][1][3] = {{{4, 5, 6}}};
     Array<int_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DIntArraySubsettingTest) {
@@ -462,8 +422,7 @@ TEST_F(ArrayIndexTest, dynamic3DIntArraySubsettingTest) {
     int_ c_array_2d[2][3] = {{1, 2, 3},
                              {4, 5, 6}};
     Array<int_> result{c_array_2d};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DIntArrayBooleanIndexingTest) {
@@ -472,8 +431,7 @@ TEST_F(ArrayIndexTest, dynamic3DIntArrayBooleanIndexingTest) {
     Array<int_> array{c_array_3d};
     auto booleanIndex = array["array <= 2"];
     Array<int_> result{1, 2};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DIntArraySlicingTest) {
@@ -483,8 +441,7 @@ TEST_F(ArrayIndexTest, dynamic3DIntArraySlicingTest) {
     auto slice = array["0:1,1:2,"];
     int_ c_array_result[1][1][3] = {{{4, 5, 6}}};
     Array<int_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static3DFloatArraySubsettingTest) {
@@ -495,8 +452,7 @@ TEST_F(ArrayIndexTest, static3DFloatArraySubsettingTest) {
     auto subset = array[0];
     float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
     Array<float_> result{c_array_2d};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static3DFloatArrayBooleanIndexingTest) {
@@ -507,8 +463,7 @@ TEST_F(ArrayIndexTest, static3DFloatArrayBooleanIndexingTest) {
     auto booleanIndex = array["array <= 2.2"];
     float_ c_array_2d[2] = {1.1, 2.2};
     Array<float_> result{c_array_2d};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static3DFloatArraySlicingTest) {
@@ -519,8 +474,7 @@ TEST_F(ArrayIndexTest, static3DFloatArraySlicingTest) {
     auto slice = array["0:1,1:2,"];
     float_ c_array_result[1][1][3] = {{{4.4, 5.5, 6.6}}};
     Array<float_> result{c_array_result};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DFloatArraySubsettingTest) {
@@ -531,8 +485,7 @@ TEST_F(ArrayIndexTest, dynamic3DFloatArraySubsettingTest) {
     auto subset = array[0];
     float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
     Array<float_> result{c_array_2d};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DFloatArrayBooleanIndexingTest) {
@@ -543,8 +496,7 @@ TEST_F(ArrayIndexTest, dynamic3DFloatArrayBooleanIndexingTest) {
     auto booleanIndex = array["array <= 3.3"];
     float_ c_array_2d[3] = {1.1, 2.2, 3.3};
     Array<float_> result{c_array_2d};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, dynamic3DFloatArraySlicingTest) {
@@ -555,8 +507,7 @@ TEST_F(ArrayIndexTest, dynamic3DFloatArraySlicingTest) {
     auto slice = array["0:1,1:2,"];
     float_ c_array_2d[1][1][3] = {{{4.4, 5.5, 6.6}}};
     Array<float_> result{c_array_2d};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }
 
 TEST_F(ArrayIndexTest, static3DStringArraySubsettingTest) {
@@ -576,8 +527,7 @@ TEST_F(ArrayIndexTest, static3DStringArraySubsettingTest) {
                                 {"str13", "str14", "str15"},
                                 {"str16", "str17", "str18"}};
     Array<string_> result{c_array_2d};
-    auto equals = array_equal(subset, result);
-    EXPECT_TRUE(equals);
+    compare(subset, result);
 }
 
 TEST_F(ArrayIndexTest, static3DStringArrayBooleanIndexingTest) {
@@ -594,8 +544,7 @@ TEST_F(ArrayIndexTest, static3DStringArrayBooleanIndexingTest) {
     auto booleanIndex = array["array <= str2"];
     string_ c_array_2d[12] = {"str1", "str2", "str13", "str14", "str15", "str16", "str17", "str18", "str10", "str11", "str12", "str19"};
     Array<string_> result{c_array_2d};
-    auto equals = array_equal(booleanIndex, result);
-    EXPECT_TRUE(equals);
+    compare(booleanIndex, result);
 }
 
 TEST_F(ArrayIndexTest, static3DStringArraySlicingTest) {
@@ -612,6 +561,5 @@ TEST_F(ArrayIndexTest, static3DStringArraySlicingTest) {
     auto slice = array["0:1,1:2,"];
     string_ c_array_2d[1][1][3] = {{{"str4", "str5", "str6"}}};
     Array<string_> result{c_array_2d};
-    auto equals = array_equal(slice, result);
-    EXPECT_TRUE(equals);
+    compare(slice, result);
 }

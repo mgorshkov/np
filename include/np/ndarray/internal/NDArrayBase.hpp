@@ -188,6 +188,9 @@ namespace np {
                 // Array-wise sum
                 DType sum() const;
 
+                // Array-wise sum treating NaNs as zeros
+                DType nansum() const;
+
                 // Array-wise minimum value
                 DType min() const;
 
@@ -197,11 +200,20 @@ namespace np {
                 // Cumulative sum of the elements
                 auto cumsum() const;
 
+                // Cumulative sum of the elements treating NaNs as zeros
+                auto nancumsum() const;
+
                 // Mean
                 [[nodiscard]] float_ mean() const;
 
+                // Mean excluding NaNs
+                [[nodiscard]] float_ nanmean() const;
+
                 // Median
                 [[nodiscard]] float_ median() const;
+
+                // Median excluding NaNs
+                [[nodiscard]] float_ nanmedian() const;
 
                 // Covariance
                 auto cov() const;
@@ -211,6 +223,9 @@ namespace np {
 
                 // Compute the standard deviation along the specified axis.
                 [[nodiscard]] float_ std_() const;
+
+                // Compute the standard deviation along the specified axis excluding NaNs.
+                [[nodiscard]] float_ nanstd() const;
 
                 // Create a view of the array with the same data
                 auto view() const;
@@ -330,6 +345,7 @@ namespace np {
                 // Slicing
                 // a[0:2] Select items at index 0 and 1
                 // b[0:2,1] Select items at rows 0 and 1 in column 1
+                ConstIndexParent<DType, Derived, Storage> operator[](const std::string &cond) const;
                 IndexParent<DType, Derived, Storage> operator[](const std::string &cond);
 
             protected:
@@ -353,7 +369,10 @@ namespace np {
                 }
 
                 IndexParent<DType, Derived, Storage> slicing(const std::string &cond);
+                ConstIndexParent<DType, Derived, Storage> slicingConst(const std::string &cond) const;
+
                 IndexParent<DType, Derived, Storage> booleanIndexing(const std::string &cond);
+                ConstIndexParent<DType, Derived, Storage> booleanIndexingConst(const std::string &cond) const;
 
                 void save(std::ostream &stream);
                 auto load(std::istream &stream);

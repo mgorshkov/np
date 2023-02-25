@@ -76,9 +76,13 @@ namespace np {
                     }
 
                     NDArrayDynamicStorage(const NDArrayDynamicStorage &storage)
-                        : m_size{storage.m_size}, m_ptr{new DType[m_size]} {
-                        for (std::size_t i = 0; i < m_size; ++i) {
-                            m_ptr[i] = storage.m_ptr[i];
+                        : m_size{storage.m_size}, m_ptr{} {
+                        if (m_size != 0) {
+                            m_ptr.reset(new DType[m_size]);
+
+                            for (std::size_t i = 0; i < m_size; ++i) {
+                                m_ptr[i] = storage.m_ptr[i];
+                            }
                         }
                     }
 
@@ -89,9 +93,13 @@ namespace np {
                     }
 
                     explicit NDArrayDynamicStorage(Size size, const DType &value = DType())
-                        : m_size{size}, m_ptr{new DType[m_size]} {
-                        for (std::size_t i = 0; i < m_size; ++i) {
-                            m_ptr[i] = value;
+                        : m_size{size}, m_ptr{} {
+                        if (m_size != 0) {
+                            m_ptr.reset(new DType[m_size]);
+
+                            for (std::size_t i = 0; i < m_size; ++i) {
+                                m_ptr[i] = value;
+                            }
                         }
                     }
 

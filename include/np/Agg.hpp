@@ -67,6 +67,33 @@ namespace np {
     }
 
     //////////////////////////////////////////////////////////////
+    /// \brief Sum of array elements, treating NaNs as zeros
+    ///
+    /// This function sums up all elements of an array, treating NaNs as zeros.
+    ///
+    /// \param array An array to calculate the sum
+    ///
+    /// \return Sum of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nansumImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nansumImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.nansum();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nansum(const Array<DType, SizeT> &array) {
+        float_ result{};
+        nansumImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
     /// \brief Minimum of array elements
     ///
     /// This function finds a minimum among all elements of an array.
@@ -148,6 +175,33 @@ namespace np {
     }
 
     //////////////////////////////////////////////////////////////
+    /// \brief Cumulative sum of the elements treating NaNs as zeros
+    ///
+    /// This function calculates a cumulative sum among all elements of an array treating NaNs as zeros.
+    ///
+    /// \param array An array to calculate the cumulative sum
+    ///
+    /// \return Cumulative sum of array elements as a 1D array
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nancumsumImpl(const Array<DType, SizeT> &, Array<DType> &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nancumsumImpl(const Array<DType, SizeT> &array, Array<DType> &result) {
+        result = array.nancumsum();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nancumsum(const Array<DType, SizeT> &array) {
+        Array<DType> result{};
+        nancumsumImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
     /// \brief Mean of the elements
     ///
     /// This function calculates mean among all elements of an array.
@@ -171,6 +225,33 @@ namespace np {
     inline auto mean(const Array<DType, SizeT> &array) {
         float_ result{};
         meanImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Mean of the elements ignoring NaNs
+    ///
+    /// This function calculates mean among all elements of an array except NaNs.
+    ///
+    /// \param array An array to calculate the mean
+    ///
+    /// \return Mean of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nanmeanImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nanmeanImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.nanmean();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nanmean(const Array<DType, SizeT> &array) {
+        float_ result{};
+        nanmeanImpl<DType, SizeT>(array, result);
         return result;
     }
 
@@ -200,6 +281,35 @@ namespace np {
     inline auto median(const Array<DType, SizeT> &array) {
         float_ result{};
         medianImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Median of the elements ignoring NaNs
+    ///
+    /// This function calculates median among all elements of an array except NaNs.
+    /// Given an array A of length N, the median of A is the middle value of a sorted copy of A, A_sorted[(N-1)/2],
+    /// when N is odd, and the average of the two middle values of A_sorted when N is even.
+    ///
+    /// \param array An array to calculate the median
+    ///
+    /// \return Median of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nanmedianImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nanmedianImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.nanmedian();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nanmedian(const Array<DType, SizeT> &array) {
+        float_ result{};
+        nanmedianImpl<DType, SizeT>(array, result);
         return result;
     }
 
@@ -283,6 +393,34 @@ namespace np {
     inline auto std_(const Array<DType, SizeT> &array) {
         float_ result{};
         stdImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Compute the standard deviation along the specified axis except NaNs
+    ///
+    /// Returns the standard deviation, a measure of the spread of a distribution, of the array elements.
+    /// The standard deviation is computed for the flattened array
+    ///
+    /// \param array An array to calculate the standard deviation
+    ///
+    /// \return Standard deviation of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nanstdImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nanstdImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.nanstd();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nanstd(const Array<DType, SizeT> &array) {
+        float_ result{};
+        nanstdImpl<DType, SizeT>(array, result);
         return result;
     }
 

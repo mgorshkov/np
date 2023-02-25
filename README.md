@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/g17ss46hmwi71tgu/branch/main?svg=true)](https://ci.appveyor.com/project/mgorshkov/np/branch/main)
+
 # About
 C++ numpy-like template-based array implementation.
 
@@ -5,15 +7,15 @@ C++ numpy-like template-based array implementation.
 Implements two flavours of N-dimensional array in a minimalistic way.
 
 ## Static array
-std::array-based implementation, in which the element type and all the dimensions are fixed and determined at compile time.
+Static array is std::array-based implementation, in which the element type and array size are fixed and determined at compile time.
 This implies stack array storage.
 
 ## Dynamic array
-std::vector-based implementation in which only the element type is known at compile time.
+In dynamic array only the element type is known at compile time.
 This implies heap array storage.
 
 # Latest artifact
-https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.4.tgz
+https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.5.tgz
 
 # Requirements
 Any C++17-compatible compiler:

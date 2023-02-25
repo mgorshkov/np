@@ -337,6 +337,17 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            DType NDArrayBase<DType, Derived, Storage>::nansum() const {
+                DType result{};
+                for (Size i = 0; i < size(); ++i) {
+                    DType nanToZeroResult{};
+                    ndarray::internal::nanToZero(get(i), nanToZeroResult);
+                    result += nanToZeroResult;
+                }
+                return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::min() const {
                 DType result{};
                 bool inited{false};
@@ -379,6 +390,22 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::nancumsum() const {
+                Shape sh = shape();
+                sh.flatten();
+                ndarray::array_dynamic::NDArrayDynamic<DType> result{sh};
+                DType sum = 0;
+                for (Size i = 0; i < size(); ++i) {
+                    DType nanToZeroResult{};
+                    ndarray::internal::nanToZero(get(i), nanToZeroResult);
+                    sum += nanToZeroResult;
+
+                    result.set(i, sum);
+                }
+                return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             float_ NDArrayBase<DType, Derived, Storage>::mean() const {
                 auto s = size();
                 if (s == 0)
@@ -390,6 +417,27 @@ namespace np {
                 }
                 float_ resultDiv{};
                 ndarray::internal::divideBySize(result, s, resultDiv);
+                return resultDiv;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            float_ NDArrayBase<DType, Derived, Storage>::nanmean() const {
+                auto s = size();
+                if (s == 0)
+                    return 0;
+                float_ result{};
+                Size count = 0;
+                for (Size i = 0; i < s; ++i) {
+                    const auto &element = get(i);
+                    bool isNaNResult{};
+                    ndarray::internal::isNaN(element, isNaNResult);
+                    if (isNaNResult)
+                        continue;
+                    result += element;
+                    ++count;
+                }
+                float_ resultDiv{};
+                ndarray::internal::divideBySize(result, count, resultDiv);
                 return resultDiv;
             }
 
@@ -431,6 +479,54 @@ namespace np {
                                  middle1,
                                  end);
                 return array.get(s / 2);
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            float_ NDArrayBase<DType, Derived, Storage>::nanmedian() const {
+                auto s = size();
+                if (s == 0)
+                    return 0;
+                ndarray::array_dynamic::NDArrayDynamic<float_> array{shape()};
+                Size count = 0;
+                for (Size i = 0; i < s; ++i) {
+                    bool isNaNResult{};
+                    ndarray::internal::isNaN(get(i), isNaNResult);
+                    if (isNaNResult)
+                        continue;
+
+                    array.set(i, get(i));
+                    ++count;
+                }
+                auto middle1 = array.getStorage().begin();
+                std::advance(middle1, count / 2);
+
+                const auto begin = array.getStorage().begin();
+                auto end = begin;
+                std::advance(end, count);
+
+                if (s % 2 == 0) {
+                    auto middle2 = array.getStorage().begin();
+                    std::advance(middle2, (count - 1) / 2);
+
+                    std::nth_element(begin,
+                                     middle1,
+                                     end);
+
+                    std::nth_element(begin,
+                                     middle2,
+                                     end);
+
+                    // Find the average of values at indices size / 2 and (size - 1) / 2
+                    float_ addResult;
+                    ndarray::internal::add(array.get((count - 1) / 2), array.get(count / 2), addResult);
+                    float_ result;
+                    ndarray::internal::divideByDouble(addResult, 2.0, result);
+                    return result;
+                }
+                std::nth_element(begin,
+                                 middle1,
+                                 end);
+                return array.get(count / 2);
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -506,6 +602,41 @@ namespace np {
                 }
                 float_ resultSqrt;
                 ndarray::internal::sqrt(x.mean(), resultSqrt);
+                return resultSqrt;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            float_ NDArrayBase<DType, Derived, Storage>::nanstd() const {
+                Size count = 0;
+                for (Size i = 0; i < size(); ++i) {
+                    const auto &element = get(i);
+                    bool isNaNResult{};
+                    ndarray::internal::isNaN(element, isNaNResult);
+                    if (isNaNResult)
+                        continue;
+                    ++count;
+                }
+                Shape shape{count};
+                ndarray::array_dynamic::NDArrayDynamic<float_> x{shape};
+                float_ m = nanmean();
+                count = 0;
+                for (Size i = 0; i < size(); ++i) {
+                    const auto &element = get(i);
+                    bool isNaNResult{};
+                    ndarray::internal::isNaN(element, isNaNResult);
+                    if (isNaNResult)
+                        continue;
+                    float_ result;
+                    ndarray::internal::subtract<float_>(element, m, result);
+                    float_ resultAbs;
+                    ndarray::internal::abs(result, resultAbs);
+                    auto a = resultAbs;
+                    float_ resultMul;
+                    ndarray::internal::multiply(a, a, resultMul);
+                    x.set(count++, resultMul);
+                }
+                float_ resultSqrt;
+                ndarray::internal::sqrt(x.nanmean(), resultSqrt);
                 return resultSqrt;
             }
 
@@ -1028,6 +1159,26 @@ namespace np {
             // a[0:2] Select items at index 0 and 1
             // b[0:2,1] Select items at rows 0 and 1 in column 1
             template<typename DType, typename Derived, typename Storage>
+            ConstIndexParent<DType, Derived, Storage> NDArrayBase<DType, Derived, Storage>::operator[](const std::string &cond) const {
+                static constexpr std::size_t kIndexingHandlersSize{static_cast<std::size_t>(IndexingMode::None)};
+
+                const IndexingHandler<ConstIndexParent<DType, Derived, Storage>> indexingHandlers[kIndexingHandlersSize] = {
+                        {IndexingMode::Slicing,
+                         isSlicing,
+                         std::bind(&NDArrayBase::slicingConst, this, std::placeholders::_1)},
+                        {IndexingMode::BooleanIndexing,
+                         isBooleanIndexing<DType>,
+                         std::bind(&NDArrayBase::booleanIndexingConst, this, std::placeholders::_1)}};
+
+                for (const auto &indexing: indexingHandlers) {
+                    if (indexing.checker(cond)) {
+                        return indexing.worker(cond);
+                    }
+                }
+                throw std::runtime_error("Invalid operator[] argument");
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             IndexParent<DType, Derived, Storage> NDArrayBase<DType, Derived, Storage>::operator[](const std::string &cond) {
                 static constexpr std::size_t kIndexingHandlersSize{static_cast<std::size_t>(IndexingMode::None)};
 
@@ -1105,6 +1256,63 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            ConstIndexParent<DType, Derived, Storage> NDArrayBase<DType, Derived, Storage>::slicingConst(const std::string &cond) const {
+                std::size_t startPos = 0;
+                auto commaPos = cond.find(',', 0);
+                Size dim = 0;
+                auto shape{this->shape()};
+                auto sizeDim = this->size();
+
+                Size i;
+                do {
+                    auto nextCommaPos = cond.find(',', commaPos + 1);
+                    auto dimCond = cond.substr(startPos,
+                                               nextCommaPos != std::string::npos ? nextCommaPos - startPos - 1 : cond.size() - startPos);
+                    auto colonPos = dimCond.find(':');
+                    if (colonPos == std::string::npos) {
+                        i = std::stoi(cond.substr(commaPos + 1, cond.size() - commaPos - 1));
+
+                        if (shape.size() == 1) {
+                            if (i >= shape[0]) {
+                                throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
+                            }
+                            return ConstIndexParent<DType, Derived, Storage>{this, i, Shape{1}};
+                        }
+
+                        auto layerSize = shape[0] == 0 ? 0 : this->size() / shape[0];
+                        shape.removeFirstDim();
+                        return ConstIndexParent<DType, Derived, Storage>{this, i * layerSize, shape};
+                    }
+                    auto first = dimCond.substr(0, colonPos);
+                    Size firstIndex = 0;
+                    try {
+                        firstIndex = std::stoul(first);
+                    } catch (std::invalid_argument const &) {
+                    } catch (std::out_of_range const &) {
+                    }
+                    auto last = dimCond.substr(colonPos + 1, dimCond.size() - colonPos - 1);
+                    Size lastIndex = shape[0];
+                    try {
+                        lastIndex = std::stoul(last);
+                    } catch (std::invalid_argument const &) {
+                    } catch (std::out_of_range const &) {
+                    }
+                    Size length = lastIndex - firstIndex;
+                    if (length > shape[0]) {
+                        throw std::runtime_error("Incorrect range");
+                    }
+                    sizeDim /= shape[dim];
+                    shape[dim] = length;
+                    i = firstIndex * sizeDim;
+                    startPos = commaPos + 1;
+                    commaPos = nextCommaPos;
+                    ++dim;
+                } while (commaPos != std::string::npos);
+
+                return ConstIndexParent<DType, Derived, Storage>(this, i, shape);
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             IndexParent<DType, Derived, Storage> NDArrayBase<DType, Derived, Storage>::booleanIndexing(const std::string &cond) {
                 auto operatorWithArg = getOperatorWithArg<DType>(cond);
                 auto pred = [&operatorWithArg, &cond](DType value) {
@@ -1133,6 +1341,37 @@ namespace np {
                     }
                 }
                 return IndexParent<DType, Derived, Storage>(this, indexes, Shape{indexes.size()});
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            ConstIndexParent<DType, Derived, Storage> NDArrayBase<DType, Derived, Storage>::booleanIndexingConst(const std::string &cond) const {
+                auto operatorWithArg = getOperatorWithArg<DType>(cond);
+                auto pred = [&operatorWithArg, &cond](DType value) {
+                    switch (operatorWithArg.first) {
+                        case Operator::More:
+                            return value > operatorWithArg.second;
+                        case Operator::MoreOrEqual:
+                            return value >= operatorWithArg.second;
+                        case Operator::Equal:
+                            return value == operatorWithArg.second;
+                        case Operator::LessOrEqual:
+                            return value <= operatorWithArg.second;
+                        case Operator::NotEqual:
+                            return value != operatorWithArg.second;
+                        case Operator::Less:
+                            return value < operatorWithArg.second;
+                        default:
+                            throw std::runtime_error("Invalid condition: " + cond);
+                    }
+                };
+                std::vector<Size> indexes{};
+                for (Size i = 0; i < this->size(); ++i) {
+                    DType element = get(i);
+                    if (pred(element)) {
+                        indexes.push_back(i);
+                    }
+                }
+                return ConstIndexParent<DType, Derived, Storage>(this, indexes, Shape{indexes.size()});
             }
         }// namespace internal
     }    // namespace ndarray
