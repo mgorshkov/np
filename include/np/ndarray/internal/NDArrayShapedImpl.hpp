@@ -43,14 +43,19 @@ namespace np {
         namespace internal {
 
             template<typename DType, typename Derived, typename Storage>
-            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const std::vector<DType> &vector, Shape shape)
-                : Base{vector, shape.calcSizeByShape()}, m_shape{std::move(shape)} {
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const std::vector<DType> &vector, const Shape &shape)
+                : Base{vector, shape.calcSizeByShape()}, m_shape{shape} {
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(DType *data, const Shape &shape)
+                : Base{data, shape.calcSizeByShape()}, m_shape{shape} {
             }
 
             template<typename DType, typename Derived, typename Storage>
             template<typename... Args>
-            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(Shape shape, Args &&...args)
-                : Base{std::forward<Args>(args)...}, m_shape{std::move(shape)} {
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const Shape &shape, Args &&...args)
+                : Base{std::forward<Args>(args)...}, m_shape{shape} {
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -87,23 +92,11 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
-            void NDArrayShaped<DType, Derived, Storage>::setShape(Shape shape) {
-                m_shape = std::move(shape);
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            Size NDArrayShaped<DType, Derived, Storage>::len() const {
-                return m_shape.empty() ? 0 : m_shape[0];
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            Size NDArrayShaped<DType, Derived, Storage>::ndim() const {
-                return m_shape.size();
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            Size NDArrayShaped<DType, Derived, Storage>::size() const {
-                return m_shape.calcSizeByShape();
+            void NDArrayShaped<DType, Derived, Storage>::setShape(const Shape &shape) {
+                if (shape.calcSizeByShape() != m_shape.calcSizeByShape()) {
+                    throw std::runtime_error("Cannot set shape of different size");
+                }
+                m_shape = shape;
             }
 
         }// namespace internal

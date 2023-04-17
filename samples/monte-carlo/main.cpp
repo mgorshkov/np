@@ -28,7 +28,7 @@ SOFTWARE.
 int main(int, char **) {
     // PI number calculation with Monte-Carlo method
     using namespace np;
-    static const constexpr Size size = 10000000;
+    static const constexpr Size size = 100000000;
     auto rx = random::rand(size);
     auto ry = random::rand(size);
     auto dist = rx * rx + ry * ry;

@@ -129,7 +129,7 @@ namespace np {
 
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector1DType &vector) noexcept
-                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                : NDArrayStaticBase<DType, SizeT>{Shape{static_cast<Size>(vector.size())}, vector} {
             }
 
             template<typename DType, Size SizeT>
@@ -144,32 +144,32 @@ namespace np {
 
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector2DType &vector) noexcept
-                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                : NDArrayStaticBase<DType, SizeT>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                 }
             }
 
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector3DType &vector) noexcept
-                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                : NDArrayStaticBase<DType, SizeT>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                     if (!vector[0].empty()) {
-                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0].size());
+                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0][0].size()));
                     }
                 }
             }
 
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdVector4DType &vector) noexcept
-                : NDArrayStaticBase<DType, SizeT>{Shape{vector.size()}, vector} {
+                : NDArrayStaticBase<DType, SizeT>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0].size());
+                    NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                     if (!vector[0].empty()) {
-                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0].size());
+                        NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0][0].size()));
                         if (!vector[0][0].empty()) {
-                            NDArrayStaticBase<DType, SizeT>::m_shape.addDim(vector[0][0][0].size());
+                            NDArrayStaticBase<DType, SizeT>::m_shape.addDim(static_cast<Size>(vector[0][0][0].size()));
                         }
                     }
                 }
@@ -177,7 +177,7 @@ namespace np {
 
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(std::initializer_list<DType> init_list) noexcept
-                : NDArrayStaticBase<DType, SizeT>{Shape{init_list.size()}, init_list} {
+                : NDArrayStaticBase<DType, SizeT>{Shape{static_cast<Size>(init_list.size())}, init_list} {
             }
 
             template<typename DType, Size SizeT>

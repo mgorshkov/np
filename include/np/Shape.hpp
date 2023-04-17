@@ -63,11 +63,11 @@ namespace np {
         ///
         /// Initialize shape with a vector of dimensions.
         ///
-        /// \param v vector of dimensions
+        /// \param storage vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        explicit Shape(const Storage &v)
-            : m_sizes{v} {
+        explicit Shape(const Storage &storage)
+            : m_sizes{storage} {
         }
 
         //////////////////////////////////////////////////////////////
@@ -75,11 +75,11 @@ namespace np {
         ///
         /// Initialize shape with a vector of dimensions.
         ///
-        /// \param initList vector of dimensions
+        /// \param storage vector of dimensions
         ///
         //////////////////////////////////////////////////////////////
-        explicit Shape(Storage &&v)
-            : m_sizes{std::move(v)} {
+        explicit Shape(Storage &&storage)
+            : m_sizes{std::move(storage)} {
         }
 
         Shape(const Shape &another) = default;
@@ -92,10 +92,13 @@ namespace np {
             return *this;
         }
 
-        Shape &operator=(Shape &&another) noexcept {
-            if (this != &another) {
-                m_sizes = std::move(another.m_sizes);
-            }
+        Shape &operator=(const Storage &storage) {
+            m_sizes = storage;
+            return *this;
+        }
+
+        Shape &operator=(Storage &&storage) noexcept {
+            m_sizes = std::move(storage);
             return *this;
         }
 
@@ -133,11 +136,11 @@ namespace np {
             while (true) {
                 std::size_t commaIndex = shapeTupleStr.find(',', prevCommaIndex);
                 if (commaIndex == std::string::npos) {
-                    push_number(shapeTupleStr.length(), prevCommaIndex);
+                    push_number(static_cast<Size>(shapeTupleStr.length()), prevCommaIndex);
                     break;
                 }
-                push_number(commaIndex, prevCommaIndex);
-                prevCommaIndex = commaIndex + 1;
+                push_number(static_cast<Size>(commaIndex), prevCommaIndex);
+                prevCommaIndex = static_cast<Size>(commaIndex) + 1;
             }
             NP_THROW_UNLESS_WITH_ARG(!m_sizes.empty(), "Incorrect shape string format", shapeTupleStr);
         }
@@ -254,6 +257,35 @@ namespace np {
 
         [[nodiscard]] const Size &back() const {
             return m_sizes.back();
+        }
+
+        [[nodiscard]] Shape broadcast(const Shape &another) const {
+            auto size1 = size();
+            auto size2 = another.size();
+            Shape shape{};
+            if (size1 == 0 || size2 == 0) {
+                return shape;
+            }
+            int32_t i1 = static_cast<int32_t>(size1) - 1;
+            int32_t i2 = static_cast<int32_t>(size2) - 1;
+            while (i1 >= 0 || i2 >= 0) {
+                auto s1 = i1 < 0 ? 1 : m_sizes[i1];
+                auto s2 = i2 < 0 ? 1 : another.m_sizes[i2];
+                if (s1 != s2 && s1 != 1 && s2 != 1) {
+                    throw std::runtime_error("Arrays cannot be broadcast together");
+                }
+                std::size_t out;
+                if (s1 == s2 || s2 == 1) {
+                    out = s1;
+                } else {
+                    out = s2;
+                }
+                shape.addDim(out);
+                --i1;
+                --i2;
+            }
+            shape.transpose();
+            return shape;
         }
 
         inline friend bool operator==(const Shape &left, const Shape &right) {

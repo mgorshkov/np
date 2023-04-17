@@ -1,3 +1,7 @@
+# Release 0.0.6
+## Changes
+* Subsetting/slicing/boolean indexing enhanced
+
 # Release 0.0.5
 ## Changes
 * NaN functions
