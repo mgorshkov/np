@@ -39,8 +39,7 @@ TEST_F(ArrayMathTest, dynamicEmptyIntArraysTest) {
     Array<int_> array1{};
     Array<int_> array2{};
     auto array = add(array1, array2);
-    auto equal = array_equal(array, array1);
-    EXPECT_TRUE(equal);
+    compare(array, array1);
 }
 
 TEST_F(ArrayMathTest, dynamicEmptyFloatArraysTest) {
@@ -48,8 +47,7 @@ TEST_F(ArrayMathTest, dynamicEmptyFloatArraysTest) {
     Array<int_> array1{};
     Array<int_> array2{};
     auto array = add(array1, array2);
-    auto equal = array_equal(array, array1);
-    EXPECT_TRUE(equal);
+    compare(array, array1);
 }
 
 TEST_F(ArrayMathTest, static1DIntArraysTest) {
@@ -59,8 +57,7 @@ TEST_F(ArrayMathTest, static1DIntArraysTest) {
     {
         Array<int_, 3> sum{5, 7, 9};
         auto array = add(array1, array2);
-        auto equal = array_equal<int_>(array, sum);
-        EXPECT_TRUE(equal);
+        compare<int_>(array, sum);
     }
     {
         auto result = array1.dot(array2);
@@ -75,8 +72,7 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysTest) {
     {
         Array<int_> sum{5, 7, 9};
         auto array = add(array1, array2);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         auto result = array1.dot(array2);
@@ -91,8 +87,7 @@ TEST_F(ArrayMathTest, static1DFloatArraysTest) {
     {
         Array<float_, 3> sum{5.5, 7.7, 9.9};
         auto array = add(array1, array2);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         auto result = array1.dot(array2);
@@ -107,8 +102,7 @@ TEST_F(ArrayMathTest, dynamic1DFloatArraysTest) {
     {
         Array<float_> sum{5.5, 7.7, 9.9};
         auto array = add(array1, array2);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         auto result = array1.dot(array2);
@@ -124,8 +118,7 @@ TEST_F(ArrayMathTest, static2DIntArraysTest) {
     auto array = add(array1, array2);
     long c_array_sum[2][3] = {{8, 10, 12}, {14, 16, 18}};
     Array<int_, 2 * 3> sum(c_array_sum);
-    auto equal = array_equal(array, sum);
-    EXPECT_TRUE(equal);
+    compare(array, sum);
 }
 
 TEST_F(ArrayMathTest, dynamic2DIntArraysTest) {
@@ -137,15 +130,31 @@ TEST_F(ArrayMathTest, dynamic2DIntArraysTest) {
         long c_array_plus[2][3] = {{8, 10, 12}, {14, 16, 18}};
         auto array = add(array1, array2);
         Array<int_> sum{c_array_plus};
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         long c_array_minus[2][3] = {{-6, -6, -6}, {-6, -6, -6}};
         auto array = subtract(array1, array2);
         Array<int_> diff{c_array_minus};
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
+    }
+}
+
+TEST_F(ArrayMathTest, dynamic1DIntArraysBroadcastTest) {
+    long c_array_1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> array1(c_array_1);
+    Array<int_> array2{7, 8, 9};
+    {
+        long c_array_plus[2][3] = {{8, 10, 12}, {11, 13, 15}};
+        auto array = add(array1, array2);
+        Array<int_> sum{c_array_plus};
+        compare(array, sum);
+    }
+    {
+        long c_array_minus[2][3] = {{-6, -6, -6}, {-3, -3, -3}};
+        auto array = subtract(array1, array2);
+        Array<int_> diff{c_array_minus};
+        compare(array, diff);
     }
 }
 
@@ -158,15 +167,13 @@ TEST_F(ArrayMathTest, static2DFloatArraysTest) {
         double c_array_plus[2][3] = {{8.8, 11, 13.2}, {14.5, 16.61, 18.72}};
         auto array = add(array1, array2);
         Array<float_, 2 * 3> sum{c_array_plus};
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         double c_array_minus[2][3] = {{-6.6, -6.6, -6.6}, {-5.7, -5.61, -5.52}};
         auto array = subtract(array1, array2);
         Array<float_, 2 * 3> diff{c_array_minus};
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }
 
@@ -179,15 +186,13 @@ TEST_F(ArrayMathTest, dynamic2DFloatArraysTest) {
         double c_array_plus[2][3] = {{8.8, 11, 13.2}, {14.5, 16.61, 18.72}};
         auto array = add(array1, array2);
         Array<float_> sum{c_array_plus};
-        auto equal = array_equal<float_>(array, sum);
-        EXPECT_TRUE(equal);
+        compare<float_>(array, sum);
     }
     {
         double c_array_minus[2][3] = {{-6.6, -6.6, -6.6}, {-5.7, -5.61, -5.52}};
         auto array = subtract(array1, array2);
         Array<float_> diff{c_array_minus};
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }
 
@@ -200,15 +205,13 @@ TEST_F(ArrayMathTest, static3DIntArraysTest) {
         long c_array_plus[2][2][3] = {{{2, 4, 6}, {8, 10, 12}}, {{14, 16, 18}, {20, 22, 24}}};
         auto array = add(array1, array2);
         auto sum = createIntArray<2 * 2 * 3>(c_array_plus);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         long c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
         auto array = subtract(array1, array2);
         auto diff = createIntArray<2 * 2 * 3>(c_array_minus);
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }
 
@@ -221,15 +224,13 @@ TEST_F(ArrayMathTest, dynamic3DIntArraysTest) {
         long c_array_plus[2][2][3] = {{{2, 4, 6}, {8, 10, 12}}, {{14, 16, 18}, {20, 22, 24}}};
         auto array = add(array1, array2);
         auto sum = createIntArray(c_array_plus);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         long c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
         auto array = subtract(array1, array2);
         auto diff = createIntArray(c_array_minus);
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }
 
@@ -242,15 +243,13 @@ TEST_F(ArrayMathTest, static3DFloatArraysTest) {
         double c_array_plus[2][2][3] = {{{2.2, 4.4, 6.6}, {8.8, 11, 13.2}}, {{15.4, 17.6, 19.8}, {20.2, 22.22, 24.24}}};
         auto array = add(array1, array2);
         auto sum = createFloatArray(c_array_plus);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         double c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
         auto array = subtract(array1, array2);
         auto diff = createFloatArray(c_array_minus);
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }
 
@@ -263,14 +262,12 @@ TEST_F(ArrayMathTest, dynamic3DFloatArraysTest) {
         double c_array_plus[2][2][3] = {{{2.2, 4.4, 6.6}, {8.8, 11, 13.2}}, {{15.4, 17.6, 19.8}, {20.2, 22.22, 24.24}}};
         auto array = add(array1, array2);
         auto sum = createFloatArray(c_array_plus);
-        auto equal = array_equal(array, sum);
-        EXPECT_TRUE(equal);
+        compare(array, sum);
     }
     {
         double c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
         auto array = subtract(array1, array2);
         auto diff = createFloatArray(c_array_minus);
-        auto equal = array_equal(array, diff);
-        EXPECT_TRUE(equal);
+        compare(array, diff);
     }
 }

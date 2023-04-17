@@ -40,10 +40,12 @@ protected:
     static void compare(const np::ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &result, const np::ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &result_sample, bool shouldEqual = true) {
         bool equals = np::array_equal(result, result_sample);
         if (shouldEqual && !equals) {
-            std::cerr << "Array " << result << " is not equal to " << result_sample << std::endl;
+            std::cerr << "Array " << result << std::endl
+                      << " is not equal to " << result_sample << std::endl;
             EXPECT_TRUE(equals);
         } else if (!shouldEqual && equals) {
-            std::cerr << "Array " << result << " is equal to " << result_sample << std::endl;
+            std::cerr << "Array " << result << std::endl
+                      << " is equal to " << result_sample << std::endl;
             EXPECT_FALSE(equals);
         }
     }

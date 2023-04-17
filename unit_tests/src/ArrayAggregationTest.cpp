@@ -40,6 +40,7 @@ protected:
         float_ nanmean{0.0};
         float_ nanmedian{0.0};
         float_ nanstd{0.0};
+        float_ nanvar{0.0};
     };
 
     template<typename DType>
@@ -53,6 +54,7 @@ protected:
         Array<float_> cov{};
         Array<float_> corrcoef{};
         float_ std_{0.0};
+        float_ var{0.0};
         bool covException{false};
         bool corrException{false};
     };
@@ -99,6 +101,10 @@ protected:
         compareValue(aggResults.std_, std__);
         auto nanstd_ = nanstd<DType, SizeT>(array);
         compareValue(aggResults.nanstd, nanstd_);
+        auto var_ = var<DType, SizeT>(array);
+        compareValue(aggResults.var, var_);
+        auto nanvar_ = nanvar<DType, SizeT>(array);
+        compareValue(aggResults.nanvar, nanvar_);
     }
 
     template<typename DType, Size SizeT>
@@ -114,6 +120,8 @@ protected:
         compareValue(aggResults.nanmedian, nanmedian_);
         auto nanstd_ = nanstd<DType, SizeT>(array);
         compareValue(aggResults.nanstd, nanstd_);
+        auto nanvar_ = nanvar<DType, SizeT>(array);
+        compareValue(aggResults.nanvar, nanvar_);
     }
 
     // dynamic arrays
@@ -158,6 +166,10 @@ protected:
         compareValue(aggResults.std_, std__);
         auto nanstd_ = nanstd<DType>(array);
         compareValue(aggResults.nanstd, nanstd_);
+        auto var_ = var<DType>(array);
+        compareValue(aggResults.var, var_);
+        auto nanvar_ = nanvar<DType>(array);
+        compareValue(aggResults.nanvar, nanvar_);
     }
 
     template<typename DType>
@@ -173,6 +185,8 @@ protected:
         compareValue(aggResults.nanmedian, nanmedian_);
         auto nanstd_ = nanstd<DType>(array);
         compareValue(aggResults.nanstd, nanstd_);
+        auto nanvar_ = nanvar<DType>(array);
+        compareValue(aggResults.nanvar, nanvar_);
     }
 };
 
@@ -211,39 +225,43 @@ TEST_F(ArrayAggregationTest, static1DIntArrayTest) {
     aggResults.corrcoef = Array<float_>{1.0};
     aggResults.std_ = 23.961636004246458;
     aggResults.nanstd = 23.961636004246458;
+    aggResults.var = 574.16000000000008;
+    aggResults.nanvar = 574.16000000000008;
     checkArrayAggregation(array, aggResults);
 }
 
 TEST_F(ArrayAggregationTest, static1DFloatArrayTest) {
-    {
-        Array<float_, 5> array{17.1, 42.2, 83.3, 24.4, 16.6};
-        AggResults<float_> aggResults{};
-        aggResults.sum = 183.6;
-        aggResults.nansum = 183.6;
-        aggResults.min = 16.6;
-        aggResults.max = 83.3;
-        aggResults.cumsum = Array<float_>{17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
-        aggResults.nancumsum = Array<float_>{17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
-        aggResults.mean = 36.72;
-        aggResults.nanmean = 36.72;
-        aggResults.median = 24.4;
-        aggResults.nanmedian = 24.4;
-        aggResults.cov = Array<float_>{1.0};
-        aggResults.corrcoef = Array<float_>{1.0};
-        aggResults.std_ = 25.064987532412616;
-        aggResults.nanstd = 25.064987532412616;
-        checkArrayAggregation(array, aggResults);
-    }
-    {
-        Array<float_, 7> array{17.1, NaN, 42.2, 83.3, 24.4, NaN, 16.6};
-        AggNaNResults<float_> aggResults{};
-        aggResults.nansum = 183.6;
-        aggResults.nancumsum = Array<float_>{17.1, 17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
-        aggResults.nanmean = 36.72;
-        aggResults.nanmedian = 24.4;
-        aggResults.nanstd = 25.064987532412616;
-        checkArrayAggregation(array, aggResults);
-    }
+    Array<float_, 5> array{17.1, 42.2, 83.3, 24.4, 16.6};
+    AggResults<float_> aggResults{};
+    aggResults.sum = 183.6;
+    aggResults.nansum = 183.6;
+    aggResults.min = 16.6;
+    aggResults.max = 83.3;
+    aggResults.cumsum = Array<float_>{17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
+    aggResults.nancumsum = Array<float_>{17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
+    aggResults.mean = 36.72;
+    aggResults.nanmean = 36.72;
+    aggResults.median = 24.4;
+    aggResults.nanmedian = 24.4;
+    aggResults.cov = Array<float_>{1.0};
+    aggResults.corrcoef = Array<float_>{1.0};
+    aggResults.std_ = 25.064987532412616;
+    aggResults.nanstd = 25.064987532412616;
+    aggResults.var = 628.25359999999989;
+    aggResults.nanvar = 628.25359999999989;
+    checkArrayAggregation(array, aggResults);
+}
+
+TEST_F(ArrayAggregationTest, static1DFloatArrayNaNTest) {
+    Array<float_, 7> array{17.1, NaN, 42.2, 83.3, 24.4, NaN, 16.6};
+    AggNaNResults<float_> aggResults{};
+    aggResults.nansum = 183.6;
+    aggResults.nancumsum = Array<float_>{17.1, 17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
+    aggResults.nanmean = 36.72;
+    aggResults.nanmedian = 24.4;
+    aggResults.nanstd = 25.064987532412616;
+    aggResults.nanvar = 628.25359999999989;
+    checkArrayAggregation(array, aggResults);
 }
 
 TEST_F(ArrayAggregationTest, dynamic1DIntArrayTest) {
@@ -264,39 +282,43 @@ TEST_F(ArrayAggregationTest, dynamic1DIntArrayTest) {
     aggResults.corrcoef = Array<float_>{1.0};
     aggResults.std_ = 23.961636004246458;
     aggResults.nanstd = 23.961636004246458;
+    aggResults.var = 574.16000000000008;
+    aggResults.nanvar = 574.16000000000008;
     checkArrayAggregation(array, aggResults);
 }
 
 TEST_F(ArrayAggregationTest, dynamic1DFloatArrayTest) {
-    {
-        Array<float_> array{1.1, 2.2, 3.3, 4.4};
-        AggResults<float_> aggResults{};
-        aggResults.sum = 11;
-        aggResults.nansum = 11;
-        aggResults.min = 1.1;
-        aggResults.max = 4.4;
-        aggResults.cumsum = Array<float_>{1.1, 3.3, 6.6, 11};
-        aggResults.nancumsum = Array<float_>{1.1, 3.3, 6.6, 11};
-        aggResults.mean = 2.75;
-        aggResults.nanmean = 2.75;
-        aggResults.median = 2.75;
-        aggResults.nanmedian = 2.75;
-        aggResults.cov = Array<float_>{1};
-        aggResults.corrcoef = Array<float_>{1};
-        aggResults.std_ = 1.2298373876248845;
-        aggResults.nanstd = 1.2298373876248845;
-        checkArrayAggregation(array, aggResults);
-    }
-    {
-        Array<float_> array{17.1, NaN, 42.2, 83.3, 24.4, NaN, 16.6};
-        AggNaNResults<float_> aggResults{};
-        aggResults.nansum = 183.6;
-        aggResults.nancumsum = Array<float_>{17.1, 17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
-        aggResults.nanmean = 36.72;
-        aggResults.nanmedian = 24.4;
-        aggResults.nanstd = 25.064987532412616;
-        checkArrayAggregation(array, aggResults);
-    }
+    Array<float_> array{1.1, 2.2, 3.3, 4.4};
+    AggResults<float_> aggResults{};
+    aggResults.sum = 11;
+    aggResults.nansum = 11;
+    aggResults.min = 1.1;
+    aggResults.max = 4.4;
+    aggResults.cumsum = Array<float_>{1.1, 3.3, 6.6, 11};
+    aggResults.nancumsum = Array<float_>{1.1, 3.3, 6.6, 11};
+    aggResults.mean = 2.75;
+    aggResults.nanmean = 2.75;
+    aggResults.median = 2.75;
+    aggResults.nanmedian = 2.75;
+    aggResults.cov = Array<float_>{1};
+    aggResults.corrcoef = Array<float_>{1};
+    aggResults.std_ = 1.2298373876248845;
+    aggResults.nanstd = 1.2298373876248845;
+    aggResults.var = 1.5125000000000002;
+    aggResults.nanvar = 1.5125000000000002;
+    checkArrayAggregation(array, aggResults);
+}
+
+TEST_F(ArrayAggregationTest, dynamic1DFloatArrayNaNTest) {
+    Array<float_> array{17.1, NaN, 42.2, 83.3, 24.4, NaN, 16.6};
+    AggNaNResults<float_> aggResults{};
+    aggResults.nansum = 183.6;
+    aggResults.nancumsum = Array<float_>{17.1, 17.1, 17.1 + 42.2, 17.1 + 42.2 + 83.3, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4, 17.1 + 42.2 + 83.3 + 24.4 + 16.6};
+    aggResults.nanmean = 36.72;
+    aggResults.nanmedian = 24.4;
+    aggResults.nanstd = 25.064987532412616;
+    aggResults.nanvar = 628.25359999999989;
+    checkArrayAggregation(array, aggResults);
 }
 
 TEST_F(ArrayAggregationTest, static2DIntArrayTest) {
@@ -319,6 +341,8 @@ TEST_F(ArrayAggregationTest, static2DIntArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_corrcoef};
     aggResults.std_ = 1.707825127659933;
     aggResults.nanstd = 1.707825127659933;
+    aggResults.var = 2.9166666666666665;
+    aggResults.nanvar = 2.9166666666666665;
     checkArrayAggregation(array, aggResults);
 }
 
@@ -342,6 +366,8 @@ TEST_F(ArrayAggregationTest, static2DFloatArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_corrcoef};
     aggResults.std_ = 1.8786076404259262;
     aggResults.nanstd = 1.8786076404259262;
+    aggResults.var = 3.5291666666666663;
+    aggResults.nanvar = 3.5291666666666663;
     checkArrayAggregation(array, aggResults);
 }
 
@@ -365,6 +391,8 @@ TEST_F(ArrayAggregationTest, dynamic2DIntArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_corrcoef};
     aggResults.std_ = 1.707825127659933;
     aggResults.nanstd = 1.707825127659933;
+    aggResults.var = 2.9166666666666665;
+    aggResults.nanvar = 2.9166666666666665;
     checkArrayAggregation(array, aggResults);
 }
 
@@ -388,6 +416,8 @@ TEST_F(ArrayAggregationTest, dynamic2DFloatArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_2d_corrcoef};
     aggResults.std_ = 1.8786076404259262;
     aggResults.nanstd = 1.8786076404259262;
+    aggResults.var = 3.5291666666666663;
+    aggResults.nanvar = 3.5291666666666663;
     checkArrayAggregation(array, aggResults);
 }
 
@@ -410,6 +440,8 @@ TEST_F(ArrayAggregationTest, static3DIntArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_cov};
     aggResults.std_ = 3.4520525295346629;
     aggResults.nanstd = 3.4520525295346629;
+    aggResults.var = 11.916666666666666;
+    aggResults.nanvar = 11.916666666666666;
     aggResults.covException = true;
     aggResults.corrException = true;
     checkArrayAggregation(array, aggResults);
@@ -435,6 +467,8 @@ TEST_F(ArrayAggregationTest, static3DFloatArrayTest) {
     aggResults.corrcoef = Array<float_>{c_array_cov};
     aggResults.std_ = 3.4815277417631854;
     aggResults.nanstd = 3.4815277417631854;
+    aggResults.var = 12.121035416666663;
+    aggResults.nanvar = 12.121035416666663;
     aggResults.covException = true;
     aggResults.corrException = true;
     checkArrayAggregation(array, aggResults);

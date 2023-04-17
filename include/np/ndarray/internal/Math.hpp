@@ -35,14 +35,24 @@ SOFTWARE.
 namespace np {
     namespace ndarray {
         namespace internal {
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> add(DType, DType, DType &) {
+            template<typename DType1, typename DType2>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> add(DType1, DType2, DType1 &) {
                 throw std::runtime_error("Plus called for non-arithmetic types");
             }
 
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> add(DType arg1, DType arg2, DType &result) {
+            template<typename DType1, typename DType2>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> add(DType1 arg1, DType2 arg2, DType1 &result) {
                 result = arg1 + arg2;
+            }
+
+            template<typename DType1, typename DType2>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> && !std::is_arithmetic_v<DType2>> inc(DType1 &, DType2) {
+                throw std::runtime_error("Inc called for non-arithmetic types");
+            }
+
+            template<typename DType1, typename DType2>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> inc(DType1 &arg1, DType2 arg2) {
+                arg1 += static_cast<DType1>(arg2);
             }
 
             template<typename DType>
@@ -53,6 +63,16 @@ namespace np {
             template<typename DType>
             std::enable_if_t<std::is_arithmetic_v<DType>> subtract(DType arg1, DType arg2, DType &result) {
                 result = arg1 - arg2;
+            }
+
+            template<typename DType>
+            std::enable_if_t<!std::is_arithmetic_v<DType>> dec(DType &, DType) {
+                throw std::runtime_error("Dec called for non-arithmetic types");
+            }
+
+            template<typename DType>
+            std::enable_if_t<std::is_arithmetic_v<DType>> dec(DType &arg1, DType arg2) {
+                arg1 -= arg2;
             }
 
             template<typename DType>
@@ -183,6 +203,26 @@ namespace np {
             template<typename DType>
             std::enable_if_t<std::is_floating_point_v<DType>> nanToZero(DType arg, DType &result) {
                 result = std::isnan(arg) ? 0 : arg;
+            }
+
+            template<typename DType>
+            std::enable_if_t<!std::is_arithmetic_v<DType>> isTrue(DType, bool &) {
+                throw std::runtime_error("isTrue is called for non-arithmetic type");
+            }
+
+            template<typename DType>
+            std::enable_if_t<std::is_arithmetic_v<DType>> isTrue(DType arg, bool &result) {
+                result = static_cast<bool>(arg);
+            }
+
+            template<typename DType>
+            std::enable_if_t<!std::is_arithmetic_v<DType>> isFalse(DType, bool &) {
+                throw std::runtime_error("isFalse is called for non-arithmetic type");
+            }
+
+            template<typename DType>
+            std::enable_if_t<std::is_arithmetic_v<DType>> isFalse(DType arg, bool &result) {
+                result = !static_cast<bool>(arg);
             }
         }// namespace internal
     }    // namespace ndarray

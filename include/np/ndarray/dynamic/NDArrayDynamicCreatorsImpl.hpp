@@ -111,7 +111,7 @@ namespace np {
 
             template<typename DType>
             inline NDArrayDynamic<DType>::NDArrayDynamic(const StdVector1DType &vector) noexcept
-                : NDArrayDynamicBase<DType>{Shape{vector.size()}, vector} {
+                : NDArrayDynamicBase<DType>{Shape{static_cast<Size>(vector.size())}, vector} {
             }
 
             template<typename DType>
@@ -125,33 +125,43 @@ namespace np {
             }
 
             template<typename DType>
+            inline NDArrayDynamic<DType>::NDArrayDynamic(DType *data, Size size) noexcept
+                : NDArrayDynamicBase<DType>{data, size} {
+            }
+
+            template<typename DType>
+            inline NDArrayDynamic<DType>::NDArrayDynamic(DType *data, const Shape &shape) noexcept
+                : NDArrayDynamicBase<DType>{data, shape} {
+            }
+
+            template<typename DType>
             inline NDArrayDynamic<DType>::NDArrayDynamic(const StdVector2DType &vector) noexcept
-                : NDArrayDynamicBase<DType>{Shape{vector.size()}, vector} {
+                : NDArrayDynamicBase<DType>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayDynamicBase<DType>::m_shape.addDim(vector[0].size());
+                    NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                 }
             }
 
             template<typename DType>
             inline NDArrayDynamic<DType>::NDArrayDynamic(const StdVector3DType &vector) noexcept
-                : NDArrayDynamicBase<DType>{Shape{vector.size()}, vector} {
+                : NDArrayDynamicBase<DType>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayDynamicBase<DType>::m_shape.addDim(vector[0].size());
+                    NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                     if (!vector[0].empty()) {
-                        NDArrayDynamicBase<DType>::m_shape.addDim(vector[0][0].size());
+                        NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0][0].size()));
                     }
                 }
             }
 
             template<typename DType>
             inline NDArrayDynamic<DType>::NDArrayDynamic(const StdVector4DType &vector) noexcept
-                : NDArrayDynamicBase<DType>{Shape{vector.size()}, vector} {
+                : NDArrayDynamicBase<DType>{Shape{static_cast<Size>(vector.size())}, vector} {
                 if (!vector.empty()) {
-                    NDArrayDynamicBase<DType>::m_shape.addDim(vector[0].size());
+                    NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0].size()));
                     if (!vector[0].empty()) {
-                        NDArrayDynamicBase<DType>::m_shape.addDim(vector[0][0].size());
+                        NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0][0].size()));
                         if (!vector[0][0].empty()) {
-                            NDArrayDynamicBase<DType>::m_shape.addDim(vector[0][0][0].size());
+                            NDArrayDynamicBase<DType>::m_shape.addDim(static_cast<Size>(vector[0][0][0].size()));
                         }
                     }
                 }
@@ -159,7 +169,7 @@ namespace np {
 
             template<typename DType>
             inline NDArrayDynamic<DType>::NDArrayDynamic(std::initializer_list<DType> init_list) noexcept
-                : NDArrayDynamicBase<DType>{Shape{init_list.size()}, init_list} {
+                : NDArrayDynamicBase<DType>{Shape{static_cast<Size>(init_list.size())}, init_list} {
             }
 
             template<typename DType>

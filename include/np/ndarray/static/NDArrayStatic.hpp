@@ -54,6 +54,18 @@ namespace np {
             using NDArrayStaticBase = ndarray::internal::NDArrayShaped<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
 
             template<typename DType, Size SizeT>
+            using Base = ndarray::internal::NDArrayBase<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
+
+            template<typename DType, Size SizeT>
+            using BasePtr = ndarray::internal::NDArrayBasePtr<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
+
+            template<typename DType, Size SizeT>
+            using BaseConstPtr = ndarray::internal::NDArrayBaseConstPtr<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
+
+            template<typename DType, Size SizeT>
+            using BaseBoolPtr = ndarray::internal::NDArrayBasePtr<bool_, NDArrayStatic<bool_, SizeT>, NDArrayStaticStorage<bool_, SizeT>>;
+
+            template<typename DType, Size SizeT>
             class NDArrayStatic final : public NDArrayStaticBase<DType, SizeT> {
             public:
                 template<std::size_t Size1T>
@@ -182,13 +194,22 @@ namespace np {
                 NDArrayStatic<bool_, SizeT> operator>(const NDArrayStatic &array) const;
 
                 static constexpr int kDepth = 0;
-
-            private:
-                using Base = ndarray::internal::NDArrayBase<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
-                using BasePtr = ndarray::internal::NDArrayBasePtr<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
-                using BaseBoolPtr = ndarray::internal::NDArrayBasePtr<bool_, NDArrayStatic<bool_, SizeT>, NDArrayStaticStorage<bool_, SizeT>>;
-                using BaseConstPtr = ndarray::internal::NDArrayBaseConstPtr<DType, NDArrayStatic<DType, SizeT>, NDArrayStaticStorage<DType, SizeT>>;
             };
+
+            template<typename DType, Size SizeT, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayStaticMap = std::unordered_map<NDArrayStatic<DType, SizeT>, ValueType, Hasher, EqualTo>;
+
+            template<typename DType, Size SizeT>
+            using NDArrayStaticIndexKeyType = ndarray::internal::IndexParent<DType, NDArrayStatic<DType, SizeT>, internal::NDArrayStaticStorage<DType, SizeT>, Base<DType, SizeT> *>;
+
+            template<typename DType, Size SizeT>
+            using NDArrayStaticIndexConstKeyType = ndarray::internal::IndexParent<DType, NDArrayStatic<DType, SizeT>, internal::NDArrayStaticStorage<DType, SizeT>, const Base<DType, SizeT> *>;
+
+            template<typename DType, Size SizeT, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayStaticIndexMap = std::unordered_map<NDArrayStaticIndexKeyType<DType, SizeT>, ValueType, Hasher, EqualTo>;
+
+            template<typename DType, Size SizeT, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayStaticIndexConstMap = std::unordered_map<NDArrayStaticIndexConstKeyType<DType, SizeT>, ValueType, Hasher, EqualTo>;
         }// namespace array_static
     }    // namespace ndarray
 }// namespace np

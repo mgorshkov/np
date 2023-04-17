@@ -27,41 +27,62 @@ SOFTWARE.
 #include <cctype>
 #include <functional>
 #include <string>
+#include <variant>
+#include <vector>
 
 #include <np/ndarray/internal/AllToNumberConvertor.hpp>
 
 namespace np {
     namespace ndarray {
         namespace internal {
-            enum class IndexingMode {
-                BooleanIndexing,
-                Slicing,
-                None
-            };
-
-            using IndexingChecker = std::function<bool(const std::string &cond)>;
-
-            template<typename Array>
-            using IndexingWorker = std::function<Array(const std::string &cond)>;
-
-            template<typename Array>
-            struct IndexingHandler {
-                IndexingMode mode{IndexingMode::None};
-                IndexingChecker checker;
-                IndexingWorker<Array> worker;
-            };
-
             enum class Operator {
+                None,
                 More,
                 MoreOrEqual,
                 Equal,
                 LessOrEqual,
                 NotEqual,
-                Less,
-                None
+                Less
             };
+
             template<typename DType>
-            using OperatorWithArg = std::pair<Operator, DType>;
+            struct OperatorWithArg {
+                Operator m_operator;
+                DType m_arg;
+            };
+
+            using SubsettingIndexType = Size;
+
+            using SlicingIndexType = std::tuple<Size, Size, Size>;
+
+            template<typename DType>
+            using BooleanIndexType = OperatorWithArg<DType>;
+
+            template<typename DType>
+            using IndexType = std::variant<std::monostate, SubsettingIndexType, SlicingIndexType, BooleanIndexType<DType>>;
+
+            template<typename DType>
+            using IndicesType = std::vector<IndexType<DType>>;
+
+            enum class IndexingMode {
+                None,
+                Subsetting,
+                Slicing,
+                BooleanIndexing,
+                Size// this must be the last one
+            };
+
+            using IndexingChecker = std::function<bool(const std::string &cond)>;
+
+            template<typename DType>
+            using IndexingWorker = std::function<IndexType<DType>(Size index, const std::string &cond)>;
+
+            template<typename DType>
+            struct IndexingHandler {
+                IndexingMode mode{IndexingMode::None};
+                IndexingChecker checker;
+                IndexingWorker<DType> worker;
+            };
 
             struct Pattern {
                 Operator op{Operator::None};
@@ -94,15 +115,25 @@ namespace np {
                 return {Operator::None, DType{}};
             }
 
-            template<typename DType>
-            inline bool isBooleanIndexing(const std::string &cond) {
-                return internal::getOperatorWithArg<DType>(cond).first != internal::Operator::None;
+            static inline bool isNone(const std::string &cond) {
+                return cond.empty();
             }
 
-            inline bool isSlicing(const std::string &cond) {
+            static inline bool isSubsetting(const std::string &cond) {
                 return std::all_of(cond.begin(), cond.end(), [](const auto &c) {
-                    return std::isdigit(c) || c == ',' || c == ':';
+                    return std::isdigit(c);
                 });
+            }
+
+            static inline bool isSlicing(const std::string &cond) {
+                return std::all_of(cond.begin(), cond.end(), [](const auto &c) {
+                    return c == ':' || std::isdigit(c);
+                });
+            }
+
+            template<typename DType>
+            static inline bool isBooleanIndexing(const std::string &cond) {
+                return internal::getOperatorWithArg<DType>(cond).m_operator != internal::Operator::None;
             }
         }// namespace internal
     }    // namespace ndarray

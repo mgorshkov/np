@@ -29,10 +29,13 @@ SOFTWARE.
 #include <optional>
 #include <ostream>
 #include <variant>
+#include <vector>
 
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/internal/IndexStorage.hpp>
+#include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
@@ -42,31 +45,22 @@ namespace np {
             class NDArrayBase;
 
             template<typename DType, typename Derived, typename Storage>
-            using NDArrayBasePtr = std::shared_ptr<NDArrayBase<DType, Derived, Storage>>;
+            using NDArrayBasePtr = NDArrayBase<DType, Derived, Storage> *;
 
             template<typename Derived, typename Storage>
-            using NDArrayBaseBoolPtr = std::shared_ptr<NDArrayBase<bool_, Derived, Storage>>;
+            using NDArrayBaseBoolPtr = NDArrayBase<bool_, Derived, Storage> *;
 
             template<typename DType, typename Derived, typename Storage>
-            using NDArrayBaseConstPtr = std::shared_ptr<const NDArrayBase<DType, Derived, Storage>>;
+            using NDArrayBaseConstPtr = const NDArrayBase<DType, Derived, Storage> *;
 
-            template<typename DType, typename Parent, typename Storage, typename ParentStorage>
+            template<typename DType, typename Derived, typename Storage, typename ParentStorage, typename Parent>
             class Index;
 
-            template<typename DType, typename Derived, typename Storage>
+            template<typename DType, typename Storage, typename Parent>
             class IndexStorage;
 
-            template<typename DType, typename Parent, typename ParentStorage>
-            using IndexParent = Index<DType, Parent, IndexStorage<DType, Parent, ParentStorage>, ParentStorage>;
-
-            template<typename DType, typename Parent, typename Storage, typename ParentStorage>
-            class ConstIndex;
-
-            template<typename DType, typename Derived, typename Storage>
-            class ConstIndexStorage;
-
-            template<typename DType, typename Parent, typename ParentStorage>
-            using ConstIndexParent = ConstIndex<DType, Parent, ConstIndexStorage<DType, Parent, ParentStorage>, ParentStorage>;
+            template<typename DType, typename Derived, typename ParentStorage, typename Parent>
+            using IndexParent = Index<DType, Derived, IndexStorage<DType, ParentStorage, Parent>, ParentStorage, Parent>;
 
             // N-dimensional array
             template<typename DType, typename Derived, typename Storage>
@@ -100,17 +94,27 @@ namespace np {
                 void savetxt(const char *filename, const char *delimiter);
 
                 // Array dimensions
-                [[nodiscard]] virtual Shape shape() const = 0;
-                virtual void setShape(Shape shape) = 0;
+                [[nodiscard]] virtual Shape shape() const { return m_storage.shape(); };
+                virtual void setShape(const Shape &shape) { m_storage.setShape(shape); };
+
+                [[nodiscard]] bool empty() const {
+                    return shape().empty();
+                }
 
                 // Array length
-                [[nodiscard]] virtual Size len() const = 0;
+                [[nodiscard]] Size len() const {
+                    return shape().empty() ? 0 : shape()[0];
+                }
 
                 // Number of array dimensions
-                [[nodiscard]] virtual Size ndim() const = 0;
+                [[nodiscard]] Size ndim() const {
+                    return static_cast<Size>(shape().size());
+                }
 
                 // Number of array elements
-                [[nodiscard]] virtual Size size() const = 0;
+                [[nodiscard]] Size size() const {
+                    return shape().calcSizeByShape();
+                }
 
                 inline constexpr DType dtype();
 
@@ -227,6 +231,12 @@ namespace np {
                 // Compute the standard deviation along the specified axis excluding NaNs.
                 [[nodiscard]] float_ nanstd() const;
 
+                // Compute the standard variance along the specified axis.
+                [[nodiscard]] float_ var() const;
+
+                // Compute the standard variance along the specified axis excluding NaNs.
+                [[nodiscard]] float_ nanvar() const;
+
                 // Create a view of the array with the same data
                 auto view() const;
 
@@ -317,11 +327,11 @@ namespace np {
                     return m_storage.index(i);
                 }
 
-                auto begin() const {
+                auto begin() {
                     return m_storage.begin();
                 }
 
-                auto end() const {
+                auto end() {
                     return m_storage.end();
                 }
 
@@ -333,9 +343,16 @@ namespace np {
                     return m_storage.cend();
                 }
 
+                void push(const DType &value) {
+                    m_storage.push_back(value);
+                }
+
                 // Indexing arrays
-                ConstIndexParent<DType, Derived, Storage> operator[](Size i) const;
-                IndexParent<DType, Derived, Storage> operator[](Size i);
+                using IndexParentType = IndexParent<DType, Derived, Storage, NDArrayBasePtr<DType, Derived, Storage>>;
+                using IndexParentConstType = IndexParent<DType, Derived, Storage, NDArrayBaseConstPtr<DType, Derived, Storage>>;
+
+                IndexParentConstType operator[](Size i) const;
+                IndexParentType operator[](Size i);
 
                 // Subsetting
                 // a[2] Select the element at the 2nd index
@@ -345,8 +362,8 @@ namespace np {
                 // Slicing
                 // a[0:2] Select items at index 0 and 1
                 // b[0:2,1] Select items at rows 0 and 1 in column 1
-                ConstIndexParent<DType, Derived, Storage> operator[](const std::string &cond) const;
-                IndexParent<DType, Derived, Storage> operator[](const std::string &cond);
+                IndexParentConstType operator[](const std::string &cond) const;
+                IndexParentType operator[](const std::string &cond);
 
             protected:
                 [[nodiscard]] std::size_t getMaxElementSize() const {
@@ -368,17 +385,36 @@ namespace np {
                     }
                 }
 
-                IndexParent<DType, Derived, Storage> slicing(const std::string &cond);
-                ConstIndexParent<DType, Derived, Storage> slicingConst(const std::string &cond) const;
-
-                IndexParent<DType, Derived, Storage> booleanIndexing(const std::string &cond);
-                ConstIndexParent<DType, Derived, Storage> booleanIndexingConst(const std::string &cond) const;
+                IndexType<DType> runHandlers(Size dimIndex, const std::string &dimCond) const;
+                IndexType<DType> none(Size dimIndex, const std::string &dimCond) const;
+                IndexType<DType> subsetting(Size dimIndex, const std::string &dimCond) const;
+                IndexType<DType> slicing(Size dimIndex, const std::string &dimCond) const;
+                IndexType<DType> booleanIndexing(Size dimIndex, const std::string &dimCond) const;
 
                 void save(std::ostream &stream);
                 auto load(std::istream &stream);
 
             private:
                 Storage m_storage;
+            };
+
+            struct NDArrayBaseHasher {
+                template<typename DType, typename Derived, typename Storage>
+                auto operator()(const NDArrayBase<DType, Derived, Storage> &array) const -> std::size_t {
+                    std::size_t h{0};
+                    for (Size i = 0; i < array.size(); ++i) {
+                        h ^= std::hash<DType>{}(array.get(i));
+                    }
+                    return h;
+                }
+            };
+
+            struct NDArrayBaseEqualTo {
+                template<typename DType, typename Derived, typename Storage>
+                auto operator()(const NDArrayBase<DType, Derived, Storage> &x,
+                                const NDArrayBase<DType, Derived, Storage> &y) const -> bool {
+                    return x.array_equal(y);
+                }
             };
 
         }// namespace internal

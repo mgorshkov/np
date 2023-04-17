@@ -51,10 +51,12 @@ namespace np {
 
                 NDArrayShaped(NDArrayShaped &&another) noexcept = default;
 
-                NDArrayShaped(const std::vector<DType> &vector, Shape shape);
+                NDArrayShaped(const std::vector<DType> &vector, const Shape &shape);
+
+                NDArrayShaped(DType *data, const Shape &shape);
 
                 template<typename... Args>
-                explicit NDArrayShaped(Shape shape, Args &&...args);
+                explicit NDArrayShaped(const Shape &shape, Args &&...args);
 
                 template<typename... Args>
                 explicit NDArrayShaped(bool isColumnVector, Args &&...args);
@@ -69,20 +71,18 @@ namespace np {
                 using BaseConstPtr = NDArrayBaseConstPtr<DType, Derived, Storage>;
 
                 // Array dimensions
-                inline Shape shape() const;
-                void setShape(Shape sh);
+                [[nodiscard]] Shape shape() const override;
+                void setShape(const Shape &shape) override;
 
-                // Array length
-                Size len() const;
-
-                // Number of array dimensions
-                Size ndim() const;
-
-                // Number of array elements
-                inline Size size() const;
-
-                constexpr DType dtype() {
-                    return DType{};
+                using value_type = DType;// for std::back_inserter
+                void push_back(const value_type &value) {
+                    Base::push(value);
+                    if (m_shape.empty()) {
+                        m_shape = Shape{1};
+                    } else {
+                        m_shape.flatten();
+                        ++m_shape[0];
+                    }
                 }
 
             protected:

@@ -252,39 +252,69 @@ TEST_F(ArrayCreatorsTest, fill3DCreationTest) {
 }
 
 // Create an NDArray of zeros
-TEST_F(ArrayCreatorsTest, test1DZeros) {
+TEST_F(ArrayCreatorsTest, test1DZerosStatic) {
     auto array_1d = zeros<int_, 3>();
     checkArrayRepr(array_1d, "[0 0 0]");
 }
 
-TEST_F(ArrayCreatorsTest, test2DZeros) {
+TEST_F(ArrayCreatorsTest, test1DZerosDynamic) {
+    auto array_1d = zeros<int_>(Shape{3});
+    checkArrayRepr(array_1d, "[0 0 0]");
+}
+
+TEST_F(ArrayCreatorsTest, test2DZerosStatic) {
     auto array_2d = zeros<int_, 2, 3>();
     checkArrayRepr(array_2d, "[[0 0 0]\n [0 0 0]]");
 }
 
-TEST_F(ArrayCreatorsTest, test3DZeros) {
+TEST_F(ArrayCreatorsTest, test2DZerosDynamic) {
+    auto array_2d = zeros<int_>(Shape{2, 3});
+    checkArrayRepr(array_2d, "[[0 0 0]\n [0 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, test3DZerosStatic) {
     auto array_3d = zeros<int_, 2, 2, 3>();
     checkArrayRepr(array_3d, "[[[0 0 0]\n [0 0 0]]\n [[0 0 0]\n [0 0 0]]]");
 }
 
+TEST_F(ArrayCreatorsTest, test3DZerosDynamic) {
+    auto array_3d = zeros<int_>(Shape{2, 2, 3});
+    checkArrayRepr(array_3d, "[[[0 0 0]\n [0 0 0]]\n [[0 0 0]\n [0 0 0]]]");
+}
+
 // Create an NDArray of ones
-TEST_F(ArrayCreatorsTest, test1DOnes) {
+TEST_F(ArrayCreatorsTest, test1DOnesStatic) {
     auto array_1d = ones<int_, 3>();
     checkArrayRepr(array_1d, "[1 1 1]");
 }
 
-TEST_F(ArrayCreatorsTest, test2DOnes) {
+TEST_F(ArrayCreatorsTest, test1DOnesDynamic) {
+    auto array_1d = ones<int_>(Shape{3});
+    checkArrayRepr(array_1d, "[1 1 1]");
+}
+
+TEST_F(ArrayCreatorsTest, test2DOnesStatic) {
     auto array_2d = ones<int_, 2, 3>();
     checkArrayRepr(array_2d, "[[1 1 1]\n [1 1 1]]");
 }
 
-TEST_F(ArrayCreatorsTest, test3DOnes) {
+TEST_F(ArrayCreatorsTest, test2DOnesDynamic) {
+    auto array_2d = ones<int_>(Shape{2, 3});
+    checkArrayRepr(array_2d, "[[1 1 1]\n [1 1 1]]");
+}
+
+TEST_F(ArrayCreatorsTest, test3DOnesStatic) {
     auto array_3d = ones<int_, 2, 2, 3>();
     checkArrayRepr(array_3d, "[[[1 1 1]\n [1 1 1]]\n [[1 1 1]\n [1 1 1]]]");
 }
 
+TEST_F(ArrayCreatorsTest, test3DOnesDynamic) {
+    auto array_3d = ones<int_>(Shape{2, 2, 3});
+    checkArrayRepr(array_3d, "[[[1 1 1]\n [1 1 1]]\n [[1 1 1]\n [1 1 1]]]");
+}
+
 // Create 1D array with regularly incrementing values
-TEST_F(ArrayCreatorsTest, testARange) {
+TEST_F(ArrayCreatorsTest, testARangeStatic) {
     auto array_1 = arange<int_, 10>();
     checkArrayRepr(array_1, "[0 1 2 3 4 5 6 7 8 9]");
     // Create an NDArray of evenly spaced values (step value)
@@ -295,11 +325,29 @@ TEST_F(ArrayCreatorsTest, testARange) {
     checkArrayRepr(array_3, "[10 15 20]");
 }
 
+TEST_F(ArrayCreatorsTest, testARangeDynamic) {
+    auto array_1 = arange<int_>(10);
+    checkArrayRepr(array_1, "[0 1 2 3 4 5 6 7 8 9]");
+    // Create an NDArray of evenly spaced values (step value)
+    auto array_2 = arange<int_>(10, 25);
+    checkArrayRepr(array_2, "[10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]");
+    // Create an NDArray of evenly spaced values (step value)
+    auto array_3 = arange<int_>(10, 25, 5);
+    checkArrayRepr(array_3, "[10 15 20]");
+}
+
 // Create an NDArray of evenly spaced values (number of samples)
-TEST_F(ArrayCreatorsTest, testLinspace) {
+TEST_F(ArrayCreatorsTest, testLinspaceStatic) {
     auto array_1 = linspace<int_, 11UL>(0, 10);
     checkArrayRepr(array_1, "[0 1 2 3 4 5 6 7 8 9 10]");
     auto array_2 = linspace<float_, 10UL>(-3.0, 3.0);
+    checkArrayRepr(array_2, "[-3 -2.3333333 -1.6666667 -1 -0.33333333 0.33333333 1 1.6666667 2.3333333 3]");
+}
+
+TEST_F(ArrayCreatorsTest, testLinspaceDynamic) {
+    auto array_1 = linspace<int_>(0UL, 10UL, 11);
+    checkArrayRepr(array_1, "[0 1 2 3 4 5 6 7 8 9 10]");
+    auto array_2 = linspace<float_>(-3.0, 3.0, 10);
     checkArrayRepr(array_2, "[-3 -2.3333333 -1.6666667 -1 -0.33333333 0.33333333 1 1.6666667 2.3333333 3]");
 }
 
@@ -350,4 +398,20 @@ TEST_F(ArrayCreatorsTest, testEmptyDynamic) {
     Shape shape{2, 2};
     auto array = empty<int_>(shape);
     checkArrayShape(array, shape);
+}
+
+TEST_F(ArrayCreatorsTest, testExtendArray) {
+    Shape shape{2, 2};
+    auto array = empty<int_>(shape);
+    array.push_back(1);
+    checkArrayRepr(array, "[0 0 0 0 1]");
+}
+
+TEST_F(ArrayCreatorsTest, testTransformArray) {
+    auto array = eye<int_>(2);
+    checkArrayRepr(array, "[[1 0]\n [0 1]]");
+    Array<int_> output{};
+    std::transform(array.cbegin(), array.cend(),
+                   std::back_inserter(output), [](int_ i) { return i + 1; });
+    checkArrayRepr(output, "[2 1 1 2]");
 }

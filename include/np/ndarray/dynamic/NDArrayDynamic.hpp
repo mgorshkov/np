@@ -33,6 +33,7 @@ SOFTWARE.
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 
+#include <np/ndarray/internal/Index.hpp>
 #include <np/ndarray/internal/NDArrayShaped.hpp>
 
 #include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
@@ -51,6 +52,17 @@ namespace np {
 
             template<typename DType>
             using NDArrayDynamicBase = ndarray::internal::NDArrayShaped<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+
+            template<typename DType>
+            using Base = ndarray::internal::NDArrayBase<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+
+            template<typename DType>
+            using BasePtr = ndarray::internal::NDArrayBasePtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+
+            template<typename DType>
+            using BaseConstPtr = ndarray::internal::NDArrayBaseConstPtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
+
+            using BaseBoolPtr = ndarray::internal::NDArrayBasePtr<bool_, NDArrayDynamic<bool_>, NDArrayDynamicStorage<bool_>>;
 
             template<typename DType>
             class NDArrayDynamic final : public NDArrayDynamicBase<DType> {
@@ -121,6 +133,9 @@ namespace np {
 
                 inline explicit NDArrayDynamic(const StdVector1DType &vector, const Shape &shape) noexcept;
 
+                inline NDArrayDynamic(DType *data, Size size) noexcept;
+                inline NDArrayDynamic(DType *data, const Shape &shape) noexcept;
+
                 inline NDArrayDynamic(const StdVector1DType &vector, bool isColumnVector) noexcept;
 
                 inline explicit NDArrayDynamic(const StdVector2DType &vector) noexcept;
@@ -189,15 +204,36 @@ namespace np {
                     }
                     return result;
                 }
-
-            private:
-                using Base = ndarray::internal::NDArrayBase<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
-                using BasePtr = ndarray::internal::NDArrayBasePtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
-                using BaseBoolPtr = ndarray::internal::NDArrayBasePtr<bool_, NDArrayDynamic<bool_>, NDArrayDynamicStorage<bool_>>;
-                using BaseConstPtr = ndarray::internal::NDArrayBaseConstPtr<DType, NDArrayDynamic<DType>, NDArrayDynamicStorage<DType>>;
             };
 
             using NDArrayDynamicBool = NDArrayDynamic<bool_>;
+
+            struct NDArrayDynamicHasher {
+                template<typename DType>
+                auto operator()(const NDArrayDynamic<DType> &array) const -> std::size_t {
+                    std::size_t h{0};
+                    for (const auto &element: array) {
+                        h ^= std::hash<DType>{}(element);
+                    }
+                    return h;
+                }
+            };
+
+            template<typename DType, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayDynamicMap = std::unordered_map<NDArrayDynamic<DType>, ValueType, Hasher, EqualTo>;
+
+            template<typename DType>
+            using NDArrayDynamicIndexKeyType = ndarray::internal::IndexParent<DType, NDArrayDynamic<DType>, internal::NDArrayDynamicStorage<DType>, BasePtr<DType>>;
+
+            template<typename DType>
+            using NDArrayDynamicIndexConstKeyType = ndarray::internal::IndexParent<DType, NDArrayDynamic<DType>, internal::NDArrayDynamicStorage<DType>, BaseConstPtr<DType>>;
+
+            template<typename DType, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayDynamicIndexMap = std::unordered_map<NDArrayDynamicIndexKeyType<DType>, ValueType, Hasher, EqualTo>;
+
+            template<typename DType, typename ValueType, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+            using NDArrayDynamicIndexConstMap = std::unordered_map<NDArrayDynamicIndexConstKeyType<DType>, ValueType, Hasher, EqualTo>;
+
         }// namespace array_dynamic
     }    // namespace ndarray
 }// namespace np

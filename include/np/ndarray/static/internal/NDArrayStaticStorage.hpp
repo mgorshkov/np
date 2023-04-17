@@ -555,6 +555,18 @@ namespace np {
                         return i;
                     }
 
+                    Shape shape() const {
+                        throw std::runtime_error("shape() is not implemented");
+                    }
+
+                    void setShape(const Shape &) {
+                        throw std::runtime_error("setShape() is not implemented");
+                    }
+
+                    void push_back(const DType &) {
+                        throw std::runtime_error("push_back is not implemented");
+                    }
+
                     static constexpr int kDepth = 0;
 
                 private:
