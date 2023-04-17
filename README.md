@@ -14,14 +14,11 @@ This implies stack array storage.
 In dynamic array only the element type is known at compile time.
 This implies heap array storage.
 
-# Latest artifact
-https://mgorshkov.jfrog.io/artifactory/default-generic-local/np/np-0.0.5.tgz
-
 # Requirements
-Any C++17-compatible compiler:
-* gcc 8 or higher
+Any C++20-compatible compiler:
+* gcc 10 or higher
 * clang 6 or higher
-* Visual Studio 2017 or higher
+* Visual Studio 2019 or higher
 
 # Repo
 ```
@@ -106,5 +103,6 @@ PI=3.14158
 ```
 
 # Links
+* Methods from pandas library on top of NP library: https://github.com/mgorshkov/pd
 * Scientific methods on top of NP library: https://github.com/mgorshkov/scipy
 * ML Methods from scikit-learn library: https://github.com/mgorshkov/sklearn

@@ -27,6 +27,18 @@ SOFTWARE.
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 
+#ifdef OPENMP
+#include <omp.h>
+#else
+inline int omp_get_max_threads() {
+    return 1;
+}
+
+inline int omp_get_thread_num() {
+    return 0;
+}
+#endif
+
 #include <iostream>
 
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
@@ -64,6 +76,24 @@ namespace np {
     auto createUnicodeArray(Args &&...args) {
         return createArray<unicode_, SizeT>(std::forward<Args>(args)...);
     }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    using ArrayIndexKeyType = typename std::conditional<
+            SizeT == SIZE_DEFAULT,
+            ndarray::array_dynamic::NDArrayDynamicIndexKeyType<DType>,
+            ndarray::array_static::NDArrayStaticIndexKeyType<DType, SizeT>>::type;
+
+    template<typename DType = DTypeDefault, typename ValueType = DType, Size SizeT = SIZE_DEFAULT, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+    using ArrayIndexMap = typename std::conditional<
+            SizeT == SIZE_DEFAULT,
+            ndarray::array_dynamic::NDArrayDynamicIndexMap<DType, ValueType, Hasher, EqualTo>,
+            ndarray::array_static::NDArrayStaticIndexMap<DType, SizeT, ValueType, Hasher, EqualTo>>::type;
+
+    template<typename DType = DTypeDefault, typename ValueType = DType, Size SizeT = SIZE_DEFAULT, typename Hasher = ndarray::internal::NDArrayBaseHasher, typename EqualTo = ndarray::internal::NDArrayBaseEqualTo>
+    using ArrayIndexConstMap = typename std::conditional<
+            SizeT == SIZE_DEFAULT,
+            ndarray::array_dynamic::NDArrayDynamicIndexConstMap<DType, ValueType, Hasher, EqualTo>,
+            ndarray::array_static::NDArrayStaticIndexConstMap<DType, SizeT, ValueType, Hasher, EqualTo>>::type;
 }// namespace np
 
 #include "np/ndarray/internal/NDArrayBaseStreamIoImpl.hpp"
@@ -79,8 +109,6 @@ namespace np {
 #include <np/Math.hpp>
 #include <np/Sort.hpp>
 #include <np/ndarray/dynamic/internal/NDArrayDynamicStorageStreamIoImpl.hpp>
-#include <np/ndarray/internal/ConstIndexImpl.hpp>
-#include <np/ndarray/internal/IndexImpl.hpp>
 #include <np/ndarray/internal/NDArrayBaseImpl.hpp>
 #include <np/ndarray/internal/NDArrayShapedImpl.hpp>
 #include <np/ndarray/static/internal/NDArrayStaticStorageStreamIoImpl.hpp>

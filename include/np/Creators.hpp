@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include <new>
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 #include <np/Exception.hpp>
@@ -31,6 +32,15 @@ SOFTWARE.
 
 #include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
+
+#ifdef __cpp_lib_hardware_interference_size
+using std::hardware_constructive_interference_size;
+using std::hardware_destructive_interference_size;
+#else
+// 64 bytes on x86-64 │ L1_CACHE_BYTES │ L1_CACHE_SHIFT │ __cacheline_aligned │ ...
+constexpr std::size_t hardware_constructive_interference_size = 64;
+constexpr std::size_t hardware_destructive_interference_size = 64;
+#endif
 
 namespace np {
     using ndarray::array_dynamic::NDArrayDynamic;
@@ -117,11 +127,10 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
     auto arange(DType stop) {
-        std::array<DType, stop> array;
-        for (DType i = 0; i < stop; ++i) {
-            array[i] = i;
-        }
-        return NDArrayDynamic<DType>{array};
+        std::vector<DType> vector;
+        vector.resize(stop);
+        std::iota(vector.begin(), vector.end(), 0);
+        return NDArrayDynamic<DType>{vector};
     }
 
     //////////////////////////////////////////////////////////////
@@ -138,9 +147,7 @@ namespace np {
     template<typename DType, DType stop>
     auto arange() {
         std::array<DType, stop> array;
-        for (DType i = 0; i < stop; ++i) {
-            array[i] = i;
-        }
+        std::iota(array.begin(), array.end(), 0);
         return NDArrayStatic<DType, stop>{array};
     }
 
@@ -158,16 +165,16 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
-    auto arange(DType start, DType stop, DType step) {
+    auto arange(DType start, DType stop, DType step = 1) {
         NP_THROW_UNLESS(step != 0, "Step must not be zero.");
 
         DType const size = (stop - start) / step;
-        std::array<DType, size> array;
-        Size i{0};
+        std::vector<DType> vector;
+        vector.reserve(size);
         for (DType value = start; value < stop; value += step) {
-            array[i++] = value;
+            vector.push_back(value);
         }
-        return NDArrayDynamic<DType>{array};
+        return NDArrayDynamic<DType>{vector};
     }
 
     //////////////////////////////////////////////////////////////
@@ -215,10 +222,9 @@ namespace np {
 
         std::vector<DType> vector;
         vector.reserve(num);
-        Size i{0};
-        const DType delta = (stop - start) / (num - 1);
+        const DType delta = (stop - start) / (static_cast<DType>(num) - 1);
         for (DType value = start; value <= stop; value += delta) {
-            vector.set(i++, value);
+            vector.push_back(value);
         }
         return NDArrayDynamic<DType>{vector};
     }
@@ -347,15 +353,27 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto rand(const Shape &shape) {
-            std::random_device device;
-            std::mt19937 generator(device());
-            std::uniform_real_distribution<DType> distribution;
-            std::vector<DType> vector;
-            auto size = shape.calcSizeByShape();
-            vector.resize(size);
-            std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
+            struct alignas(hardware_destructive_interference_size) rng {
+                std::random_device device;
+                std::mt19937 generator{device()};
+                std::uniform_real_distribution<DType> distribution;
+            };
 
-            return NDArrayDynamic<DType>{vector, shape};
+            std::vector<rng> rngs(omp_get_max_threads());
+
+            auto size = shape.calcSizeByShape();
+            auto *data = new DType[size];
+#pragma omp parallel default(none) shared(rngs, data, size)
+            {
+                auto &rng = rngs[omp_get_thread_num()];
+#pragma omp for
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
+                    data[offset] = rng.distribution(rng.generator);
+                }
+            }
+
+            return NDArrayDynamic<DType>{data, shape};
         }
 
         //////////////////////////////////////////////////////////////

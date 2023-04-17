@@ -424,4 +424,60 @@ namespace np {
         return result;
     }
 
+    //////////////////////////////////////////////////////////////
+    /// \brief Compute the variance along the specified axis
+    ///
+    /// Returns the variance of the array elements, a measure of the spread of a distribution.
+    /// The variance is computed for the flattened array
+    ///
+    /// \param array An array to calculate the variance
+    ///
+    /// \return Variance of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> varImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> varImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.var();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto var(const Array<DType, SizeT> &array) {
+        float_ result{};
+        varImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Compute the variance along the specified axis except NaNs
+    ///
+    /// Returns the variance of the array elements, a measure of the spread of a distribution.
+    /// The variance is computed for the flattened array
+    ///
+    /// \param array An array to calculate the variance
+    ///
+    /// \return Variance of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> nanvarImpl(const Array<DType, SizeT> &, float_ &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> nanvarImpl(const Array<DType, SizeT> &array, float_ &result) {
+        result = array.nanvar();
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
+    inline auto nanvar(const Array<DType, SizeT> &array) {
+        float_ result{};
+        nanvarImpl<DType, SizeT>(array, result);
+        return result;
+    }
+
 }// namespace np
