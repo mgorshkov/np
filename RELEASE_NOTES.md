@@ -1,3 +1,9 @@
+# Release 0.0.7
+## Changes
+* interp, expand_dims functions added
+* random::seed added
+* data-generator sample added
+
 # Release 0.0.6
 ## Changes
 * Subsetting/slicing/boolean indexing enhanced

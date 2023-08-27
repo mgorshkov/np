@@ -193,9 +193,6 @@ namespace np {
                 NDArrayDynamic<bool_> operator<(const NDArrayDynamic &array) const;
                 NDArrayDynamic<bool_> operator>(const NDArrayDynamic &array) const;
 
-                // Sort an array
-                inline void sort();
-
                 template<typename DTypeNew>
                 inline NDArrayDynamic<DTypeNew> astype() {
                     NDArrayDynamic<DTypeNew> result{NDArrayDynamicBase<DType>::shape()};

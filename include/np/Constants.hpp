@@ -29,9 +29,14 @@ SOFTWARE.
 
 namespace np {
 
-    using Size = std::uint32_t;
+    using Size = unsigned long;
     static const Size constexpr SIZE_DEFAULT = static_cast<Size>(-1);
 
+    using SignedSize = long;
+
     static const double constexpr NaN = NAN;
+
+    template<typename DType>
+    concept Arithmetic = std::is_arithmetic_v<DType>;
 
 }// namespace np

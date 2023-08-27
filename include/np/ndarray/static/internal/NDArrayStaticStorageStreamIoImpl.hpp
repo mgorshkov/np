@@ -38,19 +38,51 @@ namespace np {
                 std::ostream &
                 operator<<(std::ostream &stream, const NDArrayStaticStorage<DType, SizeT> &array) {
                     stream << "[";
-                    for (Size index = 0; index < SizeT; ++index) {
-                        if (index > 0) {
-                            stream << " ";
+                    if constexpr (SizeT > 100) {
+                        for (Size index = 0; index < 2; ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
-                        if constexpr (std::is_floating_point<DType>::value) {
-                            stream << std::setprecision(8);
+                        stream << std::endl
+                               << "...";
+                        for (Size index = SizeT - 3; index < SizeT; ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
-                        if constexpr (std::is_same<DType, std::string>::value) {
-                            stream << "\"";
-                        }
-                        stream << array.get(index);
-                        if constexpr (std::is_same<DType, std::string>::value) {
-                            stream << "\"";
+                    } else {
+                        for (Size index = 0; index < SizeT; ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
                     }
                     stream << "]";

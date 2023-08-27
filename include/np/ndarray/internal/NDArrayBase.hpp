@@ -119,29 +119,29 @@ namespace np {
                 inline constexpr DType dtype();
 
                 // Array mathematics
-                template<typename Derived2, typename Storage2>
-                auto operator+(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto add(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto add(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2>
+                auto add(const DType2 &value) const;
 
-                template<typename Derived2, typename Storage2>
-                auto operator-(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto subtract(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto subtract(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2>
+                auto subtract(const DType2 &value) const;
 
-                template<typename Derived2, typename Storage2>
-                auto operator*(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto multiply(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2>
+                auto multiply(const DType2 &value) const;
 
-                template<typename Derived2, typename Storage2>
-                auto operator/(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto divide(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto divide(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<Arithmetic DType2>
+                auto divide(const DType2 &value) const;
 
                 auto exp() const;
 
@@ -156,18 +156,18 @@ namespace np {
                 auto abs() const;
 
                 // Dot product
-                template<typename Derived2, typename Storage2>
-                DType dot(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<typename DType2, typename Derived2, typename Storage2>
+                auto dot(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 // Elementwise comparison
-                template<typename Derived2, typename Storage2>
-                auto operator==(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<typename DType2, typename Derived2, typename Storage2>
+                auto operator==(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto operator<(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<typename DType2, typename Derived2, typename Storage2>
+                auto operator<(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
-                template<typename Derived2, typename Storage2>
-                auto operator>(const NDArrayBase<DType, Derived2, Storage2> &array) const;
+                template<typename DType2, typename Derived2, typename Storage2>
+                auto operator>(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 // Array-wise comparison
                 bool array_equal(const DType &element) const {
@@ -291,10 +291,6 @@ namespace np {
 
                 // Create stacked column-wise arrays
                 template<typename DType2, typename Derived2, typename Storage2>
-                auto column_stack(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
-
-                // Create stacked column-wise arrays
-                template<typename DType2, typename Derived2, typename Storage2>
                 auto c_(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 // Split the array horizontally
@@ -302,6 +298,9 @@ namespace np {
 
                 // Split the array vertically
                 auto vsplit(std::size_t sections) const;
+
+                // Expand the shape of an array.
+                auto expand_dims(Size axis) const;
 
                 const DType &get(Size i) const {
                     return m_storage.get(i);
@@ -351,8 +350,8 @@ namespace np {
                 using IndexParentType = IndexParent<DType, Derived, Storage, NDArrayBasePtr<DType, Derived, Storage>>;
                 using IndexParentConstType = IndexParent<DType, Derived, Storage, NDArrayBaseConstPtr<DType, Derived, Storage>>;
 
-                IndexParentConstType operator[](Size i) const;
-                IndexParentType operator[](Size i);
+                IndexParentConstType operator[](SignedSize i) const;
+                IndexParentType operator[](SignedSize i);
 
                 // Subsetting
                 // a[2] Select the element at the 2nd index

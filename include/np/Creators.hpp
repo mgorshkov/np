@@ -29,6 +29,7 @@ SOFTWARE.
 #include <np/DType.hpp>
 #include <np/Exception.hpp>
 #include <np/Shape.hpp>
+#include <random>
 
 #include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
@@ -170,9 +171,10 @@ namespace np {
 
         DType const size = (stop - start) / step;
         std::vector<DType> vector;
-        vector.reserve(size);
+        vector.resize(size);
+        Size i{0};
         for (DType value = start; value < stop; value += step) {
-            vector.push_back(value);
+            vector[i++] = value;
         }
         return NDArrayDynamic<DType>{vector};
     }
@@ -221,10 +223,14 @@ namespace np {
         NP_THROW_UNLESS(num > 0, "Number of samples must be non-negative.");
 
         std::vector<DType> vector;
-        vector.reserve(num);
+        vector.resize(num);
         const DType delta = (stop - start) / (static_cast<DType>(num) - 1);
+        if (delta == 0) {
+            throw std::runtime_error("Invalid parameters, delta == 0");
+        }
+        std::size_t i = 0;
         for (DType value = start; value <= stop; value += delta) {
-            vector.push_back(value);
+            vector[i++] = value;
         }
         return NDArrayDynamic<DType>{vector};
     }
@@ -247,8 +253,11 @@ namespace np {
         NP_THROW_CONSTEXPR_UNLESS(num > 0, "Number of samples must be non-negative.");
 
         NDArrayStatic<DType, num> array{};
-        Size i{0};
         const DType delta = (stop - start) / (num - 1);
+        if (delta == 0) {
+            throw std::runtime_error("Invalid parameters, delta == 0");
+        }
+        Size i{0};
         for (DType value = start; value <= stop; value += delta) {
             array.set(i++, value);
         }
@@ -340,6 +349,18 @@ namespace np {
     }
 
     namespace random {
+        static std::random_device device;
+        static std::mt19937 generator{device()};
+        //////////////////////////////////////////////////////////////
+        /// \brief Seeds the random data generator
+        ///
+        /// Seeds the random data generator
+        ///
+        //////////////////////////////////////////////////////////////
+        inline void seed(unsigned int sd) {
+            generator.seed(sd);
+        }
+
         //////////////////////////////////////////////////////////////
         /// \brief Create a random dynamic array of values
         ///
@@ -354,8 +375,6 @@ namespace np {
         template<typename DType = DTypeDefault>
         auto rand(const Shape &shape) {
             struct alignas(hardware_destructive_interference_size) rng {
-                std::random_device device;
-                std::mt19937 generator{device()};
                 std::uniform_real_distribution<DType> distribution;
             };
 
@@ -363,13 +382,13 @@ namespace np {
 
             auto size = shape.calcSizeByShape();
             auto *data = new DType[size];
-#pragma omp parallel default(none) shared(rngs, data, size)
+#pragma omp parallel default(none) shared(rngs, data, size, generator)
             {
                 auto &rng = rngs[omp_get_thread_num()];
 #pragma omp for
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
-                    data[offset] = rng.distribution(rng.generator);
+                    data[offset] = rng.distribution(generator);
                 }
             }
 
@@ -398,8 +417,6 @@ namespace np {
             static Size constexpr m_size = (SizeT * ... * Sizes);
 
             rand_helper() {
-                std::random_device device;
-                std::mt19937 generator(device());
                 std::uniform_real_distribution<DType> distribution;
                 std::vector<DType> vector;
                 vector.resize(m_size);
@@ -430,6 +447,94 @@ namespace np {
         template<typename DType, Size SizeT, Size... Sizes>
         NDArrayStatic<DType, (SizeT * ... * Sizes)> rand() {
             return static_cast<NDArrayStatic<DType, (SizeT * ... * Sizes)>>(rand_helper<DType, SizeT, Sizes...>());
+        }
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Create a random dynamic array of values
+        ///
+        /// Return a sample (or samples) from the “standard normal” distribution.
+        ///
+        /// \param DType Type of array elements
+        /// \param shape shape of the array
+        ///
+        /// \return A dynamic array of random values
+        ///
+        //////////////////////////////////////////////////////////////
+        template<typename DType = DTypeDefault>
+        auto randn(const Shape &shape) {
+            struct alignas(hardware_destructive_interference_size) rng {
+                std::normal_distribution<DType> distribution;
+            };
+
+            std::vector<rng> rngs(omp_get_max_threads());
+
+            auto size = shape.calcSizeByShape();
+            auto *data = new DType[size];
+#pragma omp parallel default(none) shared(rngs, data, size, generator)
+            {
+                auto &rng = rngs[omp_get_thread_num()];
+#pragma omp for
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
+                    data[offset] = rng.distribution(generator);
+                }
+            }
+
+            return NDArrayDynamic<DType>{data, shape};
+        }
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Create a random dynamic array of values
+        ///
+        /// Return a sample (or samples) from the “standard normal” distribution.
+        ///
+        /// \param DType Type of array elements
+        /// \param size size of the array
+        ///
+        /// \return A dynamic array of random values
+        ///
+        //////////////////////////////////////////////////////////////
+        template<typename DType = DTypeDefault>
+        auto randn(Size size) {
+            const Shape shape{size};
+            return randn<DType>(shape);
+        }
+
+        template<typename DType, Size SizeT, Size... Sizes>
+        struct randn_helper {
+            static Size constexpr m_size = (SizeT * ... * Sizes);
+
+            randn_helper() {
+                std::normal_distribution<DType> distribution;
+                std::vector<DType> vector;
+                vector.resize(m_size);
+                std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
+                const Shape shape{SizeT, Sizes...};
+                m_array = NDArrayStatic<DType, m_size>(vector, shape);
+            }
+
+            explicit operator NDArrayStatic<DType, m_size>() {
+                return m_array;
+            }
+
+            NDArrayStatic<DType, m_size> m_array;
+        };
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Create a random static array of values
+        ///
+        /// Create a random static array with uniform distribution.
+        ///
+        /// \param DType Type of array elements
+        /// \param SizeT First dim of the array
+        /// \param Sizes Rest dims of the array
+        ///
+        /// \return A static array of zeros
+        ///
+        //////////////////////////////////////////////////////////////
+        template<typename DType, Size SizeT, Size... Sizes>
+        NDArrayStatic<DType, (SizeT * ... * Sizes)> randn() {
+            return static_cast<NDArrayStatic<DType, (SizeT * ... * Sizes)>>(randn_helper<DType, SizeT, Sizes...>());
         }
     }// namespace random
 
