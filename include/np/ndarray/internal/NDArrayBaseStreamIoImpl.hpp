@@ -40,28 +40,84 @@ namespace np {
 
                 if (!array.shape().empty()) {
                     if (array.shape().size() == 1) {
-                        for (Size index = 0; index < array.shape()[0]; ++index) {
-                            if (index > 0)
-                                stream << " ";
-                            if constexpr (std::is_floating_point<DType>::value) {
-                                stream << std::setprecision(8);
+                        if (array.shape()[0] > 100) {
+                            for (Size index = 0; index < 2; ++index) {
+                                if (index > 0)
+                                    stream << " ";
+                                if constexpr (std::is_floating_point<DType>::value) {
+                                    stream << std::setprecision(8);
+                                }
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
+                                stream << array.get(index);
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
                             }
-                            if constexpr (std::is_same<DType, std::string>::value) {
-                                stream << "\"";
+                            stream << std::endl
+                                   << "...";
+                            for (Size index = array.shape()[0] - 3; index < array.shape()[0]; ++index) {
+                                if (index > 0)
+                                    stream << " ";
+                                if constexpr (std::is_floating_point<DType>::value) {
+                                    stream << std::setprecision(8);
+                                }
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
+                                stream << array.get(index);
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
                             }
-                            stream << array.get(index);
-                            if constexpr (std::is_same<DType, std::string>::value) {
-                                stream << "\"";
+                        } else {
+                            for (Size index = 0; index < array.shape()[0]; ++index) {
+                                if (index > 0)
+                                    stream << " ";
+                                if constexpr (std::is_floating_point<DType>::value) {
+                                    stream << std::setprecision(8);
+                                }
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
+                                stream << array.get(index);
+                                if constexpr (std::is_same<DType, std::string>::value) {
+                                    stream << "\"";
+                                }
                             }
                         }
                     } else {
-                        for (Size index = 0; index < array.shape()[0]; ++index) {
-                            if (index > 0) {
-                                stream << std::endl
-                                       << " ";
+                        if (array.shape()[0] > 100) {
+                            for (Size index = 0; index < 2; ++index) {
+                                if (index > 0) {
+                                    stream << std::endl
+                                           << " ";
+                                }
+                                if constexpr (Storage::kDepth < 10) {
+                                    stream << array[index];
+                                }
                             }
-                            if constexpr (Storage::kDepth < 10) {
-                                stream << array[index];
+                            stream << std::endl
+                                   << "...";
+                            for (Size index = array.shape()[0] - 3; index < array.shape()[0]; ++index) {
+                                if (index > 0) {
+                                    stream << std::endl
+                                           << " ";
+                                }
+                                if constexpr (Storage::kDepth < 10) {
+                                    stream << array[index];
+                                }
+                            }
+                        } else {
+                            for (Size index = 0; index < array.shape()[0]; ++index) {
+                                if (index > 0) {
+                                    stream << std::endl
+                                           << " ";
+                                }
+                                if constexpr (Storage::kDepth < 10) {
+                                    stream << array[index];
+                                }
                             }
                         }
                     }

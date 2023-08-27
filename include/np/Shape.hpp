@@ -220,6 +220,10 @@ namespace np {
             m_sizes.push_back(size);
         }
 
+        void expandDims(Size axis) {
+            m_sizes.insert(std::next(m_sizes.cbegin(), axis), 1);
+        }
+
         void removeFirstDim() {
             if (empty()) {
                 throw std::runtime_error("Empty shape, cannot remove first dim");

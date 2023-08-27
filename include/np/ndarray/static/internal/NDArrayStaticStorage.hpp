@@ -551,11 +551,11 @@ namespace np {
                         return const_iterator{this, SizeT};
                     }
 
-                    Size index(Size i) const {
+                    [[nodiscard]] Size index(Size i) const {
                         return i;
                     }
 
-                    Shape shape() const {
+                    [[nodiscard]] Shape shape() const {
                         throw std::runtime_error("shape() is not implemented");
                     }
 

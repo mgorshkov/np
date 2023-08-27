@@ -34,7 +34,6 @@ namespace np {
     namespace ndarray {
         namespace array_dynamic {
             namespace internal {
-
                 template<typename Stream>
                 class SquareBracketsInserter {
                 public:
@@ -54,19 +53,50 @@ namespace np {
                 template<typename DType>
                 std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicStorage<DType> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
-
-                    for (Size index = 0; index < array.size(); ++index) {
-                        if (index > 0)
-                            stream << " ";
-                        if constexpr (std::is_floating_point<DType>::value) {
-                            stream << std::setprecision(8);
+                    if (array.size() > 100) {
+                        for (Size index = 0; index < 2; ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
-                        if constexpr (std::is_same<DType, std::string>::value) {
-                            stream << "\"";
+                        stream << "...";
+                        for (Size index = array.size() - 3; index < array.size(); ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
-                        stream << array.get(index);
-                        if constexpr (std::is_same<DType, std::string>::value) {
-                            stream << "\"";
+                    } else {
+                        for (Size index = 0; index < array.size(); ++index) {
+                            if (index > 0)
+                                stream << " ";
+                            if constexpr (std::is_floating_point<DType>::value) {
+                                stream << std::setprecision(8);
+                            }
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
+                            stream << array.get(index);
+                            if constexpr (std::is_same<DType, std::string>::value) {
+                                stream << "\"";
+                            }
                         }
                     }
                     return stream;
