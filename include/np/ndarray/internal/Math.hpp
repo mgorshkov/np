@@ -35,18 +35,18 @@ SOFTWARE.
 namespace np {
     namespace ndarray {
         namespace internal {
-            template<typename DType1, typename DType2>
-            std::enable_if_t<!std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> add(DType1, DType2, DType1 &) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> add(DType1, DType2, DType3 &) {
                 throw std::runtime_error("Plus called for non-arithmetic types");
             }
 
-            template<typename DType1, typename DType2>
-            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> add(DType1 arg1, DType2 arg2, DType1 &result) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> add(DType1 arg1, DType2 arg2, DType3 &result) {
                 result = arg1 + arg2;
             }
 
             template<typename DType1, typename DType2>
-            std::enable_if_t<!std::is_arithmetic_v<DType1> && !std::is_arithmetic_v<DType2>> inc(DType1 &, DType2) {
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> inc(DType1 &, DType2) {
                 throw std::runtime_error("Inc called for non-arithmetic types");
             }
 
@@ -55,63 +55,43 @@ namespace np {
                 arg1 += static_cast<DType1>(arg2);
             }
 
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> subtract(DType, DType, DType &) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> subtract(DType1, DType2, DType3 &) {
                 throw std::runtime_error("Subtract called for non-arithmetic types");
             }
 
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> subtract(DType arg1, DType arg2, DType &result) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> subtract(DType1 arg1, DType2 arg2, DType3 &result) {
                 result = arg1 - arg2;
             }
 
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> dec(DType &, DType) {
+            template<typename DType1, typename DType2>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> dec(DType1 &, DType2) {
                 throw std::runtime_error("Dec called for non-arithmetic types");
             }
 
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> dec(DType &arg1, DType arg2) {
-                arg1 -= arg2;
+            template<typename DType1, typename DType2>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> dec(DType1 &arg1, DType2 arg2) {
+                arg1 -= static_cast<DType1>(arg2);
             }
 
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> multiply(DType, DType, DType &) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> multiply(DType1, DType2, DType3 &) {
                 throw std::runtime_error("Multiply called for non-arithmetic types");
             }
 
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> multiply(DType arg1, DType arg2, DType &result) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> multiply(DType1 arg1, DType2 arg2, DType3 &result) {
                 result = arg1 * arg2;
             }
 
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> divide(DType, DType, DType &) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> divide(DType1, DType2, DType3 &) {
                 throw std::runtime_error("Divide called for non-arithmetic types");
             }
 
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> divide(DType arg1, DType arg2, DType &result) {
-                result = arg1 / arg2;
-            }
-
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> divideBySize(DType, Size, float_ &) {
-                throw std::runtime_error("Divide called for non-arithmetic types");
-            }
-
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> divideBySize(DType arg1, Size arg2, float_ &result) {
-                result = arg1 / arg2;
-            }
-
-            template<typename DType>
-            std::enable_if_t<!std::is_arithmetic_v<DType>> divideByDouble(DType, float_, DType &) {
-                throw std::runtime_error("Divide called for non-arithmetic types");
-            }
-
-            template<typename DType>
-            std::enable_if_t<std::is_arithmetic_v<DType>> divideByDouble(DType arg1, float_ arg2, DType &result) {
+            template<typename DType1, typename DType2, typename DType3>
+            std::enable_if_t<std::is_arithmetic_v<DType1> && std::is_arithmetic_v<DType2>> divide(DType1 arg1, DType2 arg2, DType3 &result) {
                 result = arg1 / arg2;
             }
 

@@ -176,15 +176,67 @@ namespace np {
     /// 2D arrays are stacked as-is, just like with hstack.
     /// 1D arrays are turned into 2D columns first.
     ///
-    /// \param array1 Array to stack
-    /// \param array2 Array to stack
+    /// \param arg1, args Arrays to stack
     ///
     /// \return The array formed by stacking the given arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
-    auto column_stack(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
-        return array1.column_stack(array2);
+    template<typename Arg>
+    auto all_empty(Arg &&array) {
+        return array.empty();
+    }
+
+    template<typename Arg, typename... Args>
+    auto all_empty(Arg &&arg1, Args &&...args) {
+        return arg1.empty() && all_empty(args...);
+    }
+
+    template<typename Arg>
+    auto check_ndim(Arg &&array) {
+        return array.ndim();
+    }
+
+    template<typename Arg, typename... Args>
+    auto check_ndim(Arg &&arg1, Args &&...args) {
+        auto ndim_args = check_ndim(args...);
+        if (check_ndim(arg1) != ndim_args) {
+            throw std::runtime_error("Number of dims should be equal");
+        }
+        return ndim_args;
+    }
+
+    template<typename Target, typename Arg>
+    void fill(Target &&target, Size indexSource, Size &indexTarget, Arg &&arg1) {
+        target.set(indexTarget++, arg1.get(indexSource));
+    }
+
+    template<typename Target, typename Arg, typename... Args>
+    void fill(Target &&target, Size indexSource, Size &indexTarget, Arg &&arg1, Args &&...args) {
+        fill(target, indexSource, indexTarget, arg1);
+        fill(target, indexSource, indexTarget, args...);
+    }
+
+    template<typename DType, typename Derived, typename Storage, typename... Args>
+    auto column_stack(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &arg1, Args &&...args) {
+        if (all_empty(arg1, args...)) {
+            return ndarray::array_dynamic::NDArrayDynamic<DType>{};
+        }
+        auto ndim = check_ndim(arg1, args...);
+        if (ndim == 1) {
+            Shape shape{arg1.shape()[0], sizeof...(args) + 1};
+            ndarray::array_dynamic::NDArrayDynamic<DType> result{shape};
+            Size indexTarget = 0;
+            for (Size indexSource = 0; indexSource < arg1.size(); ++indexSource) {
+                fill(result, indexSource, indexTarget, arg1, args...);
+            }
+            return result;
+        }
+        //concatenation along 2nd axis
+        ndarray::array_dynamic::NDArrayDynamic<DType> result = arg1.copy();
+        for (const auto &array: {args...}) {
+            result = result.concatenate(array, 1);
+        }
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -238,6 +290,22 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto vsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, std::size_t sections) {
         return array.vsplit(sections);
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Expand the shape of an array.
+    //
+    /// Insert a new axis that will appear at the axis position in the expanded array shape.
+    ///
+    /// \param a Input array
+    /// \param axis Position in the expanded axes where the new axis (or axes) is placed.
+    ///
+    /// \return View of a with the number of dimensions increased.
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType, typename Derived, typename Storage>
+    auto expand_dims(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &a, Size axis) {
+        return a.expand_dims(axis);
     }
 
 }// namespace np

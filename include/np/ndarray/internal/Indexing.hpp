@@ -53,7 +53,7 @@ namespace np {
 
             using SubsettingIndexType = Size;
 
-            using SlicingIndexType = std::tuple<Size, Size, Size>;
+            using SlicingIndexType = std::tuple<Size, Size, SignedSize>;
 
             template<typename DType>
             using BooleanIndexType = OperatorWithArg<DType>;

@@ -38,14 +38,14 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayTransposeTest) {
     // dynamic
     Array<int_> array{};
     auto result = transpose(array);
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayRavelTest) {
     // dynamic
     Array<int_> array{};
     auto result = array.ravel();
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayReshapeTest) {
@@ -53,7 +53,7 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayReshapeTest) {
     Array<int_> array{};
     Shape shape;
     auto result = array.reshape(shape);
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayResizeTest) {
@@ -61,7 +61,7 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayResizeTest) {
     Array<int_> array{};
     Shape shape;
     auto result = array.resize(shape);
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayAppendTest) {
@@ -69,7 +69,7 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayAppendTest) {
     Array<int_> array{};
     Array<int_> array1{};
     auto result = array.append(array1);
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayInsertTest) {
@@ -89,72 +89,72 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayConcatenateTest) {
     Array<int_> array{};
     Array<int_> array1{};
     auto result = array.concatenate(array1);
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayVstackTest) {
     Array<int_> array1{};
     Array<int_> array2{};
-    auto result = vstack<int_>(array1, array2);
-    compare<int_>(result, array1);
+    auto result = vstack(array1, array2);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayR_Test) {
     Array<int_> array1{};
     Array<int_> array2{};
-    auto result = r_<int_>(array1, array2);
-    compare<int_>(result, array1);
+    auto result = r_(array1, array2);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayHStackTest) {
     Array<int_> array1{};
     Array<int_> array2{};
-    auto result = hstack<int_>(array1, array2);
-    compare<int_>(result, array1);
+    auto result = hstack(array1, array2);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayColumsStackTest) {
     Array<int_> array1{};
     Array<int_> array2{};
-    auto result = column_stack<int_>(array1, array2);
-    compare<int_>(result, array1);
+    auto result = column_stack(array1, array2);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayC_Test) {
     Array<int_> array1{};
     Array<int_> array2{};
-    auto result = c_<int_>(array1, array2);
-    compare<int_>(result, array1);
+    auto result = c_(array1, array2);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayHSplitTest) {
     Array<int_> array1{};
-    auto result = hsplit<int_>(array1, 2);
+    auto result = hsplit(array1, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<int_>(result[0], array1);
-    compare<int_>(result[1], array1);
+    compare(result[0], array1);
+    compare(result[1], array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayVSplitTest) {
     Array<int_> array1{};
-    auto result = vsplit<int_>(array1, 2);
+    auto result = vsplit(array1, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<int_>(result[0], array1);
-    compare<int_>(result[1], array1);
+    compare(result[0], array1);
+    compare(result[1], array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayTransposeTest) {
     // dynamic
     Array<float_> array{};
     auto result = transpose(array);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayRavelTest) {
     // dynamic
     Array<float_> array{};
     auto result = array.ravel();
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayReshapeTest) {
@@ -162,7 +162,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayReshapeTest) {
     Array<float_> array{};
     Shape shape;
     auto result = array.reshape(shape);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayResizeTest) {
@@ -170,7 +170,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayResizeTest) {
     Array<float_> array{};
     Shape shape;
     auto result = array.resize(shape);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayAppendTest) {
@@ -178,7 +178,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayAppendTest) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = array.append(array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayInsertTest) {
@@ -199,7 +199,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayConcatenateTest) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = array.concatenate(array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVstackTest) {
@@ -207,7 +207,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVstackTest) {
     Array<float_> array1{};
     Array<float_> array2{};
     auto result = vstack(array1, array2);
-    compare<float_>(result, array1);
+    compare(result, array1);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayR_Test) {
@@ -215,7 +215,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayR_Test) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = r_(array, array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayHStackTest) {
@@ -223,7 +223,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayHStackTest) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = hstack(array, array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayColumsStackTest) {
@@ -231,7 +231,7 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayColumsStackTest) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = column_stack(array, array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayC_Test) {
@@ -239,16 +239,16 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayC_Test) {
     Array<float_> array{};
     Array<float_> array1{};
     auto result = c_(array, array1);
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayHSplitTest) {
     // dynamic
     Array<float_> array{};
-    auto result = hsplit<float_>(array, 2);
+    auto result = hsplit(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<float_>(result[0], array);
-    compare<float_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVSplitTest) {
@@ -256,22 +256,22 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVSplitTest) {
     Array<float_> array{};
     auto result = vsplit<float_>(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<float_>(result[0], array);
-    compare<float_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayTransposeTest) {
     // dynamic
     Array<string_> array{};
     auto result = transpose<string_>(array);
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayRavelTest) {
     // dynamic
     Array<string_> array{};
     auto result = array.ravel();
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayReshapeTest) {
@@ -279,7 +279,7 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayReshapeTest) {
     Array<string_> array{};
     Shape shape;
     auto result = array.reshape(shape);
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayResizeTest) {
@@ -287,7 +287,7 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayResizeTest) {
     Array<string_> array{};
     Shape shape;
     auto result = array.resize(shape);
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayAppendTest) {
@@ -295,7 +295,7 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayAppendTest) {
     Array<string_> array{};
     Array<string_> array1{};
     auto result = array.append(array1);
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayInsertTest) {
@@ -316,79 +316,79 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayConcatenateTest) {
     auto array = createStringArray();
     auto array1 = createStringArray();
     auto result = array.concatenate(array1);
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayVstackTest) {
     // dynamic
     auto array = createStringArray();
     auto array1 = createStringArray();
-    auto result = vstack<string_>(array, array1);
-    compare<string_>(result, array);
+    auto result = vstack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayR_Test) {
     // dynamic
     auto array = createStringArray();
     auto array1 = createStringArray();
-    auto result = r_<string_>(array, array1);
-    compare<string_>(result, array);
+    auto result = r_(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayHStackTest) {
     // dynamic
     auto array = createStringArray();
     auto array1 = createStringArray();
-    auto result = hstack<string_>(array, array1);
-    compare<string_>(result, array);
+    auto result = hstack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayColumsStackTest) {
     // dynamic
     auto array = createStringArray();
     auto array1 = createStringArray();
-    auto result = column_stack<string_>(array, array1);
-    compare<string_>(result, array);
+    auto result = column_stack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayC_Test) {
     // dynamic
     auto array = createStringArray();
     auto array1 = createStringArray();
-    auto result = c_<string_>(array, array1);
-    compare<string_>(result, array);
+    auto result = c_(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayHSplitTest) {
     // dynamic
     auto array = createStringArray();
-    auto result = hsplit<string_>(array, 2);
+    auto result = hsplit(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<string_>(result[0], array);
-    compare<string_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayVSplitTest) {
     // dynamic
     auto array = createStringArray();
-    auto result = vsplit<string_>(array, 2);
+    auto result = vsplit(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<string_>(result[0], array);
-    compare<string_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayTransposeTest) {
     // dynamic
     auto array = createUnicodeArray();
-    auto result = transpose<unicode_>(array);
-    compare<unicode_>(result, array);
+    auto result = transpose(array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayRavelTest) {
     // dynamic
     auto array = createUnicodeArray();
     auto result = array.ravel();
-    compare<unicode_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayReshapeTest) {
@@ -396,7 +396,7 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayReshapeTest) {
     auto array = createUnicodeArray();
     Shape shape;
     auto result = array.reshape(shape);
-    compare<unicode_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayResizeTest) {
@@ -404,7 +404,7 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayResizeTest) {
     auto array = createUnicodeArray();
     Shape shape;
     auto result = array.resize(shape);
-    compare<unicode_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayAppendTest) {
@@ -412,7 +412,7 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayAppendTest) {
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
     auto result = array.append(array1);
-    compare<unicode_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayInsertTest) {
@@ -432,64 +432,64 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayConcatenateTest) {
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
     auto result = array.concatenate(array1);
-    compare<unicode_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayVstackTest) {
     // dynamic
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    auto result = vstack<unicode_>(array, array1);
-    compare<unicode_>(result, array);
+    auto result = vstack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayR_Test) {
     // dynamic
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    auto result = r_<unicode_>(array, array1);
-    compare<unicode_>(result, array);
+    auto result = r_(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayHStackTest) {
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    auto result = hstack<unicode_>(array, array1);
-    compare<unicode_>(result, array);
+    auto result = hstack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayColumsStackTest) {
     // dynamic
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    auto result = column_stack<unicode_>(array, array1);
-    compare<unicode_>(result, array);
+    auto result = column_stack(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayC_Test) {
     // dynamic
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    auto result = c_<unicode_>(array, array1);
-    compare<unicode_>(result, array);
+    auto result = c_(array, array1);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayHSplitTest) {
     // dynamic
     auto array = createUnicodeArray();
-    auto result = hsplit<unicode_>(array, 2);
+    auto result = hsplit(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<unicode_>(result[0], array);
-    compare<unicode_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayVSplitTest) {
     // dynamic
     auto array = createUnicodeArray();
-    auto result = vsplit<unicode_>(array, 2);
+    auto result = vsplit(array, 2);
     EXPECT_EQ(result.size(), 2U);
-    compare<unicode_>(result[0], array);
-    compare<unicode_>(result[1], array);
+    compare(result[0], array);
+    compare(result[1], array);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayTransposeTest) {
@@ -498,8 +498,8 @@ TEST_F(ArrayManipTest, static1DIntArrayTransposeTest) {
     auto array = createIntArray<3>(ar);
     std::initializer_list<int_> res = {1, 2, 3};
     auto result_sample = createIntArray(res);
-    auto result = transpose<int_>(array);
-    compare<int_>(result, result_sample);
+    auto result = transpose(array);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayRavelTest) {
@@ -507,7 +507,7 @@ TEST_F(ArrayManipTest, static1DIntArrayRavelTest) {
     std::initializer_list<int_> ar = {1, 2, 3};
     auto array = createIntArray(ar);
     auto result = array.ravel();
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayReshapeTest) {
@@ -518,7 +518,7 @@ TEST_F(ArrayManipTest, static1DIntArrayReshapeTest) {
     auto result_sample = createIntArray(c_array_2d);
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayResizeTest) {
@@ -529,7 +529,7 @@ TEST_F(ArrayManipTest, static1DIntArrayResizeTest) {
     auto result_sample = createIntArray(res);
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayAppendTest) {
@@ -540,7 +540,7 @@ TEST_F(ArrayManipTest, static1DIntArrayAppendTest) {
     auto array_append = createIntArray<3>(ar_append);
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = array.append(array_append);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayInsertTest) {
@@ -549,7 +549,7 @@ TEST_F(ArrayManipTest, static1DIntArrayInsertTest) {
     Array<int_, 3> array_insert{4, 5, 6};
     Array<int_> result_sample{1, 4, 5, 6, 2, 3};
     auto result = array.insert(1, array_insert);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayDelTest) {
@@ -557,7 +557,7 @@ TEST_F(ArrayManipTest, static1DIntArrayDelTest) {
     Array<int_, 3> array{1, 2, 3};
     Array<int_> result_sample{1, 3};
     auto result = array.del(1);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayConcatenateTest) {
@@ -566,7 +566,7 @@ TEST_F(ArrayManipTest, static1DIntArrayConcatenateTest) {
     Array<int_, 3> array_concatenate{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = array.concatenate(array_concatenate);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayVStackTest) {
@@ -575,7 +575,7 @@ TEST_F(ArrayManipTest, static1DIntArrayVStackTest) {
     Array<int_, 3> array_vstack{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = vstack(array, array_vstack);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayR_Test) {
@@ -584,7 +584,7 @@ TEST_F(ArrayManipTest, static1DIntArrayR_Test) {
     Array<int_, 3> array_r_{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = r_(array, array_r_);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayHStackTest) {
@@ -593,7 +593,7 @@ TEST_F(ArrayManipTest, static1DIntArrayHStackTest) {
     Array<int_, 3> array_hstack{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = hstack(array, array_hstack);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayColumnStackTest) {
@@ -603,7 +603,7 @@ TEST_F(ArrayManipTest, static1DIntArrayColumnStackTest) {
     int_ array_2D[3][2]{{1, 4}, {2, 5}, {3, 6}};
     Array<int_> result_sample{array_2D};
     auto result = column_stack(array, array_column_stack);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayC_Test) {
@@ -612,7 +612,7 @@ TEST_F(ArrayManipTest, static1DIntArrayC_Test) {
     Array<int_, 3> array_c_{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = c_(array, array_c_);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DIntArrayHSplitTest) {
@@ -620,9 +620,18 @@ TEST_F(ArrayManipTest, static1DIntArrayHSplitTest) {
     Array<int_, 4> array{1, 2, 3, 4};
     auto result = hsplit(array, 2);
     Array<int_> result0_sample{1, 2};
-    compare<int_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<int_> result1_sample{3, 4};
-    compare<int_>(result[1], result1_sample);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, static1DIntArrayExpandDimsTest) {
+    // static
+    Array<int_, 4> array{1, 2, 3, 4};
+    auto result = expand_dims(array, 0);
+    int_ c_array_2d[1][4] = {{1, 2, 3, 4}};
+    Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayTransposeTest) {
@@ -630,14 +639,14 @@ TEST_F(ArrayManipTest, static1DFloatArrayTransposeTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     Array<float_> result_sample{1.1, 2.2, 3.3};
     auto result = transpose(array);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayRavelTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     Array<float_> result_sample{1.1, 2.2, 3.3};
     auto result = array.ravel();
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayReshapeTest) {
@@ -646,7 +655,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayReshapeTest) {
     Array<float_> result_sample{c_array_2d};
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayResizeTest) {
@@ -654,7 +663,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayResizeTest) {
     Array<float_> result_sample{1.1, 2.2, 3.3, 1.1};
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayAppendTest) {
@@ -662,7 +671,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayAppendTest) {
     Array<float_, 3> array_append{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = array.append(array_append);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayInsertTest) {
@@ -670,14 +679,14 @@ TEST_F(ArrayManipTest, static1DFloatArrayInsertTest) {
     Array<float_, 3> array_insert{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 4.4, 5.5, 6.6, 2.2, 3.3};
     auto result = array.insert(1, array_insert);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayDelTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     Array<float_> result_sample{1.1, 3.3};
     auto result = array.del(1);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayConcatenateTest) {
@@ -685,7 +694,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayConcatenateTest) {
     Array<float_, 3> array_concatenate{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = array.concatenate(array_concatenate);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayVStackTest) {
@@ -693,7 +702,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayVStackTest) {
     Array<float_, 3> array_vstack{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = vstack(array, array_vstack);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayR_Test) {
@@ -701,7 +710,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayR_Test) {
     Array<float_, 3> array_r_{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = r_(array, array_r_);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayHStackTest) {
@@ -709,7 +718,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayHStackTest) {
     Array<float_, 3> array_hstack{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = hstack(array, array_hstack);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayCoumnStackTest) {
@@ -718,7 +727,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayCoumnStackTest) {
     float_ array_2D[3][2]{{1.1, 4.4}, {2.2, 5.5}, {3.3, 6.6}};
     Array<float_> result_sample{array_2D};
     auto result = column_stack(array, array_column_stack);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayC_Test) {
@@ -726,30 +735,39 @@ TEST_F(ArrayManipTest, static1DFloatArrayC_Test) {
     Array<float_, 3> array_c_{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = c_(array, array_c_);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DFloatArrayHSplitTest) {
     Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
     auto result = hsplit(array, 2);
     Array<float_> result0_sample{1.1, 2.2};
-    compare<float_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<float_> result1_sample{3.3, 4.4};
-    compare<float_>(result[1], result1_sample);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, static1DFloatArrayExpandDimsTest) {
+    // static
+    Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
+    auto result = expand_dims(array, 0);
+    float_ c_array_2d[1][4] = {{1.1, 2.2, 3.3, 4.4}};
+    Array<float_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayTransposeTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     Array<string_> result_sample{"str1", "str2", "str3"};
     auto result = transpose(array);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayRavelTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     Array<string_> result_sample{"str1", "str2", "str3"};
     auto result = array.ravel();
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayReshapeTest) {
@@ -758,7 +776,7 @@ TEST_F(ArrayManipTest, static1DStringArrayReshapeTest) {
     Array<string_> result_sample{c_array_2d};
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayResizeTest) {
@@ -766,7 +784,7 @@ TEST_F(ArrayManipTest, static1DStringArrayResizeTest) {
     Array<string_> result_sample{"str1", "str2", "str3", "str1"};
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayAppendTest) {
@@ -774,7 +792,7 @@ TEST_F(ArrayManipTest, static1DStringArrayAppendTest) {
     Array<string_, 3> array_append{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = array.append(array_append);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayInsertTest) {
@@ -782,14 +800,14 @@ TEST_F(ArrayManipTest, static1DStringArrayInsertTest) {
     Array<string_, 3> array_insert{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str4", "str5", "str6", "str2", "str3"};
     auto result = array.insert(1, array_insert);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayDelTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     Array<string_> result_sample{"str1", "str3"};
     auto result = array.del(1);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayConcatenateTest) {
@@ -797,7 +815,7 @@ TEST_F(ArrayManipTest, static1DStringArrayConcatenateTest) {
     Array<string_, 3> array_concatenate{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = array.concatenate(array_concatenate);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayVStackTest) {
@@ -805,7 +823,7 @@ TEST_F(ArrayManipTest, static1DStringArrayVStackTest) {
     Array<string_, 3> array_vstack{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = vstack(array, array_vstack);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayR_Test) {
@@ -813,7 +831,7 @@ TEST_F(ArrayManipTest, static1DStringArrayR_Test) {
     Array<string_, 3> array_r_{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = r_(array, array_r_);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayHStackTest) {
@@ -821,7 +839,7 @@ TEST_F(ArrayManipTest, static1DStringArrayHStackTest) {
     Array<string_, 3> array_hstack{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = hstack(array, array_hstack);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayColumnStackTest) {
@@ -830,7 +848,7 @@ TEST_F(ArrayManipTest, static1DStringArrayColumnStackTest) {
     string_ array_2D[3][2]{{"str1", "str4"}, {"str2", "str5"}, {"str3", "str6"}};
     Array<string_> result_sample{array_2D};
     auto result = column_stack(array, array_column_stack);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayC_Test) {
@@ -838,30 +856,39 @@ TEST_F(ArrayManipTest, static1DStringArrayC_Test) {
     Array<string_, 3> array_c_{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = c_(array, array_c_);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, static1DStringArrayHSplitTest) {
     Array<string_, 4> array{"str1", "str2", "str3", "str4"};
     auto result = hsplit(array, 2);
     Array<string_> result0_sample{"str1", "str2"};
-    compare<string_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<string_> result1_sample{"str3", "str4"};
-    compare<string_>(result[1], result1_sample);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, static1DStringArrayExpandDimsTest) {
+    // static
+    Array<string_, 4> array{"str1", "str2", "str3", "str4"};
+    auto result = expand_dims(array, 0);
+    string_ c_array_2d[1][4] = {{"str1", "str2", "str3", "str4"}};
+    Array<string_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayTransposeTest) {
     // dynamic
     Array<int_> array{1, 2, 3};
     Array<int_> result_sample{1, 2, 3};
-    auto result = transpose<int_>(array);
-    compare<int_>(result, result_sample);
+    auto result = transpose(array);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayRavelTest) {
     Array<int_> array{1, 2, 3};
     auto result = array.ravel();
-    compare<int_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayReshapeTest) {
@@ -870,7 +897,7 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayReshapeTest) {
     Array<int_> result_sample{c_array_2d};
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayResizeTest) {
@@ -878,7 +905,7 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayResizeTest) {
     Array<int_> result_sample{1, 2, 3, 1};
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayAppendTest) {
@@ -886,7 +913,7 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayAppendTest) {
     Array<int_> array_append{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = array.append(array_append);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayInsertTest) {
@@ -894,14 +921,14 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayInsertTest) {
     Array<int_> array_insert{4, 5, 6};
     Array<int_> result_sample{1, 4, 5, 6, 2, 3};
     auto result = array.insert(1, array_insert);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayDelTest) {
     Array<int_> array{1, 2, 3};
     Array<int_> result_sample{1, 3};
     auto result = array.del(1);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayConcatenateTest) {
@@ -909,31 +936,31 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayConcatenateTest) {
     Array<int_> array_concatenate{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
     auto result = array.concatenate(array_concatenate);
-    compare<int_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayVStackTest) {
     Array<int_> array{1, 2, 3};
     Array<int_> array_vstack{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    auto result = vstack<int_>(array, array_vstack);
-    compare<int_>(result, result_sample);
+    auto result = vstack(array, array_vstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayR_Test) {
     Array<int_> array{1, 2, 3};
     Array<int_> array_r_{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    auto result = r_<int_>(array, array_r_);
-    compare<int_>(result, result_sample);
+    auto result = r_(array, array_r_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayHStackTest) {
     Array<int_> array{1, 2, 3};
     Array<int_> array_hstack{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    auto result = hstack<int_>(array, array_hstack);
-    compare<int_>(result, result_sample);
+    auto result = hstack(array, array_hstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayColumnStackTest) {
@@ -941,38 +968,46 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayColumnStackTest) {
     Array<int_> array_column_stack{4, 5, 6};
     int_ array_2D[3][2]{{1, 4}, {2, 5}, {3, 6}};
     Array<int_> result_sample{array_2D};
-    auto result = column_stack<int_>(array, array_column_stack);
-    compare<int_>(result, result_sample);
+    auto result = column_stack(array, array_column_stack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayC_Test) {
     Array<int_> array{1, 2, 3};
     Array<int_> array_c_{4, 5, 6};
     Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    auto result = c_<int_>(array, array_c_);
-    compare<int_>(result, result_sample);
+    auto result = c_(array, array_c_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DIntArrayHSplitTest) {
     Array<int_> array{1, 2, 3, 4};
-    auto result = hsplit<int_>(array, 2);
+    auto result = hsplit(array, 2);
     Array<int_> result0_sample{1, 2};
-    compare<int_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<int_> result1_sample{3, 4};
-    compare<int_>(result[1], result1_sample);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DIntArrayExpandDimsTest) {
+    Array<int_> array{1, 2, 3, 4};
+    auto result = expand_dims(array, 0);
+    int_ c_array_2d[1][4] = {{1, 2, 3, 4}};
+    Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayTransposeTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> result_sample{1.1, 2.2, 3.3};
-    auto result = transpose<float_>(array);
-    compare<float_>(result, result_sample);
+    auto result = transpose(array);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayRavelTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     auto result = array.ravel();
-    compare<float_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayReshapeTest) {
@@ -981,7 +1016,7 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayReshapeTest) {
     Array<float_> result_sample{c_array_2d};
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayResizeTest) {
@@ -989,7 +1024,7 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayResizeTest) {
     Array<float_> result_sample{1.1, 2.2, 3.3, 1.1};
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayAppendTest) {
@@ -997,7 +1032,7 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayAppendTest) {
     Array<float_> array_append{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = array.append(array_append);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayInsertTest) {
@@ -1005,14 +1040,14 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayInsertTest) {
     Array<float_> array_insert{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 4.4, 5.5, 6.6, 2.2, 3.3};
     auto result = array.insert(1, array_insert);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayDelTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> result_sample{1.1, 3.3};
     auto result = array.del(1);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayConcatenateTest) {
@@ -1020,31 +1055,31 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayConcatenateTest) {
     Array<float_> array_concatenate{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     auto result = array.concatenate(array_concatenate);
-    compare<float_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayVStackTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> array_vstack{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = vstack<float_>(array, array_vstack);
-    compare<float_>(result, result_sample);
+    auto result = vstack(array, array_vstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayR_Test) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> array_r_{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = r_<float_>(array, array_r_);
-    compare<float_>(result, result_sample);
+    auto result = r_(array, array_r_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayHStackTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> array_hstack{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = hstack<float_>(array, array_hstack);
-    compare<float_>(result, result_sample);
+    auto result = hstack(array, array_hstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayColumnStackTest) {
@@ -1052,38 +1087,46 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayColumnStackTest) {
     Array<float_> array_column_stack{4.4, 5.5, 6.6};
     float_ array_2D[3][2]{{1.1, 4.4}, {2.2, 5.5}, {3.3, 6.6}};
     Array<float_> result_sample{array_2D};
-    auto result = column_stack<float_>(array, array_column_stack);
-    compare<float_>(result, result_sample);
+    auto result = column_stack(array, array_column_stack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayC_Test) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> array_c_{4.4, 5.5, 6.6};
     Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = c_<float_>(array, array_c_);
-    compare<float_>(result, result_sample);
+    auto result = c_(array, array_c_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DFloatArrayHSplitTest) {
     Array<float_> array{1.1, 2.2, 3.3, 4.4};
     auto result = hsplit<float_>(array, 2);
     Array<float_> result0_sample{1.1, 2.2};
-    compare<float_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<float_> result1_sample{3.3, 4.4};
-    compare<float_>(result[1], result1_sample);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DFloatArrayExpandDimsTest) {
+    Array<float_> array{1.1, 2.2, 3.3, 4.4};
+    auto result = expand_dims(array, 0);
+    float_ c_array_2d[1][4] = {{1.1, 2.2, 3.3, 4.4}};
+    Array<float_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayTransposeTest) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> result_sample{"str1", "str2", "str3"};
-    auto result = transpose<string_>(array);
-    compare<string_>(result, result_sample);
+    auto result = transpose(array);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayRavelTest) {
     Array<string_> array{"str1", "str2", "str3"};
     auto result = array.ravel();
-    compare<string_>(result, array);
+    compare(result, array);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayReshapeTest) {
@@ -1092,7 +1135,7 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayReshapeTest) {
     Array<string_> result_sample{c_array_2d};
     Shape shape{3, 1};
     auto result = array.reshape(shape);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayResizeTest) {
@@ -1100,7 +1143,7 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayResizeTest) {
     Array<string_> result_sample{"str1", "str2", "str3", "str1"};
     Shape shape{4};
     auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayAppendTest) {
@@ -1108,7 +1151,7 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayAppendTest) {
     Array<string_> array_append{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = array.append(array_append);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayInsertTest) {
@@ -1116,14 +1159,14 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayInsertTest) {
     Array<string_> array_insert{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str4", "str5", "str6", "str2", "str3"};
     auto result = array.insert(1, array_insert);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayDelTest) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> result_sample{"str1", "str3"};
     auto result = array.del(1);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayConcatenateTest) {
@@ -1131,31 +1174,31 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayConcatenateTest) {
     Array<string_> array_concatenate{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
     auto result = array.concatenate(array_concatenate);
-    compare<string_>(result, result_sample);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayVStackTest) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> array_vstack{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    auto result = vstack<string_>(array, array_vstack);
-    compare<string_>(result, result_sample);
+    auto result = vstack(array, array_vstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayR_Test) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> array_r_{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    auto result = r_<string_>(array, array_r_);
-    compare<string_>(result, result_sample);
+    auto result = r_(array, array_r_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayHStackTest) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> array_hstack{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    auto result = hstack<string_>(array, array_hstack);
-    compare<string_>(result, result_sample);
+    auto result = hstack(array, array_hstack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayColumnStackTest) {
@@ -1163,2649 +1206,31 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayColumnStackTest) {
     Array<string_> array_column_stack{"str4", "str5", "str6"};
     string_ array_2D[3][2]{{"str1", "str4"}, {"str2", "str5"}, {"str3", "str6"}};
     Array<string_> result_sample{array_2D};
-    auto result = column_stack<string_>(array, array_column_stack);
-    compare<string_>(result, result_sample);
+    auto result = column_stack(array, array_column_stack);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayC_Test) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> array_c_{"str4", "str5", "str6"};
     Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    auto result = c_<string_>(array, array_c_);
-    compare<string_>(result, result_sample);
+    auto result = c_(array, array_c_);
+    compare(result, result_sample);
 }
 
 TEST_F(ArrayManipTest, dynamic1DStringArrayHSplitTest) {
     Array<string_> array{"str1", "str2", "str3", "str4"};
     auto result = hsplit<string_>(array, 2);
     Array<string_> result0_sample{"str1", "str2"};
-    compare<string_>(result[0], result0_sample);
+    compare(result[0], result0_sample);
     Array<string_> result1_sample{"str3", "str4"};
-    compare<string_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayTransposeTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_result_2d[3][2] = {{1, 4}, {2, 5}, {3, 6}};
-    Array<int_> result_sample{c_array_result_2d};
-    auto result = transpose(array);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayRavelTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    auto result = array.ravel();
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayReshapeTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d_result[3][2] = {{1, 2}, {3, 4}, {5, 6}};
-    Array<int_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayResizeTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d_result[3][3] = {{1, 2, 3}, {4, 5, 6}, {1, 2, 3}};
-    Array<int_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayAppendTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d_array_append[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_append{c_array_2d_array_append};
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    auto result = array.append(array_append);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayInsertTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d_array_insert[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_insert{c_array_2d_array_insert};
-    Array<int_> result_sample{1, 7, 8, 9, 10, 11, 12, 2, 3, 4, 5, 6};
-    auto result = array.insert(1, array_insert);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayDelTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    Array<int_> result_sample{1, 3, 4, 5, 6};
-    auto result = array.del(1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayConcatenateTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d_array_concatenate[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_concatenate{c_array_2d_array_concatenate};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayVStackTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_vstack_2d[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_vstack{c_array_vstack_2d};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = vstack(array, array_vstack);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayR_Test) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_r_2d[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_r_{c_array_r_2d};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = r_(array, array_r_);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayHStackTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_hstack[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_hstack{c_array_hstack};
-    int_ c_array_result[2][6] = {{1, 2, 3, 7, 8, 9}, {4, 5, 6, 10, 11, 12}};
-    Array<int_> result_sample{c_array_result};
-    auto result = hstack(array, array_hstack);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayColumnStackTest) {
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_2d1[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array1{c_array_2d1};
-    int_ c_array_2d_result[2][6] = {{1, 2, 3, 7, 8, 9},
-                                    {4, 5, 6, 10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = column_stack(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayC_Test) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    int_ c_array_c_[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_, 2 * 3> array_c_{c_array_c_};
-    int_ c_array_result[2][6] = {{1, 2, 3, 7, 8, 9}, {4, 5, 6, 10, 11, 12}};
-    Array<int_> result_sample{c_array_result};
-    auto result = c_(array, array_c_);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayHSplitTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    auto result = hsplit(array, 3);
-    int_ c_array_2d_0[2][1] = {{1}, {4}};
-    Array<int_> result0_sample{c_array_2d_0};
-    compare<int_>(result[0], result0_sample);
-    int_ c_array_2d_1[2][1] = {{2}, {5}};
-    Array<int_> result1_sample{c_array_2d_1};
-    compare<int_>(result[1], result1_sample);
-    int_ c_array_2d_2[2][1] = {{3}, {6}};
-    Array<int_> result2_sample{c_array_2d_2};
-    compare<int_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, static2DIntArrayVSplitTest) {
-    // static
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_, 2 * 3> array{c_array_2d};
-    auto result = vsplit(array, 2);
-    int_ c_array_2d_0[1][3] = {{1, 2, 3}};
-    Array<int_> result0_sample{c_array_2d_0};
-    compare<int_>(result[0], result0_sample);
-    int_ c_array_2d_1[1][3] = {{4, 5, 6}};
-    Array<int_> result1_sample{c_array_2d_1};
-    compare<int_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayTransposeTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_result_2d[3][2] = {{1.1, 4.4}, {2.2, 5.5}, {3.3, 6.6}};
-    Array<float_> result_sample{c_array_result_2d};
-    auto result = transpose(array);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayRavelTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    auto result = array.ravel();
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayReshapeTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_result[3][2] = {{1.1, 2.2}, {3.3, 4.4}, {5.5, 6.6}};
-    Array<float_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayResizeTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_2d_result[3][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {1.1, 2.2, 3.3}};
-    Array<float_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayAppendTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_2d_array_append[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_append{c_array_2d_array_append};
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.10, 11.11, 12.12};
-    auto result = array.append(array_append);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayInsertTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_2d_array_insert[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_insert{c_array_2d_array_insert};
-    Array<float_> result_sample{1.1, 7.7, 8.8, 9.9, 10.10, 11.11, 12.12, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = array.insert(1, array_insert);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayDelTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    Array<float_> result_sample{1.1, 3.3, 4.4, 5.5, 6.6};
-    auto result = array.del(1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayConcatenateTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_2d_array_concatenate[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_concatenate{c_array_2d_array_concatenate};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayVStackTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_vstack_2d[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_vstack{c_array_vstack_2d};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = vstack(array, array_vstack);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayR_Test) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_r_2d[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_r_{c_array_r_2d};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = r_(array, array_r_);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayHStackTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_hstack[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_hstack{c_array_hstack};
-    float_ c_array_result[2][6] = {{1.1, 2.2, 3.3, 7.7, 8.8, 9.9}, {4.4, 5.5, 6.6, 10.1, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_result};
-    auto result = hstack(array, array_hstack);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayColumnStackTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_2d1[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
-    Array<float_, 2 * 3> array1{c_array_2d1};
-    float_ c_array_2d_result[2][6] = {{1.1, 2.2, 3.3, 7.7, 8.8, 9.9}, {4.4, 5.5, 6.6, 10.1, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = column_stack(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayC_Test) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    float_ c_array_hstack[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
-    Array<float_, 2 * 3> array_c_{c_array_hstack};
-    float_ c_array_result[2][6] = {{1.1, 2.2, 3.3, 7.7, 8.8, 9.9}, {4.4, 5.5, 6.6, 10.1, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_result};
-    auto result = c_(array, array_c_);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayHSplitTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    auto result = hsplit(array, 3);
-    float_ c_array_2d_0[2][1] = {{1.1}, {4.4}};
-    Array<float_> result0_sample{c_array_2d_0};
-    compare<float_>(result[0], result0_sample);
-    float_ c_array_2d_1[2][1] = {{2.2}, {5.5}};
-    Array<float_> result1_sample{c_array_2d_1};
-    compare<float_>(result[1], result1_sample);
-    float_ c_array_2d_2[2][1] = {{3.3}, {6.6}};
-    Array<float_> result2_sample{c_array_2d_2};
-    compare<float_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, static2DFloatArrayVSplitTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_, 2 * 3> array{c_array_2d};
-    auto result = vsplit(array, 2);
-    float_ c_array_2d_0[1][3] = {{1.1, 2.2, 3.3}};
-    Array<float_> result0_sample{c_array_2d_0};
-    compare<float_>(result[0], result0_sample);
-    float_ c_array_2d_1[1][3] = {{4.4, 5.5, 6.6}};
-    Array<float_> result1_sample{c_array_2d_1};
-    compare<float_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayTransposeTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_result_2d[3][2] = {{"str1", "str4"},
-                                       {"str2", "str5"},
-                                       {"str3", "str6"}};
-    Array<string_> result_sample{c_array_result_2d};
-    auto result = transpose(array);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayRavelTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    auto result = array.ravel();
-    Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayReshapeTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_result[3][2] = {
-            {"str1", "str2"},
-            {"str3", "str4"},
-            {"str5", "str6"}};
-    Array<string_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayResizeTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_result[3][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"},
-            {"str1", "str2", "str3"}};
-    Array<string_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayAppendTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_append[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_append{c_array_2d_append};
-    Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7", "str8", "str9", "str10", "str11", "str12"};
-    auto result = array.append(array_append);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayInsertTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_insert[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_insert{c_array_2d_insert};
-    Array<string_> result_sample{"str1", "str7", "str8", "str9", "str10", "str11", "str12", "str2", "str3", "str4", "str5", "str6"};
-    auto result = array.insert(1, array_insert);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayDelTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    Array<string_> result_sample{"str1", "str3", "str4", "str5", "str6"};
-    auto result = array.del(1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayConcatenateTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_array_concatenate[2][3] = {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_concatenate{c_array_2d_array_concatenate};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayVStackTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_vstack_2d[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_vstack{c_array_vstack_2d};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = vstack(array, array_vstack);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayR_Test) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_r_2d[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_r_{c_array_r_2d};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = r_(array, array_r_);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayHStackTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_hstack[2][3] = {{"str7", "str8", "str9"},
-                                    {"str10", "str11", "str12"}};
-    ;
-    Array<string_, 2 * 3> array_hstack{c_array_hstack};
-    string_ c_array_result[2][6] = {{"str1", "str2", "str3", "str7", "str8", "str9"},
-                                    {"str4", "str5", "str6", "str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_result};
-    auto result = hstack(array, array_hstack);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayColumnStackTest) {
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d1[2][3] = {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array1{c_array_2d1};
-    string_ c_array_2d_result[2][6] = {{"str1", "str2", "str3", "str7", "str8", "str9"},
-                                       {"str4", "str5", "str6", "str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = column_stack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayC_Test) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_c_[2][3] = {{"str7", "str8", "str9"},
-                                {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_c_{c_array_c_};
-    string_ c_array_result[2][6] = {{"str1", "str2", "str3", "str7", "str8", "str9"},
-                                    {"str4", "str5", "str6", "str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_result};
-    auto result = c_(array, array_c_);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayHSplitTest) {
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    auto result = hsplit(array, 3);
-    string_ c_array_2d_0[2][1] = {{"str1"}, {"str4"}};
-    Array<string_> result0_sample{c_array_2d_0};
-    compare<string_>(result[0], result0_sample);
-    string_ c_array_2d_1[2][1] = {{"str2"}, {"str5"}};
-    Array<string_> result1_sample{c_array_2d_1};
-    compare<string_>(result[1], result1_sample);
-    string_ c_array_2d_2[2][1] = {{"str3"}, {"str6"}};
-    Array<string_> result2_sample{c_array_2d_2};
-    compare<string_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, static2DStringArrayVSplitTest) {
-    // static
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    auto result = vsplit(array, 2);
-    string_ c_array_2d_0[1][3] = {{"str1", "str2", "str3"}};
-    Array<string_> result0_sample{c_array_2d_0};
-    compare<string_>(result[0], result0_sample);
-    string_ c_array_2d_2[1][3] = {{"str4", "str5", "str6"}};
-    Array<string_> result1_sample{c_array_2d_2};
-    compare<string_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayTransposeTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_result_2d[3][2] = {{1, 4}, {2, 5}, {3, 6}};
-    Array<int_> result_sample{c_array_result_2d};
-    auto result = transpose(array);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayRavelTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    auto result = array.ravel();
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayReshapeTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_2d_result[3][2] = {{1, 2}, {3, 4}, {5, 6}};
-    Array<int_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayResizeTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_2d_result[3][3] = {{1, 2, 3}, {4, 5, 6}, {1, 2, 3}};
-    Array<int_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayAppendTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    Array<int_> array_append{7, 8, 9};
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    auto result = array.append(array_append);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayInsertTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    Array<int_> array_insert{7, 8, 9};
-    Array<int_> result_sample{1, 7, 8, 9, 2, 3, 4, 5, 6};
-    auto result = array.insert(1, array_insert);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayDelTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    Array<int_> result_sample{1, 3, 4, 5, 6};
-    auto result = array.del(1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayConcatenateTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_2d_array_concatenate[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_> array_concatenate{c_array_2d_array_concatenate};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayVStackTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_vstack_2d[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_> array_vstack{c_array_vstack_2d};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = vstack<int_>(array, array_vstack);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayR_Test) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_r_2d[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_> array_r_{c_array_r_2d};
-    int_ c_array_2d_result[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = r_<int_>(array, array_r_);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayHStackTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_hstack[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_> array_hstack{c_array_hstack};
-    int_ c_array_result[2][6] = {{1, 2, 3, 7, 8, 9}, {4, 5, 6, 10, 11, 12}};
-    Array<int_> result_sample{c_array_result};
-    auto result = hstack<int_>(array, array_hstack);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayColumnStackTest) {
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_2d1[2][3] = {{7, 8, 9}, {10, 11, 12}};
-    Array<int_> array1{c_array_2d1};
-    int_ c_array_2d_result[2][6] = {{1, 2, 3, 7, 8, 9},
-                                    {4, 5, 6, 10, 11, 12}};
-    Array<int_> result_sample{c_array_2d_result};
-    auto result = column_stack<int_>(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayC_Test) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    int_ c_array_hstack[2][2] = {{7, 8}, {9, 10}};
-    Array<int_> array_c_{c_array_hstack};
-    int_ c_array_result[2][5] = {{1, 2, 3, 7, 8}, {4, 5, 6, 9, 10}};
-    Array<int_> result_sample{c_array_result};
-    auto result = c_<int_>(array, array_c_);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayHSplitTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    auto result = hsplit<int_>(array, 3);
-    int_ c_array_2d_1[2][1] = {{1}, {4}};
-    Array<int_> result0_sample{c_array_2d_1};
-    compare<int_>(result[0], result0_sample);
-    int_ c_array_2d_2[2][1] = {{2}, {5}};
-    Array<int_> result1_sample{c_array_2d_2};
-    compare<int_>(result[1], result1_sample);
-    int_ c_array_2d_3[2][1] = {{3}, {6}};
-    Array<int_> result2_sample{c_array_2d_3};
-    compare<int_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DIntArrayVSplitTest) {
-    /*
-    a=np.array([[1, 2, 3], [4, 5, 6]])
-     */
-    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    Array<int_> array{c_array_2d};
-    auto result = vsplit<int_>(array, 2);
-    int_ c_array_2d_0[1][3] = {{1, 2, 3}};
-    Array<int_> result0_sample{c_array_2d_0};
-    compare<int_>(result[0], result0_sample);
-    int_ c_array_2d_1[1][3] = {{4, 5, 6}};
-    Array<int_> result1_sample{c_array_2d_1};
-    compare<int_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayTransposeTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_result_2d[3][2] = {{1.1, 4.4}, {2.2, 5.5}, {3.3, 6.6}};
-    Array<float_> result_sample{c_array_result_2d};
-    auto result = transpose<float_>(array);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayRavelTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    auto result = array.ravel();
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayReshapeTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_result[3][2] = {{1.1, 2.2}, {3.3, 4.4}, {5.5, 6.6}};
-    Array<float_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayResizeTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_result[3][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {1.1, 2.2, 3.3}};
-    Array<float_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayAppendTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    Array<float_> array_append{7.7, 8.8, 9.9};
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
-    auto result = array.append(array_append);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayInsertTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    Array<float_> array_insert{7.7, 8.8, 9.9};
-    Array<float_> result_sample{1.1, 7.7, 8.8, 9.9, 2.2, 3.3, 4.4, 5.5, 6.6};
-    auto result = array.insert(1, array_insert);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayDelTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    Array<float_> result_sample{1.1, 3.3, 4.4, 5.5, 6.6};
-    auto result = array.del(1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayConcatenateTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_array_concatenate[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> array_concatenate{c_array_2d_array_concatenate};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayVStackTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_array_vstack[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> array_vstack{c_array_2d_array_vstack};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = vstack<float_>(array, array_vstack);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayR_Test) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d_array_r_[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> array_r_{c_array_2d_array_r_};
-    float_ c_array_2d_result[4][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = r_<float_>(array, array_r_);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayHStackTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_hstack[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
-    Array<float_> array_hstack{c_array_hstack};
-    float_ c_array_result[2][6] = {{1.1, 2.2, 3.3, 7.7, 8.8, 9.9}, {4.4, 5.5, 6.6, 10.1, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_result};
-    auto result = hstack<float_>(array, array_hstack);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayColumnStackTest) {
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_2d1[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
-    Array<float_> array1{c_array_2d1};
-    float_ c_array_2d_result[2][6] = {{1.1, 2.2, 3.3, 7.7, 8.8, 9.9},
-                                      {4.4, 5.5, 6.6, 10.1, 11.11, 12.12}};
-    Array<float_> result_sample{c_array_2d_result};
-    auto result = column_stack<float_>(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayC_Test) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    float_ c_array_hstack[2][2] = {{7.7, 8.8}, {9.9, 10.1}};
-    Array<float_> array_c_{c_array_hstack};
-    float_ c_array_result[2][5] = {{1.1, 2.2, 3.3, 7.7, 8.8}, {4.4, 5.5, 6.6, 9.9, 10.1}};
-    Array<float_> result_sample{c_array_result};
-    auto result = c_<float_>(array, array_c_);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayHSplitTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    auto result = hsplit<float_>(array, 3);
-    float_ c_array_2d_1[2][1] = {{1.1}, {4.4}};
-    Array<float_> result0_sample{c_array_2d_1};
-    compare<float_>(result[0], result0_sample);
-    float_ c_array_2d_2[2][1] = {{2.2}, {5.5}};
-    Array<float_> result1_sample{c_array_2d_2};
-    compare<float_>(result[1], result1_sample);
-    float_ c_array_2d_3[2][1] = {{3.3}, {6.6}};
-    Array<float_> result2_sample{c_array_2d_3};
-    compare<float_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DFloatArrayVSplitTest) {
-    /*
-    a=np.array([[1.1, 2.2, 3.3], [4.4, 5.5, 6.6]])
-     */
-    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
-    Array<float_> array{c_array_2d};
-    auto result = vsplit(array, 2);
-    float_ c_array_2d_0[1][3] = {{1.1, 2.2, 3.3}};
-    Array<float_> result0_sample{c_array_2d_0};
-    compare<float_>(result[0], result0_sample);
-    float_ c_array_2d_1[1][3] = {{4.4, 5.5, 6.6}};
-    Array<float_> result1_sample{c_array_2d_1};
-    compare<float_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayTransposeTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_result_2d[3][2] = {{"str1", "str4"}, {"str2", "str5"}, {"str3", "str6"}};
-    Array<string_> result_sample{c_array_result_2d};
-    auto result = transpose(array);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayRavelTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    auto result = array.ravel();
-    Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayReshapeTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_2d_result[3][2] = {{"str1", "str2"}, {"str3", "str4"}, {"str5", "str6"}};
-    Array<string_> result_sample{c_array_2d_result};
-    Shape shape{3, 2};
-    auto result = array.reshape(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayResizeTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_2d_result[3][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str1", "str2", "str3"}};
-    Array<string_> result_sample{c_array_2d_result};
-    Shape shape{3, 3};
-    auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayAppendTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    Array<string_> array_append{"str7", "str8", "str9"};
-    Array<string_> result_sample{"str1", "str2", "str3", "str4", "str5", "str6", "str7", "str8", "str9"};
-    auto result = array.append(array_append);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayInsertTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    Array<string_> array_insert{"str7", "str8", "str9"};
-    Array<string_> result_sample{"str1", "str7", "str8", "str9", "str2", "str3", "str4", "str5", "str6"};
-    auto result = array.insert(1, array_insert);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayDelTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    Array<string_> result_sample{"str1", "str3", "str4", "str5", "str6"};
-    auto result = array.del(1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayConcatenateTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {
-            {"str1", "str2", "str3"},
-            {"str4", "str5", "str6"}};
-    Array<string_, 2 * 3> array{c_array_2d};
-    string_ c_array_2d_array_concatenate[2][3] = {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_, 2 * 3> array_concatenate{c_array_2d_array_concatenate};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = array.concatenate(array_concatenate);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayVStackTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_vstack_2d[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_> array_vstack{c_array_vstack_2d};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = vstack(array, array_vstack);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayR_Test) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_r_2d[2][3] = {
-            {"str7", "str8", "str9"},
-            {"str10", "str11", "str12"}};
-    Array<string_> array_r_{c_array_r_2d};
-    string_ c_array_2d_result[4][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = r_(array, array_r_);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayHStackTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_hstack[2][3] = {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> array_hstack{c_array_hstack};
-    string_ c_array_result[2][6] = {{"str1", "str2", "str3", "str7", "str8", "str9"},
-                                    {"str4", "str5", "str6", "str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_result};
-    auto result = hstack<string_>(array, array_hstack);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayColumnStackTest) {
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_2d1[2][3] = {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}};
-    Array<string_> array1{c_array_2d1};
-    string_ c_array_2d_result[2][6] = {{"str1", "str2", "str3", "str7", "str8", "str9"},
-                                       {"str4", "str5", "str6", "str10", "str11", "str12"}};
-    Array<string_> result_sample{c_array_2d_result};
-    auto result = column_stack<string_>(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayC_Test) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    string_ c_array_hstack[2][2] = {{"str7", "str8"}, {"str9", "str10"}};
-    Array<string_> array_c_{c_array_hstack};
-    string_ c_array_result[2][5] = {{"str1", "str2", "str3", "str7", "str8"}, {"str4", "str5", "str6", "str9", "str10"}};
-    Array<string_> result_sample{c_array_result};
-    auto result = c_<string_>(array, array_c_);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayHSplitTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    auto result = hsplit<string_>(array, 3);
-    string_ c_array_2d_0[2][1] = {{"str1"}, {"str4"}};
-    Array<string_> result0_sample{c_array_2d_0};
-    compare<string_>(result[0], result0_sample);
-    string_ c_array_2d_1[2][1] = {{"str2"}, {"str5"}};
-    Array<string_> result1_sample{c_array_2d_1};
-    compare<string_>(result[1], result1_sample);
-    string_ c_array_2d_2[2][1] = {{"str3"}, {"str6"}};
-    Array<string_> result2_sample{c_array_2d_2};
-    compare<string_>(result[2], result2_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic2DStringArrayVSplitTest) {
-    /*
-    a=np.array([['str1', 'str2', 'str3'], ['str4', 'str5', 'str6']], dtype='string_')
-     */
-    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
-    Array<string_> array{c_array_2d};
-    auto result = vsplit<string_>(array, 2);
-    string_ c_array_2d_0[1][3] = {{"str1", "str2", "str3"}};
-    Array<string_> result0_sample{c_array_2d_0};
-    compare<string_>(result[0], result0_sample);
-    string_ c_array_2d_1[1][3] = {{"str4", "str5", "str6"}};
-    Array<string_> result1_sample{c_array_2d_1};
-    compare<string_>(result[1], result1_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayTransposeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {
-            {{1, 7},
-             {4, 10}},
-            {{2, 8},
-             {5, 11}},
-            {{3, 9},
-             {6, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    auto result = transpose(array);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayRavelTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    auto result = array.ravel();
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayReshapeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<int_> result = array.reshape(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayResizeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayAppendTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayInsertTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_1d[24] = {1, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    Array<int_> result_sample{c_array_1d};
-    auto result = array.insert(1, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayDelTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_1d[11] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    Array<int_> array1{c_array_1d};
-    auto result = array.del(1);
-    compare<int_>(result, array1);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayConcatenateTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = array.concatenate(array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayVStackTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = vstack(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayR_Test) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = r_(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayHStackTest) {
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}},
-                                 {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_result[2][4][3] = {{{1, 2, 3}, {4, 5, 6}, {13, 14, 15}, {16, 17, 18}},
-                                    {{7, 8, 9}, {10, 11, 12}, {19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_result};
-    auto result = hstack(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayColumnStackTest) {
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}},
-                                 {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_result[2][4][3] = {{{1, 2, 3}, {4, 5, 6}, {13, 14, 15}, {16, 17, 18}},
-                                    {{7, 8, 9}, {10, 11, 12}, {19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_result};
-    auto result = column_stack(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayC_Test) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_, 2 * 2 * 3> array1{c_array_3d1};
-    int_ c_array_3d_result[2][2][6] = {{{1, 2, 3, 13, 14, 15},
-                                        {4, 5, 6, 16, 17, 18}},
-                                       {{7, 8, 9, 19, 20, 21},
-                                        {10, 11, 12, 22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = c_(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayHSplitTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_result_sample_0[2][1][3] = {{{1, 2, 3}}, {{7, 8, 9}}};
-    Array<int_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit(array, 2);
-    compare<int_>(result[0], result_sample_0);
-    int_ c_array_result_sample_1[2][1][3] = {{{4, 5, 6}}, {{10, 11, 12}}};
-    Array<int_> result_sample_1{c_array_result_sample_1};
-    compare<int_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, static3DIntArrayVSplitTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_, 2 * 2 * 3> array{c_array_3d};
-    int_ c_array_3d_0[1][2][3] = {{{1, 2, 3}, {4, 5, 6}}};
-    Array<int_> result_sample_0{c_array_3d_0};
-    int_ c_array_3d_1[1][2][3] = {{{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> result_sample_1{c_array_3d_1};
-
-    auto result = vsplit(array, 2);
-    compare<int_>(result[0], result_sample_0);
-    compare<int_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayTransposeTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 7.7},
-             {4.4, 10.10}},
-            {{2.2, 8.8},
-             {5.5, 11.11}},
-            {{3.3, 9.9},
-             {6.6, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    auto result = transpose(array);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayRavelTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    auto result = array.ravel();
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayReshapeTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 2.2},
-             {3.3, 4.4}},
-            {{5.5, 6.6},
-             {7.7, 8.8}},
-            {{9.9, 10.10},
-             {11.11, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<float_> result = array.reshape(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayResizeTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 2.2},
-             {3.3, 4.4}},
-            {{5.5, 6.6},
-             {7.7, 8.8}},
-            {{9.9, 10.10},
-             {11.11, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayAppendTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.2, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 13.13, 14.14, 15.15,
-                                16.16, 17.17, 18.18, 19.19, 20.2, 21.21, 22.22, 23.23, 24.24};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayInsertTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_1d[24] = {1.1, 13.13, 14.14, 15.15, 16.16, 17.17, 18.18, 19.19, 20.20, 21.21, 22.22, 23.23, 24.24, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    Array<float_> result_sample{c_array_1d};
-    auto result = array.insert(1, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayDelTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_1d[11] = {1.1, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.10, 11.11, 12.12};
-    Array<float_> result_sample{c_array_1d};
-    auto result = array.del(1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayConcatenateTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = array.concatenate(array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayVStackTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = vstack(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayR_Test) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = r_(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayHStackTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[2][4][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}, {19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = hstack(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayColumnStackTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[2][4][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}, {19.19, 20.2, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = column_stack(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayC_Test) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_, 2 * 2 * 3> array1{c_array_3d1};
-    float_ c_array_result[2][2][6] = {{{1.1, 2.2, 3.3, 13.13, 14.14, 15.15}, {4.4, 5.5, 6.6, 16.16, 17.17, 18.18}}, {{7.7, 8.8, 9.9, 19.19, 20.2, 21.21}, {10.10, 11.11, 12.12, 22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = c_(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayHSplitTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_result_sample_0[2][1][3] = {{{1.1, 2.2, 3.3}}, {{7.7, 8.8, 9.9}}};
-    Array<float_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit(array, 2);
-    compare<float_>(result[0], result_sample_0);
-    float_ c_array_result_sample_1[2][1][3] = {{{4.4, 5.5, 6.6}}, {{10.10, 11.11, 12.12}}};
-    Array<float_> result_sample_1{c_array_result_sample_1};
-    compare<float_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, static3DFloatArrayVSplitTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_, 2 * 2 * 3> array{c_array_3d};
-    float_ c_array_3d_0[1][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}}};
-    Array<float_> result_sample_0{c_array_3d_0};
-    auto result = vsplit(array, 2);
-    compare<float_>(result[0], result_sample_0);
-    float_ c_array_3d_1[1][2][3] = {{{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}}};
-    Array<float_> result_sample_1{c_array_3d_1};
-    compare<float_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayTransposeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str7"},
-             {"str4", "str10"}},
-            {{"str2", "str8"},
-             {"str5", "str11"}},
-            {{"str3", "str9"},
-             {"str6", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    auto result = transpose(array);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayRavelTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    auto result = array.ravel();
-    Array<string_> result_sample{"str1", "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayReshapeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str2"},
-             {"str3", "str4"}},
-            {{"str5", "str6"},
-             {"str7", "str8"}},
-            {{"str9", "str10"},
-             {"str11", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<string_> result = array.reshape(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayResizeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str2"},
-             {"str3", "str4"}},
-            {{"str5", "str6"},
-             {"str7", "str8"}},
-            {{"str9", "str10"},
-             {"str11", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayAppendTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<string_> result_sample{"str1", "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12",
-                                 "str13", "str14", "str15",
-                                 "str16", "str17", "str18",
-                                 "str19", "str20", "str21",
-                                 "str22", "str23", "str24"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayInsertTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    Array<string_> result_sample{"str1",
-                                 "str13", "str14", "str15",
-                                 "str16", "str17", "str18",
-                                 "str19", "str20", "str21",
-                                 "str22", "str23", "str24",
-                                 "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12"};
-    auto result = array.insert(1, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayDelTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_1d[11] = {"str1", "str3",
-                              "str4", "str5", "str6",
-                              "str7", "str8", "str9",
-                              "str10", "str11", "str12"};
-    Array<string_> result_sample{c_array_1d};
-    auto result = array.del(1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayConcatenateTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = array.concatenate(array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayVStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = vstack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayR_Test) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = r_(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayHStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[2][4][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}, {"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = hstack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayColumnStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[2][4][3] = {{{"str1", "str2", "str3"},
-                                        {"str4", "str5", "str6"},
-                                        {"str13", "str14", "str15"},
-                                        {"str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9"},
-                                        {"str10", "str11", "str12"},
-                                        {"str19", "str20", "str21"},
-                                        {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = column_stack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayC_Test) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_, 2 * 2 * 3> array1{c_array_3d1};
-    string_ c_array_result[2][2][6] = {{{"str1", "str2", "str3", "str13", "str14", "str15"},
-                                        {"str4", "str5", "str6", "str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9", "str19", "str20", "str21"},
-                                        {"str10", "str11", "str12", "str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = c_(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayHSplitTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_result_sample_0[2][1][3] = {{{"str1", "str2", "str3"}}, {{"str7", "str8", "str9"}}};
-    Array<string_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit(array, 2);
-    compare<string_>(result[0], result_sample_0);
-    string_ c_array_result_sample_1[2][1][3] = {{{"str4", "str5", "str6"}}, {{"str10", "str11", "str12"}}};
-    Array<string_> result_sample_1{c_array_result_sample_1};
-    compare<string_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, static3DStringArrayVSplitTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_, 2 * 2 * 3> array{c_array_3d};
-    string_ c_array_3d_0[1][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}}};
-    Array<string_> result_sample_0{c_array_3d_0};
-    string_ c_array_3d_1[1][2][3] = {
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> result_sample_1{c_array_3d_1};
-
-    auto result = vsplit(array, 2);
-    compare<string_>(result[0], result_sample_0);
-    compare<string_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayTransposeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {
-            {{1, 7},
-             {4, 10}},
-            {{2, 8},
-             {5, 11}},
-            {{3, 9},
-             {6, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    auto result = transpose(array);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayRavelTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    auto result = array.ravel();
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayReshapeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<int_> result = array.reshape(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayResizeTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_result_3d[3][2][2] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
-    Array<int_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayAppendTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<int_> result_sample{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayInsertTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_1d[24] = {1, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    Array<int_> result_sample{c_array_1d};
-    auto result = array.insert(1, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayDelTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_1d[11] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    Array<int_> array1{c_array_1d};
-    auto result = array.del(1);
-    compare<int_>(result, array1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayConcatenateTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = array.concatenate(array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayVStackTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = vstack(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayR_Test) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}},
-                                 {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_3d_result[4][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                       {{7, 8, 9}, {10, 11, 12}},
-                                       {{13, 14, 15}, {16, 17, 18}},
-                                       {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = r_<int_>(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayHStackTest) {
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}},
-                                 {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_result[2][4][3] = {{{1, 2, 3}, {4, 5, 6}, {13, 14, 15}, {16, 17, 18}},
-                                    {{7, 8, 9}, {10, 11, 12}, {19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_result};
-    auto result = hstack<int_>(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayColumnStackTest) {
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_result[2][4][3] = {{{1, 2, 3}, {4, 5, 6}, {13, 14, 15}, {16, 17, 18}},
-                                    {{7, 8, 9}, {10, 11, 12}, {19, 20, 21}, {22, 23, 24}}};
-    Array<int_> result_sample{c_array_result};
-    auto result = column_stack<int_>(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayC_Test) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    long c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    long c_array_3d1[2][2][3] = {{{13, 14, 15}, {16, 17, 18}}, {{19, 20, 21}, {22, 23, 24}}};
-    Array<int_> array1{c_array_3d1};
-    int_ c_array_3d_result[2][2][6] = {{{1, 2, 3, 13, 14, 15}, {4, 5, 6, 16, 17, 18}}, {{7, 8, 9, 19, 20, 21}, {10, 11, 12, 22, 23, 24}}};
-    Array<int_> result_sample{c_array_3d_result};
-    auto result = c_<int_>(array, array1);
-    compare<int_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayHSplitTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}}, {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_result_sample_0[2][1][3] = {{{1, 2, 3}}, {{7, 8, 9}}};
-    Array<int_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit<int_>(array, 2);
-    compare<int_>(result[0], result_sample_0);
-    int_ c_array_result_sample_1[2][1][3] = {{{4, 5, 6}}, {{10, 11, 12}}};
-    Array<int_> result_sample_1{c_array_result_sample_1};
-    compare<int_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DIntArrayVSplitTest) {
-    /*
-    a=np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], dtype='int')
-     */
-    int_ c_array_3d[2][2][3] = {{{1, 2, 3}, {4, 5, 6}},
-                                {{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> array{c_array_3d};
-    int_ c_array_3d_0[1][2][3] = {{{1, 2, 3}, {4, 5, 6}}};
-    Array<int_> result_sample_0{c_array_3d_0};
-    int_ c_array_3d_1[1][2][3] = {{{7, 8, 9}, {10, 11, 12}}};
-    Array<int_> result_sample_1{c_array_3d_1};
-
-    auto result = vsplit<int_>(array, 2);
-    compare<int_>(result[0], result_sample_0);
-    compare<int_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayTransposeTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 7.7},
-             {4.4, 10.10}},
-            {{2.2, 8.8},
-             {5.5, 11.11}},
-            {{3.3, 9.9},
-             {6.6, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    auto result = transpose<float_>(array);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayRavelTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    auto result = array.ravel();
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayReshapeTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 2.2},
-             {3.3, 4.4}},
-            {{5.5, 6.6},
-             {7.7, 8.8}},
-            {{9.9, 10.10},
-             {11.11, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<float_> result = array.reshape(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayResizeTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_result_3d[3][2][2] = {
-            {{1.1, 2.2},
-             {3.3, 4.4}},
-            {{5.5, 6.6},
-             {7.7, 8.8}},
-            {{9.9, 10.10},
-             {11.11, 12.12}}};
-    Array<float_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayAppendTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.2, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<float_> result_sample{1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 13.13, 14.14, 15.15,
-                                16.16, 17.17, 18.18, 19.19, 20.2, 21.21, 22.22, 23.23, 24.24};
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayInsertTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_1d[24] = {1.1, 13.13, 14.14, 15.15, 16.16, 17.17, 18.18, 19.19, 20.20, 21.21, 22.22, 23.23, 24.24, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    Array<float_> result_sample{c_array_1d};
-    auto result = array.insert(1, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayDelTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_1d[11] = {1.1, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.10, 11.11, 12.12};
-    Array<float_> array1{c_array_1d};
-    auto result = array.del(1);
-    compare<float_>(result, array1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayConcatenateTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = array.concatenate(array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayVStackTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = vstack(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayR_Test) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                   {{19.19, 20.2, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[4][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}},
-                                      {{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = r_(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayHStackTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[2][4][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}, {19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = hstack<float_>(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayColumnStackTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[2][4][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}},
-                                      {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}, {19.19, 20.2, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = column_stack<float_>(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayC_Test) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d1[2][2][3] = {{{13.13, 14.14, 15.15}, {16.16, 17.17, 18.18}}, {{19.19, 20.20, 21.21}, {22.22, 23.23, 24.24}}};
-    Array<float_> array1{c_array_3d1};
-    float_ c_array_result[2][2][6] = {{{1.1, 2.2, 3.3, 13.13, 14.14, 15.15}, {4.4, 5.5, 6.6, 16.16, 17.17, 18.18}}, {{7.7, 8.8, 9.9, 19.19, 20.2, 21.21}, {10.10, 11.11, 12.12, 22.22, 23.23, 24.24}}};
-    Array<float_> result_sample{c_array_result};
-    auto result = c_<float_>(array, array1);
-    compare<float_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayHSplitTest) {
-    double c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_result_sample_0[2][1][3] = {{{1.1, 2.2, 3.3}}, {{7.7, 8.8, 9.9}}};
-    Array<float_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit<float_>(array, 2);
-    compare<float_>(result[0], result_sample_0);
-    float_ c_array_result_sample_1[2][1][3] = {{{4.4, 5.5, 6.6}}, {{10.1, 11.11, 12.12}}};
-    Array<float_> result_sample_1{c_array_result_sample_1};
-    compare<float_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DFloatArrayVSplitTest) {
-    float_ c_array_3d[2][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}},
-                                  {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}}};
-    Array<float_> array{c_array_3d};
-    float_ c_array_3d_0[1][2][3] = {{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}}};
-    Array<float_> result_sample_0{c_array_3d_0};
-    auto result = vsplit<float_>(array, 2);
-    compare<float_>(result[0], result_sample_0);
-    float_ c_array_3d_1[1][2][3] = {{{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}}};
-    Array<float_> result_sample_1{c_array_3d_1};
-    compare<float_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayTransposeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str7"},
-             {"str4", "str10"}},
-            {{"str2", "str8"},
-             {"str5", "str11"}},
-            {{"str3", "str9"},
-             {"str6", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    auto result = transpose<string_>(array);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayRavelTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    auto result = array.ravel();
-    Array<string_> result_sample{"str1", "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayReshapeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str2"},
-             {"str3", "str4"}},
-            {{"str5", "str6"},
-             {"str7", "str8"}},
-            {{"str9", "str10"},
-             {"str11", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    Array<string_> result = array.reshape(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayResizeTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_result_3d[3][2][2] = {
-            {{"str1", "str2"},
-             {"str3", "str4"}},
-            {{"str5", "str6"},
-             {"str7", "str8"}},
-            {{"str9", "str10"},
-             {"str11", "str12"}}};
-    Array<string_> result_sample{c_array_result_3d};
-    Shape shape{3, 2, 2};
-    auto result = array.resize(shape);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayAppendTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    auto result = array.append(array1);
-    Array<string_> result_sample{"str1", "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12",
-                                 "str13", "str14", "str15",
-                                 "str16", "str17", "str18",
-                                 "str19", "str20", "str21",
-                                 "str22", "str23", "str24"};
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayInsertTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    Array<string_> result_sample{"str1",
-                                 "str13", "str14", "str15",
-                                 "str16", "str17", "str18",
-                                 "str19", "str20", "str21",
-                                 "str22", "str23", "str24",
-                                 "str2", "str3",
-                                 "str4", "str5", "str6",
-                                 "str7", "str8", "str9",
-                                 "str10", "str11", "str12"};
-    auto result = array.insert(1, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayDelTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_1d[11] = {"str1", "str3",
-                              "str4", "str5", "str6",
-                              "str7", "str8", "str9",
-                              "str10", "str11", "str12"};
-    Array<string_> array1{c_array_1d};
-    auto result = array.del(1);
-    compare<string_>(result, array1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayConcatenateTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = array.concatenate(array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayVStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = vstack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayR_Test) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[4][2][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}},
-                                       {{"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = r_(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayHStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[2][4][3] = {{{"str1", "str2", "str3"}, {"str4", "str5", "str6"}, {"str13", "str14", "str15"}, {"str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9"}, {"str10", "str11", "str12"}, {"str19", "str20", "str21"}, {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = hstack(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayColumnStackTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[2][4][3] = {{{"str1", "str2", "str3"},
-                                        {"str4", "str5", "str6"},
-                                        {"str13", "str14", "str15"},
-                                        {"str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9"},
-                                        {"str10", "str11", "str12"},
-                                        {"str19", "str20", "str21"},
-                                        {"str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = column_stack<string_>(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayC_Test) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d1[2][2][3] = {
-            {{"str13", "str14", "str15"},
-             {"str16", "str17", "str18"}},
-            {{"str19", "str20", "str21"},
-             {"str22", "str23", "str24"}}};
-    Array<string_> array1{c_array_3d1};
-    string_ c_array_result[2][2][6] = {{{"str1", "str2", "str3", "str13", "str14", "str15"},
-                                        {"str4", "str5", "str6", "str16", "str17", "str18"}},
-                                       {{"str7", "str8", "str9", "str19", "str20", "str21"},
-                                        {"str10", "str11", "str12", "str22", "str23", "str24"}}};
-    Array<string_> result_sample{c_array_result};
-    auto result = c_<string_>(array, array1);
-    compare<string_>(result, result_sample);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayHSplitTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_result_sample_0[2][1][3] = {{{"str1", "str2", "str3"}}, {{"str7", "str8", "str9"}}};
-    Array<string_> result_sample_0{c_array_result_sample_0};
-    auto result = hsplit<string_>(array, 2);
-    compare<string_>(result[0], result_sample_0);
-    string_ c_array_result_sample_1[2][1][3] = {{{"str4", "str5", "str6"}}, {{"str10", "str11", "str12"}}};
-    Array<string_> result_sample_1{c_array_result_sample_1};
-    compare<string_>(result[1], result_sample_1);
-}
-
-TEST_F(ArrayManipTest, dynamic3DStringArrayVSplitTest) {
-    string_ c_array_3d[2][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}},
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> array{c_array_3d};
-    string_ c_array_3d_0[1][2][3] = {
-            {{"str1", "str2", "str3"},
-             {"str4", "str5", "str6"}}};
-    Array<string_> result_sample_0{c_array_3d_0};
-    string_ c_array_3d_1[1][2][3] = {
-            {{"str7", "str8", "str9"},
-             {"str10", "str11", "str12"}}};
-    Array<string_> result_sample_1{c_array_3d_1};
-
-    auto result = vsplit<string_>(array, 2);
-    compare<string_>(result[0], result_sample_0);
-    compare<string_>(result[1], result_sample_1);
+    compare(result[1], result1_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DStringArrayExpandDimsTest) {
+    Array<string_> array{"str1", "str2", "str3", "str4"};
+    auto result = expand_dims(array, 0);
+    string_ c_array_2d[1][4] = {{"str1", "str2", "str3", "str4"}};
+    Array<string_> result_sample{c_array_2d};
+    compare(result, result_sample);
 }
