@@ -1,3 +1,7 @@
+# Release 0.0.8
+## Changes
+* inv, round, stack, where, diag, isclose functions added
+
 # Release 0.0.7
 ## Changes
 * interp, expand_dims functions added

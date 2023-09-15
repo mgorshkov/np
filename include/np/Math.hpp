@@ -54,13 +54,13 @@ namespace np {
         return array1.add(array2);
     }
 
-    template<Arithmetic DType1, typename Derived2, typename Storage2, Arithmetic DType2>
-    inline auto operator+(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
         return array.add(value);
     }
 
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
-    inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+    template<Arithmetic DType1, typename Derived2, typename Storage2, Arithmetic DType2>
+    inline auto operator+(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
         return array.add(value);
     }
 
@@ -85,14 +85,14 @@ namespace np {
         return array1.subtract(array2);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator-(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
-        return array.subtract(value);
-    }
-
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
     inline auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
         return array.subtract(value);
+    }
+
+    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto operator-(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+        return array.subtractFrom(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -116,13 +116,13 @@ namespace np {
         return array1.multiply(array2);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator*(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
         return array.multiply(value);
     }
 
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
-    inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto operator*(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
         return array.multiply(value);
     }
 
@@ -149,14 +149,14 @@ namespace np {
         return array1.divide(array2);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator/(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
-        return array.divide(value);
-    }
-
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
     inline auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
         return array.divide(value);
+    }
+
+    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto operator/(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+        return array.divideFrom(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -315,6 +315,34 @@ namespace np {
             }
         }
 
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Evenly round to the given number of decimals.
+    ///
+    /// \param a input data
+    /// \param decimals Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.
+    ///
+    /// \return
+    /// An array of the same type as a, containing the rounded values. Unless out was specified, a new array is created. A reference to the result is returned.
+    ///
+    /// The real and imaginary parts of complex numbers are rounded separately. The result of rounding a float is a float.
+    ///
+    //////////////////////////////////////////////////////////////
+    template<Arithmetic DType>
+    inline auto round(DType a, int decimals = 0) {
+        auto digits = std::pow(10, decimals);
+        return std::round(a * digits) / digits;
+    }
+
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto round(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &a, int decimals = 0) {
+        NDArrayDynamic<DType> result{a.shape()};
+        auto multiplier = std::pow(10, decimals);
+        for (Size i = 0; i < result.size(); ++i) {
+            result.set(i, std::round(a.get(i) * multiplier) / multiplier);
+        }
         return result;
     }
 }// namespace np

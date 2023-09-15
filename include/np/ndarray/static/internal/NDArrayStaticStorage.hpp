@@ -567,7 +567,7 @@ namespace np {
                         throw std::runtime_error("push_back is not implemented");
                     }
 
-                    static constexpr int kDepth = 0;
+                    static constexpr std::size_t kDepth = 0;
 
                 private:
                     std::array<DType, SizeT> m_storage;

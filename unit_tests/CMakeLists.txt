@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(NP_UNIT_TESTS np_unit_tests)
 
-project(${NP_UNIT_TESTS} VERSION 0.0.7 DESCRIPTION "C++ Numpy Unit Tests")
+project(${NP_UNIT_TESTS} VERSION 0.0.8 DESCRIPTION "C++ Numpy Unit Tests")
 
 add_definitions(-DTEST_DATA_FOLDER="${CMAKE_CURRENT_SOURCE_DIR}/test_data")
 

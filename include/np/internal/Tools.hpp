@@ -32,23 +32,17 @@ SOFTWARE.
 namespace np {
     namespace internal {
         template<typename DType>
-        typename std::enable_if<!std::numeric_limits<DType>::is_integer, bool>::type almost_equal(DType x, DType y, int ulp) {
-            // the machine epsilon has to be scaled to the magnitude of the values used
-            // and multiplied by the desired precision in ULPs (units in the last place)
-            // unless the result is subnormal
-            return std::fabs(x - y) <= std::numeric_limits<DType>::epsilon() * std::fabs(x + y) * ulp ||
-                   std::fabs(x - y) < std::numeric_limits<DType>::min();
+        typename std::enable_if<!std::numeric_limits<DType>::is_integer, bool>::type almost_equal(DType x, DType y, np::float_ rtol = 1e-05, np::float_ atol = 1e-08) {
+            return std::fabs(x - y) <= (atol + rtol * std::fabs(y));
         }
 
         template<typename DType1, typename DType2>
-        inline static bool element_equal(const DType1 &value1, const DType2 &value2) {
+        inline static bool element_equal(const DType1 &value1, const DType2 &value2, np::float_ = 1e-05, np::float_ = 1e-08) {
             return value1 == value2;
         }
 
-        static const constexpr int ULP_TOLERANCE = 7;
-
-        inline static bool element_equal(const float_ &value1, const float_ &value2) {
-            return (std::isnan(value1) && std::isnan(value2)) || almost_equal(value1, value2, ULP_TOLERANCE);
+        inline static bool element_equal(const float_ &value1, const float_ &value2, np::float_ rtol = 1e-05, np::float_ atol = 1e-08, bool equal_nan = false) {
+            return (equal_nan && std::isnan(value1) && std::isnan(value2)) || almost_equal(value1, value2, rtol, atol);
         }
     }// namespace internal
 }// namespace np

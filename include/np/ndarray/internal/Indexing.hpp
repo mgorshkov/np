@@ -127,7 +127,7 @@ namespace np {
 
             static inline bool isSlicing(const std::string &cond) {
                 return std::all_of(cond.begin(), cond.end(), [](const auto &c) {
-                    return c == ':' || std::isdigit(c);
+                    return c == ':' || c == '+' || c == '-' || std::isdigit(c);
                 });
             }
 

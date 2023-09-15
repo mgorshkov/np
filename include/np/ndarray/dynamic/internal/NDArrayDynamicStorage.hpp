@@ -93,7 +93,7 @@ namespace np {
                         storage.m_capacity = 0;
                     }
 
-                    explicit NDArrayDynamicStorage(Size size, const DType &value = DType())
+                    explicit NDArrayDynamicStorage(Size size, const DType &value = DType{})
                         : m_size{size}, m_capacity{size}, m_ptr{nullptr} {
                         if (m_size != 0) {
                             m_ptr = new DType[m_size];
@@ -691,7 +691,7 @@ namespace np {
                         m_ptr[m_size++] = value;
                     }
 
-                    static constexpr int kDepth = 0;
+                    static constexpr std::size_t kDepth = 0;
 
                 private:
                     Size m_size;
@@ -711,7 +711,7 @@ namespace np {
                     if (array1.size() != array2.size())
                         return false;
                     for (std::size_t i = 0; i < array1.size(); ++i) {
-                        if (!np::internal::almost_equal(array1.get(i), array2.get(i), np::internal::ULP_TOLERANCE))
+                        if (!np::internal::almost_equal(array1.get(i), array2.get(i)))
                             return false;
                     }
                     return true;

@@ -49,4 +49,16 @@ namespace np {
         return true;
     }
 
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
+    inline static auto isclose(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b,
+                               np::float_ rtol = 1e-05, np::float_ atol = 1e-08, bool equal_nan = false) {
+        if (a.shape() != b.shape())
+            throw std::runtime_error("Arrays are different");
+        ndarray::array_dynamic::NDArrayDynamic<bool_> result{a.shape()};
+        for (Size index = 0; index < a.size(); ++index) {
+            result.set(index, internal::element_equal(a.get(index), b.get(index), rtol, atol, equal_nan));
+        }
+        return result;
+    }
+
 }// namespace np
