@@ -131,6 +131,9 @@ namespace np {
                 template<Arithmetic DType2>
                 auto subtract(const DType2 &value) const;
 
+                template<Arithmetic DType2>
+                auto subtractFrom(const DType2 &value) const;
+
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
@@ -142,6 +145,9 @@ namespace np {
 
                 template<Arithmetic DType2>
                 auto divide(const DType2 &value) const;
+
+                template<Arithmetic DType2>
+                auto divideFrom(const DType2 &value) const;
 
                 auto exp() const;
 
@@ -363,6 +369,11 @@ namespace np {
                 // b[0:2,1] Select items at rows 0 and 1 in column 1
                 IndexParentConstType operator[](const std::string &cond) const;
                 IndexParentType operator[](const std::string &cond);
+
+                explicit operator DType() const {
+                    assert(size() == 1);
+                    return get(0);
+                }
 
             protected:
                 [[nodiscard]] std::size_t getMaxElementSize() const {

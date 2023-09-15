@@ -571,4 +571,43 @@ namespace np {
         const Shape shape{SizeT, Sizes...};
         return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape};
     }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Extract a diagonal or construct a diagonal array.
+    ///
+    /// Return the extracted diagonal or constructed diagonal array.
+    ///
+    /// \param DType Type of array elements
+    /// \param v if v is a 2-D array, return a copy of its k-th diagonal. If v is a 1-D array, return a 2-D array with v on the k-th diagonal.
+    /// \param k Diagonal in question. The default is 0. Use k>0 for diagonals above the main diagonal, and k<0 for diagonals below the main diagonal.
+    ///
+    /// \return the extracted diagonal or constructed diagonal array.
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType, typename Derived, typename Storage>
+    auto diag(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
+        if (v.empty()) {
+            Size size = (k > 0 ? k : -k);
+            return Array<DType>{Shape{size, size}};
+        }
+        if (v.ndim() != 1 && v.ndim() != 2) {
+            throw std::runtime_error("Input must be 1- or 2-d.");
+        }
+        if (v.ndim() == 1) {
+            auto size = v.size() + (k >= 0 ? k : -k);
+            Shape shape{size, size};
+            Array<DType> result{shape};
+            Size offset = (k >= 0 ? k : size * (-k));
+            for (Size i = 0; i < v.size(); ++i) {
+                result.set(offset, v.get(i));
+                offset += (size + 1);
+            }
+            return result;
+        }
+        Array<DType> result{};
+        for (Size offset = (k >= 0 ? k : v.shape()[1] * (-k)); offset < v.size(); offset += (v.shape()[1] + 1)) {
+            result.push_back(v.get(offset));
+        }
+        return result;
+    }
 }// namespace np

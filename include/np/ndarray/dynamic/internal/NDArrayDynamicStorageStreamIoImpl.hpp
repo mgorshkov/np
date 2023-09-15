@@ -69,7 +69,7 @@ namespace np {
                             }
                         }
                         stream << "...";
-                        for (Size index = array.size() - 3; index < array.size(); ++index) {
+                        for (std::size_t index = array.size() - 3; index < array.size(); ++index) {
                             if (index > 0)
                                 stream << " ";
                             if constexpr (std::is_floating_point<DType>::value) {
@@ -84,7 +84,7 @@ namespace np {
                             }
                         }
                     } else {
-                        for (Size index = 0; index < array.size(); ++index) {
+                        for (std::size_t index = 0; index < array.size(); ++index) {
                             if (index > 0)
                                 stream << " ";
                             if constexpr (std::is_floating_point<DType>::value) {

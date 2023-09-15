@@ -94,8 +94,10 @@ namespace np {
                                     stream << std::endl
                                            << " ";
                                 }
-                                if constexpr (Storage::kDepth < 10) {
+                                if constexpr (Storage::kDepth < kMaxArrayDims) {
                                     stream << array[index];
+                                } else {
+                                    assert(false);
                                 }
                             }
                             stream << std::endl
@@ -105,8 +107,10 @@ namespace np {
                                     stream << std::endl
                                            << " ";
                                 }
-                                if constexpr (Storage::kDepth < 10) {
+                                if constexpr (Storage::kDepth < kMaxArrayDims) {
                                     stream << array[index];
+                                } else {
+                                    assert(false);
                                 }
                             }
                         } else {
@@ -115,8 +119,10 @@ namespace np {
                                     stream << std::endl
                                            << " ";
                                 }
-                                if constexpr (Storage::kDepth < 10) {
+                                if constexpr (Storage::kDepth < kMaxArrayDims) {
                                     stream << array[index];
+                                } else {
+                                    assert(false);
                                 }
                             }
                         }
@@ -148,8 +154,10 @@ namespace np {
                                 stream << std::endl
                                        << " ";
                             }
-                            if constexpr (Storage::kDepth < 10) {
+                            if constexpr (Storage::kDepth < kMaxArrayDims) {
                                 stream << array[index];
+                            } else {
+                                assert(false);
                             }
                         }
                     }
@@ -175,8 +183,10 @@ namespace np {
                                 stream << std::endl
                                        << " ";
                             }
-                            if constexpr (Storage::kDepth < 10) {
+                            if constexpr (Storage::kDepth < kMaxArrayDims) {
                                 stream << array[index];
+                            } else {
+                                assert(false);
                             }
                         }
                     }

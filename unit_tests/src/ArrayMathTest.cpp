@@ -249,3 +249,25 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysSubtractWithBroadcastTest) {
     Array<int_> diff{c_array_minus};
     compare(array, diff);
 }
+
+TEST_F(ArrayMathTest, static1DFloatArrayRoundTest) {
+    // static
+    Array<float_, 3> array{1.1, 2.2, 3.3};
+    auto res = round(array);
+    Array<float_> sample{1.0, 2.0, 3.0};
+    compare(sample, res);
+}
+
+TEST_F(ArrayMathTest, dynamic1DFloatArrayRoundTest) {
+    // dynamic
+    Array<float_> array{1.1, 2.2, 3.3};
+    auto res = round(array);
+    Array<float_> sample{1.0, 2.0, 3.0};
+    compare(sample, res);
+}
+
+TEST_F(ArrayMathTest, roundTest) {
+    auto res = round(56294995342131.5, 3);
+    np::float_ sample = 56294995342131.51;
+    EXPECT_DOUBLE_EQ(sample, res);
+}

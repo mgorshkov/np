@@ -220,8 +220,8 @@ namespace np {
             m_sizes.push_back(size);
         }
 
-        void expandDims(Size axis) {
-            m_sizes.insert(std::next(m_sizes.cbegin(), axis), 1);
+        void expandDims(Size axis, Size dim = 1) {
+            m_sizes.insert(std::next(m_sizes.cbegin(), axis), dim);
         }
 
         void removeFirstDim() {
@@ -273,12 +273,12 @@ namespace np {
             int32_t i1 = static_cast<int32_t>(size1) - 1;
             int32_t i2 = static_cast<int32_t>(size2) - 1;
             while (i1 >= 0 || i2 >= 0) {
-                auto s1 = i1 < 0 ? 1 : m_sizes[i1];
-                auto s2 = i2 < 0 ? 1 : another.m_sizes[i2];
+                Size s1 = i1 < 0 ? 1 : m_sizes[i1];
+                Size s2 = i2 < 0 ? 1 : another.m_sizes[i2];
                 if (s1 != s2 && s1 != 1 && s2 != 1) {
                     throw std::runtime_error("Arrays cannot be broadcast together");
                 }
-                std::size_t out;
+                Size out;
                 if (s1 == s2 || s2 == 1) {
                     out = s1;
                 } else {

@@ -27,6 +27,8 @@ SOFTWARE.
 #include <cmath>
 #include <cstdint>
 
+#include <np/DType.hpp>
+
 namespace np {
 
     using Size = unsigned long;
@@ -38,5 +40,8 @@ namespace np {
 
     template<typename DType>
     concept Arithmetic = std::is_arithmetic_v<DType>;
+
+    template<typename DType>
+    concept Float = std::is_same_v<DType, float_> || std::is_same_v<DType, float32> || std::is_same_v<DType, float64> || std::is_same_v<DType, longdouble>;
 
 }// namespace np

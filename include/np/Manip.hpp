@@ -182,60 +182,145 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename Arg>
-    auto all_empty(Arg &&array) {
+    auto allEmpty(const Arg &array) {
         return array.empty();
     }
 
     template<typename Arg, typename... Args>
-    auto all_empty(Arg &&arg1, Args &&...args) {
-        return arg1.empty() && all_empty(args...);
+    auto allEmpty(const Arg &arg1, Args &&...args) {
+        return arg1.empty() && allEmpty(std::forward<Args>(args)...);
     }
 
     template<typename Arg>
-    auto check_ndim(Arg &&array) {
+    auto checkDim(Size dim, const Arg &array) {
+        return array.shape()[dim];
+    }
+
+    template<typename Arg, typename... Args>
+    auto checkDim(Size dim, const Arg &arg1, Args &&...args) {
+        auto d = checkDim(dim, std::forward<Args>(args)...);
+        if (checkDim(dim, arg1) != d) {
+            throw std::runtime_error("Dims should be equal");
+        }
+        return d;
+    }
+
+    template<typename Arg>
+    auto getMaxDims(const Arg &array) {
         return array.ndim();
     }
 
     template<typename Arg, typename... Args>
-    auto check_ndim(Arg &&arg1, Args &&...args) {
-        auto ndim_args = check_ndim(args...);
-        if (check_ndim(arg1) != ndim_args) {
-            throw std::runtime_error("Number of dims should be equal");
+    auto getMaxDims(const Arg &array, Args &&...args) {
+        auto maxArrayDims = getMaxDims(array);
+        auto maxDims = getMaxDims(std::forward<Args>(args)...);
+        if (maxArrayDims > maxDims) {
+            maxDims = maxArrayDims;
         }
-        return ndim_args;
+        return maxDims;
+    }
+
+    template<typename Arg>
+    auto getSumDim(Size dim, const Arg &array) {
+        return array.ndim() <= dim ? 1 : array.shape()[dim];
+    }
+
+    template<typename Arg, typename... Args>
+    auto getSumDim(Size dim, const Arg &array, Args &&...args) {
+        return getSumDim(dim, array) + getSumDim(dim, std::forward<Args>(args)...);
     }
 
     template<typename Target, typename Arg>
-    void fill(Target &&target, Size indexSource, Size &indexTarget, Arg &&arg1) {
-        target.set(indexTarget++, arg1.get(indexSource));
+    void fill(Target &target, Size &indexTarget, Size rowSource, const Arg &array) {
+        auto size = array.size() / array.shape()[0];
+        for (Size columnSource = 0; columnSource < size; ++columnSource) {
+            target.set(indexTarget++, array.get(array.ndim() == 1 ? rowSource : rowSource * size + columnSource));
+        }
     }
 
     template<typename Target, typename Arg, typename... Args>
-    void fill(Target &&target, Size indexSource, Size &indexTarget, Arg &&arg1, Args &&...args) {
-        fill(target, indexSource, indexTarget, arg1);
-        fill(target, indexSource, indexTarget, args...);
+    void fill(Target &target, Size &indexTarget, Size rowSource, const Arg &arg1, Args &&...args) {
+        fill(target, indexTarget, rowSource, arg1);
+        fill(target, indexTarget, rowSource, std::forward<Args>(args)...);
     }
 
     template<typename DType, typename Derived, typename Storage, typename... Args>
     auto column_stack(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &arg1, Args &&...args) {
-        if (all_empty(arg1, args...)) {
+        if (allEmpty(arg1, std::forward<Args>(args)...)) {
             return ndarray::array_dynamic::NDArrayDynamic<DType>{};
         }
-        auto ndim = check_ndim(arg1, args...);
-        if (ndim == 1) {
-            Shape shape{arg1.shape()[0], sizeof...(args) + 1};
-            ndarray::array_dynamic::NDArrayDynamic<DType> result{shape};
-            Size indexTarget = 0;
-            for (Size indexSource = 0; indexSource < arg1.size(); ++indexSource) {
-                fill(result, indexSource, indexTarget, arg1, args...);
+
+        auto maxDims = getMaxDims(arg1, std::forward<Args>(args)...);
+        if (maxDims == 1) {
+            maxDims = 2;
+        }
+        Shape shape{};
+        for (Size dim = 0; dim < maxDims; ++dim) {
+            Size size{};
+            if (dim == 1) {
+                size = getSumDim(dim, arg1, std::forward<Args>(args)...);
+            } else {
+                size = checkDim(dim, arg1, std::forward<Args>(args)...);
             }
-            return result;
+            shape.addDim(size);
         }
-        //concatenation along 2nd axis
-        ndarray::array_dynamic::NDArrayDynamic<DType> result = arg1.copy();
-        for (const auto &array: {args...}) {
-            result = result.concatenate(array, 1);
+
+        ndarray::array_dynamic::NDArrayDynamic<DType> result{shape};
+        Size indexTarget = 0;
+        for (Size rowSource = 0; rowSource < shape[0]; ++rowSource) {
+            fill(result, indexTarget, rowSource, arg1, std::forward<Args>(args)...);
         }
+        return result;
+    }
+
+    template<typename Arg>
+    auto checkShape(const Arg &array) {
+        return array.shape();
+    }
+
+    template<typename Arg, typename... Args>
+    auto checkShape(const Arg &arg1, Args &&...args) {
+        auto shape_args = checkShape(std::forward<Args>(args)...);
+        if (checkShape(arg1) != shape_args) {
+            throw std::runtime_error("Shape should be the same");
+        }
+        return shape_args;
+    }
+
+    template<typename Target, typename Arg>
+    void stack(Target &&target, Size &indexTarget, const Arg &arg1) {
+        for (Size indexSource = 0; indexSource < arg1.size(); ++indexSource) {
+            target.set(indexTarget++, arg1.get(indexSource));
+        }
+    }
+
+    template<typename Target, typename Arg, typename... Args>
+    void stack(Target &&target, Size &indexTarget, const Arg &arg1, Args &&...args) {
+        stack(target, indexTarget, arg1);
+        stack(target, indexTarget, std::forward<Args>(args)...);
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Join a sequence of arrays along a new axis.
+    ///
+    /// The axis parameter specifies the index of the new axis in the dimensions of the result.
+    /// For example, if axis=0 it will be the first dimension and if axis=-1 it will be the last dimension.
+    ///
+    /// \param arg1, args Each array must have the same shape
+    ///
+    /// \return The stacked array has one more dimension than the input arrays.
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType, typename Derived, typename Storage, typename... Args>
+    auto stack(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &arg1, Args &&...args) {
+        if (allEmpty(arg1, std::forward<Args>(args)...)) {
+            return ndarray::array_dynamic::NDArrayDynamic<DType>{};
+        }
+        auto shape = checkShape(arg1, std::forward<Args>(args)...);
+        shape.expandDims(0, sizeof...(args) + 1);
+        ndarray::array_dynamic::NDArrayDynamic<DType> result{shape};
+        Size indexTarget = 0;
+        stack(result, indexTarget, arg1, std::forward<Args>(args)...);
         return result;
     }
 
@@ -306,6 +391,31 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto expand_dims(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &a, Size axis) {
         return a.expand_dims(axis);
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Return elements from x transformed by a lambda depending on condition.
+    //
+    /// Return elements chosen by positive or negative lambda from x depending on condition.
+    ///
+    /// \param x Source array.
+    /// \param condition Where true, yield transformed by positive lambda, otherwise by negative.
+    /// \param positive, negative Positive and negative transformations.
+    ///
+    /// \return An array with elements from x transformed by a lambda
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType, typename Derived, typename Storage>
+    auto where(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &x,
+               std::function<bool(const DType &element)> condition,
+               std::function<DType(const DType &element)> positive,
+               std::function<DType(const DType &element)> negative) {
+        NDArrayDynamic<DType> result{x.shape()};
+        for (Size i = 0; i < x.size(); ++i) {
+            const auto &element = x.get(i);
+            result.set(i, condition(element) ? positive(element) : negative(element));
+        }
+        return result;
     }
 
 }// namespace np
