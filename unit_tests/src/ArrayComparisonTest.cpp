@@ -454,3 +454,24 @@ TEST_F(ArrayComparisonTest, static3DStringArrayTest) {
     // Arraywise comparison
     compare<string_>(array1, array2, false);
 }
+
+TEST_F(ArrayComparisonTest, isCloseTest) {
+    auto result = isclose(Array<float_>{1e10, 1e-7}, Array<float_>{1.00001e10, 1e-8});
+    checkArrayRepr(result, "[1 0]");
+    result = isclose(Array<float_>{1e10, 1e-8}, Array<float_>{1.00001e10, 1e-9});
+    checkArrayRepr(result, "[1 1]");
+    result = isclose(Array<float_>{1e10, 1e-8}, Array<float_>{1.0001e10, 1e-9});
+    checkArrayRepr(result, "[0 1]");
+    result = isclose(Array<float_>{1.0, NaN}, Array<float_>{1.0, NaN});
+    checkArrayRepr(result, "[1 0]");
+    result = isclose(Array<float_>{1.0, NaN}, Array<float_>{1.0, NaN}, 1e-05, 1e-08, true);
+    checkArrayRepr(result, "[1 1]");
+    result = isclose(Array<float_>{1e-8, 1e-7}, Array<float_>{0.0, 0.0});
+    checkArrayRepr(result, "[1 0]");
+    result = isclose(Array<float_>{1e-100, 1e-7}, Array<float_>{0.0, 0.0}, 1e-05, 0.0);
+    checkArrayRepr(result, "[0 0]");
+    result = isclose(Array<float_>{1e-10, 1e-10}, Array<float_>{1e-20, 0.0});
+    checkArrayRepr(result, "[1 1]");
+    result = isclose(Array<float_>{1e-10, 1e-10}, Array<float_>{1e-20, 0.999999e-10}, 1e-05, 0.0);
+    checkArrayRepr(result, "[0 1]");
+}

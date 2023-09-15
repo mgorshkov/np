@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 set(NP np)
 
-project(${NP} VERSION 0.0.7 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX)
+project(${NP} VERSION 0.0.8 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 

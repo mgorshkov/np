@@ -198,6 +198,20 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2>
+            auto NDArrayBase<DType, Derived, Storage>::subtractFrom(const DType2 &value) const {
+                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#pragma omp parallel for default(none) shared(value, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    DType subtractResult;
+                    ndarray::internal::subtract(value, get(i % size()), subtractResult);
+                    result.set(i, subtractResult);
+                }
+                return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape().broadcast(array.shape())};
@@ -254,6 +268,20 @@ namespace np {
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType divideResult;
                     ndarray::internal::divide(get(i % size()), value, divideResult);
+                    result.set(i, divideResult);
+                }
+                return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2>
+            auto NDArrayBase<DType, Derived, Storage>::divideFrom(const DType2 &value) const {
+                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#pragma omp parallel for default(none) shared(value, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    DType divideResult;
+                    ndarray::internal::divide(value, get(i % size()), divideResult);
                     result.set(i, divideResult);
                 }
                 return result;
@@ -340,12 +368,11 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             template<typename DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::dot(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                ndarray::array_dynamic::NDArrayDynamic<DType> result{};
                 if (ndim() == 1 && array.ndim() == 1) {
                     if (size() != array.size()) {
                         throw std::runtime_error("Sizes are different for 1D arrays");
                     }
-                    result = ndarray::array_dynamic::NDArrayDynamic<DType>{Shape{1}};
+                    ndarray::array_dynamic::NDArrayDynamic<DType> result{Shape{1}};
                     DType cellResult = 0;
 #pragma omp parallel for default(none) shared(array) reduction(+ \
                                                                : cellResult)
@@ -357,11 +384,55 @@ namespace np {
                     }
                     result.set(0, cellResult);
                     return result;
-                } else if (ndim() == 2 && (array.ndim() == 1 || array.ndim() == 2)) {
+                }
+                if (ndim() == 1 && array.ndim() == 2) {
+                    if (shape()[0] != array.shape()[0]) {
+                        throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
+                    }
+                    Shape resultShape{array.shape()[1]};
+                    ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(array.shape()[1]); ++i) {
+                        // index variable in OpenMP 'for' statement must have signed integral type
+                        DType cellResult{0};
+#pragma omp parallel for default(none) shared(array, i) reduction(+ \
+                                                                  : cellResult)
+                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape()[0]); ++k) {
+                            DType multiplyResult{};
+                            ndarray::internal::multiply(get(k), array.get(k * array.shape()[1] + i),
+                                                        multiplyResult);
+                            cellResult += multiplyResult;
+                        }
+                        result.set(i, cellResult);
+                    }
+                    return result;
+                }
+                if (ndim() == 2 && array.ndim() == 1) {
+                    if (shape()[1] != array.shape()[0]) {
+                        throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
+                    }
+                    Shape resultShape{shape()[0]};
+                    ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape()[0]); ++i) {
+                        // index variable in OpenMP 'for' statement must have signed integral type
+                        DType cellResult{0};
+#pragma omp parallel for default(none) shared(array, i) reduction(+ \
+                                                                  : cellResult)
+                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape()[1]); ++k) {
+                            DType multiplyResult{};
+                            ndarray::internal::multiply(get(i * shape()[1] + k), array.get(k),
+                                                        multiplyResult);
+                            cellResult += multiplyResult;
+                        }
+                        result.set(i, cellResult);
+                    }
+                    return result;
+                }
+                if (ndim() == 2 && array.ndim() == 2) {
                     if (shape()[1] != array.shape()[0]) {
                         throw std::runtime_error("Shapes are not consistent for 2D arrays");
                     }
-                    result = ndarray::array_dynamic::NDArrayDynamic<DType>{Shape{shape()[0], array.shape()[1]}};
+                    Shape resultShape{shape()[0], array.shape()[1]};
+                    ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape()[0]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         for (std::int32_t j = 0; j < static_cast<std::int32_t>(array.shape()[1]); ++j) {
@@ -377,11 +448,9 @@ namespace np {
                             result.set(i * array.shape()[1] + j, cellResult);
                         }
                     }
-
                     return result;
-                } else {
-                    throw std::runtime_error("Arrays are not 1D or 2D");
                 }
+                throw std::runtime_error("Arrays are not 1D or 2D");
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -824,13 +893,13 @@ namespace np {
                             auto layerSize = shape[0] == 0 ? 0 : this->size() / shape[0];
                             shape.removeFirstDim();
                             subarray = ndarray::array_dynamic::NDArrayDynamic<DType>{shape};
-                            for (std::size_t j = 0; j < shape.calcSizeByShape(); ++j) {
+                            for (Size j = 0; j < shape.calcSizeByShape(); ++j) {
                                 subarray.set(j, get(i * layerSize + j));
                             }
                         }
                         subarrays.push_back(subarray.transpose());
                     }
-                    std::size_t index = 0;
+                    Size index = 0;
                     for (Size i = 0; i < subarrays[0].size(); ++i) {
                         for (Size d = 0; d < dim1; ++d) {
                             result.set(index++, subarrays[d].get(i));
@@ -1041,7 +1110,7 @@ namespace np {
                     return concatenate(array);
                 }
                 // All the dims except the last should be equal
-                Size last = sh1.size() - 1;
+                std::size_t last = sh1.size() - 1;
                 Size sizes = 1;
                 for (Size i = 0; i < last; ++i) {
                     if (sh1[i] != sh2[i])
@@ -1082,7 +1151,7 @@ namespace np {
                     if (sh[0] % sections != 0) {
                         throw std::runtime_error("Array split does not result in an equal division");
                     }
-                    Size sectionSize = sh[0] / sections;
+                    Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
                     for (std::size_t section = 0; section < sections; ++section) {
@@ -1104,7 +1173,7 @@ namespace np {
                 for (std::size_t i = 2; i < sh1.size(); ++i) {
                     rest *= sh1[i];
                 }
-                Size sectionSize = sh[1] / sections;
+                Size sectionSize = sh[1] / static_cast<Size>(sections);
                 sh1[1] = sectionSize;
                 std::vector<array_dynamic::NDArrayDynamic<DType>> results;
                 for (std::size_t section = 0; section < sections; ++section) {
@@ -1143,7 +1212,7 @@ namespace np {
                     if (sh[0] % sections != 0) {
                         throw std::runtime_error("Array split does not result in an equal division");
                     }
-                    Size sectionSize = sh[0] / sections;
+                    Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
                     for (std::size_t section = 0; section < sections; ++section) {
@@ -1165,7 +1234,7 @@ namespace np {
                 for (std::size_t i = 1; i < sh0.size(); ++i) {
                     rest *= sh0[i];
                 }
-                Size sectionSize = sh[0] / sections;
+                Size sectionSize = sh[0] / static_cast<Size>(sections);
                 sh0[0] = sectionSize;
                 std::vector<array_dynamic::NDArrayDynamic<DType>> results;
                 for (std::size_t section = 0; section < sections; ++section) {
@@ -1189,7 +1258,7 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::expand_dims(Size axis) const {
-                if (axis >= ndim()) {
+                if (axis > ndim()) {
                     std::stringstream ss;
                     ss << axis << " is out of bounds for array of dimension " << ndim();
                     throw std::runtime_error(ss.str());
@@ -1281,8 +1350,7 @@ namespace np {
                 IndicesType<DType> indices;
                 while (true) {
                     std::size_t commaPos = cond.find(',', prevCommaPos);
-                    auto dimCond = cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos);
-                    dimCond.erase(dimCond.find_last_not_of(" \n\r\t") + 1);
+                    auto dimCond = trim(cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos));
                     prevCommaPos = commaPos + 1;
 
                     auto index = runHandlers(dimIndex, dimCond);
@@ -1309,8 +1377,7 @@ namespace np {
                 IndicesType<DType> indices;
                 while (true) {
                     std::size_t commaPos = cond.find(',', prevCommaPos);
-                    auto dimCond = cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos);
-                    dimCond.erase(dimCond.find_last_not_of(" \n\r\t") + 1);
+                    auto dimCond = trim(cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos));
                     prevCommaPos = commaPos + 1;
 
                     auto index = runHandlers(dimIndex, dimCond);
@@ -1369,7 +1436,7 @@ namespace np {
                 SignedSize index = std::stol(dimCond);
                 Size offset = index;
                 if (index < 0) {
-                    offset = static_cast<Size>(shape[dimIndex]) + index;
+                    offset = static_cast<Size>(shape[dimIndex] + index);
                 } else if (index > static_cast<SignedSize>(shape[dimIndex])) {
                     throw std::runtime_error("Index " + std::to_string(index) +
                                              " out of bounds for axis " + std::to_string(dimIndex) +
@@ -1392,7 +1459,7 @@ namespace np {
                     if (!firstStr.empty()) {
                         SignedSize firstSigned = std::stol(firstStr);
                         if (firstSigned < 0) {
-                            first = static_cast<Size>(shape[dimIndex]) + firstSigned;
+                            first = static_cast<Size>(shape[dimIndex] + firstSigned);
                         } else {
                             first = static_cast<Size>(firstSigned);
                         }
@@ -1401,7 +1468,7 @@ namespace np {
                     if (!lastStr.empty()) {
                         SignedSize lastSigned = std::stol(lastStr);
                         if (lastSigned < 0) {
-                            last = static_cast<Size>(shape[dimIndex]) + lastSigned;
+                            last = static_cast<Size>(shape[dimIndex] + lastSigned);
                         } else {
                             last = static_cast<Size>(lastSigned);
                         }

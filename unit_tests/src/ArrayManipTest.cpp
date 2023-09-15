@@ -92,6 +92,13 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayConcatenateTest) {
     compare(result, array);
 }
 
+TEST_F(ArrayManipTest, dynamicEmptyIntArrayStackTest) {
+    Array<int_> array1{};
+    Array<int_> array2{};
+    auto result = stack(array1, array2);
+    compare(result, array1);
+}
+
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayVstackTest) {
     Array<int_> array1{};
     Array<int_> array2{};
@@ -210,6 +217,14 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayVstackTest) {
     compare(result, array1);
 }
 
+TEST_F(ArrayManipTest, dynamicEmptyFloatArrayStackTest) {
+    // dynamic
+    Array<float_> array1{};
+    Array<float_> array2{};
+    auto result = stack(array1, array2);
+    compare(result, array1);
+}
+
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayR_Test) {
     // dynamic
     Array<float_> array{};
@@ -316,6 +331,14 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayConcatenateTest) {
     auto array = createStringArray();
     auto array1 = createStringArray();
     auto result = array.concatenate(array1);
+    compare(result, array);
+}
+
+TEST_F(ArrayManipTest, dynamicEmptyStringArrayStackTest) {
+    // dynamic
+    auto array = createStringArray();
+    auto array1 = createStringArray();
+    auto result = stack(array, array1);
     compare(result, array);
 }
 
@@ -432,6 +455,14 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayConcatenateTest) {
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
     auto result = array.concatenate(array1);
+    compare(result, array);
+}
+
+TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayStackTest) {
+    // dynamic
+    auto array = createUnicodeArray();
+    auto array1 = createUnicodeArray();
+    auto result = stack(array, array1);
     compare(result, array);
 }
 
@@ -569,6 +600,16 @@ TEST_F(ArrayManipTest, static1DIntArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, static1DIntArrayStackTest) {
+    // static
+    Array<int_, 3> array{1, 2, 3};
+    Array<int_, 3> array_stack{4, 5, 6};
+    int_ result_sample_c[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, static1DIntArrayVStackTest) {
     // static
     Array<int_, 3> array{1, 2, 3};
@@ -631,6 +672,24 @@ TEST_F(ArrayManipTest, static1DIntArrayExpandDimsTest) {
     auto result = expand_dims(array, 0);
     int_ c_array_2d[1][4] = {{1, 2, 3, 4}};
     Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, static1DIntArrayExpandDims1Test) {
+    // static
+    Array<int_, 4> array{1, 2, 3, 4};
+    auto result = expand_dims(array, 1);
+    int_ c_array_2d[4][1] = {{1}, {2}, {3}, {4}};
+    Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, static1DIntArrayWhereTest) {
+    // static
+    Array<int_, 10> x{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    auto result = where<int_>(
+            x, [](const auto &element) { return element < 5; }, [](const auto &) { return 1; }, [](const auto &element) { return element * 2; });
+    Array<int_> result_sample{1, 1, 1, 1, 1, 10, 12, 14, 16, 18};
     compare(result, result_sample);
 }
 
@@ -697,6 +756,16 @@ TEST_F(ArrayManipTest, static1DFloatArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, static1DFloatArrayStackTest) {
+    // static
+    Array<float_, 3> array{1.1, 2.2, 3.3};
+    Array<float_, 3> array_stack{4.4, 5.5, 6.6};
+    float_ result_sample_c[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
+    Array<float_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, static1DFloatArrayVStackTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     Array<float_, 3> array_vstack{4.4, 5.5, 6.6};
@@ -721,7 +790,7 @@ TEST_F(ArrayManipTest, static1DFloatArrayHStackTest) {
     compare(result, result_sample);
 }
 
-TEST_F(ArrayManipTest, static1DFloatArrayCoumnStackTest) {
+TEST_F(ArrayManipTest, static1DFloatArrayColumnStackTest) {
     Array<float_, 3> array{1.1, 2.2, 3.3};
     Array<float_, 3> array_column_stack{4.4, 5.5, 6.6};
     float_ array_2D[3][2]{{1.1, 4.4}, {2.2, 5.5}, {3.3, 6.6}};
@@ -752,6 +821,15 @@ TEST_F(ArrayManipTest, static1DFloatArrayExpandDimsTest) {
     Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
     auto result = expand_dims(array, 0);
     float_ c_array_2d[1][4] = {{1.1, 2.2, 3.3, 4.4}};
+    Array<float_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, static1DFloatArrayExpandDims1Test) {
+    // static
+    Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
+    auto result = expand_dims(array, 1);
+    float_ c_array_2d[4][1] = {{1.1}, {2.2}, {3.3}, {4.4}};
     Array<float_> result_sample{c_array_2d};
     compare(result, result_sample);
 }
@@ -818,6 +896,16 @@ TEST_F(ArrayManipTest, static1DStringArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, static1DStringArrayStackTest) {
+    // static
+    Array<string_, 3> array{"str1", "str2", "str3"};
+    Array<string_, 3> array_stack{"str4", "str5", "str6"};
+    string_ result_sample_c[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
+    Array<string_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, static1DStringArrayVStackTest) {
     Array<string_, 3> array{"str1", "str2", "str3"};
     Array<string_, 3> array_vstack{"str4", "str5", "str6"};
@@ -873,6 +961,15 @@ TEST_F(ArrayManipTest, static1DStringArrayExpandDimsTest) {
     Array<string_, 4> array{"str1", "str2", "str3", "str4"};
     auto result = expand_dims(array, 0);
     string_ c_array_2d[1][4] = {{"str1", "str2", "str3", "str4"}};
+    Array<string_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, static1DStringArrayExpandDims1Test) {
+    // static
+    Array<string_, 4> array{"str1", "str2", "str3", "str4"};
+    auto result = expand_dims(array, 1);
+    string_ c_array_2d[4][1] = {{"str1"}, {"str2"}, {"str3"}, {"str4"}};
     Array<string_> result_sample{c_array_2d};
     compare(result, result_sample);
 }
@@ -939,6 +1036,15 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, dynamic1DIntArrayStackTest) {
+    Array<int_> array{1, 2, 3};
+    Array<int_> array_stack{4, 5, 6};
+    int_ result_sample_c[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, dynamic1DIntArrayVStackTest) {
     Array<int_> array{1, 2, 3};
     Array<int_> array_vstack{4, 5, 6};
@@ -994,6 +1100,22 @@ TEST_F(ArrayManipTest, dynamic1DIntArrayExpandDimsTest) {
     auto result = expand_dims(array, 0);
     int_ c_array_2d[1][4] = {{1, 2, 3, 4}};
     Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DIntArrayExpandDims1Test) {
+    Array<int_> array{1, 2, 3, 4};
+    auto result = expand_dims(array, 1);
+    int_ c_array_2d[4][1] = {{1}, {2}, {3}, {4}};
+    Array<int_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DIntArrayWhereTest) {
+    Array<int_> x{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    auto result = where<int_>(
+            x, [](const auto &element) { return element < 5; }, [](const auto &) { return 1; }, [](const auto &element) { return element * 2; });
+    Array<int_> result_sample{1, 1, 1, 1, 1, 10, 12, 14, 16, 18};
     compare(result, result_sample);
 }
 
@@ -1058,6 +1180,15 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, dynamic1DFloatArrayStackTest) {
+    Array<float_> array{1.1, 2.2, 3.3};
+    Array<float_> array_stack{4.4, 5.5, 6.6};
+    float_ result_sample_c[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
+    Array<float_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, dynamic1DFloatArrayVStackTest) {
     Array<float_> array{1.1, 2.2, 3.3};
     Array<float_> array_vstack{4.4, 5.5, 6.6};
@@ -1112,6 +1243,14 @@ TEST_F(ArrayManipTest, dynamic1DFloatArrayExpandDimsTest) {
     Array<float_> array{1.1, 2.2, 3.3, 4.4};
     auto result = expand_dims(array, 0);
     float_ c_array_2d[1][4] = {{1.1, 2.2, 3.3, 4.4}};
+    Array<float_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DFloatArrayExpandDims1Test) {
+    Array<float_> array{1.1, 2.2, 3.3, 4.4};
+    auto result = expand_dims(array, 1);
+    float_ c_array_2d[4][1] = {{1.1}, {2.2}, {3.3}, {4.4}};
     Array<float_> result_sample{c_array_2d};
     compare(result, result_sample);
 }
@@ -1177,6 +1316,15 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayConcatenateTest) {
     compare(result, result_sample);
 }
 
+TEST_F(ArrayManipTest, dynamic1DStringArrayStackTest) {
+    Array<string_> array{"str1", "str2", "str3"};
+    Array<string_> array_stack{"str4", "str5", "str6"};
+    string_ result_sample_c[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
+    Array<string_> result_sample{result_sample_c};
+    auto result = stack(array, array_stack);
+    compare(result, result_sample);
+}
+
 TEST_F(ArrayManipTest, dynamic1DStringArrayVStackTest) {
     Array<string_> array{"str1", "str2", "str3"};
     Array<string_> array_vstack{"str4", "str5", "str6"};
@@ -1231,6 +1379,14 @@ TEST_F(ArrayManipTest, dynamic1DStringArrayExpandDimsTest) {
     Array<string_> array{"str1", "str2", "str3", "str4"};
     auto result = expand_dims(array, 0);
     string_ c_array_2d[1][4] = {{"str1", "str2", "str3", "str4"}};
+    Array<string_> result_sample{c_array_2d};
+    compare(result, result_sample);
+}
+
+TEST_F(ArrayManipTest, dynamic1DStringArrayExpandDims1Test) {
+    Array<string_> array{"str1", "str2", "str3", "str4"};
+    auto result = expand_dims(array, 1);
+    string_ c_array_2d[4][1] = {{"str1"}, {"str2"}, {"str3"}, {"str4"}};
     Array<string_> result_sample{c_array_2d};
     compare(result, result_sample);
 }

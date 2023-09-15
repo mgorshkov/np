@@ -196,7 +196,7 @@ namespace np {
                 template<typename DTypeNew>
                 inline NDArrayDynamic<DTypeNew> astype() {
                     NDArrayDynamic<DTypeNew> result{NDArrayDynamicBase<DType>::shape()};
-                    for (std::size_t i = 0; i < result.size(); ++i) {
+                    for (Size i = 0; i < result.size(); ++i) {
                         result.set(i, static_cast<DTypeNew>(NDArrayDynamicBase<DType>::get(i)));
                     }
                     return result;

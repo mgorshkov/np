@@ -317,7 +317,7 @@ namespace np {
                     m_shape = shape;
                 }
 
-                static constexpr int kDepth = Storage::kDepth + 1;
+                static constexpr std::size_t kDepth = Storage::kDepth + 1;
 
             private:
                 static bool hasBooleanIndexing(const IndicesType<DType> &indices) {

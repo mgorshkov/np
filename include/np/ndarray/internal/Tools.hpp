@@ -36,6 +36,8 @@ namespace np {
     namespace ndarray {
         namespace internal {
 
+            constexpr std::size_t kMaxArrayDims = 10;
+
             template<typename Class>
             inline void dumpObject(std::ostream &stream, const Class &object) {
                 stream.write(reinterpret_cast<const char *>(&object), sizeof(object));
@@ -78,6 +80,22 @@ namespace np {
                     object += static_cast<wchar_t>(value);
                 }
                 return object;
+            }
+
+            constexpr const char *kWhitespace = " \n\r\t\f\v";
+
+            inline std::string ltrim(const std::string &s) {
+                auto start = s.find_first_not_of(kWhitespace);
+                return start == std::string::npos ? "" : s.substr(start);
+            }
+
+            inline std::string rtrim(const std::string &s) {
+                auto end = s.find_last_not_of(kWhitespace);
+                return end == std::string::npos ? "" : s.substr(0, end + 1);
+            }
+
+            inline std::string trim(const std::string &s) {
+                return rtrim(ltrim(s));
             }
 
             template<typename Stream>
