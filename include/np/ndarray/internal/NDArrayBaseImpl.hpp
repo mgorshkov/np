@@ -35,9 +35,9 @@ SOFTWARE.
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 #include <np/ndarray/internal/Agg.hpp>
-#include <np/ndarray/internal/Index.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
+#include <np/ndarray/internal/NDArrayIndex.hpp>
 #include <np/ndarray/internal/Nep1.hpp>
 
 namespace np {

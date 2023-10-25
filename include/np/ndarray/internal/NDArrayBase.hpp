@@ -34,8 +34,8 @@ SOFTWARE.
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
-#include <np/ndarray/internal/IndexStorage.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
+#include <np/ndarray/internal/NDArrayIndexStorage.hpp>
 #include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
@@ -54,13 +54,13 @@ namespace np {
             using NDArrayBaseConstPtr = const NDArrayBase<DType, Derived, Storage> *;
 
             template<typename DType, typename Derived, typename Storage, typename ParentStorage, typename Parent>
-            class Index;
+            class NDArrayIndex;
 
             template<typename DType, typename Storage, typename Parent>
-            class IndexStorage;
+            class NDArrayIndexStorage;
 
             template<typename DType, typename Derived, typename ParentStorage, typename Parent>
-            using IndexParent = Index<DType, Derived, IndexStorage<DType, ParentStorage, Parent>, ParentStorage, Parent>;
+            using IndexParent = NDArrayIndex<DType, Derived, NDArrayIndexStorage<DType, ParentStorage, Parent>, ParentStorage, Parent>;
 
             // N-dimensional array
             template<typename DType, typename Derived, typename Storage>

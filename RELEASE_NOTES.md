@@ -1,3 +1,7 @@
+# Release 0.0.9
+## Changes
+* NDArrayDiagonal, NDArrayIdentity, NDArrayConstant
+
 # Release 0.0.8
 ## Changes
 * inv, round, stack, where, diag, isclose functions added
