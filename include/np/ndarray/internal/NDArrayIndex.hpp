@@ -38,23 +38,23 @@ namespace np {
     namespace ndarray {
         namespace internal {
             template<typename DType, typename Derived, typename Storage, typename ParentStorage, typename Parent>
-            class Index final : public NDArrayBase<DType, Derived, Storage> {
+            class NDArrayIndex final : public NDArrayBase<DType, Derived, Storage> {
             public:
-                Index() = default;
+                NDArrayIndex() = default;
 
-                Index(const Index &another)
+                NDArrayIndex(const NDArrayIndex &another)
                     : NDArrayBase<DType, Derived, Storage>{another.getStorage()} {
                 }
 
-                Index(Index &&another) noexcept
+                NDArrayIndex(NDArrayIndex &&another) noexcept
                     : NDArrayBase<DType, Derived, Storage>{std::move(another.getStorage())} {
                 }
 
-                Index &operator=(const Index &another) = default;
-                Index &operator=(Index &&another) noexcept = default;
+                NDArrayIndex &operator=(const NDArrayIndex &another) = default;
+                NDArrayIndex &operator=(NDArrayIndex &&another) noexcept = default;
 
-                Index(Parent parent, const IndicesType<DType> &indices)
-                    : NDArrayBase<DType, Derived, IndexStorage<DType, ParentStorage, Parent>>{parent, indices} {
+                NDArrayIndex(Parent parent, const IndicesType<DType> &indices)
+                    : NDArrayBase<DType, Derived, NDArrayIndexStorage<DType, ParentStorage, Parent>>{parent, indices} {
                 }
             };
 
@@ -62,7 +62,7 @@ namespace np {
             using IndexParentPtr = std::shared_ptr<IndexParent<DType, Derived, ParentStorage, ParentType>>;
 
             template<typename DType, typename Derived, typename ParentStorage, typename Parent>
-            using IndexParent = Index<DType, Derived, IndexStorage<DType, ParentStorage, Parent>, ParentStorage, Parent>;
+            using IndexParent = NDArrayIndex<DType, Derived, NDArrayIndexStorage<DType, ParentStorage, Parent>, ParentStorage, Parent>;
         }// namespace internal
     }    // namespace ndarray
 }// namespace np

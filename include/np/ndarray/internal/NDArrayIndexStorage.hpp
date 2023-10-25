@@ -42,39 +42,39 @@ namespace np {
             class NDArrayBase;
 
             template<typename DType, typename Storage, typename Parent>
-            class IndexStorage {
+            class NDArrayIndexStorage {
             public:
-                IndexStorage() = default;
+                NDArrayIndexStorage() = default;
 
-                IndexStorage(const IndexStorage &) = default;
+                NDArrayIndexStorage(const NDArrayIndexStorage &) = default;
 
-                IndexStorage(IndexStorage &&) noexcept = default;
+                NDArrayIndexStorage(NDArrayIndexStorage &&) noexcept = default;
 
-                IndexStorage(Parent parent, const IndicesType<DType> &indices)
+                NDArrayIndexStorage(Parent parent, const IndicesType<DType> &indices)
                     : m_parent{parent}, m_shape{}, m_weights{} {
                     initWeights();
                     initIndices(indices);
                     initShape(indices);
                 }
 
-                IndexStorage &operator=(const IndexStorage &) = default;
-                IndexStorage &operator=(IndexStorage &&) noexcept = default;
+                NDArrayIndexStorage &operator=(const NDArrayIndexStorage &) = default;
+                NDArrayIndexStorage &operator=(NDArrayIndexStorage &&) noexcept = default;
 
-                const DType &get(std::size_t i) const {
+                const DType &get(Size i) const {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
                     }
                     return m_parent->get(m_indices[i]);
                 }
 
-                DType &get(std::size_t i) {
+                DType &get(Size i) {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
                     }
                     return m_parent->get(m_indices[i]);
                 }
 
-                void set(std::size_t i, const DType &value) {
+                void set(Size i, const DType &value) {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
                     }
@@ -89,11 +89,11 @@ namespace np {
                     using reference = DType &;
                     using iterator_category = std::random_access_iterator_tag;
 
-                    explicit iterator(IndexStorage *container)
+                    explicit iterator(NDArrayIndexStorage *container)
                         : m_container{container}, m_offset{container->m_indices} {
                     }
 
-                    iterator(IndexStorage *container, const OffsetType &offset)
+                    iterator(NDArrayIndexStorage *container, const OffsetType &offset)
                         : m_container{container}, m_offset{offset} {
                     }
 
@@ -183,7 +183,7 @@ namespace np {
                     }
 
                 private:
-                    IndexStorage *m_container;
+                    NDArrayIndexStorage *m_container;
                     OffsetType m_offset;
                 };
 
@@ -203,11 +203,11 @@ namespace np {
                     using reference = DType &;
                     using iterator_category = std::random_access_iterator_tag;
 
-                    explicit const_iterator(const IndexStorage *container)
+                    explicit const_iterator(const NDArrayIndexStorage *container)
                         : m_container{container}, m_offset{container->m_indices} {
                     }
 
-                    const_iterator(const IndexStorage *container, const OffsetType &offset)
+                    const_iterator(const NDArrayIndexStorage *container, const OffsetType &offset)
                         : m_container{container}, m_offset{offset} {
                     }
 
@@ -297,7 +297,7 @@ namespace np {
                     }
 
                 private:
-                    const IndexStorage *m_container;
+                    const NDArrayIndexStorage *m_container;
                     OffsetType m_offset;
                 };
 

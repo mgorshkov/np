@@ -28,11 +28,11 @@ SOFTWARE.
 #include <iomanip>
 #include <iostream>
 
-#include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
+#include <np/ndarray/diagonal/internal/NDArrayIdentityStorage.hpp>
 
 namespace np {
     namespace ndarray {
-        namespace array_dynamic {
+        namespace array_diagonal {
             namespace internal {
                 template<typename Stream>
                 class SquareBracketsInserter {
@@ -51,7 +51,7 @@ namespace np {
                 };
 
                 template<typename DType>
-                std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicStorage<DType> &array) {
+                std::ostream &operator<<(std::ostream &stream, const NDArrayIdentityStorage<DType> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
                     if (array.size() > 100) {
                         for (Size index = 0; index < 2; ++index) {
@@ -101,38 +101,7 @@ namespace np {
                     }
                     return stream;
                 }
-
-                std::ostream &
-                operator<<(std::ostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
-                    SquareBracketsInserter squareBracketsInserter(stream);
-
-                    for (Size index = 0; index < array.size(); ++index) {
-                        if (index > 0) {
-                            stream << " ";
-                        }
-                        const auto &wstr = array.get(index);
-                        std::string str(wstr.length(), 0);
-                        std::transform(wstr.begin(), wstr.end(), str.begin(), [](wchar_t c) {
-                            return static_cast<char>(c);
-                        });
-                        stream << "\"" << str << "\"";
-                    }
-                    return stream;
-                }
-
-                std::wostream &
-                operator<<(std::wostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
-                    SquareBracketsInserter squareBracketsInserter(stream);
-
-                    for (Size index = 0; index < array.size(); ++index) {
-                        if (index > 0) {
-                            stream << " ";
-                        }
-                        stream << "\"" << array.get(index) << "\"";
-                    }
-                    return stream;
-                }
             }// namespace internal
-        }    // namespace array_dynamic
+        }    // namespace array_diagonal
     }        // namespace ndarray
 }// namespace np

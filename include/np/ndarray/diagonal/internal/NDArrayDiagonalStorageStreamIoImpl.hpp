@@ -28,11 +28,11 @@ SOFTWARE.
 #include <iomanip>
 #include <iostream>
 
-#include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
+#include <np/ndarray/diagonal/internal/NDArrayDiagonalStorage.hpp>
 
 namespace np {
     namespace ndarray {
-        namespace array_dynamic {
+        namespace array_diagonal {
             namespace internal {
                 template<typename Stream>
                 class SquareBracketsInserter {
@@ -51,7 +51,7 @@ namespace np {
                 };
 
                 template<typename DType>
-                std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicStorage<DType> &array) {
+                std::ostream &operator<<(std::ostream &stream, const NDArrayDiagonalStorage<DType> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
                     if (array.size() > 100) {
                         for (Size index = 0; index < 2; ++index) {
@@ -69,7 +69,7 @@ namespace np {
                             }
                         }
                         stream << "...";
-                        for (Size index = array.size() - 3; index < array.size(); ++index) {
+                        for (std::size_t index = array.size() - 3; index < array.size(); ++index) {
                             if (index > 0)
                                 stream << " ";
                             if constexpr (std::is_floating_point<DType>::value) {
@@ -84,7 +84,7 @@ namespace np {
                             }
                         }
                     } else {
-                        for (Size index = 0; index < array.size(); ++index) {
+                        for (std::size_t index = 0; index < array.size(); ++index) {
                             if (index > 0)
                                 stream << " ";
                             if constexpr (std::is_floating_point<DType>::value) {
@@ -103,7 +103,7 @@ namespace np {
                 }
 
                 std::ostream &
-                operator<<(std::ostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
+                operator<<(std::ostream &stream, const NDArrayDiagonalStorage<std::wstring> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
 
                     for (Size index = 0; index < array.size(); ++index) {
@@ -121,7 +121,7 @@ namespace np {
                 }
 
                 std::wostream &
-                operator<<(std::wostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
+                operator<<(std::wostream &stream, const NDArrayDiagonalStorage<std::wstring> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
 
                     for (Size index = 0; index < array.size(); ++index) {
@@ -133,6 +133,6 @@ namespace np {
                     return stream;
                 }
             }// namespace internal
-        }    // namespace array_dynamic
+        }    // namespace array_diagonal
     }        // namespace ndarray
 }// namespace np

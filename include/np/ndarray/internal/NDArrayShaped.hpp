@@ -51,12 +51,12 @@ namespace np {
 
                 NDArrayShaped(NDArrayShaped &&another) noexcept = default;
 
-                NDArrayShaped(const std::vector<DType> &vector, const Shape &shape);
+                NDArrayShaped(const std::vector<DType> &vector, Shape shape);
 
-                NDArrayShaped(DType *data, const Shape &shape);
+                NDArrayShaped(DType *data, Shape shape);
 
                 template<typename... Args>
-                explicit NDArrayShaped(const Shape &shape, Args &&...args);
+                explicit NDArrayShaped(Shape shape, Args &&...args);
 
                 template<typename... Args>
                 explicit NDArrayShaped(bool isColumnVector, Args &&...args);

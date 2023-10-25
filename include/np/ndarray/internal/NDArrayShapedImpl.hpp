@@ -43,19 +43,19 @@ namespace np {
         namespace internal {
 
             template<typename DType, typename Derived, typename Storage>
-            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const std::vector<DType> &vector, const Shape &shape)
-                : Base{vector, shape.calcSizeByShape()}, m_shape{shape} {
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const std::vector<DType> &vector, Shape shape)
+                : Base{vector, shape.calcSizeByShape()}, m_shape{std::move(shape)} {
             }
 
             template<typename DType, typename Derived, typename Storage>
-            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(DType *data, const Shape &shape)
-                : Base{data, shape.calcSizeByShape()}, m_shape{shape} {
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(DType *data, Shape shape)
+                : Base{data, shape.calcSizeByShape()}, m_shape{std::move(shape)} {
             }
 
             template<typename DType, typename Derived, typename Storage>
             template<typename... Args>
-            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(const Shape &shape, Args &&...args)
-                : Base{std::forward<Args>(args)...}, m_shape{shape} {
+            NDArrayShaped<DType, Derived, Storage>::NDArrayShaped(Shape shape, Args &&...args)
+                : Base{std::forward<Args>(args)...}, m_shape{std::move(shape)} {
             }
 
             template<typename DType, typename Derived, typename Storage>

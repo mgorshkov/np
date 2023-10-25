@@ -33,7 +33,7 @@ SOFTWARE.
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
 
-#include <np/ndarray/internal/Index.hpp>
+#include <np/ndarray/internal/NDArrayIndex.hpp>
 #include <np/ndarray/internal/NDArrayShaped.hpp>
 
 #include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>

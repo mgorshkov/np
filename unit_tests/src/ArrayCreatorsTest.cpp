@@ -252,63 +252,33 @@ TEST_F(ArrayCreatorsTest, fill3DCreationTest) {
 }
 
 // Create an NDArray of zeros
-TEST_F(ArrayCreatorsTest, test1DZerosStatic) {
-    auto array_1d = zeros<int_, 3>();
-    checkArrayRepr(array_1d, "[0 0 0]");
-}
-
-TEST_F(ArrayCreatorsTest, test1DZerosDynamic) {
+TEST_F(ArrayCreatorsTest, test1DZeros) {
     auto array_1d = zeros<int_>(Shape{3});
     checkArrayRepr(array_1d, "[0 0 0]");
 }
 
-TEST_F(ArrayCreatorsTest, test2DZerosStatic) {
-    auto array_2d = zeros<int_, 2, 3>();
-    checkArrayRepr(array_2d, "[[0 0 0]\n [0 0 0]]");
-}
-
-TEST_F(ArrayCreatorsTest, test2DZerosDynamic) {
+TEST_F(ArrayCreatorsTest, test2DZeros) {
     auto array_2d = zeros<int_>(Shape{2, 3});
     checkArrayRepr(array_2d, "[[0 0 0]\n [0 0 0]]");
 }
 
-TEST_F(ArrayCreatorsTest, test3DZerosStatic) {
-    auto array_3d = zeros<int_, 2, 2, 3>();
-    checkArrayRepr(array_3d, "[[[0 0 0]\n [0 0 0]]\n [[0 0 0]\n [0 0 0]]]");
-}
-
-TEST_F(ArrayCreatorsTest, test3DZerosDynamic) {
+TEST_F(ArrayCreatorsTest, test3DZeros) {
     auto array_3d = zeros<int_>(Shape{2, 2, 3});
     checkArrayRepr(array_3d, "[[[0 0 0]\n [0 0 0]]\n [[0 0 0]\n [0 0 0]]]");
 }
 
 // Create an NDArray of ones
-TEST_F(ArrayCreatorsTest, test1DOnesStatic) {
-    auto array_1d = ones<int_, 3>();
-    checkArrayRepr(array_1d, "[1 1 1]");
-}
-
-TEST_F(ArrayCreatorsTest, test1DOnesDynamic) {
+TEST_F(ArrayCreatorsTest, test1DOnes) {
     auto array_1d = ones<int_>(Shape{3});
     checkArrayRepr(array_1d, "[1 1 1]");
 }
 
-TEST_F(ArrayCreatorsTest, test2DOnesStatic) {
-    auto array_2d = ones<int_, 2, 3>();
-    checkArrayRepr(array_2d, "[[1 1 1]\n [1 1 1]]");
-}
-
-TEST_F(ArrayCreatorsTest, test2DOnesDynamic) {
+TEST_F(ArrayCreatorsTest, test2DOnes) {
     auto array_2d = ones<int_>(Shape{2, 3});
     checkArrayRepr(array_2d, "[[1 1 1]\n [1 1 1]]");
 }
 
-TEST_F(ArrayCreatorsTest, test3DOnesStatic) {
-    auto array_3d = ones<int_, 2, 2, 3>();
-    checkArrayRepr(array_3d, "[[[1 1 1]\n [1 1 1]]\n [[1 1 1]\n [1 1 1]]]");
-}
-
-TEST_F(ArrayCreatorsTest, test3DOnesDynamic) {
+TEST_F(ArrayCreatorsTest, test3DOnes) {
     auto array_3d = ones<int_>(Shape{2, 2, 3});
     checkArrayRepr(array_3d, "[[[1 1 1]\n [1 1 1]]\n [[1 1 1]\n [1 1 1]]]");
 }
@@ -352,24 +322,14 @@ TEST_F(ArrayCreatorsTest, testLinspaceDynamic) {
 }
 
 // Create a constant NDArray
-TEST_F(ArrayCreatorsTest, testFullStatic) {
-    auto array = full<int_, 2, 2>(7);
-    checkArrayRepr(array, "[[7 7]\n [7 7]]");
-}
-
-TEST_F(ArrayCreatorsTest, testFullDynamic) {
+TEST_F(ArrayCreatorsTest, testFull) {
     Shape shape{2, 2};
     auto array = full<int_>(7, shape);
     checkArrayRepr(array, "[[7 7]\n [7 7]]");
 }
 
 // Create an identity matrix
-TEST_F(ArrayCreatorsTest, testEyeStatic) {
-    auto array = eye<int_, 2>();
-    checkArrayRepr(array, "[[1 0]\n [0 1]]");
-}
-
-TEST_F(ArrayCreatorsTest, testEyeDynamic) {
+TEST_F(ArrayCreatorsTest, testEye) {
     auto array = eye<int_>(2);
     checkArrayRepr(array, "[[1 0]\n [0 1]]");
 }
@@ -388,13 +348,7 @@ TEST_F(ArrayCreatorsTest, testRandomDynamic) {
 }
 
 // Create an empty NDArray
-TEST_F(ArrayCreatorsTest, testEmptyStatic) {
-    auto array = empty<int_, 2, 2>();
-    Shape shape{2, 2};
-    checkArrayShape(array, shape);
-}
-
-TEST_F(ArrayCreatorsTest, testEmptyDynamic) {
+TEST_F(ArrayCreatorsTest, testEmpty) {
     Shape shape{2, 2};
     auto array = empty<int_>(shape);
     checkArrayShape(array, shape);
@@ -402,13 +356,13 @@ TEST_F(ArrayCreatorsTest, testEmptyDynamic) {
 
 TEST_F(ArrayCreatorsTest, testExtendArray) {
     Shape shape{2, 2};
-    auto array = empty<int_>(shape);
+    auto array = empty<int_>(shape).copy();
     array.push_back(1);
     checkArrayRepr(array, "[0 0 0 0 1]");
 }
 
 TEST_F(ArrayCreatorsTest, testTransformArray) {
-    auto array = eye<int_>(2);
+    auto array = eye<int_>(2).copy();
     checkArrayRepr(array, "[[1 0]\n [0 1]]");
     Array<int_> output{};
     std::transform(array.cbegin(), array.cend(),
@@ -416,140 +370,158 @@ TEST_F(ArrayCreatorsTest, testTransformArray) {
     checkArrayRepr(output, "[2 1 1 2]");
 }
 
-TEST_F(ArrayCreatorsTest, testDiagEmpty) {
-    {
-        auto v = Array<int_>{};
-        int k = 0;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[]");
-    }
-    {
-        auto v = Array<int_>{};
-        int k = 3;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[0 0 0]\n"
-                              " [0 0 0]\n"
-                              " [0 0 0]]");
-    }
-    {
-        auto v = Array<int_>{};
-        int k = -4;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[0 0 0 0]\n"
-                              " [0 0 0 0]\n"
-                              " [0 0 0 0]\n"
-                              " [0 0 0 0]]");
-    }
+TEST_F(ArrayCreatorsTest, testDiagEmpty0) {
+    auto v = Array<int_>{};
+    int k = 0;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[]");
 }
 
-TEST_F(ArrayCreatorsTest, testDiag1D) {
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = 0;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[1 0 0]\n"
-                              " [0 2 0]\n"
-                              " [0 0 3]]");
-    }
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = 1;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[0 1 0 0]\n"
-                              " [0 0 2 0]\n"
-                              " [0 0 0 3]\n"
-                              " [0 0 0 0]]");
-    }
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = 2;
-        auto array = diag(v, k);
-        checkArrayRepr(array,
-                       "[[0 0 1 0 0]\n"
-                       " [0 0 0 2 0]\n"
-                       " [0 0 0 0 3]\n"
-                       " [0 0 0 0 0]\n"
-                       " [0 0 0 0 0]]");
-    }
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = -1;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[0 0 0 0]\n"
-                              " [1 0 0 0]\n"
-                              " [0 2 0 0]\n"
-                              " [0 0 3 0]]");
-    }
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = -2;
-        auto array = diag(v, k);
-        checkArrayRepr(array,
-                       "[[0 0 0 0 0]\n"
-                       " [0 0 0 0 0]\n"
-                       " [1 0 0 0 0]\n"
-                       " [0 2 0 0 0]\n"
-                       " [0 0 3 0 0]]");
-    }
-    {
-        auto v = Array<int_>{1, 2, 3};
-        int k = -20;
-        auto array = diag(v, k);
-        checkArrayRepr(array, "[[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
-                              " [0 0 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]");
-    }
+TEST_F(ArrayCreatorsTest, testDiagEmpty3) {
+    auto v = Array<int_>{};
+    int k = 3;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[0 0 0]\n"
+                          " [0 0 0]\n"
+                          " [0 0 0]]");
 }
 
-TEST_F(ArrayCreatorsTest, testDiag2D) {
-    {
-        int_ array[2][4] = {{1, 2, 3, 4},
-                            {5, 6, 7, 8}};
-        auto v = Array<int_>{array};
-        int k = 0;
-        checkArrayRepr(diag(v, k), "[1 6]");
-    }
-    {
-        int_ array[2][4] = {{1, 2, 3, 4},
-                            {5, 6, 7, 8}};
-        auto v = Array<int_>{array};
-        int k = 2;
-        checkArrayRepr(diag(v, k), "[3 8]");
-    }
-    {
-        int_ array[2][4] = {{1, 2, 3, 4},
-                            {5, 6, 7, 8}};
-        auto v = Array<int_>{array};
-        int k = -1;
-        checkArrayRepr(diag(v, k), "[5]");
-    }
-    {
-        int_ array[2][4] = {{1, 2, 3, 4},
-                            {5, 6, 7, 8}};
-        auto v = Array<int_>{array};
-        int k = -2;
-        checkArrayRepr(diag(v, k), "[]");
-    }
+TEST_F(ArrayCreatorsTest, testDiagEmptyMinus4) {
+    auto v = Array<int_>{};
+    int k = -4;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[0 0 0 0]\n"
+                          " [0 0 0 0]\n"
+                          " [0 0 0 0]\n"
+                          " [0 0 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1D0) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = 0;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[1 0 0]\n"
+                          " [0 2 0]\n"
+                          " [0 0 3]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1D1) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = 1;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[0 1 0 0]\n"
+                          " [0 0 2 0]\n"
+                          " [0 0 0 3]\n"
+                          " [0 0 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1D2) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = 2;
+    auto array = diag(v, k);
+    checkArrayRepr(array,
+                   "[[0 0 1 0 0]\n"
+                   " [0 0 0 2 0]\n"
+                   " [0 0 0 0 3]\n"
+                   " [0 0 0 0 0]\n"
+                   " [0 0 0 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1DMinus1) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = -1;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[0 0 0 0]\n"
+                          " [1 0 0 0]\n"
+                          " [0 2 0 0]\n"
+                          " [0 0 3 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1DMinus2) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = -2;
+    auto array = diag(v, k);
+    checkArrayRepr(array,
+                   "[[0 0 0 0 0]\n"
+                   " [0 0 0 0 0]\n"
+                   " [1 0 0 0 0]\n"
+                   " [0 2 0 0 0]\n"
+                   " [0 0 3 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag1DMinus20) {
+    auto v = Array<int_>{1, 2, 3};
+    int k = -20;
+    auto array = diag(v, k);
+    checkArrayRepr(array, "[[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n"
+                          " [0 0 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2D0) {
+    int_ array[2][4] = {{1, 2, 3, 4},
+                        {5, 6, 7, 8}};
+    auto v = Array<int_>{array};
+    int k = 0;
+    checkArrayRepr(diag(v, k), "[1 6]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2D2) {
+    int_ array[2][4] = {{1, 2, 3, 4},
+                        {5, 6, 7, 8}};
+    auto v = Array<int_>{array};
+    int k = 2;
+    checkArrayRepr(diag(v, k), "[3 8]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2DMinus1) {
+    int_ array[2][4] = {{1, 2, 3, 4},
+                        {5, 6, 7, 8}};
+    auto v = Array<int_>{array};
+    int k = -1;
+    checkArrayRepr(diag(v, k), "[5]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2DMinus2) {
+    int_ array[2][4] = {{1, 2, 3, 4},
+                        {5, 6, 7, 8}};
+    auto v = Array<int_>{array};
+    int k = -2;
+    checkArrayRepr(diag(v, k), "[]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2D2x4) {
+    int_ array[4][2] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    auto v = Array<int_>{array};
+    int k = 1;
+    checkArrayRepr(diag(v, k), "[2]");
+}
+
+TEST_F(ArrayCreatorsTest, testDiag2D2x4Minus1) {
+    int_ array[4][2] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    auto v = Array<int_>{array};
+    int k = -1;
+    checkArrayRepr(diag(v, k), "[3 6]");
 }
 
 TEST_F(ArrayCreatorsTest, testDiag3D) {

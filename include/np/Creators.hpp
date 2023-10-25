@@ -31,6 +31,9 @@ SOFTWARE.
 #include <np/Shape.hpp>
 #include <random>
 
+#include <np/ndarray/constant/NDArrayConstant.hpp>
+#include <np/ndarray/diagonal/NDArrayDiagonal.hpp>
+#include <np/ndarray/diagonal/NDArrayIdentity.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
 
@@ -44,13 +47,16 @@ constexpr std::size_t hardware_destructive_interference_size = 64;
 #endif
 
 namespace np {
+    using ndarray::array_constant::NDArrayConstant;
+    using ndarray::array_diagonal::NDArrayDiagonal;
+    using ndarray::array_diagonal::NDArrayIdentity;
     using ndarray::array_dynamic::NDArrayDynamic;
     using ndarray::array_static::NDArrayStatic;
 
     //////////////////////////////////////////////////////////////
     /// \brief Create a dynamic array of zeros
     ///
-    /// Create a dynamic array of zeros of a given shape.
+    /// Create a constant array of zeros of a given shape.
     ///
     /// \param DType Type of array elements
     /// \param shape Shape of the array
@@ -60,31 +66,13 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
     auto zeros(Shape shape) {
-        return NDArrayDynamic<DType>{shape, 0};
+        return NDArrayConstant<DType>{std::move(shape), 0};
     }
 
     //////////////////////////////////////////////////////////////
-    /// \brief Create a static array of zeros
+    /// \brief Create a constant array of ones
     ///
-    /// Create a static array of zeros of a given shape.
-    ///
-    /// \param DType Type of array elements
-    /// \param SizeT First dim of the array
-    /// \param Sizes Rest dims of the array
-    ///
-    /// \return A dynamic array of zeros
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... Sizes>
-    auto zeros() {
-        const Shape shape{SizeT, Sizes...};
-        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, 0};
-    }
-
-    //////////////////////////////////////////////////////////////
-    /// \brief Create a dynamic array of ones
-    ///
-    /// Create a dynamic array of ones of a given shape.
+    /// Create a constant array of ones of a given shape.
     ///
     /// \param DType Type of array elements
     /// \param shape Shape of the array
@@ -94,25 +82,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
     auto ones(Shape shape) {
-        return NDArrayDynamic<DType>{shape, 1};
-    }
-
-    //////////////////////////////////////////////////////////////
-    /// \brief Create a static array of ones
-    ///
-    /// Create a static array of ones of a given shape.
-    ///
-    /// \param DType Type of array elements
-    /// \param SizeT First dim of the array
-    /// \param Sizes Rest dims of the array
-    ///
-    /// \return A dynamic array of zeros
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... Sizes>
-    auto ones() {
-        const Shape shape{SizeT, Sizes...};
-        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, 1};
+        return NDArrayConstant<DType>{std::move(shape), 1};
     }
 
     //////////////////////////////////////////////////////////////
@@ -265,9 +235,9 @@ namespace np {
     }
 
     //////////////////////////////////////////////////////////////
-    /// \brief Create a dynamic array filled with a value
+    /// \brief Create a constant array filled with a value
     ///
-    /// Create a dynamic array filled with a fillValue.
+    /// Create a constant array filled with a fillValue.
     ///
     /// \param DType Type of array elements
     /// \param fillValue Value to fill the array
@@ -277,28 +247,8 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType>
-    auto full(DType fillValue, const Shape &shape) {
-        return NDArrayDynamic{shape, fillValue};
-    }
-
-    //////////////////////////////////////////////////////////////
-    /// \brief Create a static array filled with a value
-    ///
-    /// Create a static array filled with a fillValue.
-    ///
-    /// \param DType Type of array elements
-    /// \param SizeT First dim of the array
-    /// \param Sizes Rest dims of the array
-    /// \param fillValue Value to fill the array
-    /// \param shape Shape of the array
-    ///
-    /// \return A static array of zeros
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... Sizes>
-    auto full(DType fillValue) {
-        const Shape shape{SizeT, Sizes...};
-        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape, fillValue};
+    auto full(const DType &fillValue, const Shape &shape) {
+        return NDArrayConstant{shape, fillValue};
     }
 
     //////////////////////////////////////////////////////////////
@@ -315,37 +265,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
     auto eye(Size size) {
-        std::vector<std::vector<DType>> vector;
-        vector.resize(size);
-        for (Size i = 0; i < size; ++i) {
-            vector[i].resize(size);
-            for (Size j = 0; j < size; ++j) {
-                vector[i][j] = i == j;
-            }
-        }
-        return NDArrayDynamic<DType>{vector};
-    }
-
-    //////////////////////////////////////////////////////////////
-    /// \brief Create an identity matrix
-    ///
-    /// Create an identity matrix.
-    ///
-    /// \param DType Type of array elements
-    /// \param SizeT Size of the array
-    ///
-    /// \return A static array of zeros
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT>
-    auto eye() {
-        std::array<std::array<DType, SizeT>, SizeT> array;
-        for (Size i = 0; i < SizeT; ++i) {
-            for (Size j = 0; j < SizeT; ++j) {
-                array[i][j] = i == j;
-            }
-        }
-        return NDArrayStatic<DType, SizeT * 2>{array};
+        return NDArrayIdentity<DType>{size};
     }
 
     namespace random {
@@ -550,26 +470,8 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault>
-    auto empty(const Shape &shape) {
-        return NDArrayDynamic<DType>{shape};
-    }
-
-    //////////////////////////////////////////////////////////////
-    /// \brief Create an empty static array of values
-    ///
-    /// Create an empty static array.
-    ///
-    /// \param DType Type of array elements
-    /// \param SizeT First dim of the array
-    /// \param Sizes Rest dims of the array
-    ///
-    /// \return An empty static array
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType, Size SizeT, Size... Sizes>
-    auto empty() {
-        const Shape shape{SizeT, Sizes...};
-        return NDArrayStatic<DType, (SizeT * ... * Sizes)>{shape};
+    auto empty(Shape shape) {
+        return NDArrayConstant<DType>{std::move(shape), 0};
     }
 
     //////////////////////////////////////////////////////////////
@@ -586,28 +488,9 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType, typename Derived, typename Storage>
     auto diag(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
-        if (v.empty()) {
-            Size size = (k > 0 ? k : -k);
-            return Array<DType>{Shape{size, size}};
+        if (v.ndim() > 2) {
+            throw std::runtime_error("diag supports empty, 1D and 2D arrays");
         }
-        if (v.ndim() != 1 && v.ndim() != 2) {
-            throw std::runtime_error("Input must be 1- or 2-d.");
-        }
-        if (v.ndim() == 1) {
-            auto size = v.size() + (k >= 0 ? k : -k);
-            Shape shape{size, size};
-            Array<DType> result{shape};
-            Size offset = (k >= 0 ? k : size * (-k));
-            for (Size i = 0; i < v.size(); ++i) {
-                result.set(offset, v.get(i));
-                offset += (size + 1);
-            }
-            return result;
-        }
-        Array<DType> result{};
-        for (Size offset = (k >= 0 ? k : v.shape()[1] * (-k)); offset < v.size(); offset += (v.shape()[1] + 1)) {
-            result.push_back(v.get(offset));
-        }
-        return result;
+        return NDArrayDiagonal<DType, Derived, Storage>(v, k);
     }
 }// namespace np

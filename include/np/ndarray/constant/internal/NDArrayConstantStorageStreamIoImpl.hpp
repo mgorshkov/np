@@ -28,11 +28,11 @@ SOFTWARE.
 #include <iomanip>
 #include <iostream>
 
-#include <np/ndarray/dynamic/internal/NDArrayDynamicStorage.hpp>
+#include <np/ndarray/constant/internal/NDArrayConstantStorage.hpp>
 
 namespace np {
     namespace ndarray {
-        namespace array_dynamic {
+        namespace array_constant {
             namespace internal {
                 template<typename Stream>
                 class SquareBracketsInserter {
@@ -51,7 +51,7 @@ namespace np {
                 };
 
                 template<typename DType>
-                std::ostream &operator<<(std::ostream &stream, const NDArrayDynamicStorage<DType> &array) {
+                std::ostream &operator<<(std::ostream &stream, const NDArrayConstantStorage<DType> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
                     if (array.size() > 100) {
                         for (Size index = 0; index < 2; ++index) {
@@ -103,7 +103,7 @@ namespace np {
                 }
 
                 std::ostream &
-                operator<<(std::ostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
+                operator<<(std::ostream &stream, const NDArrayConstantStorage<std::wstring> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
 
                     for (Size index = 0; index < array.size(); ++index) {
@@ -121,7 +121,7 @@ namespace np {
                 }
 
                 std::wostream &
-                operator<<(std::wostream &stream, const NDArrayDynamicStorage<std::wstring> &array) {
+                operator<<(std::wostream &stream, const NDArrayConstantStorage<std::wstring> &array) {
                     SquareBracketsInserter squareBracketsInserter(stream);
 
                     for (Size index = 0; index < array.size(); ++index) {
@@ -133,6 +133,6 @@ namespace np {
                     return stream;
                 }
             }// namespace internal
-        }    // namespace array_dynamic
+        }    // namespace array_constant
     }        // namespace ndarray
 }// namespace np

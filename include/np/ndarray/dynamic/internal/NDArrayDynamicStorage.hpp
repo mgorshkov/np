@@ -427,19 +427,19 @@ namespace np {
                         }
                     }
 
-                    [[nodiscard]] const DType &get(std::size_t i) const {
+                    [[nodiscard]] const DType &get(Size i) const {
                         return m_ptr[i];
                     }
 
-                    DType &get(std::size_t i) {
+                    DType &get(Size i) {
                         return m_ptr[i];
                     }
 
-                    void set(std::size_t i, DType value) {
+                    void set(Size i, DType value) {
                         m_ptr[i] = value;
                     }
 
-                    [[nodiscard]] std::size_t size() const {
+                    [[nodiscard]] Size size() const {
                         return m_size;
                     }
 
@@ -463,7 +463,7 @@ namespace np {
                         using reference = DType &;
                         using iterator_category = std::random_access_iterator_tag;
 
-                        iterator(NDArrayDynamicStorage *container_, std::size_t offset_)
+                        iterator(NDArrayDynamicStorage *container_, Size offset_)
                             : container{container_}, offset{offset_} {
                         }
 
@@ -550,7 +550,7 @@ namespace np {
 
                     private:
                         NDArrayDynamicStorage *container;
-                        std::size_t offset;
+                        Size offset;
                     };
 
                     iterator begin() {
@@ -558,7 +558,7 @@ namespace np {
                     }
 
                     iterator end() {
-                        return iterator{this, static_cast<std::size_t>(m_size)};
+                        return iterator{this, m_size};
                     }
 
                     class const_iterator {
@@ -569,7 +569,7 @@ namespace np {
                         using reference = DType &;
                         using iterator_category = std::random_access_iterator_tag;
 
-                        const_iterator(const NDArrayDynamicStorage *container_, std::size_t offset_)
+                        const_iterator(const NDArrayDynamicStorage *container_, Size offset_)
                             : container{container_}, offset{offset_} {
                         }
 
@@ -656,7 +656,7 @@ namespace np {
 
                     private:
                         const NDArrayDynamicStorage *container;
-                        std::size_t offset;
+                        Size offset;
                     };
 
                     [[nodiscard]] const_iterator cbegin() const {
