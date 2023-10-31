@@ -97,23 +97,23 @@ namespace np {
                 [[nodiscard]] virtual Shape shape() const { return m_storage.shape(); };
                 virtual void setShape(const Shape &shape) { m_storage.setShape(shape); };
 
-                [[nodiscard]] bool empty() const {
-                    return shape().empty();
+                [[nodiscard]] virtual bool empty() const {
+                    return m_storage.shape().empty();
                 }
 
                 // Array length
-                [[nodiscard]] Size len() const {
-                    return shape().empty() ? 0 : shape()[0];
+                [[nodiscard]] virtual Size len() const {
+                    return m_storage.shape().empty() ? 0 : m_storage.shape()[0];
                 }
 
                 // Number of array dimensions
-                [[nodiscard]] Size ndim() const {
-                    return static_cast<Size>(shape().size());
+                [[nodiscard]] virtual Size ndim() const {
+                    return static_cast<Size>(m_storage.shape().size());
                 }
 
                 // Number of array elements
-                [[nodiscard]] Size size() const {
-                    return shape().calcSizeByShape();
+                [[nodiscard]] virtual Size size() const {
+                    return m_storage.shape().calcSizeByShape();
                 }
 
                 inline constexpr DType dtype();

@@ -74,6 +74,25 @@ namespace np {
                 [[nodiscard]] Shape shape() const override;
                 void setShape(const Shape &shape) override;
 
+                [[nodiscard]] bool empty() const override {
+                    return m_shape.empty();
+                }
+
+                // Array length
+                [[nodiscard]] Size len() const override {
+                    return m_shape.empty() ? 0 : m_shape[0];
+                }
+
+                // Number of array dimensions
+                [[nodiscard]] Size ndim() const override {
+                    return static_cast<Size>(m_shape.size());
+                }
+
+                // Number of array elements
+                [[nodiscard]] Size size() const override {
+                    return m_shape.calcSizeByShape();
+                }
+
                 using value_type = DType;// for std::back_inserter
                 void push_back(const value_type &value) {
                     Base::push(value);

@@ -487,10 +487,26 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType, typename Derived, typename Storage>
-    auto diag(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
-        if (v.ndim() > 2) {
-            throw std::runtime_error("diag supports empty, 1D and 2D arrays");
+    auto diag0(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
+        if (!v.empty()) {
+            throw std::runtime_error("diag0 supports empty arrays");
         }
-        return NDArrayDiagonal<DType, Derived, Storage>(v, k);
+        return NDArrayDiagonal<DType, Derived, Storage, 0>(v, k);
+    }
+
+    template<typename DType, typename Derived, typename Storage>
+    auto diag1(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
+        if (v.ndim() != 1) {
+            throw std::runtime_error("diag1 supports 1D arrays");
+        }
+        return NDArrayDiagonal<DType, Derived, Storage, 1>(v, k);
+    }
+
+    template<typename DType, typename Derived, typename Storage>
+    auto diag2(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
+        if (v.ndim() != 2) {
+            throw std::runtime_error("diag2 supports 2D arrays");
+        }
+        return NDArrayDiagonal<DType, Derived, Storage, 2>(v, k);
     }
 }// namespace np

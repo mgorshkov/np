@@ -37,7 +37,7 @@ namespace np {
         }
 
         template<typename DType1, typename DType2>
-        inline static bool element_equal(const DType1 &value1, const DType2 &value2, np::float_ = 1e-05, np::float_ = 1e-08) {
+        inline static bool element_equal(const DType1 &value1, const DType2 &value2, np::float_, np::float_, bool) {
             return value1 == value2;
         }
 

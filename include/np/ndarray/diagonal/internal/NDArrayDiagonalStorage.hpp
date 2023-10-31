@@ -39,7 +39,7 @@ namespace np {
         namespace array_diagonal {
             namespace internal {
 
-                template<typename DType, typename Derived, typename Storage>
+                template<typename DType, typename Derived, typename Storage, Size Dims>
                 class NDArrayDiagonalStorage {
                 public:
                     NDArrayDiagonalStorage() noexcept
@@ -81,11 +81,11 @@ namespace np {
                     [[nodiscard]] const DType &get(Size i) const {
                         static DType zero{0};
                         // empty array
-                        if (m_v.empty()) {
+                        if constexpr (Dims == 0) {
                             return zero;
                         }
                         // 1D array
-                        if (m_v.ndim() == 1) {
+                        if constexpr (Dims == 1) {
                             if (m_size == 0) {
                                 throw std::runtime_error("Empty NDArrayDiagonalStorage");
                             }

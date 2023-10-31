@@ -368,16 +368,23 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             template<typename DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::dot(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                if (ndim() == 1 && array.ndim() == 1) {
-                    if (size() != array.size()) {
+                auto ndim1 = ndim();
+                auto ndim2 = array.ndim();
+                auto size1 = size();
+                auto size2 = array.size();
+                auto shape1 = shape();
+                auto shape2 = array.shape();
+
+                if (ndim1 == 1 && ndim2 == 1) {
+                    if (size1 != size2) {
                         throw std::runtime_error("Sizes are different for 1D arrays");
                     }
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{Shape{1}};
                     DType cellResult = 0;
-#pragma omp parallel for default(none) shared(array) reduction(+ \
-                                                               : cellResult)
+#pragma omp parallel for default(none) shared(array, size1) reduction(+ \
+                                                                      : cellResult)
                     // index variable in OpenMP 'for' statement must have signed integral type
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(size1); ++i) {
                         DType multiplyResult{};
                         ndarray::internal::multiply(get(i), array.get(i), multiplyResult);
                         cellResult += multiplyResult;
@@ -385,20 +392,20 @@ namespace np {
                     result.set(0, cellResult);
                     return result;
                 }
-                if (ndim() == 1 && array.ndim() == 2) {
-                    if (shape()[0] != array.shape()[0]) {
+                if (ndim1 == 1 && ndim2 == 2) {
+                    if (shape1[0] != shape2[0]) {
                         throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
                     }
-                    Shape resultShape{array.shape()[1]};
+                    Shape resultShape{shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(array.shape()[1]); ++i) {
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape2[1]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i) reduction(+ \
-                                                                  : cellResult)
-                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape()[0]); ++k) {
+#pragma omp parallel for default(none) shared(array, i, shape1, shape2) reduction(+ \
+                                                                                  : cellResult)
+                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[0]); ++k) {
                             DType multiplyResult{};
-                            ndarray::internal::multiply(get(k), array.get(k * array.shape()[1] + i),
+                            ndarray::internal::multiply(get(k), array.get(k * shape2[1] + i),
                                                         multiplyResult);
                             cellResult += multiplyResult;
                         }
@@ -406,20 +413,20 @@ namespace np {
                     }
                     return result;
                 }
-                if (ndim() == 2 && array.ndim() == 1) {
-                    if (shape()[1] != array.shape()[0]) {
+                if (ndim1 == 2 && ndim2 == 1) {
+                    if (shape1[1] != shape2[0]) {
                         throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
                     }
-                    Shape resultShape{shape()[0]};
+                    Shape resultShape{shape1[0]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape()[0]); ++i) {
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape1[0]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i) reduction(+ \
-                                                                  : cellResult)
-                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape()[1]); ++k) {
+#pragma omp parallel for default(none) shared(array, i, shape1) reduction(+ \
+                                                                          : cellResult)
+                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
                             DType multiplyResult{};
-                            ndarray::internal::multiply(get(i * shape()[1] + k), array.get(k),
+                            ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k),
                                                         multiplyResult);
                             cellResult += multiplyResult;
                         }
@@ -427,25 +434,25 @@ namespace np {
                     }
                     return result;
                 }
-                if (ndim() == 2 && array.ndim() == 2) {
-                    if (shape()[1] != array.shape()[0]) {
+                if (ndim1 == 2 && ndim2 == 2) {
+                    if (shape1[1] != shape2[0]) {
                         throw std::runtime_error("Shapes are not consistent for 2D arrays");
                     }
-                    Shape resultShape{shape()[0], array.shape()[1]};
+                    Shape resultShape{shape1[0], shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape()[0]); ++i) {
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape1[0]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
-                        for (std::int32_t j = 0; j < static_cast<std::int32_t>(array.shape()[1]); ++j) {
+                        for (std::int32_t j = 0; j < static_cast<std::int32_t>(shape2[1]); ++j) {
                             DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, j) reduction(+ \
-                                                                     : cellResult)
-                            for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape()[1]); ++k) {
+#pragma omp parallel for default(none) shared(array, i, j, shape1, shape2) reduction(+ \
+                                                                                     : cellResult)
+                            for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
                                 DType multiplyResult{};
-                                ndarray::internal::multiply(get(i * shape()[1] + k), array.get(k * array.shape()[1] + j),
+                                ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k * shape2[1] + j),
                                                             multiplyResult);
                                 cellResult += multiplyResult;
                             }
-                            result.set(i * array.shape()[1] + j, cellResult);
+                            result.set(i * shape2[1] + j, cellResult);
                         }
                     }
                     return result;
@@ -1482,9 +1489,7 @@ namespace np {
                     }
                 }
                 if (last > shape[dimIndex]) {
-                    throw std::runtime_error("Index " + std::to_string(last) +
-                                             " out of bounds for axis " + std::to_string(dimIndex) +
-                                             " with size " + std::to_string(shape[dimIndex]));
+                    last = shape[dimIndex];
                 }
                 if (first >= last) {
                     last = first;

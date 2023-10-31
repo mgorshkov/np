@@ -70,8 +70,8 @@ namespace np {
                 return Array<DType>{1.0 / denominator};
             }
             NDArrayDynamic<float_> result{shape};
-            if constexpr (Storage::kDepth < ndarray::internal::kMaxArrayDims) {
-                std::string a_index = "0:" + std::to_string(n - 1) + ", 0:" + std::to_string(n - 1);
+            if constexpr (Storage::kDepth < 10) {
+                std::string a_index = "0:" + std::to_string(n - 1) + ",0:" + std::to_string(n - 1);
                 const auto A = array[a_index];
 
                 std::string b_index = "0:" + std::to_string(n - 1) + "," + std::to_string(n - 1) + ":" + std::to_string(n);

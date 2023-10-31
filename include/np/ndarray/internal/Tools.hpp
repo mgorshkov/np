@@ -36,7 +36,7 @@ namespace np {
     namespace ndarray {
         namespace internal {
 
-            constexpr std::size_t kMaxArrayDims = 10;
+            constexpr std::size_t kMaxArrayDims = 4;
 
             template<typename Class>
             inline void dumpObject(std::ostream &stream, const Class &object) {
@@ -113,6 +113,54 @@ namespace np {
             private:
                 Stream &m_stream;
             };
+
+            template<typename Type>
+            struct ExtendedGCDResult {
+                std::pair<Type, Type> bezout_coeff;
+                Type gcd;
+            };
+
+            template<typename Type>
+            ExtendedGCDResult<Type> extendedGCD(Type a, Type b) {
+                Type x0{1};
+                Type y0{0};
+
+                int sign_a = a < 0 ? -1 : 1;
+                int sign_b = b < 0 ? -1 : 1;
+
+                a = std::abs(a);
+                b = std::abs(b);
+
+                if (b == 0) {
+                    ExtendedGCDResult<Type> result;
+                    result.gcd = a;
+                    result.bezout_coeff = std::make_pair(sign_a * x0, sign_b * y0);
+                    return result;
+                }
+
+                Type x1{0};
+                Type y1{1};
+                Type r0{a};
+                Type r1{b};
+                while (r1 != 0) {
+                    Type q = r0 / r1;
+                    Type tmp = r0;
+                    r0 = r1;
+                    r1 = tmp - q * r1;
+
+                    tmp = x0;
+                    x0 = x1;
+                    x1 = tmp - q * x1;
+
+                    tmp = y0;
+                    y0 = y1;
+                    y1 = tmp - q * y1;
+                }
+                ExtendedGCDResult<Type> result;
+                result.gcd = r0;
+                result.bezout_coeff = std::make_pair(sign_a * x0, sign_b * y0);
+                return result;
+            }
         }// namespace internal
     }    // namespace ndarray
 }// namespace np
