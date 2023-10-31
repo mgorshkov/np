@@ -43,25 +43,25 @@ namespace np {
     namespace ndarray {
         namespace array_diagonal {
             // N-dimensional diagonal array
-            template<typename DType, typename Derived, typename Storage>
+            template<typename DType, typename Derived, typename Storage, Size Dims>
             class NDArrayDiagonal;
 
-            template<typename DType, typename Derived, typename Storage>
-            using NDArrayDiagonalStorage = internal::NDArrayDiagonalStorage<DType, Derived, Storage>;
+            template<typename DType, typename Derived, typename Storage, Size Dims>
+            using NDArrayDiagonalStorage = internal::NDArrayDiagonalStorage<DType, Derived, Storage, Dims>;
 
-            template<typename DType, typename Derived, typename Storage>
-            using NDArrayDiagonalBase = ndarray::internal::NDArrayShaped<DType, NDArrayDiagonal<DType, Derived, Storage>, NDArrayDiagonalStorage<DType, Derived, Storage>>;
+            template<typename DType, typename Derived, typename Storage, Size Dims>
+            using NDArrayDiagonalBase = ndarray::internal::NDArrayShaped<DType, NDArrayDiagonal<DType, Derived, Storage, Dims>, NDArrayDiagonalStorage<DType, Derived, Storage, Dims>>;
 
-            template<typename DType, typename Derived, typename Storage>
-            class NDArrayDiagonal final : public NDArrayDiagonalBase<DType, Derived, Storage> {
+            template<typename DType, typename Derived, typename Storage, Size Dims>
+            class NDArrayDiagonal final : public NDArrayDiagonalBase<DType, Derived, Storage, Dims> {
             public:
                 // Creating Arrays
                 NDArrayDiagonal() noexcept
-                    : NDArrayDiagonalBase<DType, Storage, Storage>{} {
+                    : NDArrayDiagonalBase<DType, Storage, Storage, Dims>{} {
                 }
 
                 NDArrayDiagonal(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k)
-                    : NDArrayDiagonalBase<DType, Derived, Storage>{calcShape(v, k), v, k} {
+                    : NDArrayDiagonalBase<DType, Derived, Storage, Dims>{calcShape(v, k), v, k} {
                 }
 
                 NDArrayDiagonal(const NDArrayDiagonal &another) noexcept = default;
@@ -72,27 +72,30 @@ namespace np {
 
                 NDArrayDiagonal &operator=(const NDArrayDiagonal &another) noexcept {
                     if (&another != this) {
-                        NDArrayDiagonalBase<DType, Derived, Storage>::operator=(another);
+                        NDArrayDiagonalBase<DType, Derived, Storage, Dims>::operator=(another);
                     }
                 }
 
                 NDArrayDiagonal &operator=(NDArrayDiagonal &&another) noexcept {
-                    NDArrayDiagonalBase<DType, Derived, Storage>::operator=(another);
+                    NDArrayDiagonalBase<DType, Derived, Storage, Dims>::operator=(another);
                     return *this;
                 }
 
             private:
                 static Shape calcShape(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k) {
                     auto size = static_cast<Size>(std::abs(k));
+                    if (Dims != v.ndim()) {
+                        throw std::runtime_error("Incorrect Dims");
+                    }
                     // empty array
-                    if (v.empty()) {
+                    if constexpr (Dims == 0) {
                         if (size == 0) {
                             return Shape{};
                         }
                         return Shape{size, size};
                     }
                     // 1D array
-                    if (v.ndim() == 1) {
+                    if constexpr (Dims == 1) {
                         size += v.size();
                         return Shape{size, size};
                     }

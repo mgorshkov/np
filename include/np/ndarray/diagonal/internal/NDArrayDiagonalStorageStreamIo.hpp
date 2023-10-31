@@ -34,16 +34,16 @@ namespace np {
     namespace ndarray {
         namespace array_diagonal {
             namespace internal {
-                template<typename DType, typename Storage, typename Parent>
-                std::ostream &operator<<(std::ostream &stream, const NDArrayDiagonalStorage<DType, Storage, Parent> &array);
+                template<typename DType, typename Storage, typename Parent, Size Dims>
+                std::ostream &operator<<(std::ostream &stream, const NDArrayDiagonalStorage<DType, Storage, Parent, Dims> &array);
 
-                template<typename Storage, typename Parent>
+                template<typename Storage, typename Parent, Size Dims>
                 inline std::ostream &
-                operator<<(std::ostream &stream, const NDArrayDiagonalStorage<std::wstring, Storage, Parent> &array);
+                operator<<(std::ostream &stream, const NDArrayDiagonalStorage<std::wstring, Storage, Parent, Dims> &array);
 
-                template<typename Storage, typename Parent>
+                template<typename Storage, typename Parent, Size Dims>
                 inline std::wostream &
-                operator<<(std::wostream &stream, const NDArrayDiagonalStorage<std::wstring, Storage, Parent> &array);
+                operator<<(std::wostream &stream, const NDArrayDiagonalStorage<std::wstring, Storage, Parent, Dims> &array);
             }// namespace internal
         }    // namespace array_diagonal
     }        // namespace ndarray

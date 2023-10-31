@@ -30,28 +30,20 @@ SOFTWARE.
 namespace np {
     namespace ndarray {
         namespace internal {
-            using Positions = std::vector<Size>;
-
             class OffsetType {
             public:
                 using difference_type = std::ptrdiff_t;
 
-                OffsetType() : m_positions{}, m_currentPosition{0} {
+                OffsetType() : m_currentPosition{0} {
                 }
 
-                explicit OffsetType(const Positions &positions) : m_positions{positions}, m_currentPosition{0} {
+                explicit OffsetType(Size currentPosition) : m_currentPosition{currentPosition} {
                 }
 
-                explicit OffsetType(const Positions &positions, Size currentPosition) : m_positions{positions}, m_currentPosition{currentPosition} {
-                }
-
-                OffsetType(const OffsetType &offsetType) : m_positions{offsetType.m_positions}, m_currentPosition{offsetType.m_currentPosition} {
+                OffsetType(const OffsetType &offsetType) : m_currentPosition{offsetType.m_currentPosition} {
                 }
 
                 bool operator==(const OffsetType &another) const {
-                    if (m_positions != another.m_positions) {
-                        throw std::runtime_error("Comparing offsets with different positions");
-                    }
                     return m_currentPosition == another.m_currentPosition;
                 }
 
@@ -60,46 +52,28 @@ namespace np {
                 }
 
                 bool operator<(const OffsetType &another) const {
-                    if (m_positions != another.m_positions) {
-                        throw std::runtime_error("Comparing offsets with different positions");
-                    }
                     return m_currentPosition < another.m_currentPosition;
                 }
 
                 bool operator<=(const OffsetType &another) const {
-                    if (m_positions != another.m_positions) {
-                        throw std::runtime_error("Comparing offsets with different positions");
-                    }
                     return m_currentPosition <= another.m_currentPosition;
                 }
 
                 bool operator>(const OffsetType &another) const {
-                    if (m_positions != another.m_positions) {
-                        throw std::runtime_error("Comparing offsets with different positions");
-                    }
                     return m_currentPosition > another.m_currentPosition;
                 }
 
                 bool operator>=(const OffsetType &another) const {
-                    if (m_positions != another.m_positions) {
-                        throw std::runtime_error("Comparing offsets with different positions");
-                    }
                     return m_currentPosition >= another.m_currentPosition;
                 }
 
                 OffsetType operator++() {
-                    if (m_currentPosition == m_positions.size()) {
-                        throw std::runtime_error("Going beyond last position");
-                    }
-                    OffsetType offset{m_positions, ++m_currentPosition};
+                    OffsetType offset{++m_currentPosition};
                     return offset;
                 }
 
                 OffsetType operator++(int) {
-                    if (m_currentPosition == m_positions.size()) {
-                        throw std::runtime_error("Going beyond last position");
-                    }
-                    OffsetType offset{m_positions, m_currentPosition++};
+                    OffsetType offset{m_currentPosition++};
                     return offset;
                 }
 
@@ -122,7 +96,7 @@ namespace np {
                     if (m_currentPosition == 0) {
                         throw std::runtime_error("Going before zero position");
                     }
-                    OffsetType offset{m_positions, --m_currentPosition};
+                    OffsetType offset{--m_currentPosition};
                     return offset;
                 }
 
@@ -130,7 +104,7 @@ namespace np {
                     if (m_currentPosition == 0) {
                         throw std::runtime_error("Going before zero position");
                     }
-                    OffsetType offset{m_positions, m_currentPosition--};
+                    OffsetType offset{m_currentPosition--};
                     return offset;
                 }
 
@@ -164,7 +138,6 @@ namespace np {
                 }
 
             private:
-                Positions m_positions;
                 Size m_currentPosition;
             };
 
