@@ -4,7 +4,7 @@
 C++ numpy-like template-based array implementation.
 
 # Description
-Implements two flavours of N-dimensional array in a minimalistic way.
+Implements multiple flavours of a N-dimensional array in a minimalistic way.
 
 ## Static array
 Static array is std::array-based implementation, in which the element type and array size are fixed and determined at compile time.
@@ -13,6 +13,19 @@ This implies stack array storage.
 ## Dynamic array
 In dynamic array only the element type is known at compile time.
 This implies heap array storage.
+
+## Diagonal array
+Implements a diagonal array view on another array. Only diagonal's number is stored.
+
+## Identity array
+Implements an identity array. Only the shape is stored.
+
+## Constant array
+Implements an N-dimensional array with the same value in every cell. Only the shape and the value is stored. 
+
+## Sliced/subset/boolean indexed array
+Implements a view on another array.
+Only a set of indexes (in case of boolean indexed array) or set of ranges (in case of sliced and subset arrays), or their combination is stored. 
 
 # Requirements
 Any C++20-compatible compiler:

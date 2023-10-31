@@ -25,6 +25,19 @@ SOFTWARE.
 #pragma once
 
 namespace np {
+    inline Size ravel_multi_index(const Shape &indices, const Shape &shape) {
+        Shape::Storage weights;
+        weights.resize(shape.size());
+        Size multiplier{1UL};
+        for (std::size_t pos = weights.size(); pos--;) {
+            weights[pos] = multiplier;
+            multiplier *= shape[pos];
+        }
 
-
-}
+        Size result{};
+        for (std::size_t index = shape.size(); index--;) {
+            result += indices[index] * weights[index];
+        }
+        return result;
+    }
+}// namespace np

@@ -1,3 +1,7 @@
+# Release 0.1.0
+## Changes
+* Subsetting/slicing/boolean indexing optimized
+
 # Release 0.0.9
 ## Changes
 * NDArrayDiagonal, NDArrayIdentity, NDArrayConstant

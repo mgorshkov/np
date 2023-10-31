@@ -28,9 +28,8 @@ SOFTWARE.
 #include <cstddef>
 #include <set>
 #include <tuple>
-#include <utility>
-#include <vector>
 
+#include <np/Index.hpp>
 #include <np/Shape.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/OffsetType.hpp>
@@ -51,8 +50,7 @@ namespace np {
                 NDArrayIndexStorage(NDArrayIndexStorage &&) noexcept = default;
 
                 NDArrayIndexStorage(Parent parent, const IndicesType<DType> &indices)
-                    : m_parent{parent}, m_shape{}, m_weights{} {
-                    initWeights();
+                    : m_parent{parent}, m_indices{parent} {
                     initIndices(indices);
                     initShape(indices);
                 }
@@ -188,11 +186,11 @@ namespace np {
                 };
 
                 iterator begin() {
-                    return iterator{this, OffsetType{m_indices}};
+                    return iterator{this, OffsetType{}};
                 }
 
                 iterator end() {
-                    return iterator{this, OffsetType{m_indices, static_cast<Size>(m_indices.size())}};
+                    return iterator{this, OffsetType{m_indices.size()}};
                 }
 
                 class const_iterator {
@@ -331,82 +329,452 @@ namespace np {
                     return hasBooleanIndexing;
                 }
 
-                void initWeights() {
-                    m_weights.resize(m_parent->ndim());
-                    Size multiplier{1UL};
-                    for (std::size_t pos = m_weights.size(); pos--;) {
-                        m_weights[pos] = multiplier;
-                        multiplier *= m_parent->shape()[pos];
+                class Indices {
+                public:
+                    explicit Indices(Parent parent) : m_parent{parent}, m_shape{parent->shape()}, m_weights{} {
+                        initWeights();
                     }
-                }
 
-                [[nodiscard]] Shape::Storage getDimIndices(Size index) const {
-                    Shape::Storage dimIndices(m_parent->ndim());
-                    for (std::size_t pos = 0; pos < dimIndices.size(); ++pos) {
-                        dimIndices[pos] = index / m_weights[pos];
-                        index -= dimIndices[pos] * m_weights[pos];
+                    void add(std::size_t dim, const SubsettingIndexType &index) {
+                        auto ror = createROR(dim, Range{index, index, 0});
+                        intersectRORs(ror, dim);
                     }
-                    return dimIndices;
-                }
 
-                void initIndices(const IndicesType<DType> &indices) {
-                    std::vector<std::uint8_t> absentElements(m_parent->size());
-                    for (std::size_t dim = 0; dim < indices.size(); ++dim) {
-#pragma omp parallel for default(none) shared(indices, dim, absentElements)
-                        // index variable in OpenMP 'for' statement must have signed integral type
-                        for (std::int32_t i = 0; i < static_cast<std::int32_t>(absentElements.size()); ++i) {
-                            auto dimIndices = getDimIndices(i);
-                            if (std::holds_alternative<SubsettingIndexType>(indices[dim])) {
-                                if (dimIndices[dim] != std::get<SubsettingIndexType>(indices[dim])) {
-                                    absentElements[i] = 1;
-                                }
-                            } else if (std::holds_alternative<SlicingIndexType>(indices[dim])) {
-                                auto [start, stop, step] = std::get<SlicingIndexType>(indices[dim]);
-                                if (dimIndices[dim] < start || dimIndices[dim] >= stop || (dimIndices[dim] - start) % step != 0) {
-                                    absentElements[i] = 1;
-                                }
-                            } else if (std::holds_alternative<BooleanIndexType<DType>>(indices[dim])) {
-                                const DType &value = m_parent->get(i);
-                                auto booleanIndex = std::get<BooleanIndexType<DType>>(indices[dim]);
-                                auto pred = [&booleanIndex](const DType &value) {
-                                    switch (booleanIndex.m_operator) {
-                                        case Operator::More:
-                                            return value > booleanIndex.m_arg;
-                                        case Operator::MoreOrEqual:
-                                            return value >= booleanIndex.m_arg;
-                                        case Operator::Equal:
-                                            return value == booleanIndex.m_arg;
-                                        case Operator::LessOrEqual:
-                                            return value <= booleanIndex.m_arg;
-                                        case Operator::NotEqual:
-                                            return value != booleanIndex.m_arg;
-                                        case Operator::Less:
-                                            return value < booleanIndex.m_arg;
-                                        default:
-                                            throw std::runtime_error("Invalid operator");
-                                    }
-                                };
-                                if (!pred(value)) {
-                                    absentElements[i] = 1;
-                                }
-                            } else {
-                                throw std::runtime_error("Invalid index type");
+                    void add(std::size_t dim, const SlicingIndexType &index) {
+                        auto [start, stop, step] = index;
+                        if (start == 0 && stop == m_shape[dim] && step == 1) {
+                            return;// no limitation on complete index
+                        }
+                        auto ror = createROR(dim, Range{start, stop - 1, step});
+                        intersectRORs(ror, dim);
+                    }
+
+                    void add(const BooleanIndexType<DType> &index) {
+                        auto booleanIndex = [&index](const DType &value) {
+                            switch (index.m_operator) {
+                                case Operator::More:
+                                    return value > index.m_arg;
+                                case Operator::MoreOrEqual:
+                                    return value >= index.m_arg;
+                                case Operator::Equal:
+                                    return value == index.m_arg;
+                                case Operator::LessOrEqual:
+                                    return value <= index.m_arg;
+                                case Operator::NotEqual:
+                                    return value != index.m_arg;
+                                case Operator::Less:
+                                    return value < index.m_arg;
+                                default:
+                                    throw std::runtime_error("Invalid operator");
+                            }
+                        };
+                        std::vector<Size> bi;
+                        for (Size i = 0; i < size(); ++i) {
+                            auto offset = operator[](i);
+                            const auto &element = m_parent->get(offset);
+                            if (booleanIndex(element)) {
+                                bi.emplace_back(offset);
                             }
                         }
+                        m_booleanIndex = bi;
                     }
-                    for (Size i = 0; i < absentElements.size(); ++i) {
-                        if (absentElements[i] == 0) {
-                            m_indices.emplace_back(i);
+
+                    [[nodiscard]] Size size() const {
+                        if (!m_booleanIndex.empty()) {
+                            return m_booleanIndex.size();
+                        }
+                        Size size = m_ror.size();
+                        if (size == 0) {
+                            return m_parent->size();
+                        }
+                        return size * m_ror.start.size();
+                    }
+
+                    [[nodiscard]] Size front() const {
+                        auto range = m_ror.start;
+                        return range.start;
+                    }
+
+                    [[nodiscard]] Size back() const {
+                        auto range = m_ror.stop;
+                        return range.stop;
+                    }
+
+                    auto getFrontIndices() const {
+                        return getDimIndices(front());
+                    }
+
+                    auto getBackIndices() const {
+                        return getDimIndices(back());
+                    }
+
+                    Size operator[](Size i) const {
+                        // use boolean index
+                        if (!m_booleanIndex.empty()) {
+                            return m_booleanIndex[i];
+                        }
+
+                        // use ranges
+                        if (m_ror.empty()) {
+                            return i;
+                        }
+
+                        auto start = m_ror.start;
+                        if (i >= m_ror.size() * start.size()) {
+                            throw std::runtime_error("Access over array bounds");
+                        }
+
+                        if (m_ror.size() == 1) {
+                            return start.start + i * start.step;
+                        }
+
+                        auto start2 = start.start + m_ror.step;
+                        if (start2 < start.stop) {
+                            // overlapping ranges
+                            auto range = Range{m_ror.start.start + (i % m_ror.size()) * m_ror.start.step,
+                                               m_ror.start.stop + (i % m_ror.size()) * m_ror.start.step, m_ror.start.step};
+                            return range.start + i / m_ror.size() * range.step;
+                        }
+                        // successive ranges
+                        auto range = Range{m_ror.start.start + (i / m_ror.start.size()) * m_ror.step,
+                                           m_ror.start.stop + (i / m_ror.start.size()) * m_ror.step, m_ror.start.step};
+                        return range.start + (i % range.size()) * range.step;
+                    }
+
+                    explicit operator OffsetType() const {
+                        return OffsetType();
+                    }
+
+                private:
+                    [[nodiscard]] Shape::Storage getDimIndices(Size index) const {
+                        Shape::Storage dimIndices(m_shape.size());
+                        for (std::size_t pos = 0; pos < dimIndices.size(); ++pos) {
+                            dimIndices[pos] = index / m_weights[pos];
+                            index -= dimIndices[pos] * m_weights[pos];
+                        }
+                        return dimIndices;
+                    }
+
+                    void initWeights() {
+                        m_weights.resize(m_shape.size());
+                        Size multiplier{1UL};
+                        for (std::size_t pos = m_weights.size(); pos--;) {
+                            m_weights[pos] = multiplier;
+                            multiplier *= m_shape[pos];
+                        }
+                    }
+
+                    struct Range {
+                        Range() noexcept : start{}, stop{}, step{-1} {
+                        }
+
+                        Range(Size start_, Size stop_, SignedSize step_) noexcept : start{start_}, stop{stop_}, step{step_} {
+                        }
+
+                        Size start;
+                        Size stop;
+                        SignedSize step;
+
+                        [[nodiscard]] bool empty() const {
+                            return start == 0 && stop == 0 && step == -1;
+                        }
+
+                        [[nodiscard]] Size size() const {
+                            return step == 0 ? 1 : (stop - start) / step + 1;
+                        }
+
+                        void clear() {
+                            start = 0;
+                            stop = 0;
+                            step = -1;
+                        }
+
+                        auto operator<=>(const Range &) const = default;
+
+                        friend std::ostream &operator<<(std::ostream &stream, const Range &range) {
+                            return stream << "Range[" << range.start << ", " << range.stop << ", " << range.step << "], size=" << range.size();
+                        }
+                    };
+
+                    using Ranges = std::set<Range>;
+
+                    struct ROR {
+                        ROR()
+                        noexcept : start{}, stop{}, step{-1} {
+                        }
+
+                        ROR(const Range &start_, const Range &stop_, SignedSize step_)
+                        noexcept : start{start_}, stop{stop_}, step{step_} {
+                        }
+
+                        explicit ROR(const Ranges &ranges) {
+                            if (ranges.empty()) {
+                                return;
+                            }
+                            if (ranges.size() == 1) {
+                                auto it = ranges.cbegin();
+                                start = *it;
+                                stop = *it;
+                                step = 0;
+                                return;
+                            }
+                            if (ranges.size() == 2) {
+                                auto it = ranges.cbegin();
+                                start = *it;
+                                it = ranges.cend();
+                                stop = *std::prev(it);
+                                step = static_cast<SignedSize>(stop.start - start.start);
+                                return;
+                            }
+                            auto it = ranges.cbegin();
+                            start = *it;
+                            it = std::next(it);
+                            auto next = *it;
+                            auto end = ranges.cend();
+                            end = std::prev(end);
+                            stop = *end;
+                            step = static_cast<SignedSize>(next.start - start.start);
+                        }
+
+                        Range start;
+                        Range stop;
+                        SignedSize step;
+
+                        [[nodiscard]] bool empty() const {
+                            return start.empty() && stop.empty() && step == -1;
+                        }
+
+                        [[nodiscard]] Size size() const {
+                            return empty() ? 0 : step == 0 ? 1
+                                                           : (stop.start - start.start) / step + 1;
+                        }
+
+                        void clear() {
+                            start.clear();
+                            stop.clear();
+                            step = -1;
+                        }
+
+                        auto operator<=>(const ROR &) const = default;
+
+                        friend std::ostream &operator<<(std::ostream &stream, const ROR &ror) {
+                            return stream << "ROR[" << ror.start << ", " << ror.stop << ", " << ror.step << "], size=" << ror.size();
+                        }
+                    };
+
+                    ROR createROR(std::size_t dim, const Range &indexRange) {
+                        // required dimension is the first: one range
+                        if (dim == 0) {
+                            auto size = m_shape.calcSizeByShape() / m_shape[dim];
+                            // low/high bounds of all slice parts
+                            Range range{indexRange.start * size, (indexRange.stop + 1) * size - 1, indexRange.start == indexRange.stop && size == 1 ? 0 : 1};
+                            return ROR{range, range, 0};
+                        }
+                        // required dimension is the last: one range with non-trivial step
+                        if (dim == m_shape.size() - 1) {
+                            // low bound of all slice parts
+                            Range low{indexRange.start, indexRange.stop, indexRange.start == indexRange.stop ? 0 : indexRange.step};
+                            // high bound of all slice parts
+                            Range high{m_shape.calcSizeByShape() - m_shape[dim] + indexRange.start,
+                                       m_shape.calcSizeByShape() - m_shape[dim] + indexRange.stop,
+                                       indexRange.start == indexRange.stop ? 0 : indexRange.step};
+                            return ROR{low, high, low == high ? 0 : static_cast<SignedSize>(m_shape[dim])};
+                        }
+                        // multiple ranges for the rest dimensions
+                        if (indexRange.step != 0 && indexRange.step != 1) {
+                            throw std::runtime_error("Non-contiguous ranges are not currently supported");
+                        }
+                        Shape::Storage storage;
+                        storage.resize(m_shape.size());
+                        Shape shape{storage};
+                        Size high = m_shape[0];
+                        for (Size d = 1; d < dim; ++d) {
+                            high *= m_shape[d];
+                        }
+                        Ranges ranges;
+                        for (Size h = 0; h < high; ++h) {
+                            shape[dim] = indexRange.start;
+                            for (std::size_t low = shape.size() - 1; low > dim; low--) {
+                                shape[low] = 0;
+                            }
+                            auto minIndex = ravel_multi_index(shape, m_shape);
+
+                            shape[dim] = indexRange.stop;
+                            for (std::size_t low = shape.size() - 1; low > dim; low--) {
+                                shape[low] = m_shape[low] - 1;
+                            }
+                            auto maxIndex = ravel_multi_index(shape, m_shape);
+                            ranges.insert({minIndex, maxIndex, minIndex == maxIndex ? 0 : 1});
+
+                            // increment high digits
+                            SignedSize d = static_cast<SignedSize>(dim) - 1;
+                            while (d >= 0) {
+                                ++shape[d];
+                                if (shape[d] >= m_shape[d]) {
+                                    shape[d] = 0;
+                                    --d;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+
+                        return ROR{ranges};
+                    }
+
+                    [[nodiscard]] bool isTrivial(const Range &range) const {
+                        return range.start == 0 && range.stop + 1 == m_shape.calcSizeByShape() && range.step == 1;
+                    }
+
+                    [[nodiscard]] bool isTrivial(const Range &range, std::size_t dim) const {
+                        return range.start == 0 && range.stop + 1 == m_shape[dim] && range.step == 1;
+                    }
+
+                    std::optional<Range> intersectRanges(const Range &range1, const Range &range2, std::size_t dim) {
+                        if (range1.start > range2.stop || range2.start > range1.stop) {
+                            return std::nullopt;
+                        }
+
+                        if (isTrivial(range2, dim) || isTrivial(range2)) {
+                            return range1;
+                        }
+
+                        if (isTrivial(range1, dim) || isTrivial(range2)) {
+                            return range2;
+                        }
+
+                        if (range1.step == 0 && range2.step == 0) {
+                            if (range1.start == range2.start) {
+                                return range1;
+                            }
+                        } else if (range1.step == 0) {
+                            if (range2.start <= range1.start && range1.start <= range2.stop) {
+                                if ((range2.start - range1.start) % range2.step == 0 &&
+                                    (range2.start - range1.start) / range2.step >= 0) {
+                                    return range1;
+                                }
+                            }
+                        } else if (range2.step == 0) {
+                            if (range1.start <= range2.start && range2.start <= range1.stop) {
+                                if ((range1.start - range2.start) % range1.step == 0 &&
+                                    (range1.start - range2.start) / range1.step >= 0) {
+                                    return range2;
+                                }
+                            }
+                        }
+
+                        // https://math.stackexchange.com/questions/1656120/formula-to-find-the-first-intersection-of-two-arithmetic-progressions
+                        auto extGCD = extendedGCD(-range2.step, range1.step);
+                        auto g = extGCD.gcd;
+
+                        if ((range2.start - range1.start) % g != 0) {
+                            return std::nullopt;
+                        }
+
+                        auto [u, v] = extGCD.bezout_coeff;
+                        SignedSize c = range2.start - range1.start;
+                        Size min_t = static_cast<Size>(std::max(
+                                std::ceil(static_cast<float_>(-c) * static_cast<float_>(u) / range1.step),
+                                std::ceil(static_cast<float_>(-c) * static_cast<float_>(v) / range2.step)));
+                        Size max_t = std::min(((range2.size() - 1) * g - c * u) / range1.step,
+                                              ((range1.size() - 1) * g - c * v) / range2.step);
+                        assert(min_t <= max_t);
+
+                        Size Xmin = (c * u + min_t * range1.step) / g;
+
+                        Size X0 = range2.start + Xmin * range2.step;
+                        assert(X0 == range1.start + (c * v + min_t * range2.step) / g * range1.step);
+                        Size X1 = range2.start + (c * u + (min_t + 1) * range1.step) / g * range2.step;
+
+                        Size Xmax = (c * u + max_t * range1.step) / g;
+                        Size Xend = range2.start + Xmax * range2.step;
+
+                        return Range{X0, Xend, Xend > X0 ? static_cast<SignedSize>(X1 - X0) : 0};
+                    }
+
+                    void intersectRORs(const ROR &ror, std::size_t dim) {
+                        if (m_ror.empty()) {
+                            m_ror = ror;
+                            return;
+                        }
+                        // Non-intersecting RORs
+                        if (ror.start.start > m_ror.stop.stop || ror.stop.stop < m_ror.start.start) {
+                            m_ror.clear();
+                            return;
+                        }
+
+                        // Zero step in RORs
+                        Ranges ranges;
+                        if (ror.step == 0 && m_ror.step == 0) {
+                            if (ror.start == m_ror.start) {
+                                ranges.insert(ror.start);
+                            }
+                        } else if (ror.step == 0) {
+                            for (Size i = 0; i < m_ror.size(); ++i) {
+                                Range range2{m_ror.start.start + i * m_ror.step, m_ror.start.stop + i * m_ror.step,
+                                             m_ror.start.step};
+                                auto range = intersectRanges(ror.start, range2, dim);
+                                if (range) {
+                                    ranges.insert(*range);
+                                }
+                            }
+                        } else if (m_ror.step == 0) {
+                            for (Size i = 0; i < ror.size(); ++i) {
+                                Range range2{ror.start.start + i * ror.step, ror.start.stop + i * ror.step,
+                                             ror.start.step};
+                                auto range = intersectRanges(m_ror.start, range2, dim);
+                                if (range) {
+                                    ranges.insert(*range);
+                                }
+                            }
+                        } else {
+                            for (Size i = 0; i < m_ror.size(); ++i) {
+                                for (Size j = 0; j < ror.size(); ++j) {
+                                    Range range1{m_ror.start.start + i * m_ror.step, m_ror.start.stop + i * m_ror.step,
+                                                 m_ror.start.step};
+                                    Range range2{ror.start.start + j * ror.step, ror.start.stop + j * ror.step,
+                                                 ror.start.step};
+
+                                    auto range = intersectRanges(range1, range2, dim);
+                                    if (range) {
+                                        ranges.insert(*range);
+                                    }
+                                }
+                            }
+                        }
+
+                        m_ror = ROR{ranges};
+                    }
+
+                    Parent m_parent;
+                    Shape m_shape;
+                    Shape::Storage m_weights;
+
+                    ROR m_ror;// ror to iterate through ("OR" condition)
+                    std::vector<Size> m_booleanIndex;
+                };
+
+                void initIndices(const IndicesType<DType> &indices) {
+                    for (std::size_t dim = 0; dim < indices.size(); ++dim) {
+                        if (std::holds_alternative<SubsettingIndexType>(indices[dim])) {
+                            m_indices.add(dim, std::get<SubsettingIndexType>(indices[dim]));
+                        } else if (std::holds_alternative<SlicingIndexType>(indices[dim])) {
+                            m_indices.add(dim, std::get<SlicingIndexType>(indices[dim]));
+                        } else if (std::holds_alternative<BooleanIndexType<DType>>(indices[dim])) {
+                            m_indices.add(std::get<BooleanIndexType<DType>>(indices[dim]));
+                        } else {
+                            throw std::runtime_error("Invalid index type");
                         }
                     }
                 }
 
                 void initShape(const IndicesType<DType> &indices) {
+                    m_shape.clear();
                     if (hasBooleanIndexing(indices)) {
-                        m_shape.addDim(static_cast<Size>(m_indices.size()));
+                        m_shape.addDim(m_indices.size());
                     } else {
-                        auto dimIndicesFront = getDimIndices(m_indices.front());
-                        auto dimIndicesBack = getDimIndices(m_indices.back());
+                        auto dimIndicesFront = m_indices.getFrontIndices();
+                        auto dimIndicesBack = m_indices.getBackIndices();
                         for (std::size_t pos = dimIndicesBack.size(); pos--;) {
                             dimIndicesBack[pos] -= dimIndicesFront[pos];// delta + 1 is dim
                             ++dimIndicesBack[pos];
@@ -423,10 +791,8 @@ namespace np {
                 }
 
                 Parent m_parent;
-                std::vector<Size> m_indices;
+                Indices m_indices;
                 Shape m_shape;
-
-                Shape::Storage m_weights;
 
                 friend class iterator;
                 friend class const_iterator;

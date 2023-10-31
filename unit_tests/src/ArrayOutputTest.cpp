@@ -105,6 +105,6 @@ TEST_F(ArrayOutputTest, diagonalArrayTest) {
     intc array_c[4][2] = {{1, 2}, {3, 4}, {5, 6}};
     Array<intc, 8> array{array_c};
     std::stringstream stream;
-    stream << diag(array);
+    stream << diag2(array);
     EXPECT_EQ(stream.str(), "[1 4]");
 }
