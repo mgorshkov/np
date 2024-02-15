@@ -33,10 +33,10 @@ SOFTWARE.
 
 #include <np/Axis.hpp>
 #include <np/Shape.hpp>
+#include <np/internal/Tools.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/NDArrayIndexStorage.hpp>
-#include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
     namespace ndarray {
@@ -390,7 +390,7 @@ namespace np {
                 }
 
                 void dumpToStreamAsBinary(std::ostream &stream) {
-                    for (std::size_t index = 0; index < size(); ++index) {
+                    for (Size index = 0; index < size(); ++index) {
                         ndarray::internal::dumpObject(stream, get(index));
                     }
                 }

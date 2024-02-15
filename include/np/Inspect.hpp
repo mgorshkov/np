@@ -25,7 +25,6 @@ SOFTWARE.
 #pragma once
 
 #include <np/Constants.hpp>
-#include <np/ndarray/internal/NDArrayBaseImpl.hpp>
 
 /* Array inspection
  Length of array
