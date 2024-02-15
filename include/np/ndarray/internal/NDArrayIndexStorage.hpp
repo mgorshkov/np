@@ -62,6 +62,9 @@ namespace np {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
                     }
+                    if (m_parent == nullptr) {
+                        throw std::runtime_error("Parent is nullptr");
+                    }
                     return m_parent->get(m_indices[i]);
                 }
 
@@ -69,12 +72,18 @@ namespace np {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
                     }
+                    if (m_parent == nullptr) {
+                        throw std::runtime_error("Parent is nullptr");
+                    }
                     return m_parent->get(m_indices[i]);
                 }
 
                 void set(Size i, const DType &value) {
                     if (i >= m_indices.size()) {
                         throw std::runtime_error("Index out of bounds");
+                    }
+                    if (m_parent == nullptr) {
+                        throw std::runtime_error("Parent is nullptr");
                     }
                     return m_parent->set(m_indices[i], value);
                 }
@@ -300,11 +309,11 @@ namespace np {
                 };
 
                 const_iterator cbegin() const {
-                    return const_iterator{this, OffsetType{m_indices}};
+                    return const_iterator{this, OffsetType{}};
                 }
 
                 const_iterator cend() const {
-                    return const_iterator{this, OffsetType{m_indices, static_cast<Size>(m_indices.size())}};
+                    return const_iterator{this, OffsetType{m_indices.size()}};
                 }
 
                 [[nodiscard]] Shape shape() const {
@@ -331,7 +340,10 @@ namespace np {
 
                 class Indices {
                 public:
-                    explicit Indices(Parent parent) : m_parent{parent}, m_shape{parent->shape()}, m_weights{} {
+                    explicit Indices(Parent parent) : m_parent{parent}, m_weights{} {
+                        if (parent != nullptr) {
+                            m_shape = parent->shape();
+                        }
                         initWeights();
                     }
 
@@ -368,6 +380,9 @@ namespace np {
                                     throw std::runtime_error("Invalid operator");
                             }
                         };
+                        if (m_parent == nullptr) {
+                            throw std::runtime_error("Parent is nullptr");
+                        }
                         std::vector<Size> bi;
                         for (Size i = 0; i < size(); ++i) {
                             auto offset = operator[](i);
@@ -381,10 +396,13 @@ namespace np {
 
                     [[nodiscard]] Size size() const {
                         if (!m_booleanIndex.empty()) {
-                            return m_booleanIndex.size();
+                            return static_cast<Size>(m_booleanIndex.size());
                         }
                         Size size = m_ror.size();
                         if (size == 0) {
+                            if (m_parent == nullptr) {
+                                throw std::runtime_error("Parent is nullptr");
+                            }
                             return m_parent->size();
                         }
                         return size * m_ror.start.size();
