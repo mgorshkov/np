@@ -524,19 +524,19 @@ namespace np {
                         }
 
                         iterator operator-(difference_type diff) {
-                            return iterator(container, offset - diff);
+                            return iterator(container, offset - static_cast<Size>(diff));
                         }
 
                         iterator operator+(difference_type diff) {
-                            return iterator(container, offset + diff);
+                            return iterator(container, offset + static_cast<Size>(diff));
                         }
 
                         iterator operator+=(difference_type diff) {
-                            return iterator(container, offset += diff);
+                            return iterator(container, offset += static_cast<Size>(diff));
                         }
 
                         iterator operator-=(difference_type diff) {
-                            return iterator(container, offset -= diff);
+                            return iterator(container, offset -= static_cast<Size>(diff));
                         }
 
                         difference_type operator-(const iterator &it) const {
@@ -630,19 +630,19 @@ namespace np {
                         }
 
                         const_iterator operator-(difference_type diff) {
-                            return const_iterator(container, offset - diff);
+                            return const_iterator(container, offset - static_cast<Size>(diff));
                         }
 
                         const_iterator operator+(difference_type diff) {
-                            return const_iterator(container, offset + diff);
+                            return const_iterator(container, offset + static_cast<Size>(diff));
                         }
 
                         const_iterator operator+=(difference_type diff) {
-                            return const_iterator(container, offset += diff);
+                            return const_iterator(container, offset += static_cast<Size>(diff));
                         }
 
                         const_iterator operator-=(difference_type diff) {
-                            return const_iterator(container, offset -= diff);
+                            return const_iterator(container, offset -= static_cast<Size>(diff));
                         }
 
                         difference_type operator-(const const_iterator &it) const {

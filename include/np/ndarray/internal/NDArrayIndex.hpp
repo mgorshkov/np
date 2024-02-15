@@ -25,12 +25,8 @@ SOFTWARE.
 #pragma once
 
 #include <cstddef>
-#include <functional>
 #include <memory>
-#include <utility>
 
-#include <np/Shape.hpp>
-#include <np/internal/Tools.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
 
@@ -40,8 +36,6 @@ namespace np {
             template<typename DType, typename Derived, typename Storage, typename ParentStorage, typename Parent>
             class NDArrayIndex final : public NDArrayBase<DType, Derived, Storage> {
             public:
-                NDArrayIndex() = default;
-
                 NDArrayIndex(const NDArrayIndex &another)
                     : NDArrayBase<DType, Derived, Storage>{another.getStorage()} {
                 }
@@ -53,7 +47,7 @@ namespace np {
                 NDArrayIndex &operator=(const NDArrayIndex &another) = default;
                 NDArrayIndex &operator=(NDArrayIndex &&another) noexcept = default;
 
-                NDArrayIndex(Parent parent, const IndicesType<DType> &indices)
+                NDArrayIndex(Parent parent = nullptr, const IndicesType<DType> &indices = IndicesType<DType>{})
                     : NDArrayBase<DType, Derived, NDArrayIndexStorage<DType, ParentStorage, Parent>>{parent, indices} {
                 }
             };

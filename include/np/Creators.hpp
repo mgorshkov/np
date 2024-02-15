@@ -37,15 +37,6 @@ SOFTWARE.
 #include <np/ndarray/dynamic/NDArrayDynamicCreatorsImpl.hpp>
 #include <np/ndarray/static/NDArrayStaticCreatorsImpl.hpp>
 
-#ifdef __cpp_lib_hardware_interference_size
-using std::hardware_constructive_interference_size;
-using std::hardware_destructive_interference_size;
-#else
-// 64 bytes on x86-64 │ L1_CACHE_BYTES │ L1_CACHE_SHIFT │ __cacheline_aligned │ ...
-constexpr std::size_t hardware_constructive_interference_size = 64;
-constexpr std::size_t hardware_destructive_interference_size = 64;
-#endif
-
 namespace np {
     using ndarray::array_constant::NDArrayConstant;
     using ndarray::array_diagonal::NDArrayDiagonal;
@@ -294,7 +285,7 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto rand(const Shape &shape) {
-            struct alignas(hardware_destructive_interference_size) rng {
+            struct rng {
                 std::uniform_real_distribution<DType> distribution;
             };
 
@@ -382,7 +373,7 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto randn(const Shape &shape) {
-            struct alignas(hardware_destructive_interference_size) rng {
+            struct rng {
                 std::normal_distribution<DType> distribution;
             };
 

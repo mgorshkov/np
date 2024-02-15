@@ -311,7 +311,7 @@ namespace np {
                 auto x1 = (*it).first;
                 auto y1 = (*it).second;
                 auto derivative = static_cast<DType3>((y1 - y0)) / (x1 - x0);
-                result.set(i, y0 + derivative * (element - x0));
+                result.set(i, static_cast<DType3>(y0 + derivative * (element - x0)));
             }
         }
 
