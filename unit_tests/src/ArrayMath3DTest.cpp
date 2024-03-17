@@ -41,13 +41,13 @@ TEST_F(ArrayMath3DTest, static3DIntArraysTest) {
     auto array2 = createIntArray<2 * 2 * 3>(c_array_2);
     {
         long c_array_plus[2][2][3] = {{{2, 4, 6}, {8, 10, 12}}, {{14, 16, 18}, {20, 22, 24}}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         auto sum = createIntArray<2 * 2 * 3>(c_array_plus);
         compare(array, sum);
     }
     {
         long c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         auto diff = createIntArray<2 * 2 * 3>(c_array_minus);
         compare(array, diff);
     }
@@ -63,13 +63,13 @@ TEST_F(ArrayMath3DTest, dynamic3DIntArraysTest) {
     auto array2 = createIntArray<2 * 2 * 3>(c_array_2);
     {
         long c_array_plus[2][2][3] = {{{2, 4, 6}, {8, 10, 12}}, {{14, 16, 18}, {20, 22, 24}}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         auto sum = createIntArray(c_array_plus);
         compare(array, sum);
     }
     {
         long c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         auto diff = createIntArray(c_array_minus);
         compare(array, diff);
     }
@@ -85,13 +85,13 @@ TEST_F(ArrayMath3DTest, static3DFloatArraysTest) {
     auto array2 = createFloatArray<2 * 2 * 3>(c_array_2);
     {
         double c_array_plus[2][2][3] = {{{2.2, 4.4, 6.6}, {8.8, 11, 13.2}}, {{15.4, 17.6, 19.8}, {20.2, 22.22, 24.24}}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         auto sum = createFloatArray(c_array_plus);
         compare(array, sum);
     }
     {
         double c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         auto diff = createFloatArray(c_array_minus);
         compare(array, diff);
     }
@@ -107,13 +107,13 @@ TEST_F(ArrayMath3DTest, dynamic3DFloatArraysTest) {
     auto array2 = createFloatArray<2 * 2 * 3>(c_array_2);
     {
         double c_array_plus[2][2][3] = {{{2.2, 4.4, 6.6}, {8.8, 11, 13.2}}, {{15.4, 17.6, 19.8}, {20.2, 22.22, 24.24}}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         auto sum = createFloatArray(c_array_plus);
         compare(array, sum);
     }
     {
         double c_array_minus[2][2][3] = {{{0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         auto diff = createFloatArray(c_array_minus);
         compare(array, diff);
     }
