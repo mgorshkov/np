@@ -41,13 +41,14 @@ TEST_F(ArrayMath2DTest, dynamic2DIntArraysTest) {
     Array<int_> array2(c_array_2);
     {
         int_ c_array_plus[2][3] = {{8, 10, 12}, {14, 16, 18}};
-        auto array = add(array1, array2);
+
+        auto array = array1 + array2;
         Array<int_> sum{c_array_plus};
         compare(array, sum);
     }
     {
         int_ c_array_minus[2][3] = {{-6, -6, -6}, {-6, -6, -6}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         Array<int_> diff{c_array_minus};
         compare(array, diff);
     }
@@ -68,13 +69,13 @@ TEST_F(ArrayMath2DTest, static2DFloatArraysTest) {
     Array<float_, 2 * 3> array2{c_array_2};
     {
         float_ c_array_plus[2][3] = {{8.8, 11, 13.2}, {14.5, 16.61, 18.72}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         Array<float_, 2 * 3> plus{c_array_plus};
         compare(array, plus);
     }
     {
         float_ c_array_minus[2][3] = {{-6.6, -6.6, -6.6}, {-5.7, -5.61, -5.52}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         Array<float_, 2 * 3> diff{c_array_minus};
         compare(array, diff);
     }
@@ -95,7 +96,7 @@ TEST_F(ArrayMath2DTest, dynamic2DFloatArraysTest) {
         float_ c_array_2[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
         Array<float_, 2 * 3> array2{c_array_2};
         float_ c_array_plus[2][3] = {{8.8, 11, 13.2}, {14.5, 16.61, 18.72}};
-        auto array = add(array1, array2);
+        auto array = array1 + array2;
         Array<float_> plus{c_array_plus};
         compare<float_>(array, plus);
     }
@@ -105,7 +106,7 @@ TEST_F(ArrayMath2DTest, dynamic2DFloatArraysTest) {
         float_ c_array_2[2][3] = {{7.7, 8.8, 9.9}, {10.10, 11.11, 12.12}};
         Array<float_, 2 * 3> array2{c_array_2};
         float_ c_array_minus[2][3] = {{-6.6, -6.6, -6.6}, {-5.7, -5.61, -5.52}};
-        auto array = subtract(array1, array2);
+        auto array = array1 - array2;
         Array<float_> diff{c_array_minus};
         compare(array, diff);
     }

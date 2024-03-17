@@ -153,6 +153,20 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2, typename Derived2, typename Storage2>
+            auto NDArrayBase<DType, Derived, Storage>::addInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
+                auto size1 = size();
+                auto size2 = array.size();
+                auto maxSize = std::max(size1, size2);
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                    ndarray::internal::add(get(i % size1), array.get(i % size2));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::add(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
@@ -160,7 +174,7 @@ namespace np {
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType addResult;
-                    ndarray::internal::add(get(i % size()), value, addResult);
+                    ndarray::internal::add(get(i), value, addResult);
                     result.set(i, addResult);
                 }
                 return result;
@@ -184,6 +198,20 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2, typename Derived2, typename Storage2>
+            auto NDArrayBase<DType, Derived, Storage>::subtractInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
+                auto size1 = size();
+                auto size2 = array.size();
+                auto maxSize = std::max(size1, size2);
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                    ndarray::internal::subtract(get(i % size1), array.get(i % size2));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::subtract(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
@@ -195,6 +223,17 @@ namespace np {
                     result.set(i, subtractResult);
                 }
                 return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2>
+            auto NDArrayBase<DType, Derived, Storage>::subtractInplace(const DType2 &value) {
+#pragma omp parallel for default(none) shared(value, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::subtract(get(i % size()), value);
+                }
+                return copy();
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -229,6 +268,20 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2, typename Derived2, typename Storage2>
+            auto NDArrayBase<DType, Derived, Storage>::multiplyInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
+                auto size1 = size();
+                auto size2 = array.size();
+                auto maxSize = std::max(size1, size2);
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                    ndarray::internal::multiply(get(i % size1), array.get(i % size2));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::multiply(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
@@ -260,6 +313,20 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2, typename Derived2, typename Storage2>
+            auto NDArrayBase<DType, Derived, Storage>::divideInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
+                auto size1 = size();
+                auto size2 = array.size();
+                auto maxSize = std::max(size1, size2);
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                    ndarray::internal::divide(get(i % size1), array.get(i % size2));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::divide(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
@@ -271,6 +338,17 @@ namespace np {
                     result.set(i, divideResult);
                 }
                 return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            template<Arithmetic DType2>
+            auto NDArrayBase<DType, Derived, Storage>::divideInplace(const DType2 &value) {
+#pragma omp parallel for default(none) shared(value, result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::divide(get(i % size()), value);
+                }
+                return copy();
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -301,6 +379,16 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::expInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::exp(get(i));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::sqrt() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
 #pragma omp parallel for default(none) shared(result)
@@ -311,6 +399,16 @@ namespace np {
                     result.set(i, sqrtResult);
                 }
                 return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::sqrtInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::sqrt(get(i));
+                }
+                return copy();
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -327,6 +425,16 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::sinInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::sin(get(i));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::cos() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
 #pragma omp parallel for default(none) shared(result)
@@ -337,6 +445,16 @@ namespace np {
                     result->set(i, cosResult);
                 }
                 return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::cosInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::cos(get(i));
+                }
+                return copy();
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -353,6 +471,16 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::logInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::log(get(i));
+                }
+                return copy();
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::abs() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
 #pragma omp parallel for default(none) shared(result)
@@ -363,6 +491,16 @@ namespace np {
                     result.set(i, absResult);
                 }
                 return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
+            auto NDArrayBase<DType, Derived, Storage>::absInplace() {
+#pragma omp parallel for default(none) shared(result)
+                // index variable in OpenMP 'for' statement must have signed integral type
+                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
+                    ndarray::internal::abs(get(i));
+                }
+                return copy();
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -500,6 +638,60 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
+            template<typename DType2, typename Derived2, typename Storage2>
+            auto NDArrayBase<DType, Derived, Storage>::average(const NDArrayBase<DType2, Derived2, Storage2> &weights) const {
+                auto s = size() / shape()[0];
+                ndarray::array_dynamic::NDArrayDynamic<float_> result{Shape{s}};
+                if (!weights.empty()) {
+                    if (weights.ndim() == 1) {
+                        if (weights.size() != shape()[0]) {
+                            throw std::runtime_error("Incorrect weigths shape");
+                        }
+                    } else if (weights.shape() != shape()) {
+                        throw std::runtime_error("Incorrect weigths shape");
+                    }
+                    if (ndim() == 1) {
+                        float_ sum{};
+                        float_ weightsSum{};
+                        for (Size i = 0; i < size(); ++i) {
+                            const auto &weight = weights.get(i);
+                            sum += get(i) * weight;
+                            weightsSum += weight;
+                        }
+                        result.set(0, sum / weightsSum);
+                    } else {
+                        for (Size i = 0; i < s; ++i) {
+                            float_ sum{};
+                            float_ weightsSum{};
+                            for (Size j = 0; j < shape()[0]; ++j) {
+                                const auto &weight = weights.get(j);
+                                sum += get(i + j * s) * weight;
+                                weightsSum += weight;
+                            }
+                            result.set(i, sum / weightsSum);
+                        }
+                    }
+                } else {
+                    if (ndim() == 1) {
+                        float_ sum{};
+                        for (Size i = 0; i < size(); ++i) {
+                            sum += get(i);
+                        }
+                        result.set(0, sum / size());
+                    } else {
+                        for (Size i = 0; i < s; ++i) {
+                            float_ sum{};
+                            for (Size j = 0; j < shape()[0]; ++j) {
+                                sum += get(i + j * s);
+                            }
+                            result.set(i, sum / shape()[0]);
+                        }
+                    }
+                }
+                return result;
+            }
+
+            template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::sum() const {
                 DType result{};
 #pragma omp parallel for default(none) reduction(+ \
@@ -592,7 +784,7 @@ namespace np {
                 float_ result{};
                 for (Size i = 0; i < s; ++i) {
                     const auto &element = get(i);
-                    ndarray::internal::inc(result, element);
+                    ndarray::internal::add(result, element);
                 }
                 float_ resultDiv{};
                 ndarray::internal::divide(result, s, resultDiv);
@@ -612,7 +804,7 @@ namespace np {
                     ndarray::internal::isNaN(element, isNaNResult);
                     if (isNaNResult)
                         continue;
-                    ndarray::internal::inc(result, element);
+                    ndarray::internal::add(result, element);
                     ++count;
                 }
                 float_ resultDiv{};

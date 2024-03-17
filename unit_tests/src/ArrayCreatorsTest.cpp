@@ -287,12 +287,15 @@ TEST_F(ArrayCreatorsTest, test3DOnes) {
 TEST_F(ArrayCreatorsTest, testARangeStatic) {
     auto array_1 = arange<int_, 10>();
     checkArrayRepr(array_1, "[0 1 2 3 4 5 6 7 8 9]");
-    // Create an NDArray of evenly spaced values (step value)
+    // Create an NDArray of evenly spaced values
     auto array_2 = arange<int_, 10, 25>();
     checkArrayRepr(array_2, "[10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]");
     // Create an NDArray of evenly spaced values (step value)
     auto array_3 = arange<int_, 10, 25, 5>();
     checkArrayRepr(array_3, "[10 15 20]");
+    // Create an NDArray of evenly spaced values (negative step value)
+    auto array_4 = arange<int_, 25, 10, -5>();
+    checkArrayRepr(array_4, "[25 20 15]");
 }
 
 TEST_F(ArrayCreatorsTest, testARangeDynamic) {
@@ -304,6 +307,9 @@ TEST_F(ArrayCreatorsTest, testARangeDynamic) {
     // Create an NDArray of evenly spaced values (step value)
     auto array_3 = arange<int_>(10, 25, 5);
     checkArrayRepr(array_3, "[10 15 20]");
+    // Create an NDArray of evenly spaced values (negative step value)
+    auto array_4 = arange<int_>(25, 10, -5);
+    checkArrayRepr(array_4, "[25 20 15]");
 }
 
 // Create an NDArray of evenly spaced values (number of samples)

@@ -473,3 +473,31 @@ TEST_F(ArrayAggregationTest, static3DFloatArrayTest) {
     aggResults.corrException = true;
     checkArrayAggregation(array, aggResults);
 }
+
+TEST_F(ArrayAggregationTest, averageTest1) {
+    auto data = arange(1.0, 5.0);
+    auto sample = Array<float_>{2.5};
+    compare(average(data), sample);
+}
+
+TEST_F(ArrayAggregationTest, averageTest2) {
+    auto data = arange(1.0, 11.0);
+    auto weights = arange(10.0, 0.0, -1.0);
+    auto sample = Array<float_>{4.0};
+    compare(average(data, weights), sample);
+}
+
+TEST_F(ArrayAggregationTest, averageTest3) {
+    auto data = arange(6.0).reshape(Shape({2, 3}));
+    auto result = average(data);
+    auto sample = Array<float_>{1.5, 2.5, 3.5};
+    compare(result, sample);
+}
+
+TEST_F(ArrayAggregationTest, averageTest4) {
+    auto data = arange(6.0).reshape(Shape({2, 3}));
+    auto weights = Array<float_>{1. / 4, 3. / 4};
+    auto result = average(data, weights);
+    auto sample = Array<float_>{2.25, 3.25, 4.25};
+    compare(result, sample);
+}

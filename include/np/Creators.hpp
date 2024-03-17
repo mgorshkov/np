@@ -130,14 +130,20 @@ namespace np {
     auto arange(DType start, DType stop, DType step = 1) {
         NP_THROW_UNLESS(step != 0, "Step must not be zero.");
 
-        DType const size = (stop - start) / step;
-        std::vector<DType> vector;
-        vector.resize(size);
-        Size i{0};
-        for (DType value = start; value < stop; value += step) {
-            vector[i++] = value;
+        Size size = static_cast<Size>((stop - start) / step);
+        Shape shape{size};
+        NDArrayDynamic<DType> result{shape};
+        Size i{};
+        if (step > 0) {
+            for (DType value = start; value < stop; value += step) {
+                result.set(i++, value);
+            }
+        } else {
+            for (DType value = start; value > stop; value += step) {
+                result.set(i++, value);
+            }
         }
-        return NDArrayDynamic<DType>{vector};
+        return result;
     }
 
     //////////////////////////////////////////////////////////////
@@ -160,8 +166,14 @@ namespace np {
         static Size const constexpr size = (stop - start) / step;
         NDArrayStatic<DType, size> array{};
         Size i{0};
-        for (DType value = start; value < stop; value += step) {
-            array.set(i++, value);
+        if constexpr (step > 0) {
+            for (DType value = start; value < stop; value += step) {
+                array.set(i++, value);
+            }
+        } else {
+            for (DType value = start; value > stop; value += step) {
+                array.set(i++, value);
+            }
         }
         return array;
     }
