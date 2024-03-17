@@ -1,3 +1,11 @@
+# Release 0.1.2
+## Changes
+* Inplace math methods
+
+# Release 0.1.1
+## Changes
+* CMakeLists.txt fixed, warnings fixed
+
 # Release 0.1.0
 ## Changes
 * Subsetting/slicing/boolean indexing optimized

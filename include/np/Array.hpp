@@ -96,7 +96,6 @@ namespace np {
             ndarray::array_static::NDArrayStaticIndexConstMap<DType, SizeT, ValueType, Hasher, EqualTo>>::type;
 }// namespace np
 
-#include "np/ndarray/internal/NDArrayBaseStreamIoImpl.hpp"
 #include <np/Agg.hpp>
 #include <np/Axis.hpp>
 #include <np/Comp.hpp>
@@ -110,5 +109,6 @@ namespace np {
 #include <np/Sort.hpp>
 #include <np/ndarray/dynamic/internal/NDArrayDynamicStorageStreamIoImpl.hpp>
 #include <np/ndarray/internal/NDArrayBaseImpl.hpp>
+#include <np/ndarray/internal/NDArrayBaseStreamIoImpl.hpp>
 #include <np/ndarray/internal/NDArrayShapedImpl.hpp>
 #include <np/ndarray/static/internal/NDArrayStaticStorageStreamIoImpl.hpp>

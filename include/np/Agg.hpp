@@ -40,6 +40,34 @@ SOFTWARE.
 ////////////////////////////////////////////////////////////
 namespace np {
     //////////////////////////////////////////////////////////////
+    /// \brief Average of the elements
+    ///
+    /// Compute the weighted average along the axis 0.
+    ///
+    /// \param array An array to calculate the average
+    /// \param weights An array of weights to calculate the average
+    ///
+    /// \return Mean of array elements
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename DType2 = DTypeDefault, Size SizeT2 = SIZE_DEFAULT>
+    std::enable_if_t<!std::is_arithmetic_v<DType>> averageImpl(const Array<DType, SizeT> &, const Array<DType2, SizeT2> &, auto &) {
+        throw std::runtime_error("Invalid argument");
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename DType2 = DTypeDefault, Size SizeT2 = SIZE_DEFAULT>
+    std::enable_if_t<std::is_arithmetic_v<DType>> averageImpl(const Array<DType, SizeT> &array, const Array<DType2, SizeT2> &weights, auto &result) {
+        result = array.average(weights);
+    }
+
+    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename DType2 = DTypeDefault, Size SizeT2 = SIZE_DEFAULT>
+    inline auto average(const Array<DType, SizeT> &array, const Array<DType2, SizeT2> &weights = Array<DType2, SizeT2>{}) {
+        ndarray::array_dynamic::NDArrayDynamic<float_> result{};
+        averageImpl<DType, SizeT, DType2, SizeT2>(array, weights, result);
+        return result;
+    }
+
+    //////////////////////////////////////////////////////////////
     /// \brief Sum of array elements
     ///
     /// This function sums up all elements of an array.

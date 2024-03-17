@@ -122,14 +122,26 @@ namespace np {
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto add(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto addInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
+
                 template<Arithmetic DType2>
                 auto add(const DType2 &value) const;
+
+                template<Arithmetic DType2>
+                auto addInplace(const DType2 &value);
 
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto subtract(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto subtractInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
+
                 template<Arithmetic DType2>
                 auto subtract(const DType2 &value) const;
+
+                template<Arithmetic DType2>
+                auto subtractInplace(const DType2 &value);
 
                 template<Arithmetic DType2>
                 auto subtractFrom(const DType2 &value) const;
@@ -137,29 +149,53 @@ namespace np {
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto multiplyInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
+
                 template<Arithmetic DType2>
                 auto multiply(const DType2 &value) const;
+
+                template<Arithmetic DType2>
+                auto multiplyInplace(const DType2 &value);
 
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto divide(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
+                template<Arithmetic DType2, typename Derived2, typename Storage2>
+                auto divideInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
+
                 template<Arithmetic DType2>
                 auto divide(const DType2 &value) const;
+
+                template<Arithmetic DType2>
+                auto divideInplace(const DType2 &value);
 
                 template<Arithmetic DType2>
                 auto divideFrom(const DType2 &value) const;
 
                 auto exp() const;
 
+                auto expInplace();
+
                 auto sqrt() const;
+
+                auto sqrtInplace();
 
                 auto sin() const;
 
+                auto sinInplace();
+
                 auto cos() const;
+
+                auto cosInplace();
 
                 auto log() const;
 
+                auto logInplace();
+
                 auto abs() const;
+
+                auto absInplace();
 
                 // Dot product
                 template<typename DType2, typename Derived2, typename Storage2>
@@ -195,6 +231,10 @@ namespace np {
                 }
 
                 // Aggregate functions
+                // Weighted average
+                template<typename DType2, typename Derived2, typename Storage2>
+                auto average(const NDArrayBase<DType2, Derived2, Storage2> &weights) const;
+
                 // Array-wise sum
                 DType sum() const;
 

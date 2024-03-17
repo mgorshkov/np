@@ -38,50 +38,90 @@ TEST_F(ArrayMathTest, dynamicEmptyIntArraysAddTest) {
     // dynamic
     Array<int_> array1{};
     Array<int_> array2{};
-    auto array = add(array1, array2);
-    compare(array, array1);
+    {
+        auto array = array1 + array2;
+        compare(array, array1);
+    }
+    {
+        array1 += array2;
+        Array<int_> array{};
+        compare(array, array1);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamicEmptyIntArraysSubtractTest) {
     // dynamic
     Array<int_> array1{};
     Array<int_> array2{};
-    auto array = subtract(array1, array2);
-    compare(array, array1);
+    {
+        auto array = array1 - array2;
+        compare(array, array1);
+    }
+    {
+        array1 -= array2;
+        Array<int_> array{};
+        compare(array, array1);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamicEmptyFloatArraysAddTest) {
     // dynamic
-    Array<int_> array1{};
-    Array<int_> array2{};
-    auto array = add(array1, array2);
-    compare(array, array1);
+    Array<float_> array1{};
+    Array<float_> array2{};
+    {
+        auto array = array1 + array2;
+        compare(array, array1);
+    }
+    {
+        array1 += array2;
+        Array<float_> array{};
+        compare(array, array1);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamicEmptyFloatArraysSubtractTest) {
     // dynamic
-    Array<int_> array1{};
-    Array<int_> array2{};
-    auto array = subtract(array1, array2);
-    compare(array, array1);
+    Array<float_> array1{};
+    Array<float_> array2{};
+    {
+        auto array = array1 - array2;
+        compare(array, array1);
+    }
+    {
+        array1 -= array2;
+        Array<float_> array{};
+        compare(array, array1);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DIntArraysAddTest) {
     // static
     Array<int_, 3> array1{1, 2, 3};
     Array<int_, 3> array2{4, 5, 6};
-    auto array = add(array1, array2);
     Array<int_> plus{5, 7, 9};
-    compare(array, plus);
+    {
+        auto array = array1 + array2;
+        compare(array, plus);
+    }
+    {
+        array1 += array2;
+        compare(array1, plus);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DIntArraysSubtractTest) {
     // static
     Array<int_, 3> array1{1, 2, 3};
     Array<int_, 3> array2{4, 5, 6};
-    auto array = subtract(array1, array2);
-    Array<float_> minus{-3, -3, -3};
-    compare(array, minus);
+    Array<int_> minus{-3, -3, -3};
+    {
+        auto array = array1 - array2;
+        compare(array, minus);
+    }
+    {
+        array1 -= array2;
+        compare(array1, minus);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DIntArraysDotTest) {
@@ -104,26 +144,38 @@ TEST_F(ArrayMathTest, static1DIntArraysInterpTest) {
 
 TEST_F(ArrayMathTest, dynamic1DIntArraysAddTest) {
     // dynamic
-    Array<int_, 3> array1{1, 2, 3};
-    Array<int_, 3> array2{4, 5, 6};
-    auto array = add(array1, array2);
+    Array<int_> array1{1, 2, 3};
+    Array<int_> array2{4, 5, 6};
     Array<int_> plus{5, 7, 9};
-    compare(array, plus);
+    {
+        auto array = array1 + array2;
+        compare(array, plus);
+    }
+    {
+        array1 += array2;
+        compare(array1, plus);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DIntArraysSubtractTest) {
     // dynamic
-    Array<int_, 3> array1{1, 2, 3};
-    Array<int_, 3> array2{4, 5, 6};
-    auto array = subtract(array1, array2);
+    Array<int_> array1{1, 2, 3};
+    Array<int_> array2{4, 5, 6};
     Array<int_> minus{-3, -3, -3};
-    compare(array, minus);
+    {
+        auto array = array1 - array2;
+        compare(array, minus);
+    }
+    {
+        array1 -= array2;
+        compare(array1, minus);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DIntArraysDotTest) {
     // dynamic
-    Array<int_, 3> array1{1, 2, 3};
-    Array<int_, 3> array2{4, 5, 6};
+    Array<int_> array1{1, 2, 3};
+    Array<int_> array2{4, 5, 6};
 
     auto array = array1.dot(array2);
     Array<int_> dot{32};
@@ -143,18 +195,30 @@ TEST_F(ArrayMathTest, static1DFloatArraysAddTest) {
     // static
     Array<float_, 3> array1{1.1, 2.2, 3.3};
     Array<float_, 3> array2{4.4, 5.5, 6.6};
-    auto array = add(array1, array2);
     Array<float_> plus{5.5, 7.7, 9.9};
-    compare(array, plus);
+    {
+        auto array = array1 + array2;
+        compare(array, plus);
+    }
+    {
+        array1 += array2;
+        compare(array1, plus);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DFloatArraysSubtractTest) {
     // static
     Array<float_, 3> array1{1.1, 2.2, 3.3};
     Array<float_, 3> array2{4.4, 5.5, 6.6};
-    auto array = subtract(array1, array2);
     Array<float_> minus{-3.3, -3.3, -3.3};
-    compare(array, minus);
+    {
+        auto array = array1 - array2;
+        compare(array, minus);
+    }
+    {
+        array1 -= array2;
+        compare(array1, minus);
+    }
 }
 
 TEST_F(ArrayMathTest, static1DFloatArraysDotTest) {
@@ -189,18 +253,30 @@ TEST_F(ArrayMathTest, dynamic1DFloatArraysAddTest) {
     // dynamic
     Array<float_> array1{1.1, 2.2, 3.3};
     Array<float_> array2{4.4, 5.5, 6.6};
-    auto array = add(array1, array2);
     Array<float_> plus{5.5, 7.7, 9.9};
-    compare(array, plus);
+    {
+        auto array = array1 + array2;
+        compare(array, plus);
+    }
+    {
+        array1 += array2;
+        compare(array1, plus);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DFloatArraysSubtractTest) {
     // dynamic
     Array<float_> array1{1.1, 2.2, 3.3};
     Array<float_> array2{4.4, 5.5, 6.6};
-    auto array = subtract(array1, array2);
     Array<float_> minus{-3.3, -3.3, -3.3};
-    compare(array, minus);
+    {
+        auto array = array1 - array2;
+        compare(array, minus);
+    }
+    {
+        array1 -= array2;
+        compare(array1, minus);
+    }
 }
 
 TEST_F(ArrayMathTest, dynamic1DFloatArraysDotTest) {
@@ -235,7 +311,7 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysAddWithBroadcastTest) {
     Array<int_> array1(c_array_1);
     Array<int_> array2{7, 8, 9};
     long c_array_plus[2][3] = {{8, 10, 12}, {11, 13, 15}};
-    auto array = add(array1, array2);
+    auto array = array1 + array2;
     Array<int_> sum{c_array_plus};
     compare(array, sum);
 }
@@ -245,7 +321,7 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysSubtractWithBroadcastTest) {
     Array<int_> array1(c_array_1);
     Array<int_> array2{7, 8, 9};
     long c_array_minus[2][3] = {{-6, -6, -6}, {-3, -3, -3}};
-    auto array = subtract(array1, array2);
+    auto array = array1 - array2;
     Array<int_> diff{c_array_minus};
     compare(array, diff);
 }

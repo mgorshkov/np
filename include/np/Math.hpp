@@ -45,13 +45,13 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto add(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+    inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
         return array1.add(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.add(array2);
+    inline auto operator+=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+        return array1.addInplace(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -59,9 +59,14 @@ namespace np {
         return array.add(value);
     }
 
-    template<Arithmetic DType1, typename Derived2, typename Storage2, Arithmetic DType2>
-    inline auto operator+(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator+(const DType2 &value, const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array) {
         return array.add(value);
+    }
+
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator+=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+        return array.addInplace(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -76,13 +81,13 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto subtract(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+    inline auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
         return array1.subtract(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.subtract(array2);
+    inline auto operator-=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+        return array1.subtractInplace(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -90,9 +95,9 @@ namespace np {
         return array.subtract(value);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator-(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
-        return array.subtractFrom(value);
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator-=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+        return array.subtractInplace(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -107,13 +112,13 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto multiply(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+    inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
         return array1.multiply(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.multiply(array2);
+    inline auto operator*=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+        return array1.multiplyInplace(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -121,9 +126,14 @@ namespace np {
         return array.multiply(value);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator*(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator*(const DType2 &value, const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array) {
         return array.multiply(value);
+    }
+
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator*=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+        return array.multiplyInplace(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -131,22 +141,22 @@ namespace np {
     ///
     /// Calculate the array-wise element-by-element ratio of the arrays.
     ///
-    /// \param array1 array to multiply
-    /// \param array2 array to multiply
+    /// \param array1 array to divide
+    /// \param array2 array to divide
     ///
     /// \warning Division by zero is not handled
     ///
     /// \return The ratio of the arrays
     ///
     //////////////////////////////////////////////////////////////
-    template<Arithmetic DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
-    inline auto divide(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
         return array1.divide(array2);
     }
 
-    template<Arithmetic DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
-    inline auto operator/(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2) {
-        return array1.divide(array2);
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto operator/=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+        return array1.divideInplace(array2);
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -154,9 +164,9 @@ namespace np {
         return array.divide(value);
     }
 
-    template<Arithmetic DType1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator/(const DType1 &value, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array) {
-        return array.divideFrom(value);
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
+    inline auto operator/=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
+        return array.divideInplace(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -175,6 +185,11 @@ namespace np {
         return array1.exp(array2);
     }
 
+    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
+    inline auto expInplace(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
+        return array1.expInplace(array2);
+    }
+
     //////////////////////////////////////////////////////////////
     /// \brief Find the square root of the array
     ///
@@ -188,6 +203,11 @@ namespace np {
     template<Arithmetic DType, typename Derived, typename Storage>
     inline auto sqrt(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.sqrt();
+    }
+
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto sqrtInplace(ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.sqrtInplace();
     }
 
     //////////////////////////////////////////////////////////////
@@ -205,6 +225,11 @@ namespace np {
         return array.sin();
     }
 
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto sinInplace(ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.sinInplace();
+    }
+
     //////////////////////////////////////////////////////////////
     /// \brief Find the cosine of the array
     ///
@@ -218,6 +243,11 @@ namespace np {
     template<Arithmetic DType, typename Derived, typename Storage>
     inline auto cos(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.cos();
+    }
+
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto cosInplace(ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.cosInplace();
     }
 
     //////////////////////////////////////////////////////////////
@@ -236,6 +266,12 @@ namespace np {
     }
 
     //////////////////////////////////////////////////////////////
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto logInplace(ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.logInplace();
+    }
+
+    //////////////////////////////////////////////////////////////
     /// \brief Find the abs of the array
     ///
     /// Find array-wise absolute value element by element.
@@ -248,6 +284,12 @@ namespace np {
     template<Arithmetic DType, typename Derived, typename Storage>
     inline auto abs(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
         return array.abs();
+    }
+
+    //////////////////////////////////////////////////////////////
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto absInplace(ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.absInplace();
     }
 
     //////////////////////////////////////////////////////////////
