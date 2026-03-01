@@ -60,30 +60,30 @@ namespace np {
 
                 const DType &get(Size i) const {
                     if (i >= m_indices.size()) {
-                        throw std::runtime_error("Index out of bounds");
+                        throw std::invalid_argument("Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::runtime_error("Parent is nullptr");
+                        throw std::invalid_argument("Parent is nullptr");
                     }
                     return m_parent->get(m_indices[i]);
                 }
 
                 DType &get(Size i) {
                     if (i >= m_indices.size()) {
-                        throw std::runtime_error("Index out of bounds");
+                        throw std::invalid_argument("Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::runtime_error("Parent is nullptr");
+                        throw std::invalid_argument("Parent is nullptr");
                     }
                     return m_parent->get(m_indices[i]);
                 }
 
                 void set(Size i, const DType &value) {
                     if (i >= m_indices.size()) {
-                        throw std::runtime_error("Index out of bounds");
+                        throw std::invalid_argument("Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::runtime_error("Parent is nullptr");
+                        throw std::invalid_argument("Parent is nullptr");
                     }
                     return m_parent->set(m_indices[i], value);
                 }
@@ -105,7 +105,7 @@ namespace np {
                     }
 
                     iterator(const iterator &it)
-                        : m_container{it.container}, m_offset{it.m_offset} {
+                        : m_container{it.m_container}, m_offset{it.m_offset} {
                     }
 
                     iterator &operator=(const iterator &it) {
@@ -324,15 +324,15 @@ namespace np {
                     m_shape = shape;
                 }
 
-                static constexpr std::size_t kDepth = Storage::kDepth + 1;
+                static constexpr size_t kDepth = Storage::kDepth + 1;
 
             private:
                 static bool hasBooleanIndexing(const IndicesType<DType> &indices) {
                     bool hasBooleanIndexing = false;
-                    for (std::size_t i = 0; i < indices.size(); ++i) {
+                    for (size_t i = 0; i < indices.size(); ++i) {
                         hasBooleanIndexing = std::holds_alternative<BooleanIndexType<DType>>(indices[i]);
                         if (i != indices.size() - 1 && hasBooleanIndexing) {
-                            throw std::runtime_error("Boolean index must be the last one");
+                            throw std::invalid_argument("Boolean index must be the last one");
                         }
                     }
                     return hasBooleanIndexing;
@@ -347,12 +347,12 @@ namespace np {
                         initWeights();
                     }
 
-                    void add(std::size_t dim, const SubsettingIndexType &index) {
+                    void add(size_t dim, const SubsettingIndexType &index) {
                         auto ror = createROR(dim, Range{index, index, 0});
                         intersectRORs(ror, dim);
                     }
 
-                    void add(std::size_t dim, const SlicingIndexType &index) {
+                    void add(size_t dim, const SlicingIndexType &index) {
                         auto [start, stop, step] = index;
                         if (start == 0 && stop == m_shape[dim] && step == 1) {
                             return;// no limitation on complete index
@@ -377,11 +377,11 @@ namespace np {
                                 case Operator::Less:
                                     return value < index.m_arg;
                                 default:
-                                    throw std::runtime_error("Invalid operator");
+                                    throw std::invalid_argument("Invalid operator");
                             }
                         };
                         if (m_parent == nullptr) {
-                            throw std::runtime_error("Parent is nullptr");
+                            throw std::invalid_argument("Parent is nullptr");
                         }
                         std::vector<Size> bi;
                         for (Size i = 0; i < size(); ++i) {
@@ -401,7 +401,7 @@ namespace np {
                         Size size = m_ror.size();
                         if (size == 0) {
                             if (m_parent == nullptr) {
-                                throw std::runtime_error("Parent is nullptr");
+                                throw std::invalid_argument("Parent is nullptr");
                             }
                             return m_parent->size();
                         }
@@ -439,7 +439,7 @@ namespace np {
 
                         auto start = m_ror.start;
                         if (i >= m_ror.size() * start.size()) {
-                            throw std::runtime_error("Access over array bounds");
+                            throw std::invalid_argument("Access over array bounds");
                         }
 
                         if (m_ror.size() == 1) {
@@ -466,7 +466,7 @@ namespace np {
                 private:
                     [[nodiscard]] Shape::Storage getDimIndices(Size index) const {
                         Shape::Storage dimIndices(m_shape.size());
-                        for (std::size_t pos = 0; pos < dimIndices.size(); ++pos) {
+                        for (size_t pos = 0; pos < dimIndices.size(); ++pos) {
                             dimIndices[pos] = index / m_weights[pos];
                             index -= dimIndices[pos] * m_weights[pos];
                         }
@@ -476,7 +476,7 @@ namespace np {
                     void initWeights() {
                         m_weights.resize(m_shape.size());
                         Size multiplier{1UL};
-                        for (std::size_t pos = m_weights.size(); pos--;) {
+                        for (size_t pos = m_weights.size(); pos--;) {
                             m_weights[pos] = multiplier;
                             multiplier *= m_shape[pos];
                         }
@@ -580,7 +580,7 @@ namespace np {
                         }
                     };
 
-                    ROR createROR(std::size_t dim, const Range &indexRange) {
+                    ROR createROR(size_t dim, const Range &indexRange) {
                         // required dimension is the first: one range
                         if (dim == 0) {
                             auto size = m_shape.calcSizeByShape() / m_shape[dim];
@@ -600,7 +600,7 @@ namespace np {
                         }
                         // multiple ranges for the rest dimensions
                         if (indexRange.step != 0 && indexRange.step != 1) {
-                            throw std::runtime_error("Non-contiguous ranges are not currently supported");
+                            throw std::invalid_argument("Non-contiguous ranges are not currently supported");
                         }
                         Shape::Storage storage;
                         storage.resize(m_shape.size());
@@ -612,13 +612,13 @@ namespace np {
                         Ranges ranges;
                         for (Size h = 0; h < high; ++h) {
                             shape[dim] = indexRange.start;
-                            for (std::size_t low = shape.size() - 1; low > dim; low--) {
+                            for (size_t low = shape.size() - 1; low > dim; low--) {
                                 shape[low] = 0;
                             }
                             auto minIndex = ravel_multi_index(shape, m_shape);
 
                             shape[dim] = indexRange.stop;
-                            for (std::size_t low = shape.size() - 1; low > dim; low--) {
+                            for (size_t low = shape.size() - 1; low > dim; low--) {
                                 shape[low] = m_shape[low] - 1;
                             }
                             auto maxIndex = ravel_multi_index(shape, m_shape);
@@ -644,11 +644,11 @@ namespace np {
                         return range.start == 0 && range.stop + 1 == m_shape.calcSizeByShape() && range.step == 1;
                     }
 
-                    [[nodiscard]] bool isTrivial(const Range &range, std::size_t dim) const {
+                    [[nodiscard]] bool isTrivial(const Range &range, size_t dim) const {
                         return range.start == 0 && range.stop + 1 == m_shape[dim] && range.step == 1;
                     }
 
-                    std::optional<Range> intersectRanges(const Range &range1, const Range &range2, std::size_t dim) {
+                    std::optional<Range> intersectRanges(const Range &range1, const Range &range2, size_t dim) {
                         if (range1.start > range2.stop || range2.start > range1.stop) {
                             return std::nullopt;
                         }
@@ -710,7 +710,7 @@ namespace np {
                         return Range{X0, Xend, Xend > X0 ? static_cast<SignedSize>(X1 - X0) : 0};
                     }
 
-                    void intersectRORs(const ROR &ror, std::size_t dim) {
+                    void intersectRORs(const ROR &ror, size_t dim) {
                         if (m_ror.empty()) {
                             m_ror = ror;
                             return;
@@ -773,7 +773,7 @@ namespace np {
                 };
 
                 void initIndices(const IndicesType<DType> &indices) {
-                    for (std::size_t dim = 0; dim < indices.size(); ++dim) {
+                    for (size_t dim = 0; dim < indices.size(); ++dim) {
                         if (std::holds_alternative<SubsettingIndexType>(indices[dim])) {
                             m_indices.add(dim, std::get<SubsettingIndexType>(indices[dim]));
                         } else if (std::holds_alternative<SlicingIndexType>(indices[dim])) {
@@ -781,7 +781,7 @@ namespace np {
                         } else if (std::holds_alternative<BooleanIndexType<DType>>(indices[dim])) {
                             m_indices.add(std::get<BooleanIndexType<DType>>(indices[dim]));
                         } else {
-                            throw std::runtime_error("Invalid index type");
+                            throw std::invalid_argument("Invalid index type");
                         }
                     }
                 }
@@ -793,11 +793,11 @@ namespace np {
                     } else {
                         auto dimIndicesFront = m_indices.getFrontIndices();
                         auto dimIndicesBack = m_indices.getBackIndices();
-                        for (std::size_t pos = dimIndicesBack.size(); pos--;) {
+                        for (size_t pos = dimIndicesBack.size(); pos--;) {
                             dimIndicesBack[pos] -= dimIndicesFront[pos];// delta + 1 is dim
                             ++dimIndicesBack[pos];
                         }
-                        for (std::size_t dim = 0; dim < dimIndicesBack.size(); ++dim) {
+                        for (size_t dim = 0; dim < dimIndicesBack.size(); ++dim) {
                             if (dim >= indices.size() || std::holds_alternative<SlicingIndexType>(indices[dim])) {
                                 m_shape.addDim(dimIndicesBack[dim]);
                             }

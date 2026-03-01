@@ -67,22 +67,22 @@ namespace np {
             template<typename DType>
             class NDArrayDynamic final : public NDArrayDynamicBase<DType> {
             public:
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 using CArray1DType = DType[Size1T];
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 using CArray2DType = CArray1DType<Size1T>[Size2T];
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 using StdArray1DType = std::array<DType, Size1T>;
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
 
                 using StdVector1DType = std::vector<DType>;
@@ -99,34 +99,34 @@ namespace np {
 
                 NDArrayDynamic(NDArrayDynamic &&another) noexcept = default;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayDynamic(const CArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayDynamic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline explicit NDArrayDynamic(const CArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline explicit NDArrayDynamic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline explicit NDArrayDynamic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayDynamic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline explicit NDArrayDynamic(const StdArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline explicit NDArrayDynamic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline explicit NDArrayDynamic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
                 inline explicit NDArrayDynamic(const StdVector1DType &vector) noexcept;
@@ -154,28 +154,28 @@ namespace np {
 
                 inline NDArrayDynamic &operator=(NDArrayDynamic &&another) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayDynamic &operator=(CArray1DType<Size1T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline NDArrayDynamic &operator=(CArray2DType<Size1T, Size2T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline NDArrayDynamic &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline NDArrayDynamic &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayDynamic &operator=(const StdArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline NDArrayDynamic &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline NDArrayDynamic &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline NDArrayDynamic &
                 operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
@@ -207,8 +207,8 @@ namespace np {
 
             struct NDArrayDynamicHasher {
                 template<typename DType>
-                auto operator()(const NDArrayDynamic<DType> &array) const -> std::size_t {
-                    std::size_t h{0};
+                auto operator()(const NDArrayDynamic<DType> &array) const -> size_t {
+                    size_t h{0};
                     for (const auto &element: array) {
                         h ^= std::hash<DType>{}(element);
                     }

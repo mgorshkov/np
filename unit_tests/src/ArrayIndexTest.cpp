@@ -35,25 +35,25 @@ protected:
 TEST_F(ArrayIndexTest, dynamicEmptyIntArrayTest) {
     // dynamic
     Array<int_> array{};
-    EXPECT_THROW(auto slice = array[0], std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyFloatArrayTest) {
     // dynamic
     Array<float_> array{};
-    EXPECT_THROW(auto slice = array[0], std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyStringArrayTest) {
     // dynamic
     Array<string_> array{};
-    EXPECT_THROW(auto slice = array[0], std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, dynamicEmptyUnicodeArrayTest) {
     // dynamic
     Array<unicode_> array{};
-    EXPECT_THROW(auto slice = array[0], std::runtime_error);
+    EXPECT_THROW(auto slice = array[0], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArraySubsettingTest) {
@@ -67,13 +67,13 @@ TEST_F(ArrayIndexTest, static1DIntArraySubsettingTest) {
 TEST_F(ArrayIndexTest, dynamic1DIntArraySubsettingOutOfBoundTest) {
     // dynamic
     Array<int_> array{1, 2, 3};
-    EXPECT_THROW(auto slice = array[3], std::runtime_error);
+    EXPECT_THROW(auto slice = array[3], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, dynamic1DIntArraySlicingOutOfBoundTest) {
     // dynamic
     Array<int_> array{1, 2, 3};
-    EXPECT_THROW(auto slice = array["1:,:1"], std::runtime_error);
+    EXPECT_THROW(auto slice = array["1:,:1"], std::invalid_argument);
 }
 
 TEST_F(ArrayIndexTest, static1DIntArrayBooleanIndexingTest) {
@@ -234,7 +234,7 @@ TEST_F(ArrayIndexTest, dynamic1DFloatArrayHashingTest) {
     // dynamic
     {
         Array<float_> array{1.1, 2.2, 3.3, 1.1, 3.3};
-        ndarray::array_dynamic::NDArrayDynamicIndexMap<float_, std::size_t> counts;
+        ndarray::array_dynamic::NDArrayDynamicIndexMap<float_, size_t> counts;
         for (np::Size i = 0; i < array.shape()[0]; ++i) {
             auto value = array[i];
             ++counts[value];
@@ -247,7 +247,7 @@ TEST_F(ArrayIndexTest, dynamic1DFloatArrayHashingTest) {
     }
     {
         const Array<float_> array{1.1, 2.2, 3.3, 1.1, 3.3};
-        ndarray::array_dynamic::NDArrayDynamicIndexConstMap<float_, std::size_t> counts;
+        ndarray::array_dynamic::NDArrayDynamicIndexConstMap<float_, size_t> counts;
         for (np::Size i = 0; i < array.shape()[0]; ++i) {
             auto value = array[i];
             ++counts[value];

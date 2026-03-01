@@ -120,9 +120,6 @@ namespace np {
 
                 // Array mathematics
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
-                auto add(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
-
-                template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto addInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
 
                 template<Arithmetic DType2>
@@ -130,9 +127,6 @@ namespace np {
 
                 template<Arithmetic DType2>
                 auto addInplace(const DType2 &value);
-
-                template<Arithmetic DType2, typename Derived2, typename Storage2>
-                auto subtract(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto subtractInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
@@ -147,9 +141,6 @@ namespace np {
                 auto subtractFrom(const DType2 &value) const;
 
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
-                auto multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
-
-                template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto multiplyInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
 
                 template<Arithmetic DType2>
@@ -157,9 +148,6 @@ namespace np {
 
                 template<Arithmetic DType2>
                 auto multiplyInplace(const DType2 &value);
-
-                template<Arithmetic DType2, typename Derived2, typename Storage2>
-                auto divide(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 template<Arithmetic DType2, typename Derived2, typename Storage2>
                 auto divideInplace(const NDArrayBase<DType2, Derived2, Storage2> &array);
@@ -292,7 +280,7 @@ namespace np {
                 // Sort an array
                 void sort();
 
-                // template<std::size_t N = -1>
+                // template<size_t N = -1>
                 // inline void sort(std::optional<Axis<N>> axis=std::optional<Axis<N>>{});
 
                 // Permute array dimensions
@@ -321,7 +309,7 @@ namespace np {
 
                 // Concatenate arrays
                 template<typename DType2, typename Derived2, typename Storage2>
-                auto concatenate(const NDArrayBase<DType2, Derived2, Storage2> &array, std::optional<std::size_t> axis = std::nullopt) const;
+                auto concatenate(const NDArrayBase<DType2, Derived2, Storage2> &array, std::optional<size_t> axis = std::nullopt) const;
 
                 // Stack arrays vertically (row-wise)
                 template<typename DType2, typename Derived2, typename Storage2>
@@ -340,13 +328,21 @@ namespace np {
                 auto c_(const NDArrayBase<DType2, Derived2, Storage2> &array) const;
 
                 // Split the array horizontally
-                auto hsplit(std::size_t sections) const;
+                auto hsplit(size_t sections) const;
 
                 // Split the array vertically
-                auto vsplit(std::size_t sections) const;
+                auto vsplit(size_t sections) const;
 
                 // Expand the shape of an array.
                 auto expand_dims(Size axis) const;
+
+                const DType *data() const {
+                    return &m_storage.get(0);
+                }
+
+                DType *data() {
+                    return &m_storage.get(0);
+                }
 
                 const DType &get(Size i) const {
                     return m_storage.get(i);
@@ -416,8 +412,8 @@ namespace np {
                 }
 
             protected:
-                [[nodiscard]] std::size_t getMaxElementSize() const {
-                    std::size_t size = sizeof(DType);
+                [[nodiscard]] size_t getMaxElementSize() const {
+                    size_t size = sizeof(DType);
                     if constexpr (std::is_same<string_, DType>::value || std::is_same<unicode_, DType>::value) {
                         size = 1;
                         for (Size i = 0; i < len(); ++i) {
@@ -450,8 +446,8 @@ namespace np {
 
             struct NDArrayBaseHasher {
                 template<typename DType, typename Derived, typename Storage>
-                auto operator()(const NDArrayBase<DType, Derived, Storage> &array) const -> std::size_t {
-                    std::size_t h{0};
+                auto operator()(const NDArrayBase<DType, Derived, Storage> &array) const -> size_t {
+                    size_t h{0};
                     for (Size i = 0; i < array.size(); ++i) {
                         h ^= std::hash<DType>{}(array.get(i));
                     }

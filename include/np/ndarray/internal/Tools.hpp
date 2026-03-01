@@ -36,7 +36,7 @@ namespace np {
     namespace ndarray {
         namespace internal {
 
-            constexpr std::size_t kMaxArrayDims = 4;
+            constexpr size_t kMaxArrayDims = 4;
 
             template<typename Class>
             inline void dumpObject(std::ostream &stream, const Class &object) {
@@ -62,20 +62,20 @@ namespace np {
                 return object;
             }
 
-            inline std::string readStr(std::istream &stream, std::size_t size) {
+            inline std::string readStr(std::istream &stream, size_t size) {
                 std::string object{};
                 uint8_t value;
-                for (std::size_t i = 0; i < size; ++i) {
+                for (size_t i = 0; i < size; ++i) {
                     stream.read(reinterpret_cast<char *>(&value), sizeof(value));
                     object += static_cast<char>(value);
                 }
                 return object;
             }
 
-            inline std::wstring readUnicode(std::istream &stream, std::size_t size) {
+            inline std::wstring readUnicode(std::istream &stream, size_t size) {
                 std::wstring object{};
                 uint32_t value;
-                for (std::size_t i = 0; i < size; ++i) {
+                for (size_t i = 0; i < size; ++i) {
                     stream.read((char *) &value, sizeof(value));
                     object += static_cast<wchar_t>(value);
                 }

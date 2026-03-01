@@ -76,13 +76,13 @@ TEST_F(ArrayManipTest, dynamicEmptyIntArrayInsertTest) {
     // dynamic
     Array<int_> array{};
     Array<int_> array1{};
-    EXPECT_THROW(array.insert(1, array1), std::runtime_error);
+    EXPECT_THROW(array.insert(1, array1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayDelTest) {
     // dynamic
     Array<int_> array{};
-    EXPECT_THROW(array.del(1), std::runtime_error);
+    EXPECT_THROW(array.del(1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyIntArrayConcatenateTest) {
@@ -192,13 +192,13 @@ TEST_F(ArrayManipTest, dynamicEmptyFloatArrayInsertTest) {
     // dynamic
     Array<float_> array{};
     Array<float_> array1{};
-    EXPECT_THROW(array.insert(1, array1), std::runtime_error);
+    EXPECT_THROW(array.insert(1, array1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayDelTest) {
     // dynamic
     Array<float_> array{};
-    EXPECT_THROW(array.del(1), std::runtime_error);
+    EXPECT_THROW(array.del(1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyFloatArrayConcatenateTest) {
@@ -317,13 +317,13 @@ TEST_F(ArrayManipTest, dynamicEmptyStringArrayInsertTest) {
     // dynamic
     Array<string_> array{};
     Array<string_> array1{};
-    EXPECT_THROW(array.insert(1, array1), std::runtime_error);
+    EXPECT_THROW(array.insert(1, array1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayDelTest) {
     // dynamic
     Array<string_> array{};
-    EXPECT_THROW(array.del(1), std::runtime_error);
+    EXPECT_THROW(array.del(1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyStringArrayConcatenateTest) {
@@ -442,13 +442,13 @@ TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayInsertTest) {
     // dynamic
     auto array = createUnicodeArray();
     auto array1 = createUnicodeArray();
-    EXPECT_THROW(array.insert(1, array1), std::runtime_error);
+    EXPECT_THROW(array.insert(1, array1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayDelTest) {
     // dynamic
     auto array = createUnicodeArray();
-    EXPECT_THROW(array.del(1), std::runtime_error);
+    EXPECT_THROW(array.del(1), std::invalid_argument);
 }
 
 TEST_F(ArrayManipTest, dynamicEmptyUnicodeArrayConcatenateTest) {

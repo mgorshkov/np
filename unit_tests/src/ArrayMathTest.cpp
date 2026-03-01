@@ -157,11 +157,49 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysAddTest) {
     }
 }
 
+TEST_F(ArrayMathTest, dynamic1DIntArraysLargeAddTest) {
+    // dynamic
+    const size_t size = 100000;
+    Array<int_> array1 = arange<int_>(size);
+    Array<int_> array2 = arange<int_>(size);
+    std::vector<int_> vector(size);
+    std::iota(vector.begin(), vector.end(), 0);
+    for (auto& x : vector) {
+        x *= 2;
+    }
+    NDArrayDynamic<int_> plus{vector};
+    {
+        auto array = array1 + array2;
+        compare(array, plus);
+    }
+    {
+        array1 += array2;
+        compare(array1, plus);
+    }
+}
+
 TEST_F(ArrayMathTest, dynamic1DIntArraysSubtractTest) {
     // dynamic
     Array<int_> array1{1, 2, 3};
     Array<int_> array2{4, 5, 6};
     Array<int_> minus{-3, -3, -3};
+    {
+        auto array = array1 - array2;
+        compare(array, minus);
+    }
+    {
+        array1 -= array2;
+        compare(array1, minus);
+    }
+}
+
+TEST_F(ArrayMathTest, dynamic1DIntArraysLargeSubtractTest) {
+    // dynamic
+    const size_t size = 100000;
+    Array<int_> array1 = arange<int_>(size);
+    Array<int_> array2 = arange<int_>(size);
+    std::vector<int_> vector(size);
+    NDArrayDynamic<int_> minus{vector};
     {
         auto array = array1 - array2;
         compare(array, minus);

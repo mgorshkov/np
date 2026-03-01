@@ -1,11 +1,29 @@
-cmake_minimum_required(VERSION 3.13.0)
+cmake_minimum_required(VERSION 3.18.0)
 
+# Project name
 set(NP np)
 
-project(${NP} VERSION 0.1.2 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX)
+# Set up project
+project(${NP} VERSION 0.1.3 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX CUDA)
 
+# C++ 20
 set(CMAKE_CXX_STANDARD 20)
 
+# Enable CUDA language
+enable_language(CUDA)
+
+# CUDA specific settings
+set(CMAKE_CUDA_STANDARD 20)
+set(CMAKE_CUDA_ARCHITECTURES 75 80 86) # RTX 20xx/30xx/40xx
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O3 --use_fast_math")
+# Avoid "style of line directive is a GCC" nvcc warnings
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -Wno-pedantic")
+set(CMAKE_CUDA_FLAGS_DEBUG "-G")
+
+# Find CUDA package
+find_package(CUDAToolkit REQUIRED)
+
+# Default build type is Release
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -21,6 +39,15 @@ else()
     add_compile_options(-Wall -Wextra -pedantic)
 endif()
 
+include(FetchContent)
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG 9.1.0
+)
+FetchContent_MakeAvailable(fmt)
+
+# Set up Open MP
 option(ENABLE_OPENMP "Enable OpenMP" OFF)
 if (ENABLE_OPENMP)
     message("OpenMP ON")
@@ -32,6 +59,7 @@ if (ENABLE_OPENMP)
     endif()
 endif()
 
+# Set up vector optimizations
 option(ENABLE_SSE2 "Enable SSE2 optimizations" OFF)
 option(ENABLE_SSE3 "Enable SSE3 optimizations" OFF)
 option(ENABLE_AVX "Enable AVX optimizations" OFF)
@@ -109,19 +137,42 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     endif()
 endif()
 
-add_library(${NP} INTERFACE)
+file(GLOB HEADER_FILES "include/np/*.hpp")
+file(GLOB CUDA_SOURCE_FILES "src/cuda/*.cu")
 
-target_include_directories(${NP} INTERFACE $<BUILD_INTERFACE:include>)
+# Create the library
+add_library(${NP} ${CUDA_SOURCE_FILES})
+
+target_include_directories(${NP} PUBLIC include)
+
+set_target_properties(${NP} PROPERTIES
+    CUDA_RUNTIME_LIBRARY Shared
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+)
+
+# Add CUDA dependencies
+target_link_libraries(${NP} INTERFACE
+    CUDA::cudart
+    CUDA::cublas
+    CUDA::cusolver
+    fmt::fmt
+)
+
+# Add compile features
+target_compile_features(${NP} INTERFACE cxx_std_20)
+
+# Add compiler options
+target_compile_options(${NP} INTERFACE
+    $<$<COMPILE_LANGUAGE:CUDA>:-O2>
+)
 
 set(MAKE_DOC OFF)
 
 # Make unit tests and sample if it's the main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set(MAKE_UNIT_TESTS ON)
-    set(MAKE_SAMPLE ON)
 else()
     set(MAKE_UNIT_TESTS OFF)
-    set(MAKE_SAMPLE OFF)
 endif()
 
 if (MAKE_UNIT_TESTS)
@@ -134,12 +185,6 @@ endif()
 if (MAKE_DOC)
     message(STATUS "Enable doxygen in ${NP}")
     add_subdirectory(doc)
-endif()
-
-if (MAKE_SAMPLE)
-    message(STATUS "Enable samples build in ${NP}")
-    add_subdirectory(samples/data-generator)
-    add_subdirectory(samples/monte-carlo)
 endif()
 
 install(

@@ -46,7 +46,7 @@ namespace np {
             struct Descr {
                 char byteOrder = '<';
                 char name;
-                std::size_t size;
+                size_t size;
             };
 
             inline std::ostream &operator>>(const Descr &descr, std::ostream &stream) {
@@ -61,14 +61,14 @@ namespace np {
                 // Whether the array data is Fortran-contiguous or not. Since Fortran-contiguous arrays are a common
                 // form of non-C-contiguity, we allow them to be written directly to disk for efficiency.
                 static constexpr char descrPattern[] = "\'descr\': \'";
-                std::size_t descrStart = header.find(descrPattern);
+                size_t descrStart = header.find(descrPattern);
                 if (descrStart == std::string::npos) {
-                    throw std::runtime_error("Array DType description is not found");
+                    throw std::invalid_argument("Array DType description is not found");
                 }
                 descrStart += sizeof(descrPattern) - 1;
-                std::size_t descrEnd = header.find('\'', descrStart);
+                size_t descrEnd = header.find('\'', descrStart);
                 if (descrEnd == std::string::npos) {
-                    throw std::runtime_error("Array DType description has incorrect format");
+                    throw std::invalid_argument("Array DType description has incorrect format");
                 }
                 std::string descrStr = header.substr(descrStart, descrEnd - descrStart);
                 Descr descr{};
@@ -81,7 +81,7 @@ namespace np {
             template<typename DType>
             class DTypeToDescrConvertor {
             public:
-                inline DTypeToDescrConvertor(std::size_t size = sizeof(DType))
+                inline DTypeToDescrConvertor(size_t size = sizeof(DType))
                     : m_Size{size} {}
 
                 inline Descr DTypeToDescr() {
@@ -93,12 +93,12 @@ namespace np {
                     return 0;
                 }
 
-                std::size_t DTypeToCharSize() {
+                size_t DTypeToCharSize() {
                     return m_Size;
                 }
 
             private:
-                std::size_t m_Size;
+                size_t m_Size;
             };
 
             template<>
@@ -198,8 +198,8 @@ namespace np {
                 // string + 4 + HEADER_LEN be evenly divisible by 16 for alignment purposes.
                 stream << dTypeStr;
                 // padding
-                std::size_t paddingLen = headerLen - dTypeStr.length() - 1;
-                for (std::size_t i = 0; i < paddingLen; ++i) {
+                size_t paddingLen = headerLen - dTypeStr.length() - 1;
+                for (size_t i = 0; i < paddingLen; ++i) {
                     stream << " ";
                 }
                 stream << std::endl;
@@ -210,14 +210,14 @@ namespace np {
                 // The shape of the array.
 
                 static constexpr char shapePattern[] = "\'shape\': (";
-                std::size_t shapeStart = header.find(shapePattern);
+                size_t shapeStart = header.find(shapePattern);
                 if (shapeStart == std::string::npos) {
-                    throw std::runtime_error("Array shape is not found");
+                    throw std::invalid_argument("Array shape is not found");
                 }
                 shapeStart += sizeof(shapePattern) - 1;
-                std::size_t shapeEnd = header.find(')', shapeStart);
+                size_t shapeEnd = header.find(')', shapeStart);
                 if (shapeEnd == std::string::npos) {
-                    throw std::runtime_error("Array DType description has incorrect format");
+                    throw std::invalid_argument("Array DType description has incorrect format");
                 }
                 std::string shapeStr{header.substr(shapeStart, shapeEnd - shapeStart)};
                 return Shape{shapeStr};

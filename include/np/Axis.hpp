@@ -30,6 +30,6 @@ SOFTWARE.
 namespace np {
 
     template<Size N = 0>
-    using Axis = std::array<std::size_t, N>;
+    using Axis = std::array<size_t, N>;
 
 }

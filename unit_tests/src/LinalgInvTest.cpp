@@ -28,12 +28,13 @@ SOFTWARE.
 #include <ArrayTest.hpp>
 
 using namespace np;
+using namespace np::linalg;
 
-class LinalgTest : public ArrayTest {
+class LinalgInvTest : public ArrayTest {
 protected:
 };
 
-TEST_F(LinalgTest, testInv2x2) {
+TEST_F(LinalgInvTest, testInv2x2) {
     float_ c_array[2][2] = {{1.0, 2.0}, {0.0, 1.0}};
     Array<float_> array{c_array};
     float_ c_array_inv_sample[2][2] = {{1.0, -2.0}, {0.0, 1.0}};
@@ -42,7 +43,7 @@ TEST_F(LinalgTest, testInv2x2) {
     compare(array_inv_sample, result);
 }
 
-TEST_F(LinalgTest, testInv3x3) {
+TEST_F(LinalgInvTest, testInv3x3) {
     float_ c_array[3][3] = {{1.0, 2.0, 3.0}, {0.0, 1.0, 4.0}, {5.0, 6.0, 1.0}};
     Array<float_> array{c_array};
     float_ c_array_inv_sample[3][3] = {{-11.5, 8.0, 2.5}, {10.0, -7.0, -2.0}, {-2.5, 2.0, 0.5}};
@@ -51,13 +52,13 @@ TEST_F(LinalgTest, testInv3x3) {
     compare(array_inv_sample, result);
 }
 
-TEST_F(LinalgTest, testInv3x3Singular) {
+TEST_F(LinalgInvTest, testInv3x3Singular) {
     float_ c_array[3][3] = {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}};
     Array<float_> array{c_array};
-    EXPECT_THROW(auto result = linalg::inv(array), std::runtime_error);
+    EXPECT_THROW(auto result = linalg::inv(array), std::invalid_argument);
 }
 
-TEST_F(LinalgTest, testInv4x4) {
+TEST_F(LinalgInvTest, testInv4x4) {
     float_ c_array[4][4] = {{1.0, 2.0, 3.0, 4.0}, {0.0, 1.0, 4.0, 5.0}, {5.0, 6.0, 1.0, 6.0}, {7.0, 6.0, 5.0, 4.0}};
     Array<float_> array{c_array};
     float_ c_array_inv_sample[4][4] = {{-2.21875, 1.25, 0.25, 0.28125}, {2.78125, -1.75, -0.25, -0.21875}, {0.59375, -0.25, -0.25, 0.09375}, {-1.03125, 0.75, 0.25, -0.03125}};
@@ -66,7 +67,7 @@ TEST_F(LinalgTest, testInv4x4) {
     compare(array_inv_sample, result);
 }
 
-TEST_F(LinalgTest, testInv5x5) {
+TEST_F(LinalgInvTest, testInv5x5) {
     float_ c_array[5][5] = {{1.0, 2.0, 3.0, 4.0, 5.0}, {0.0, 1.0, 4.0, 5.0, 6.0}, {5.0, 6.0, 1.0, 6.0, 2.0}, {7.0, 6.0, 5.0, 4.0, 2.0}, {1.0, 8.0, 3.0, 6.0, 2.0}};
     Array<float_> array{c_array};
     float_ c_array_inv_sample[5][5] = {{0.057554, -0.0611511, 0.104317, 0.0809353, -0.145683},
@@ -78,3 +79,4 @@ TEST_F(LinalgTest, testInv5x5) {
     auto result = linalg::inv(array);
     compare(array_inv_sample, result);
 }
+

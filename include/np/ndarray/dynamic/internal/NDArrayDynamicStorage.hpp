@@ -47,22 +47,22 @@ namespace np {
                 template<typename DType>
                 class NDArrayDynamicStorage {
                 public:
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     using CArray1DType = DType[Size1T];
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     using CArray2DType = CArray1DType<Size1T>[Size2T];
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     using StdArray1DType = std::array<DType, Size1T>;
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
 
                     using StdVector1DType = std::vector<DType>;
@@ -80,7 +80,7 @@ namespace np {
                         if (m_size != 0) {
                             m_ptr = new DType[m_size];
 
-                            for (std::size_t i = 0; i < m_size; ++i) {
+                            for (size_t i = 0; i < m_size; ++i) {
                                 m_ptr[i] = storage.m_ptr[i];
                             }
                         }
@@ -98,7 +98,7 @@ namespace np {
                         if (m_size != 0) {
                             m_ptr = new DType[m_size];
 
-                            for (std::size_t i = 0; i < m_size; ++i) {
+                            for (size_t i = 0; i < m_size; ++i) {
                                 m_ptr[i] = value;
                             }
                         }
@@ -107,7 +107,7 @@ namespace np {
                     // create 1D array
                     NDArrayDynamicStorage(const std::vector<DType> &vector, Size size) noexcept
                         : m_size{size}, m_capacity{size}, m_ptr{new DType[vector.size()]} {
-                        for (std::size_t i = 0; i < size; ++i) {
+                        for (size_t i = 0; i < size; ++i) {
                             m_ptr[i] = vector[i];
                         }
                     }
@@ -116,41 +116,41 @@ namespace np {
                         : m_size{size}, m_capacity{size}, m_ptr{data} {
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     explicit NDArrayDynamicStorage(const CArray1DType<Size1T> &array) noexcept
                         : m_size{Size1T}, m_capacity{Size1T}, m_ptr{new DType[Size1T]} {
                         std::copy(std::begin(array), std::end(array), m_ptr);
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     explicit NDArrayDynamicStorage(const CArray2DType<Size1T, Size2T> &array) noexcept
                         : m_size{Size2T * Size1T}, m_capacity{Size2T * Size1T}, m_ptr{new DType[Size2T * Size1T]} {
-                        for (std::size_t i = 0; i < Size2T; ++i) {
-                            for (std::size_t j = 0; j < Size1T; ++j) {
+                        for (size_t i = 0; i < Size2T; ++i) {
+                            for (size_t j = 0; j < Size1T; ++j) {
                                 m_ptr[i * Size1T + j] = array[i][j];
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     explicit NDArrayDynamicStorage(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept
                         : m_size{Size3T * Size2T * Size1T}, m_capacity{Size3T * Size2T * Size1T}, m_ptr{new DType[Size3T * Size2T * Size1T]} {
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
-                                for (std::size_t k = 0; k < Size1T; ++k) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
+                                for (size_t k = 0; k < Size1T; ++k) {
                                     m_ptr[i * Size1T * Size2T + j * Size1T + k] = array[i][j][k];
                                 }
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     explicit NDArrayDynamicStorage(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
                         : m_size{Size4T * Size3T * Size2T * Size1T}, m_capacity{Size4T * Size3T * Size2T * Size1T}, m_ptr{new DType[Size4T * Size3T * Size2T * Size1T]} {
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
-                                    for (std::size_t l = 0; l < Size1T; ++l) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
+                                    for (size_t l = 0; l < Size1T; ++l) {
                                         m_ptr[i * Size1T * Size2T * Size3T + j * Size1T * Size2T + k * Size1T + l] = array[i][j][k][l];
                                     }
                                 }
@@ -158,41 +158,41 @@ namespace np {
                         }
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     explicit NDArrayDynamicStorage(const StdArray1DType<Size1T> &array) noexcept
                         : m_size{Size1T}, m_capacity{Size1T}, m_ptr{new DType[Size1T]} {
                         std::copy(std::begin(array), std::end(array), m_ptr);
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     explicit NDArrayDynamicStorage(const StdArray2DType<Size1T, Size2T> &array) noexcept
                         : m_size{Size2T * Size1T}, m_capacity{Size2T * Size1T}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size2T; ++i) {
+                        for (size_t i = 0; i < Size2T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                             std::advance(ptr, Size1T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     explicit NDArrayDynamicStorage(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept
                         : m_size{Size3T * Size2T * Size1T}, m_capacity{Size3T * Size2T * Size1T}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i][j]), std::end(array[i][j]), ptr);
                                 std::advance(ptr, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     explicit NDArrayDynamicStorage(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
                         : m_size{Size4T * Size3T * Size2T * Size1T}, m_capacity{Size4T * Size3T * Size2T * Size1T}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i][j][k]), std::end(array[i][j][k]), ptr);
                                     std::advance(ptr, Size1T);
                                 }
@@ -208,7 +208,7 @@ namespace np {
                     explicit NDArrayDynamicStorage(const StdVector2DType &vector) noexcept
                         : m_size{static_cast<Size>(vector.size() * vector[0].size())}, m_capacity{static_cast<Size>(vector.size() * vector[0].size())}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
                             std::copy(std::begin(vector[i]), std::end(vector[i]), ptr);
                             std::advance(ptr, vector[i].size());
                         }
@@ -218,8 +218,8 @@ namespace np {
                         : m_size{static_cast<Size>(vector.size() * vector[0].size() * vector[0][0].size())},
                           m_capacity{static_cast<Size>(vector.size() * vector[0].size() * vector[0][0].size())}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
                                 std::copy(std::begin(vector[i][j]), std::end(vector[i][j]), ptr);
                                 std::advance(ptr, vector[i][j].size());
                             }
@@ -229,9 +229,9 @@ namespace np {
                     explicit NDArrayDynamicStorage(const StdVector4DType &vector) noexcept
                         : m_size{static_cast<Size>(vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size())}, m_capacity{static_cast<Size>(vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size())}, m_ptr{new DType[m_size]} {
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
-                                for (std::size_t k = 0; k < vector[0][0].size; ++k) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
+                                for (size_t k = 0; k < vector[0][0].size; ++k) {
                                     std::copy(std::begin(vector[i][j][k]), std::end(vector[i][j][k]), ptr);
                                     std::advance(ptr, vector[i][j][k].size());
                                 }
@@ -277,7 +277,7 @@ namespace np {
                         return *this;
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     NDArrayDynamicStorage &operator=(CArray1DType<Size1T> array) {
                         m_size = Size1T;
                         m_capacity = Size1T;
@@ -285,41 +285,41 @@ namespace np {
                         std::copy(std::begin(array), std::end(array), std::begin(*m_ptr));
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     NDArrayDynamicStorage &operator=(CArray2DType<Size1T, Size2T> array) {
                         m_size = Size2T * Size1T;
                         m_capacity = Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size2T; ++i) {
+                        for (size_t i = 0; i < Size2T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                             std::advance(ptr, Size1T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayDynamicStorage &operator=(CArray3DType<Size1T, Size2T, Size3T> array) {
                         m_size = Size3T * Size2T * Size1T;
                         m_capacity = Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                                 std::advance(ptr, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayDynamicStorage &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) {
                         m_size = Size4T * Size3T * Size2T * Size1T;
                         m_capacity = Size4T * Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                                     std::advance(ptr, Size1T);
                                 }
@@ -327,7 +327,7 @@ namespace np {
                         }
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     NDArrayDynamicStorage &operator=(const StdArray1DType<Size1T> &array) {
                         m_size = Size1T;
                         m_capacity = Size1T;
@@ -337,42 +337,42 @@ namespace np {
                         return *this;
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     NDArrayDynamicStorage &operator=(const StdArray2DType<Size1T, Size2T> &array) {
                         m_size = Size2T * Size1T;
                         m_capacity = Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size2T; ++i) {
+                        for (size_t i = 0; i < Size2T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                             std::advance(ptr, Size1T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayDynamicStorage &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) {
                         m_size = Size3T * Size2T * Size1T;
                         m_capacity = Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i][j]), std::end(array[i][j]), ptr);
                                 std::advance(ptr, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayDynamicStorage &
                     operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) {
                         m_size = Size4T * Size3T * Size2T * Size1T;
                         m_capacity = Size4T * Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
                         auto ptr = m_ptr;
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i][j][k]), std::end(array[i][j][k]), ptr);
                                     std::advance(ptr, Size1T);
                                 }
@@ -391,8 +391,8 @@ namespace np {
                         m_size = vector.size() * vector[0].size();
                         m_capacity = vector.size() * vector[0].size();
                         m_ptr = new DType[m_size];
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
                                 m_ptr[i * vector[0].size() + j] = vector[i][j];
                             }
                         }
@@ -403,9 +403,9 @@ namespace np {
                         m_size = vector.size() * vector[0].size() * vector[0][0].size();
                         m_capacity = vector.size() * vector[0].size() * vector[0][0].size();
                         m_ptr = new DType[m_size];
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
-                                for (std::size_t k = 0; k < vector[0][0].size(); ++k) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
+                                for (size_t k = 0; k < vector[0][0].size(); ++k) {
                                     m_ptr[k * vector[0][0].size() + i * vector[0].size() + j] = vector[i][j][k];
                                 }
                             }
@@ -416,10 +416,10 @@ namespace np {
                         m_size = vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size();
                         m_capacity = vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size();
                         m_ptr = new DType[m_size];
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
-                                for (std::size_t k = 0; k < vector[0][0].size; ++k) {
-                                    for (std::size_t l = 0; l < vector[0][0].size; ++l) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
+                                for (size_t k = 0; k < vector[0][0].size; ++k) {
+                                    for (size_t l = 0; l < vector[0][0].size; ++l) {
                                         m_ptr[l * vector[0][0][0].size() + k * vector[0][0].size() + i * vector[0].size() + j] = vector[i][j][k][l];
                                     }
                                 }
@@ -691,7 +691,7 @@ namespace np {
                         m_ptr[m_size++] = value;
                     }
 
-                    static constexpr std::size_t kDepth = 0;
+                    static constexpr size_t kDepth = 0;
 
                 private:
                     Size m_size;
@@ -710,7 +710,7 @@ namespace np {
                                                const internal::NDArrayDynamicStorage<double> &array2) {
                     if (array1.size() != array2.size())
                         return false;
-                    for (std::size_t i = 0; i < array1.size(); ++i) {
+                    for (size_t i = 0; i < array1.size(); ++i) {
                         if (!np::internal::almost_equal(array1.get(i), array2.get(i)))
                             return false;
                     }
