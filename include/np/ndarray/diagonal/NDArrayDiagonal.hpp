@@ -85,7 +85,7 @@ namespace np {
                 static Shape calcShape(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k) {
                     auto size = static_cast<Size>(std::abs(k));
                     if (Dims != v.ndim()) {
-                        throw std::runtime_error("Incorrect Dims");
+                        throw std::invalid_argument("Incorrect Dims");
                     }
                     // empty array
                     if constexpr (Dims == 0) {

@@ -87,14 +87,14 @@ protected:
             auto cov_ = cov<DType, SizeT>(array);
             compare(aggResults.cov, cov_);
             EXPECT_FALSE(aggResults.covException);
-        } catch (const std::runtime_error &) {
+        } catch (const std::invalid_argument &) {
             EXPECT_TRUE(aggResults.covException);
         }
         try {
             auto corrcoef_ = corrcoef<DType, SizeT>(array);
             compare(aggResults.corrcoef, corrcoef_);
             EXPECT_FALSE(aggResults.corrException);
-        } catch (const std::runtime_error &) {
+        } catch (const std::invalid_argument &) {
             EXPECT_TRUE(aggResults.corrException);
         }
         auto std__ = std_<DType, SizeT>(array);
@@ -152,14 +152,14 @@ protected:
             auto cov_ = cov<DType>(array);
             compare(aggResults.cov, cov_);
             EXPECT_FALSE(aggResults.covException);
-        } catch (const std::runtime_error &) {
+        } catch (const std::invalid_argument &) {
             EXPECT_TRUE(aggResults.covException);
         }
         try {
             auto corrcoef_ = corrcoef<DType>(array);
             compare(aggResults.corrcoef, corrcoef_);
             EXPECT_FALSE(aggResults.corrException);
-        } catch (const std::runtime_error &) {
+        } catch (const std::invalid_argument &) {
             EXPECT_TRUE(aggResults.corrException);
         }
         auto std__ = std_<DType>(array);

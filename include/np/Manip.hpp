@@ -110,7 +110,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
-    auto concatenate(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2, std::optional<std::size_t> axis = std::nullopt) {
+    auto concatenate(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &array2, std::optional<size_t> axis = std::nullopt) {
         return array1.concatenate(array2, axis);
     }
 
@@ -200,7 +200,7 @@ namespace np {
     auto checkDim(Size dim, const Arg &arg1, Args &&...args) {
         auto d = checkDim(dim, std::forward<Args>(args)...);
         if (checkDim(dim, arg1) != d) {
-            throw std::runtime_error("Dims should be equal");
+            throw std::invalid_argument("Dims should be equal");
         }
         return d;
     }
@@ -282,7 +282,7 @@ namespace np {
     auto checkShape(const Arg &arg1, Args &&...args) {
         auto shape_args = checkShape(std::forward<Args>(args)...);
         if (checkShape(arg1) != shape_args) {
-            throw std::runtime_error("Shape should be the same");
+            throw std::invalid_argument("Shape should be the same");
         }
         return shape_args;
     }
@@ -356,7 +356,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType, typename Derived, typename Storage>
-    auto hsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, std::size_t sections) {
+    auto hsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, size_t sections) {
         return array.hsplit(sections);
     }
 
@@ -373,7 +373,7 @@ namespace np {
     ///
     //////////////////////////////////////////////////////////////
     template<typename DType, typename Derived, typename Storage>
-    auto vsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, std::size_t sections) {
+    auto vsplit(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array, size_t sections) {
         return array.vsplit(sections);
     }
 

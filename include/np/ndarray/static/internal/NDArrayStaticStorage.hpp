@@ -57,22 +57,22 @@ namespace np {
                 template<typename DType, Size SizeT>
                 class NDArrayStaticStorage {
                 public:
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     using CArray1DType = DType[Size1T];
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     using CArray2DType = CArray1DType<Size1T>[Size2T];
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     using StdArray1DType = std::array<DType, Size1T>;
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
 
                     using StdVector1DType = std::vector<DType>;
@@ -86,7 +86,7 @@ namespace np {
                     }
 
                     explicit NDArrayStaticStorage(const DType &value) {
-                        for (std::size_t i = 0; i < SizeT; ++i) {
+                        for (size_t i = 0; i < SizeT; ++i) {
                             m_storage[i] = value;
                         }
                     }
@@ -95,43 +95,43 @@ namespace np {
                         static_assert(SizeT == size);
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     explicit NDArrayStaticStorage(const CArray1DType<Size1T> &array) noexcept {
                         static_assert(SizeT == Size1T);
-                        for (std::size_t i = 0; i < std::size(array); ++i) {
+                        for (size_t i = 0; i < std::size(array); ++i) {
                             m_storage[i] = array[i];
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     explicit NDArrayStaticStorage(const CArray2DType<Size1T, Size2T> &array) noexcept {
                         static_assert(SizeT == Size2T * Size1T);
-                        for (std::size_t i = 0; i < Size2T; ++i) {
-                            for (std::size_t j = 0; j < Size1T; ++j) {
+                        for (size_t i = 0; i < Size2T; ++i) {
+                            for (size_t j = 0; j < Size1T; ++j) {
                                 m_storage[i * Size1T + j] = array[i][j];
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     explicit NDArrayStaticStorage(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
                         static_assert(SizeT == Size3T * Size2T * Size1T);
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
-                                for (std::size_t k = 0; k < Size1T; ++k) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
+                                for (size_t k = 0; k < Size1T; ++k) {
                                     m_storage[i * Size1T * Size2T + j * Size1T + k] = array[i][j][k];
                                 }
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     explicit NDArrayStaticStorage(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
                         static_assert(SizeT == Size4T * Size3T * Size2T * Size1T);
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
-                                    for (std::size_t l = 0; l < Size1T; ++l) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
+                                    for (size_t l = 0; l < Size1T; ++l) {
                                         m_storage[i * Size1T * Size2T * Size3T + j * Size1T * Size2T + k * Size1T + l] = array[i][j][k][l];
                                     }
                                 }
@@ -139,43 +139,43 @@ namespace np {
                         }
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     explicit NDArrayStaticStorage(const StdArray1DType<Size1T> &array) noexcept {
                         static_assert(SizeT == Size1T);
-                        for (std::size_t i = 0; i < Size1T; ++i) {
+                        for (size_t i = 0; i < Size1T; ++i) {
                             std::copy(std::begin(array), std::end(array), std::begin(m_storage));
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     explicit NDArrayStaticStorage(const StdArray2DType<Size1T, Size2T> &array) noexcept {
                         static_assert(SizeT == Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size2T; ++i) {
+                        for (size_t i = 0; i < Size2T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), it);
                             std::advance(it, Size1T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     explicit NDArrayStaticStorage(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
                         static_assert(SizeT == Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i][j]), std::end(array[i][j]), it);
                                 std::advance(it, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     explicit NDArrayStaticStorage(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
                         static_assert(SizeT == Size4T * Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i][j][k]), std::end(array[i][j][k]), it);
                                     std::advance(it, Size1T);
                                 }
@@ -191,7 +191,7 @@ namespace np {
                     explicit NDArrayStaticStorage(const StdVector2DType &vector) noexcept {
                         assert(vector.size() * vector[0].size() == SizeT);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
                             std::copy(std::begin(vector[i]), std::end(vector[i]), it);
                             std::advance(it, vector[i].size());
                         }
@@ -200,8 +200,8 @@ namespace np {
                     explicit NDArrayStaticStorage(const StdVector3DType &vector) noexcept {
                         assert(vector.size() * vector[0].size() * vector[0][0].size() == SizeT);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
                                 std::copy(std::begin(vector[i][j]), std::end(vector[i][j]), it);
                                 std::advance(it, vector[i][j].size());
                             }
@@ -211,9 +211,9 @@ namespace np {
                     explicit NDArrayStaticStorage(const StdVector4DType &vector) noexcept {
                         assert(vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size() == SizeT);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < vector.size(); ++i) {
-                            for (std::size_t j = 0; j < vector[0].size(); ++j) {
-                                for (std::size_t k = 0; k < vector[0][0].size(); ++k) {
+                        for (size_t i = 0; i < vector.size(); ++i) {
+                            for (size_t j = 0; j < vector[0].size(); ++j) {
+                                for (size_t k = 0; k < vector[0][0].size(); ++k) {
                                     std::copy(std::begin(vector[i][j][k]), std::end(vector[i][j][k]), it);
                                     std::advance(it, vector[i][j][k].size());
                                 }
@@ -233,41 +233,41 @@ namespace np {
                         return *this;
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     NDArrayStaticStorage &operator=(CArray1DType<Size1T> array) noexcept {
                         static_assert(SizeT == Size1T);
                         std::copy(std::begin(array), std::end(array), std::begin(m_storage));
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     NDArrayStaticStorage &operator=(CArray2DType<Size1T, Size2T> array) noexcept {
                         static_assert(SizeT == Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size1T; ++i) {
+                        for (size_t i = 0; i < Size1T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), it);
                             std::advance(it, Size2T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayStaticStorage &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept {
                         static_assert(SizeT == Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i][j]), std::end(array[i][j]), it);
                                 std::advance(it, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayStaticStorage &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept {
                         static_assert(SizeT == Size4T * Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i][j][k]), std::end(array[i][j][k]), it);
                                     std::advance(it, Size1T);
                                 }
@@ -275,43 +275,43 @@ namespace np {
                         }
                     }
 
-                    template<std::size_t Size1T>
+                    template<size_t Size1T>
                     NDArrayStaticStorage &operator=(const StdArray1DType<Size1T> &array) noexcept {
                         static_assert(SizeT == Size1T);
                         std::copy(std::begin(array), std::end(array), std::begin(m_storage));
                         return *this;
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T>
+                    template<size_t Size1T, size_t Size2T>
                     NDArrayStaticStorage &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept {
                         static_assert(SizeT == Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size1T; ++i) {
+                        for (size_t i = 0; i < Size1T; ++i) {
                             std::copy(std::begin(array[i]), std::end(array[i]), it);
                             std::advance(it, Size2T);
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayStaticStorage &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
                         static_assert(SizeT == Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size3T; ++i) {
-                            for (std::size_t j = 0; j < Size2T; ++j) {
+                        for (size_t i = 0; i < Size3T; ++i) {
+                            for (size_t j = 0; j < Size2T; ++j) {
                                 std::copy(std::begin(array[i][j]), std::end(array[i][j]), it);
                                 std::advance(it, Size1T);
                             }
                         }
                     }
 
-                    template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                    template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayStaticStorage &
                     operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {
                         static_assert(SizeT == Size4T * Size3T * Size2T * Size1T);
                         auto it = std::begin(m_storage);
-                        for (std::size_t i = 0; i < Size4T; ++i) {
-                            for (std::size_t j = 0; j < Size3T; ++j) {
-                                for (std::size_t k = 0; k < Size2T; ++k) {
+                        for (size_t i = 0; i < Size4T; ++i) {
+                            for (size_t j = 0; j < Size3T; ++j) {
+                                for (size_t k = 0; k < Size2T; ++k) {
                                     std::copy(std::begin(array[i][j][k]), std::end(array[i][j][k]), it);
                                     std::advance(it, Size1T);
                                 }
@@ -567,7 +567,7 @@ namespace np {
                         throw std::runtime_error("push_back is not implemented");
                     }
 
-                    static constexpr std::size_t kDepth = 0;
+                    static constexpr size_t kDepth = 0;
 
                 private:
                     std::array<DType, SizeT> m_storage;

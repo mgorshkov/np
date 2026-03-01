@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.13.0)
+cmake_minimum_required(VERSION 3.18.0)
 
 set(NP_UNIT_TESTS np_unit_tests)
 
-project(${NP_UNIT_TESTS} VERSION 0.1.2 DESCRIPTION "C++ Numpy Unit Tests")
+project(${NP_UNIT_TESTS} VERSION 0.1.3 DESCRIPTION "C++ Numpy Unit Tests")
 
 add_definitions(-DTEST_DATA_FOLDER="${CMAKE_CURRENT_SOURCE_DIR}/test_data")
 
@@ -27,12 +27,22 @@ add_executable(${NP_UNIT_TESTS})
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR} "src/*.cpp")
 target_sources(${NP_UNIT_TESTS} PUBLIC ${SOURCES})
 
+set_target_properties(${NP_UNIT_TESTS} PROPERTIES
+    CUDA_RUNTIME_LIBRARY Shared
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+)
+
 add_test(NAME ${NP_UNIT_TESTS} COMMAND tests)
 
 target_link_libraries(
     ${NP_UNIT_TESTS}
     gtest
-    ${PTHREAD})
+    ${PTHREAD}
+    CUDA::cudart
+    CUDA::cublas
+    CUDA::cusolver
+    ${NP}
+)
 
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${NP_UNIT_TESTS}

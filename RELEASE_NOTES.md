@@ -1,3 +1,7 @@
+# Release 0.1.3
+## Changes
+* Least squares
+
 # Release 0.1.2
 ## Changes
 * Inplace math methods

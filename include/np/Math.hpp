@@ -25,7 +25,14 @@ SOFTWARE.
 #pragma once
 
 #include <algorithm>
+#include <cuda_runtime.h>
+#include <fmt/format.h>
 
+#include <np/internal/cuda/Add.hpp>
+#include <np/internal/cuda/Subtract.hpp>
+#include <np/internal/cuda/Multiply.hpp>
+#include <np/internal/cuda/Divide.hpp>
+#include <np/ndarray/internal/Math.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
@@ -37,6 +44,7 @@ namespace np {
     /// \brief Arrays sum
     ///
     /// Calculate the array-wise element-by-element sum of the arrays.
+    /// Broadcasting rules are applied as in numpy.
     ///
     /// \param array1 array to sum
     /// \param array2 array to sum
@@ -46,7 +54,23 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
     inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.add(array2);
+        using DTypeResult = std::common_type_t<DType1, DType2>;
+        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
+        auto size1 = array1.size();
+        auto size2 = array2.size();
+        auto maxSize = std::max(size1, size2);
+        if (maxSize > 256) {
+            internal::cuda::add(array1.data(), size1, array2.data(), size2, result.data(), result.size());
+        } else {
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+            // index variable in OpenMP 'for' statement must have signed integral type
+            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                DTypeResult plusResult;
+                ndarray::internal::add(array1.get(i % size1), array2.get(i % size2), plusResult);
+                result.set(i, plusResult);
+            }
+        }
+        return result;
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
@@ -73,6 +97,7 @@ namespace np {
     /// \brief Arrays subtraction
     ///
     /// Calculate the array-wise element-by-element difference of the arrays.
+    /// Broadcasting rules are applied as in numpy.
     ///
     /// \param array1 array to subtract from
     /// \param array2 array to subtract
@@ -82,7 +107,23 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
     inline auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.subtract(array2);
+        using DTypeResult = std::common_type_t<DType1, DType2>;
+        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
+        auto size1 = array1.size();
+        auto size2 = array2.size();
+        auto maxSize = std::max(size1, size2);
+        if (maxSize > 256) {
+            internal::cuda::subtract(array1.data(), size1, array2.data(), size2, result.data(), result.size());
+        } else {
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+            // index variable in OpenMP 'for' statement must have signed integral type
+            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                DTypeResult plusResult;
+                ndarray::internal::subtract(array1.get(i % size1), array2.get(i % size2), plusResult);
+                result.set(i, plusResult);
+            }
+        }
+        return result;
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
@@ -103,7 +144,8 @@ namespace np {
     //////////////////////////////////////////////////////////////
     /// \brief Arrays multiplication
     ///
-    /// Calculate the array-wise element-by-element product of the arrays.
+    /// Calculate the memberwise element-by-element multiplication of the arrays.
+    /// Broadcasting rules are applied as in numpy.
     ///
     /// \param array1 array to multiply
     /// \param array2 array to multiply
@@ -113,12 +155,23 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
     inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.multiply(array2);
-    }
-
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator*=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.multiplyInplace(array2);
+        using DTypeResult = std::common_type_t<DType1, DType2>;
+        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
+        auto size1 = array1.size();
+        auto size2 = array2.size();
+        auto maxSize = std::max(size1, size2);
+        if (maxSize > 256) {
+            internal::cuda::multiply(array1.data(), size1, array2.data(), size2, result.data(), result.size());
+        } else {
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+            // index variable in OpenMP 'for' statement must have signed integral type
+            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                DTypeResult multiplyResult;
+                ndarray::internal::multiply(array1.get(i % size1), array2.get(i % size2), multiplyResult);
+                result.set(i, multiplyResult);
+            }
+        }
+        return result;
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -131,32 +184,37 @@ namespace np {
         return array.multiply(value);
     }
 
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
-    inline auto operator*=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
-        return array.multiplyInplace(value);
-    }
-
     //////////////////////////////////////////////////////////////
     /// \brief Arrays division
     ///
-    /// Calculate the array-wise element-by-element ratio of the arrays.
+    /// Calculate the memberwise element-by-element division of the arrays.
+    /// Broadcasting rules are applied as in numpy.
     ///
-    /// \param array1 array to divide
-    /// \param array2 array to divide
+    /// \param array1 array to multiply
+    /// \param array2 array to multiply
     ///
-    /// \warning Division by zero is not handled
-    ///
-    /// \return The ratio of the arrays
+    /// \return The division result of the arrays
     ///
     //////////////////////////////////////////////////////////////
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
     inline auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.divide(array2);
-    }
-
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator/=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        return array1.divideInplace(array2);
+        using DTypeResult = std::common_type_t<DType1, DType2>;
+        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
+        auto size1 = array1.size();
+        auto size2 = array2.size();
+        auto maxSize = std::max(size1, size2);
+        if (maxSize > 256) {
+            internal::cuda::divide(array1.data(), size1, array2.data(), size2, result.data(), result.size());
+        } else {
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+            // index variable in OpenMP 'for' statement must have signed integral type
+            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
+                DTypeResult divideResult;
+                ndarray::internal::divide(array1.get(i % size1), array2.get(i % size2), divideResult);
+                result.set(i, divideResult);
+            }
+        }
+        return result;
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -165,8 +223,8 @@ namespace np {
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
-    inline auto operator/=(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array, const DType2 &value) {
-        return array.divideInplace(value);
+    inline auto operator/(const DType2 &value, const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array) {
+        return array.divide(value);
     }
 
     //////////////////////////////////////////////////////////////
@@ -322,16 +380,16 @@ namespace np {
                        std::optional<DType1> = std::nullopt,
                        std::optional<DType1> = std::nullopt) {
         if (xp.empty()) {
-            throw std::runtime_error("Array of sample points is empty");
+            throw std::invalid_argument("Array of sample points is empty");
         }
         if (xp.ndim() != 1) {
-            throw std::runtime_error("xp must be 1 dimensional array");
+            throw std::invalid_argument("xp must be 1 dimensional array");
         }
         if (fp.ndim() != 1) {
-            throw std::runtime_error("fp must be 1 dimensional array");
+            throw std::invalid_argument("fp must be 1 dimensional array");
         }
         if (xp.size() != fp.size()) {
-            throw std::runtime_error("fp and xp are not of the same length");
+            throw std::invalid_argument("fp and xp are not of the same length");
         }
         NDArrayDynamic<std::pair<DType2, DType3>> target{Shape{xp.size()}};
         for (Size i = 0; i < xp.size(); ++i) {

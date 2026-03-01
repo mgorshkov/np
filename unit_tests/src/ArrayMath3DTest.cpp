@@ -52,7 +52,7 @@ TEST_F(ArrayMath3DTest, static3DIntArraysTest) {
         compare(array, diff);
     }
     {
-        EXPECT_THROW(array1.dot(array2), std::runtime_error);
+        EXPECT_THROW(array1.dot(array2), std::invalid_argument);
     }
 }
 
@@ -74,7 +74,7 @@ TEST_F(ArrayMath3DTest, dynamic3DIntArraysTest) {
         compare(array, diff);
     }
     {
-        EXPECT_THROW(array1.dot(array2), std::runtime_error);
+        EXPECT_THROW(array1.dot(array2), std::invalid_argument);
     }
 }
 
@@ -96,7 +96,7 @@ TEST_F(ArrayMath3DTest, static3DFloatArraysTest) {
         compare(array, diff);
     }
     {
-        EXPECT_THROW(array1.dot(array2), std::runtime_error);
+        EXPECT_THROW(array1.dot(array2), std::invalid_argument);
     }
 }
 
@@ -118,6 +118,6 @@ TEST_F(ArrayMath3DTest, dynamic3DFloatArraysTest) {
         compare(array, diff);
     }
     {
-        EXPECT_THROW(array1.dot(array2), std::runtime_error);
+        EXPECT_THROW(array1.dot(array2), std::invalid_argument);
     }
 }
