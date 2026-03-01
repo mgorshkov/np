@@ -68,22 +68,22 @@ namespace np {
             template<typename DType, Size SizeT>
             class NDArrayStatic final : public NDArrayStaticBase<DType, SizeT> {
             public:
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 using CArray1DType = DType[Size1T];
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 using CArray2DType = CArray1DType<Size1T>[Size2T];
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 using CArray3DType = CArray2DType<Size1T, Size2T>[Size3T];
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 using CArray4DType = CArray3DType<Size1T, Size2T, Size3T>[Size4T];
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 using StdArray1DType = std::array<DType, Size1T>;
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 using StdArray2DType = std::array<StdArray1DType<Size1T>, Size2T>;
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 using StdArray3DType = std::array<StdArray2DType<Size1T, Size2T>, Size3T>;
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 using StdArray4DType = std::array<StdArray3DType<Size1T, Size2T, Size3T>, Size4T>;
 
                 using StdVector1DType = std::vector<DType>;
@@ -104,34 +104,34 @@ namespace np {
 
                 inline NDArrayStatic(NDArrayStatic &&another) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayStatic(const CArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayStatic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline explicit NDArrayStatic(const CArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline explicit NDArrayStatic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline explicit NDArrayStatic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayStatic(const StdArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline explicit NDArrayStatic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline explicit NDArrayStatic(const StdArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline explicit NDArrayStatic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline explicit NDArrayStatic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 
                 inline explicit NDArrayStatic(const StdVector1DType &vector) noexcept;
@@ -156,28 +156,28 @@ namespace np {
 
                 inline NDArrayStatic &operator=(NDArrayStatic &&another) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayStatic &operator=(CArray1DType<Size1T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline NDArrayStatic &operator=(CArray2DType<Size1T, Size2T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline NDArrayStatic &operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline NDArrayStatic &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept;
 
-                template<std::size_t Size1T>
+                template<size_t Size1T>
                 inline NDArrayStatic &operator=(const StdArray1DType<Size1T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T>
+                template<size_t Size1T, size_t Size2T>
                 inline NDArrayStatic &operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T>
                 inline NDArrayStatic &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept;
 
-                template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+                template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                 inline NDArrayStatic &
                 operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept;
 

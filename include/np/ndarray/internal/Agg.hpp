@@ -35,14 +35,14 @@ namespace np {
             inline static float_ vectorCorr(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
+                    throw std::invalid_argument("Only 1D arrays supported");
 
                 auto sh2 = v2.shape();
                 if (sh2.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
+                    throw std::invalid_argument("Only 1D arrays supported");
 
                 if (v1.len() != v2.len()) {
-                    throw std::runtime_error("Sizes are different");
+                    throw std::invalid_argument("Sizes are different");
                 }
 
                 float_ sum1 = 0;
@@ -75,14 +75,14 @@ namespace np {
             inline static float_ vectorCov(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
+                    throw std::invalid_argument("Only 1D arrays supported");
 
                 auto sh2 = v2.shape();
                 if (sh2.size() != 1)
-                    throw std::runtime_error("Only 1D arrays supported");
+                    throw std::invalid_argument("Only 1D arrays supported");
 
                 if (v1.len() != v2.len()) {
-                    throw std::runtime_error("Sizes are different");
+                    throw std::invalid_argument("Sizes are different");
                 }
 
                 float_ sum{};

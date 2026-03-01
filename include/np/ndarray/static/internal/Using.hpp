@@ -31,10 +31,10 @@ namespace np {
         namespace array_static {
             namespace internal {
 
-                //template<typename DType, std::size_t size>
+                //template<typename DType, size_t size>
                 //using NDArrayStaticStorage = std::array<DType, size>;
 
-                //template<std::size_t size>
+                //template<size_t size>
                 //using NDArrayStaticStorageBool = std::array<bool, size>;
 
             }// namespace internal

@@ -1,21 +1,51 @@
-cmake_minimum_required(VERSION 3.13.0)
+cmake_minimum_required(VERSION 3.18.0)
 
 set(MONTE_CARLO monte_carlo)
-
 project(${MONTE_CARLO})
 
+# C++ 20
+set(CMAKE_CXX_STANDARD 20)
+
+# Find CUDA package
+find_package(CUDAToolkit REQUIRED)
+
+include(FetchContent)
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG 9.1.0
+)
+FetchContent_MakeAvailable(fmt)
+
+find_library(NP_LIBRARY
+    NAMES np libnp
+    PATHS
+        ../../build
+        /usr/local/lib
+        /usr/lib
+    NO_DEFAULT_PATH
+)
+if(NOT NP_LIBRARY)
+    message(FATAL_ERROR "NP library not found! Build parent np first.")
+endif()
+
+message(STATUS "Found NP: ${NP_LIBRARY}")
 include_directories(../../include)
 
-add_executable(${MONTE_CARLO})
-
-target_sources(${MONTE_CARLO} PUBLIC main.cpp)
+add_executable(${MONTE_CARLO} main.cpp)
 
 target_link_libraries(
     ${MONTE_CARLO}
-    ${PTHREAD})
+    ${PTHREAD}
+    ${NP_LIBRARY}
+    CUDA::cudart
+    CUDA::cublas
+    CUDA::cusolver
+    fmt::fmt
+)
 
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${MONTE_CARLO}
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    TARGETS ${MONTE_CARLO}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT ${MONTE_CARLO}
 )

@@ -64,8 +64,8 @@ namespace np {
             Size n = shape[0];
             if (n == 1) {
                 auto denominator = array.get(0);
-                if (internal::element_equal(denominator, 0.0)) {
-                    throw std::runtime_error("Singular matrix");
+                if (np::internal::element_equal(denominator, 0.0)) {
+                    throw std::invalid_argument("Singular matrix");
                 }
                 return Array<DType>{1.0 / denominator};
             }
@@ -87,8 +87,8 @@ namespace np {
 
                 const auto A_minus_1 = inv(A);
                 auto denominator = d.get(0) - C.dot(A_minus_1).dot(B).get(0);
-                if (internal::element_equal(denominator, 0.0)) {
-                    throw std::runtime_error("Singular matrix");
+                if (np::internal::element_equal(denominator, 0.0)) {
+                    throw std::invalid_argument("Singular matrix");
                 }
                 const auto t = 1.0 / denominator;
                 const auto Y = A_minus_1.multiply(-1).dot(B).multiply(t);

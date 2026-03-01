@@ -199,9 +199,9 @@ namespace np {
         vector.resize(num);
         const DType delta = (stop - start) / (static_cast<DType>(num) - 1);
         if (delta == 0) {
-            throw std::runtime_error("Invalid parameters, delta == 0");
+            throw std::invalid_argument("Invalid parameters, delta == 0");
         }
-        std::size_t i = 0;
+        size_t i = 0;
         for (DType value = start; value <= stop; value += delta) {
             vector[i++] = value;
         }
@@ -228,7 +228,7 @@ namespace np {
         NDArrayStatic<DType, num> array{};
         const DType delta = (stop - start) / (num - 1);
         if (delta == 0) {
-            throw std::runtime_error("Invalid parameters, delta == 0");
+            throw std::invalid_argument("Invalid parameters, delta == 0");
         }
         Size i{0};
         for (DType value = start; value <= stop; value += delta) {
@@ -296,12 +296,17 @@ namespace np {
         ///
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
-        auto rand(const Shape &shape) {
+        auto rand(const Shape &shape, DType minValue = 0.0, DType maxValue = 1.0) {
             struct rng {
                 std::uniform_real_distribution<DType> distribution;
+                rng(DType min, DType max) : distribution(min, max) {}
             };
 
-            std::vector<rng> rngs(omp_get_max_threads());
+            std::vector<rng> rngs;
+            rngs.reserve(omp_get_max_threads());
+            for (int i = 0; i < omp_get_max_threads(); ++i) {
+                rngs.emplace_back(minValue, maxValue);
+            }
 
             auto size = shape.calcSizeByShape();
             auto *data = new DType[size];
@@ -492,7 +497,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag0(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (!v.empty()) {
-            throw std::runtime_error("diag0 supports empty arrays");
+            throw std::invalid_argument("diag0 supports empty arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 0>(v, k);
     }
@@ -500,7 +505,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag1(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (v.ndim() != 1) {
-            throw std::runtime_error("diag1 supports 1D arrays");
+            throw std::invalid_argument("diag1 supports 1D arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 1>(v, k);
     }
@@ -508,7 +513,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag2(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (v.ndim() != 2) {
-            throw std::runtime_error("diag2 supports 2D arrays");
+            throw std::invalid_argument("diag2 supports 2D arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 2>(v, k);
     }

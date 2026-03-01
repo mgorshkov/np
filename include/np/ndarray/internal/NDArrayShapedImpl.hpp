@@ -94,7 +94,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             void NDArrayShaped<DType, Derived, Storage>::setShape(const Shape &shape) {
                 if (shape.calcSizeByShape() != m_shape.calcSizeByShape()) {
-                    throw std::runtime_error("Cannot set shape of different size");
+                    throw std::invalid_argument("Cannot set shape of different size");
                 }
                 m_shape = shape;
             }

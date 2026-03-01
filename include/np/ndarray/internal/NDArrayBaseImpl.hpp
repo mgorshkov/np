@@ -25,7 +25,9 @@ SOFTWARE.
 #pragma once
 
 #include <cstddef>
+#include <cuda_runtime.h>
 #include <fstream>
+#include <fmt/format.h>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -137,23 +139,6 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType, Derived, Storage>::add(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape().broadcast(array.shape())};
-                auto size1 = size();
-                auto size2 = array.size();
-                auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                    DType plusResult;
-                    ndarray::internal::add(get(i % size1), array.get(i % size2), plusResult);
-                    result.set(i, plusResult);
-                }
-                return result;
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            template<Arithmetic DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::addInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
                 auto size1 = size();
                 auto size2 = array.size();
@@ -176,23 +161,6 @@ namespace np {
                     DType addResult;
                     ndarray::internal::add(get(i), value, addResult);
                     result.set(i, addResult);
-                }
-                return result;
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            template<Arithmetic DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType, Derived, Storage>::subtract(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape().broadcast(array.shape())};
-                auto size1 = size();
-                auto size2 = array.size();
-                auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                    DType minusResult;
-                    ndarray::internal::subtract(get(i % size1), array.get(i % size2), minusResult);
-                    result.set(i, minusResult);
                 }
                 return result;
             }
@@ -251,37 +219,6 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
-            template<Arithmetic DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType, Derived, Storage>::multiply(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape().broadcast(array.shape())};
-                auto size1 = size();
-                auto size2 = array.size();
-                auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                    DType multiplyResult;
-                    ndarray::internal::multiply(get(i % size1), array.get(i % size2), multiplyResult);
-                    result.set(i, multiplyResult);
-                }
-                return result;
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            template<Arithmetic DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType, Derived, Storage>::multiplyInplace(const NDArrayBase<DType2, Derived2, Storage2> &array) {
-                auto size1 = size();
-                auto size2 = array.size();
-                auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                    ndarray::internal::multiply(get(i % size1), array.get(i % size2));
-                }
-                return copy();
-            }
-
-            template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::multiply(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
@@ -291,23 +228,6 @@ namespace np {
                     DType multiplyResult;
                     ndarray::internal::multiply(get(i % size()), value, multiplyResult);
                     result.set(i, multiplyResult);
-                }
-                return result;
-            }
-
-            template<typename DType, typename Derived, typename Storage>
-            template<Arithmetic DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType, Derived, Storage>::divide(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
-                ndarray::array_dynamic::NDArrayDynamic<DType> result{shape().broadcast(array.shape())};
-                auto size1 = size();
-                auto size2 = array.size();
-                auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                    DType divideResult;
-                    ndarray::internal::divide(get(i % size1), array.get(i % size2), divideResult);
-                    result.set(i, divideResult);
                 }
                 return result;
             }
@@ -515,7 +435,7 @@ namespace np {
 
                 if (ndim1 == 1 && ndim2 == 1) {
                     if (size1 != size2) {
-                        throw std::runtime_error("Sizes are different for 1D arrays");
+                        throw std::invalid_argument("Sizes are different for 1D arrays");
                     }
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{Shape{1}};
                     DType cellResult = 0;
@@ -532,7 +452,7 @@ namespace np {
                 }
                 if (ndim1 == 1 && ndim2 == 2) {
                     if (shape1[0] != shape2[0]) {
-                        throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
+                        throw std::invalid_argument("Shapes are not consistent for 2D and 1D arrays");
                     }
                     Shape resultShape{shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
@@ -553,7 +473,7 @@ namespace np {
                 }
                 if (ndim1 == 2 && ndim2 == 1) {
                     if (shape1[1] != shape2[0]) {
-                        throw std::runtime_error("Shapes are not consistent for 2D and 1D arrays");
+                        throw std::invalid_argument("Shapes are not consistent for 2D and 1D arrays");
                     }
                     Shape resultShape{shape1[0]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
@@ -574,7 +494,7 @@ namespace np {
                 }
                 if (ndim1 == 2 && ndim2 == 2) {
                     if (shape1[1] != shape2[0]) {
-                        throw std::runtime_error("Shapes are not consistent for 2D arrays");
+                        throw std::invalid_argument("Shapes are not consistent for 2D arrays");
                     }
                     Shape resultShape{shape1[0], shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
@@ -595,7 +515,7 @@ namespace np {
                     }
                     return result;
                 }
-                throw std::runtime_error("Arrays are not 1D or 2D");
+                throw std::invalid_argument("Arrays are not 1D or 2D");
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -645,10 +565,10 @@ namespace np {
                 if (!weights.empty()) {
                     if (weights.ndim() == 1) {
                         if (weights.size() != shape()[0]) {
-                            throw std::runtime_error("Incorrect weigths shape");
+                            throw std::invalid_argument("Incorrect weigths shape");
                         }
                     } else if (weights.shape() != shape()) {
-                        throw std::runtime_error("Incorrect weigths shape");
+                        throw std::invalid_argument("Incorrect weigths shape");
                     }
                     if (ndim() == 1) {
                         float_ sum{};
@@ -902,7 +822,7 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::cov() const {
                 auto sh = shape();
                 if (sh.size() != 1 && sh.size() != 2)
-                    throw std::runtime_error("Only 1D and 2D arrays supported");
+                    throw std::invalid_argument("Only 1D and 2D arrays supported");
 
                 if (sh.size() == 1) {
                     float_ res;
@@ -929,7 +849,7 @@ namespace np {
                 auto sh = shape();
                 auto s = sh.size();
                 if (s != 1 && s != 2)
-                    throw std::runtime_error("Only 1D and 2D arrays supported");
+                    throw std::invalid_argument("Only 1D and 2D arrays supported");
 
                 if (s == 1) {
                     float_ res{};
@@ -1055,7 +975,7 @@ namespace np {
                 setShape(sh);
             }
 
-            // template<std::size_t N = -1>
+            // template<size_t N = -1>
             // inline void sort(std::optional<Axis<N>> axis=std::optional<Axis<N>>{});
 
             template<typename DType, typename Derived, typename Storage>
@@ -1081,11 +1001,11 @@ namespace np {
                         ndarray::array_dynamic::NDArrayDynamic<DType> subarray;
                         auto shape = this->shape();
                         if (shape.empty()) {
-                            throw std::runtime_error("Index " + std::to_string(i) + " of an empty array requested");
+                            throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
                         }
                         if (shape.size() == 1) {
                             if (i >= shape[0]) {
-                                throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
+                                throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
                             }
                             subarray = ndarray::array_dynamic::NDArrayDynamic<DType>{this->get(i)};
                         } else {
@@ -1118,7 +1038,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::reshape(const Shape &shape) const {
                 if (size() != shape.calcSizeByShape())
-                    throw std::runtime_error("Sizes of new and current arrays must be equal");
+                    throw std::invalid_argument("Sizes of new and current arrays must be equal");
                 array_dynamic::NDArrayDynamic<DType> result{shape};
                 for (Size i = 0; i < shape.calcSizeByShape(); ++i) {
                     result.set(i, get(i));
@@ -1162,7 +1082,7 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::insert(Size index, const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 auto size1 = size();
                 if (index > size1) {
-                    throw std::runtime_error("Index exceeds array bounds");
+                    throw std::invalid_argument("Index exceeds array bounds");
                 }
                 if (array.size() == 0)
                     return copy();
@@ -1185,9 +1105,9 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::del(Size index) const {
                 auto sz = size();
                 if (sz == 0)
-                    throw std::runtime_error("Cannot del from an empty array");
+                    throw std::invalid_argument("Cannot del from an empty array");
                 if (index > sz) {
-                    throw std::runtime_error("Index exceeds array bounds");
+                    throw std::invalid_argument("Index exceeds array bounds");
                 }
                 Shape sh{sz - 1};
                 array_dynamic::NDArrayDynamic<DType> result{sh};
@@ -1204,7 +1124,7 @@ namespace np {
 
             template<typename DType1, typename Derived1, typename Storage1>
             template<typename DType2, typename Derived2, typename Storage2>
-            auto NDArrayBase<DType1, Derived1, Storage1>::concatenate(const NDArrayBase<DType2, Derived2, Storage2> &array, std::optional<std::size_t> axis) const {
+            auto NDArrayBase<DType1, Derived1, Storage1>::concatenate(const NDArrayBase<DType2, Derived2, Storage2> &array, std::optional<size_t> axis) const {
                 if (array.size() == 0)
                     return copy();
                 if (axis == std::nullopt) {
@@ -1213,14 +1133,14 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::runtime_error("Number of dims should be equal");
+                    throw std::invalid_argument("Number of dims should be equal");
                 // All the dims except the 'axis' should be equal
-                for (std::size_t i = 0; i < sh1.size(); ++i) {
+                for (size_t i = 0; i < sh1.size(); ++i) {
                     if (i != *axis && sh1[i] != sh2[i])
-                        throw std::runtime_error("All the dims except the first should be equal");
+                        throw std::invalid_argument("All the dims except the first should be equal");
                 }
                 if (*axis >= sh1.size())
-                    throw std::runtime_error("axis : " + std::to_string(*axis) + " is out of bounds for array of dimension " + std::to_string(sh1.size()));
+                    throw std::invalid_argument("axis : " + std::to_string(*axis) + " is out of bounds for array of dimension " + std::to_string(sh1.size()));
                 Shape sh{sh1};
                 auto size1 = sh1.calcSizeByShape();
                 auto size2 = sh2.calcSizeByShape();
@@ -1253,7 +1173,7 @@ namespace np {
                     return result;
                 }
 
-                throw std::runtime_error("axis > 1 are not supported");
+                throw std::invalid_argument("axis > 1 are not supported");
             }
 
             template<typename DType1, typename Derived1, typename Storage1>
@@ -1281,7 +1201,7 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::runtime_error("Number of dims should be equal");
+                    throw std::invalid_argument("Number of dims should be equal");
                 return sh1.size() == 1 ?
                                        //concatenation along 1st axis
                                concatenate(array)
@@ -1303,17 +1223,17 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::runtime_error("Number of dims should be equal");
+                    throw std::invalid_argument("Number of dims should be equal");
                 if (sh1.size() == 1) {
                     //concatenation along 1st axis
                     return concatenate(array);
                 }
                 // All the dims except the last should be equal
-                std::size_t last = sh1.size() - 1;
+                size_t last = sh1.size() - 1;
                 Size sizes = 1;
                 for (Size i = 0; i < last; ++i) {
                     if (sh1[i] != sh2[i])
-                        throw std::runtime_error("All the dims except the last should be equal");
+                        throw std::invalid_argument("All the dims except the last should be equal");
                     sizes *= sh1[i];
                 }
                 Shape sh = shape();
@@ -1334,26 +1254,26 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
-            auto NDArrayBase<DType, Derived, Storage>::hsplit(std::size_t sections) const {
+            auto NDArrayBase<DType, Derived, Storage>::hsplit(size_t sections) const {
                 if (sections == 0) {
-                    throw std::runtime_error("Sections must not be 0");
+                    throw std::invalid_argument("Sections must not be 0");
                 }
                 Shape sh = shape();
                 if (sh.empty()) {
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                    for (std::size_t section = 0; section < sections; ++section) {
+                    for (size_t section = 0; section < sections; ++section) {
                         results.push_back(array_dynamic::NDArrayDynamic<DType>{});
                     }
                     return results;
                 } else if (sh.size() == 1) {
                     Shape sh1{sh};
                     if (sh[0] % sections != 0) {
-                        throw std::runtime_error("Array split does not result in an equal division");
+                        throw std::invalid_argument("Array split does not result in an equal division");
                     }
                     Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                    for (std::size_t section = 0; section < sections; ++section) {
+                    for (size_t section = 0; section < sections; ++section) {
                         ndarray::array_dynamic::NDArrayDynamic<DType> result{sh1};
                         results.emplace_back(std::move(result));
                     }
@@ -1366,22 +1286,22 @@ namespace np {
                 }
                 Shape sh1{sh};
                 if (sh[1] % sections != 0) {
-                    throw std::runtime_error("Array split does not result in an equal division");
+                    throw std::invalid_argument("Array split does not result in an equal division");
                 }
                 Size rest = 1;
-                for (std::size_t i = 2; i < sh1.size(); ++i) {
+                for (size_t i = 2; i < sh1.size(); ++i) {
                     rest *= sh1[i];
                 }
                 Size sectionSize = sh[1] / static_cast<Size>(sections);
                 sh1[1] = sectionSize;
                 std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                for (std::size_t section = 0; section < sections; ++section) {
+                for (size_t section = 0; section < sections; ++section) {
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{sh1};
                     results.emplace_back(std::move(result));
                 }
                 std::vector<Size> sectionIndexes(sections);
                 Size i = 0;
-                std::size_t section = 0;
+                size_t section = 0;
                 while (i < size()) {
                     for (Size j = 0; j < rest; ++j) {
                         results[section].set(sectionIndexes[section]++, get(i++));
@@ -1395,26 +1315,26 @@ namespace np {
             }
 
             template<typename DType, typename Derived, typename Storage>
-            auto NDArrayBase<DType, Derived, Storage>::vsplit(std::size_t sections) const {
+            auto NDArrayBase<DType, Derived, Storage>::vsplit(size_t sections) const {
                 if (sections == 0) {
-                    throw std::runtime_error("Sections must not be 0");
+                    throw std::invalid_argument("Sections must not be 0");
                 }
                 Shape sh = shape();
                 if (sh.empty()) {
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                    for (std::size_t section = 0; section < sections; ++section) {
+                    for (size_t section = 0; section < sections; ++section) {
                         results.emplace_back(std::move(ndarray::array_dynamic::NDArrayDynamic<DType>{}));
                     }
                     return results;
                 } else if (sh.size() == 1) {
                     Shape sh1{sh};
                     if (sh[0] % sections != 0) {
-                        throw std::runtime_error("Array split does not result in an equal division");
+                        throw std::invalid_argument("Array split does not result in an equal division");
                     }
                     Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
                     std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                    for (std::size_t section = 0; section < sections; ++section) {
+                    for (size_t section = 0; section < sections; ++section) {
                         ndarray::array_dynamic::NDArrayDynamic<DType> result{sh1};
                         results.emplace_back(result);
                     }
@@ -1427,22 +1347,22 @@ namespace np {
                 }
                 Shape sh0{sh};
                 if (sh[0] % sections != 0) {
-                    throw std::runtime_error("Array split does not result in an equal division");
+                    throw std::invalid_argument("Array split does not result in an equal division");
                 }
                 Size rest = 1;
-                for (std::size_t i = 1; i < sh0.size(); ++i) {
+                for (size_t i = 1; i < sh0.size(); ++i) {
                     rest *= sh0[i];
                 }
                 Size sectionSize = sh[0] / static_cast<Size>(sections);
                 sh0[0] = sectionSize;
                 std::vector<array_dynamic::NDArrayDynamic<DType>> results;
-                for (std::size_t section = 0; section < sections; ++section) {
+                for (size_t section = 0; section < sections; ++section) {
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{sh0};
                     results.emplace_back(std::move(result));
                 }
                 std::vector<Size> sectionIndexes(sections);
                 Size i = 0;
-                std::size_t section = 0;
+                size_t section = 0;
                 while (i < size()) {
                     for (Size j = 0; j < rest; ++j) {
                         results[section].set(sectionIndexes[section]++, get(i++));
@@ -1460,7 +1380,7 @@ namespace np {
                 if (axis > ndim()) {
                     std::stringstream ss;
                     ss << axis << " is out of bounds for array of dimension " << ndim();
-                    throw std::runtime_error(ss.str());
+                    throw std::invalid_argument(ss.str());
                 }
                 auto newShape = shape();
                 newShape.expandDims(axis);
@@ -1478,9 +1398,9 @@ namespace np {
                 ndarray::internal::DTypeToDescrConvertor<DType> convertorByte{descr.size};
                 NP_THROW_UNLESS_WITH_ARG(convertorByte.DTypeToChar() == descr.name, "Incorrect DType in input file: ",
                                          std::to_string(descr.name));
-                std::size_t size = shape.calcSizeByShape();
+                size_t size = shape.calcSizeByShape();
                 std::vector<DType> data{};
-                for (std::size_t i = 0; i < size; ++i) {
+                for (size_t i = 0; i < size; ++i) {
                     DType element{};
                     if constexpr (std::is_same<DType, std::string>::value) {
                         element = ndarray::internal::readStr(stream, descr.size);
@@ -1498,12 +1418,12 @@ namespace np {
             typename NDArrayBase<DType, Derived, Storage>::IndexParentConstType NDArrayBase<DType, Derived, Storage>::operator[](SignedSize i) const {
                 auto shape = this->shape();
                 if (shape.empty()) {
-                    throw std::runtime_error("Index " + std::to_string(i) + " of an empty array requested");
+                    throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
                 }
                 Size offset = i;
                 if (shape.size() == 1) {
                     if (i >= static_cast<SignedSize>(shape[0])) {
-                        throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
+                        throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
                     }
                     if (i < 0) {
                         offset = static_cast<SignedSize>(shape[0]) + i;
@@ -1518,12 +1438,12 @@ namespace np {
             typename NDArrayBase<DType, Derived, Storage>::IndexParentType NDArrayBase<DType, Derived, Storage>::operator[](SignedSize i) {
                 auto shape = this->shape();
                 if (shape.empty()) {
-                    throw std::runtime_error("Index " + std::to_string(i) + " of an empty array requested");
+                    throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
                 }
                 Size offset = i;
                 if (shape.size() == 1) {
                     if (i >= static_cast<SignedSize>(shape[0])) {
-                        throw std::runtime_error("Index " + std::to_string(i) + " out of bounds");
+                        throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
                     }
                     if (i < 0) {
                         offset = static_cast<SignedSize>(shape[0]) + i;
@@ -1544,11 +1464,11 @@ namespace np {
             // b[0:2,1] Select items at rows 0 and 1 in column 1
             template<typename DType, typename Derived, typename Storage>
             typename NDArrayBase<DType, Derived, Storage>::IndexParentConstType NDArrayBase<DType, Derived, Storage>::operator[](const std::string &cond) const {
-                std::size_t prevCommaPos{0};
+                size_t prevCommaPos{0};
                 Size dimIndex{0};
                 IndicesType<DType> indices;
                 while (true) {
-                    std::size_t commaPos = cond.find(',', prevCommaPos);
+                    size_t commaPos = cond.find(',', prevCommaPos);
                     auto dimCond = trim(cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos));
                     prevCommaPos = commaPos + 1;
 
@@ -1561,7 +1481,7 @@ namespace np {
 
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
-                        throw std::runtime_error("Too many indices for array: array is " +
+                        throw std::invalid_argument("Too many indices for array: array is " +
                                                  std::to_string(shape().size()) +
                                                  "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
@@ -1571,11 +1491,11 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             typename NDArrayBase<DType, Derived, Storage>::IndexParentType NDArrayBase<DType, Derived, Storage>::operator[](const std::string &cond) {
-                std::size_t prevCommaPos{0};
+                size_t prevCommaPos{0};
                 Size dimIndex{0};
                 IndicesType<DType> indices;
                 while (true) {
-                    std::size_t commaPos = cond.find(',', prevCommaPos);
+                    size_t commaPos = cond.find(',', prevCommaPos);
                     auto dimCond = trim(cond.substr(prevCommaPos, commaPos == std::string::npos ? cond.size() : commaPos - prevCommaPos));
                     prevCommaPos = commaPos + 1;
 
@@ -1590,7 +1510,7 @@ namespace np {
 
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
-                        throw std::runtime_error("Too many indices for array: array is " +
+                        throw std::invalid_argument("Too many indices for array: array is " +
                                                  std::to_string(shape().size()) +
                                                  "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
@@ -1600,7 +1520,7 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             IndexType<DType> NDArrayBase<DType, Derived, Storage>::runHandlers(Size dimIndex, const std::string &dimCond) const {
-                static constexpr std::size_t kIndexingHandlersSize{static_cast<std::size_t>(IndexingMode::Size)};
+                static constexpr size_t kIndexingHandlersSize{static_cast<size_t>(IndexingMode::Size)};
 
                 const IndexingHandler<DType> indexingHandlers[kIndexingHandlersSize] = {
                         {IndexingMode::None,
@@ -1621,7 +1541,7 @@ namespace np {
                         return indexingHandler.worker(dimIndex, dimCond);
                     }
                 }
-                throw std::runtime_error("Invalid operator[] argument");
+                throw std::invalid_argument("Invalid operator[] argument");
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -1637,7 +1557,7 @@ namespace np {
                 if (index < 0) {
                     offset = static_cast<Size>(shape[dimIndex] + index);
                 } else if (index > static_cast<SignedSize>(shape[dimIndex])) {
-                    throw std::runtime_error("Index " + std::to_string(index) +
+                    throw std::invalid_argument("Index " + std::to_string(index) +
                                              " out of bounds for axis " + std::to_string(dimIndex) +
                                              " with size " + std::to_string(shape[dimIndex]));
                 }
@@ -1652,7 +1572,7 @@ namespace np {
                 Size last = shape[dimIndex];
                 SignedSize step = 1;
                 if (colonPos == std::string::npos) {
-                    throw std::runtime_error("Invalid format");
+                    throw std::invalid_argument("Invalid format");
                 } else {
                     auto firstStr = dimCond.substr(0, colonPos);
                     if (!firstStr.empty()) {

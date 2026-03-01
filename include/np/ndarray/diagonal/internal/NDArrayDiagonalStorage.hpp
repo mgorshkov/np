@@ -87,7 +87,7 @@ namespace np {
                         // 1D array
                         if constexpr (Dims == 1) {
                             if (m_size == 0) {
-                                throw std::runtime_error("Empty NDArrayDiagonalStorage");
+                                throw std::invalid_argument("Empty NDArrayDiagonalStorage");
                             }
                             Size row = i / m_size;
                             Size column = i % m_size;
@@ -340,7 +340,7 @@ namespace np {
                         throw std::runtime_error("setShape() is not implemented");
                     }
 
-                    static constexpr std::size_t kDepth = 0;
+                    static constexpr size_t kDepth = 0;
 
                 private:
                     const ndarray::internal::NDArrayBase<DType, Derived, Storage> &m_v;

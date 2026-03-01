@@ -98,7 +98,7 @@ namespace np {
                         using reference = DType &;
                         using iterator_category = std::random_access_iterator_tag;
 
-                        iterator(NDArrayConstantStorage *container_, std::size_t offset_)
+                        iterator(NDArrayConstantStorage *container_, size_t offset_)
                             : container{container_}, offset{offset_} {
                         }
 
@@ -185,7 +185,7 @@ namespace np {
 
                     private:
                         NDArrayConstantStorage *container;
-                        std::size_t offset;
+                        size_t offset;
                     };
 
                     iterator begin() {
@@ -193,7 +193,7 @@ namespace np {
                     }
 
                     iterator end() {
-                        return iterator{this, static_cast<std::size_t>(m_size)};
+                        return iterator{this, static_cast<size_t>(m_size)};
                     }
 
                     class const_iterator {
@@ -204,7 +204,7 @@ namespace np {
                         using reference = DType &;
                         using iterator_category = std::random_access_iterator_tag;
 
-                        const_iterator(const NDArrayConstantStorage *container_, std::size_t offset_)
+                        const_iterator(const NDArrayConstantStorage *container_, size_t offset_)
                             : container{container_}, offset{offset_} {
                         }
 
@@ -291,7 +291,7 @@ namespace np {
 
                     private:
                         const NDArrayConstantStorage *container;
-                        std::size_t offset;
+                        size_t offset;
                     };
 
                     [[nodiscard]] const_iterator cbegin() const {
@@ -318,7 +318,7 @@ namespace np {
                         throw std::runtime_error("push_back() is not implemented");
                     }
 
-                    static constexpr std::size_t kDepth = 0;
+                    static constexpr size_t kDepth = 0;
 
                 private:
                     Size m_size;

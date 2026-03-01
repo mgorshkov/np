@@ -37,7 +37,7 @@ namespace np {
         namespace internal {
             template<typename DType1, typename DType2, typename DType3>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> add(DType1, DType2, DType3 &) {
-                throw std::runtime_error("Plus called for non-arithmetic types");
+                throw std::invalid_argument("Plus called for non-arithmetic types");
             }
 
             template<typename DType1, typename DType2, typename DType3>
@@ -47,7 +47,7 @@ namespace np {
 
             template<typename DType1, typename DType2>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> add(DType1 &, DType2) {
-                throw std::runtime_error("add called for non-arithmetic type");
+                throw std::invalid_argument("add called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2>
@@ -57,7 +57,7 @@ namespace np {
 
             template<typename DType1, typename DType2, typename DType3>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> subtract(DType1, DType2, DType3 &) {
-                throw std::runtime_error("subtract called for non-arithmetic types");
+                throw std::invalid_argument("subtract called for non-arithmetic types");
             }
 
             template<typename DType1, typename DType2, typename DType3>
@@ -67,7 +67,7 @@ namespace np {
 
             template<typename DType1, typename DType2>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> subtract(DType1 &, DType2) {
-                throw std::runtime_error("subtract called for non-arithmetic type");
+                throw std::invalid_argument("subtract called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2>
@@ -77,7 +77,7 @@ namespace np {
 
             template<typename DType1, typename DType2, typename DType3>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> multiply(DType1, DType2, DType3 &) {
-                throw std::runtime_error("multiply called for non-arithmetic type");
+                throw std::invalid_argument("multiply called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2, typename DType3>
@@ -87,7 +87,7 @@ namespace np {
 
             template<typename DType1, typename DType2>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> multiply(DType1 &, DType2) {
-                throw std::runtime_error("multiply called for non-arithmetic type");
+                throw std::invalid_argument("multiply called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2>
@@ -97,7 +97,7 @@ namespace np {
 
             template<typename DType1, typename DType2, typename DType3>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> divide(DType1, DType2, DType3 &) {
-                throw std::runtime_error("divide called for non-arithmetic type");
+                throw std::invalid_argument("divide called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2, typename DType3>
@@ -107,7 +107,7 @@ namespace np {
 
             template<typename DType1, typename DType2>
             std::enable_if_t<!std::is_arithmetic_v<DType1> || !std::is_arithmetic_v<DType2>> divide(DType1 &, DType2) {
-                throw std::runtime_error("divide called for non-arithmetic type");
+                throw std::invalid_argument("divide called for non-arithmetic type");
             }
 
             template<typename DType1, typename DType2>
@@ -117,7 +117,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> exp(DType, DType &) {
-                throw std::runtime_error("exp called for non-arithmetic type");
+                throw std::invalid_argument("exp called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -127,7 +127,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> exp(DType &) {
-                throw std::runtime_error("exp called for non-arithmetic type");
+                throw std::invalid_argument("exp called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -137,7 +137,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> setDouble(float_, DType &) {
-                throw std::runtime_error("setDouble called for non-arithmetic type");
+                throw std::invalid_argument("setDouble called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -147,7 +147,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> sqrt(DType, DType &) {
-                throw std::runtime_error("sqrt called for non-arithmetic type");
+                throw std::invalid_argument("sqrt called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -157,7 +157,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> sqrt(DType &) {
-                throw std::runtime_error("sqrt called for non-arithmetic type");
+                throw std::invalid_argument("sqrt called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -167,7 +167,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> sin(DType, DType &) {
-                throw std::runtime_error("sin called for non-arithmetic type");
+                throw std::invalid_argument("sin called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -177,7 +177,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> sin(DType &) {
-                throw std::runtime_error("sin called for non-arithmetic type");
+                throw std::invalid_argument("sin called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -187,7 +187,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> cos(DType, DType &) {
-                throw std::runtime_error("cos called for non-arithmetic type");
+                throw std::invalid_argument("cos called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -197,7 +197,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> cos(DType &) {
-                throw std::runtime_error("cos called for non-arithmetic type");
+                throw std::invalid_argument("cos called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -207,7 +207,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> log(DType, DType &) {
-                throw std::runtime_error("log called for non-arithmetic type");
+                throw std::invalid_argument("log called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -217,7 +217,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> log(DType &) {
-                throw std::runtime_error("log called for non-arithmetic type");
+                throw std::invalid_argument("log called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -227,7 +227,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> abs(DType, DType &) {
-                throw std::runtime_error("abs called for non-arithmetic types");
+                throw std::invalid_argument("abs called for non-arithmetic types");
             }
 
             template<typename DType>
@@ -237,7 +237,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> abs(DType &) {
-                throw std::runtime_error("abs called for non-arithmetic type");
+                throw std::invalid_argument("abs called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -267,7 +267,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> isTrue(DType, bool &) {
-                throw std::runtime_error("isTrue is called for non-arithmetic type");
+                throw std::invalid_argument("isTrue is called for non-arithmetic type");
             }
 
             template<typename DType>
@@ -277,7 +277,7 @@ namespace np {
 
             template<typename DType>
             std::enable_if_t<!std::is_arithmetic_v<DType>> isFalse(DType, bool &) {
-                throw std::runtime_error("isFalse is called for non-arithmetic type");
+                throw std::invalid_argument("isFalse is called for non-arithmetic type");
             }
 
             template<typename DType>

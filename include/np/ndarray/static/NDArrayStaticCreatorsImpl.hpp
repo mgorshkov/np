@@ -56,31 +56,31 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray1DType<Size1T> &data) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size1T}, data} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray1DType<Size1T> &array, bool isColumnVector) noexcept
                 : NDArrayStaticBase<DType, SizeT>{isColumnVector, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T>
+            template<size_t Size1T, size_t Size2T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray2DType<Size1T, Size2T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size2T, Size1T}, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray3DType<Size1T, Size2T, Size3T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size3T, Size2T, Size1T}, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const CArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size4T, Size3T, Size2T, Size1T}, array} {
             }
@@ -98,31 +98,31 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray1DType<Size1T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size1T}, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray1DType<Size1T> &array, bool isColumnVector) noexcept
                 : NDArrayStaticBase<DType, SizeT>{isColumnVector, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T>
+            template<size_t Size1T, size_t Size2T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray2DType<Size1T, Size2T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size2T, Size1T}, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size3T, Size2T, Size1T}, array} {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept
                 : NDArrayStaticBase<DType, SizeT>{Shape{Size4T, Size3T, Size2T, Size1T}, array} {
             }
@@ -205,7 +205,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(CArray1DType<Size1T> array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -213,7 +213,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T>
+            template<size_t Size1T, size_t Size2T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(CArray2DType<Size1T, Size2T> array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -221,7 +221,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(CArray3DType<Size1T, Size2T, Size3T> array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -229,7 +229,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -237,7 +237,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T>
+            template<size_t Size1T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(const StdArray1DType<Size1T> &array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -245,7 +245,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T>
+            template<size_t Size1T, size_t Size2T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(const StdArray2DType<Size1T, Size2T> &array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -253,7 +253,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) noexcept {
                 NDArrayStaticBase<DType, SizeT>::operator=(array);
@@ -261,7 +261,7 @@ namespace np {
             }
 
             template<typename DType, Size SizeT>
-            template<std::size_t Size1T, std::size_t Size2T, std::size_t Size3T, std::size_t Size4T>
+            template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::
             operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) noexcept {

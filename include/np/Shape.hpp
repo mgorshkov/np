@@ -27,6 +27,7 @@ SOFTWARE.
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
+#include <fmt/format.h>
 #include <numeric>
 #include <vector>
 
@@ -126,7 +127,7 @@ namespace np {
                 if (commaIndex == prevCommaIndex)
                     return;
                 auto number{shapeTupleStr.substr(prevCommaIndex, commaIndex - prevCommaIndex)};
-                std::size_t i = 0;
+                size_t i = 0;
                 while (!std::isdigit(number[i]) && i < number.length()) {
                     ++i;
                 }
@@ -134,7 +135,7 @@ namespace np {
                 m_sizes.push_back(std::stoul(numberStr));
             };
             while (true) {
-                std::size_t commaIndex = shapeTupleStr.find(',', prevCommaIndex);
+                size_t commaIndex = shapeTupleStr.find(',', prevCommaIndex);
                 if (commaIndex == std::string::npos) {
                     push_number(static_cast<Size>(shapeTupleStr.length()), prevCommaIndex);
                     break;
@@ -161,7 +162,7 @@ namespace np {
             }
 
             std::string shape;
-            for (std::size_t dim = 0; dim < m_sizes.size(); ++dim) {
+            for (size_t dim = 0; dim < m_sizes.size(); ++dim) {
                 if (dim > 0)
                     shape += ", ";
                 shape += std::to_string(m_sizes.at(dim));
@@ -201,7 +202,7 @@ namespace np {
             m_sizes.clear();
         }
 
-        [[nodiscard]] std::size_t size() const {
+        [[nodiscard]] size_t size() const {
             return m_sizes.size();
         }
 
@@ -226,16 +227,16 @@ namespace np {
 
         void removeFirstDim() {
             if (empty()) {
-                throw std::runtime_error("Empty shape, cannot remove first dim");
+                throw std::invalid_argument("Empty shape, cannot remove first dim");
             }
             m_sizes.erase(m_sizes.begin());
         }
 
-        const Size &operator[](const std::size_t index) const {
+        const Size &operator[](const size_t index) const {
             return m_sizes[index];
         }
 
-        Size &operator[](const std::size_t index) {
+        Size &operator[](const size_t index) {
             return m_sizes[index];
         }
 
@@ -276,7 +277,7 @@ namespace np {
                 Size s1 = i1 < 0 ? 1 : m_sizes[i1];
                 Size s2 = i2 < 0 ? 1 : another.m_sizes[i2];
                 if (s1 != s2 && s1 != 1 && s2 != 1) {
-                    throw std::runtime_error("Arrays cannot be broadcast together");
+                    throw std::invalid_argument(fmt::format("Arrays cannot be broadcast together: incompatible sizes: {} vs {}", s1, s2));
                 }
                 Size out;
                 if (s1 == s2 || s2 == 1) {
@@ -302,7 +303,7 @@ namespace np {
 
         inline friend std::ostream &operator<<(std::ostream &stream, const Shape &shape) {
             stream << "{";
-            for (std::size_t index = 0; index < shape.m_sizes.size(); ++index) {
+            for (size_t index = 0; index < shape.m_sizes.size(); ++index) {
                 if (index > 0)
                     stream << " ";
                 stream << shape.m_sizes[index];

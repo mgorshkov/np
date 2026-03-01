@@ -534,5 +534,5 @@ TEST_F(ArrayCreatorsTest, testDiag3D) {
     int_ array[2][2][4] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}};
     auto v = Array<int_>{array};
     int k = 2;
-    EXPECT_THROW(diag2(v, k), std::runtime_error);
+    EXPECT_THROW(diag2(v, k), std::invalid_argument);
 }
