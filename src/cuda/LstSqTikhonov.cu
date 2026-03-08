@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov
+Copyright (c) 2022-2026 Mikhail Gorshkov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,6 @@ SOFTWARE.
 #include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <stdexcept>
-#include <thrust/device_vector.h>
-
-#include <thrust/extrema.h>
-#include <thrust/execution_policy.h>
 #include <thrust/device_vector.h>
 
 #include <np/internal/cuda/Tools.cuh>
@@ -67,36 +63,40 @@ namespace np {
                     cuda_AtA.data().get(),
                     (int)n));
 
-                // Tikhonov diagonal
-                size_t gridSize = (n + blockSize - 1) / blockSize;
-                addConstantToDiagonalKernel<<<gridSize, blockSize>>>(cuda_AtA.data().get(), lambda, n);
-
                 thrust::device_vector<DType> cuda_Atb(n);
                 checkCublasError(cublasGemv<DType>(cublas, CUBLAS_OP_T, (int)m, (int)n,
                         cuda_A, (int)m, cuda_b, 1, cuda_Atb.data().get(), 1));
 
-                // Scale A and b if overflow
+                // Scale AtA and Atb if overflow to improve numerical stability
                 DType maxAtb;
-                DType scaleFactor = 1.0;
                 int maxIdx;
                 checkCublasError(cublasIamax<DType>(cublas, n, cuda_Atb.data().get(), 1, &maxIdx));
-                checkCudaError(cudaMemcpy(&maxAtb, cuda_Atb.data().get() + maxIdx, sizeof(DType), cudaMemcpyDeviceToHost));
+                if (maxIdx == 0) {
+                    throw std::runtime_error("cublasIamax returned zero idx");
+                }
+                // maxIdx is 1‑based, convert to 0‑based
+                size_t idx = maxIdx - 1;
+                checkCudaError(cudaMemcpy(&maxAtb, cuda_Atb.data().get() + idx, sizeof(DType), cudaMemcpyDeviceToHost));
 
                 DType threshold = 1e4;
                 if (maxAtb > threshold) {
-                    DType scale = sqrtf(threshold / maxAtb);
-                    checkCublasError(cublasScal<DType>(cublas, m * n, &scale, cuda_A, 1));
-                    checkCublasError(cublasScal<DType>(cublas, m, &scale, cuda_b, 1));
-                    // Recalc Atb after scaling
-                    checkCublasError(cublasGemv<DType>(cublas, CUBLAS_OP_T, (int)m, (int)n,
-                        cuda_A, (int)m, cuda_b, 1, cuda_Atb.data().get(), 1));
-                    scaleFactor = 1.0 / (scale * scale);
+                    DType scale = std::sqrt(threshold / maxAtb);
+                    DType scaleSq = scale * scale;
+                    // Scale AtA and Atb by scaleSq
+                    checkCublasError(cublasScal<DType>(cublas, n * n, &scaleSq, cuda_AtA.data().get(), 1));
+                    checkCublasError(cublasScal<DType>(cublas, n, &scaleSq, cuda_Atb.data().get(), 1));
+                    // Scale lambda accordingly
+                    lambda *= scaleSq;
                 }
 
-                // 2: Direct EVD: VΛVᵀ
+                // Tikhonov diagonal (add regularized lambda after scaling)
+                size_t gridSize = (n + blockSize - 1) / blockSize;
+                addConstantToDiagonalKernel<<<gridSize, blockSize>>>(cuda_AtA.data().get(), lambda, n);
+
+                // 2: Direct EVD: VΛV^T
                 thrust::device_vector<DType> evals(n);
                 int lwork;
-                cusolverDnDsyevd_bufferSize(cusolver, CUSOLVER_EIG_MODE_VECTOR,
+                cusolverDnSyevd_bufferSize<DType>(cusolver, CUSOLVER_EIG_MODE_VECTOR,
                     CUBLAS_FILL_MODE_LOWER, (int)n, nullptr, (int)n, nullptr, &lwork);
                 thrust::device_vector<DType> work(lwork);
                 thrust::device_vector<int> devInfo(1);
@@ -118,28 +118,36 @@ namespace np {
                     oss << "Invalid parameter: " << host_devInfo;
                     throw std::runtime_error(oss.str());
                 }
-                normalizeEigenvectorsKernel<<<gridSize, blockSize>>>(work.data().get(), (int)n);
-                checkCudaError(cudaGetLastError());
-                checkCudaError(cudaDeviceSynchronize());
+                
+                // 3. Spectral filtering: x = V Σ⁺ V^T * (AT b)
+                // Compute y = V^T * (AT b)
+                thrust::device_vector<DType> y(n);
+                checkCublasError(cublasGemv<DType>(cublas,
+                    CUBLAS_OP_T,
+                    (int)n,
+                    (int)n,
+                    cuda_AtA.data().get(),
+                    (int)n,
+                    cuda_Atb.data().get(),
+                    1,
+                    y.data().get(),
+                    1));
 
-                // 3. Spectral filtering: x = V Σ⁺ VT (AT b)
+                // Filter y by eigenvalues: filtered[i] = y[i] / evals[i] (if evals[i] > threshold)
                 thrust::device_vector<DType> filtered(n);
-                spectralFilterKernel<<<gridSize, blockSize>>>(filtered.data().get(), evals.data().get(), cuda_Atb.data().get(), n);
+                spectralFilterKernel<<<gridSize, blockSize>>>(filtered.data().get(), evals.data().get(), y.data().get(), n);
 
-                // V * filtered
+                // x = V * filtered
                 checkCublasError(cublasGemv<DType>(cublas,
                     CUBLAS_OP_N,
                     (int)n,
                     (int)n,
-                    work.data().get(),
+                    cuda_AtA.data().get(),
                     (int)n,
                     filtered.data().get(),
                     1,
                     cuda_x,
                     1));
-
-                // Unscale solution
-                cublasScal<DType>(cublas, n, &scaleFactor, cuda_x, 1);
 
                 checkCudaError(cudaMemcpy(x, cuda_x, n * sizeof(DType), cudaMemcpyDeviceToHost));
 

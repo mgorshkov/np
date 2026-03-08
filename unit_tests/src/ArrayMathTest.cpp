@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -164,7 +164,7 @@ TEST_F(ArrayMathTest, dynamic1DIntArraysLargeAddTest) {
     Array<int_> array2 = arange<int_>(size);
     std::vector<int_> vector(size);
     std::iota(vector.begin(), vector.end(), 0);
-    for (auto& x : vector) {
+    for (auto &x: vector) {
         x *= 2;
     }
     NDArrayDynamic<int_> plus{vector};

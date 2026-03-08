@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@ SOFTWARE.
 
 #include <cstddef>
 #include <cuda_runtime.h>
-#include <fstream>
 #include <fmt/format.h>
+#include <fstream>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -439,8 +439,7 @@ namespace np {
                     }
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{Shape{1}};
                     DType cellResult = 0;
-#pragma omp parallel for default(none) shared(array, size1) reduction(+ \
-                                                                      : cellResult)
+#pragma omp parallel for default(none) shared(array, size1) reduction(+ : cellResult)
                     // index variable in OpenMP 'for' statement must have signed integral type
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(size1); ++i) {
                         DType multiplyResult{};
@@ -459,8 +458,7 @@ namespace np {
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape2[1]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, shape1, shape2) reduction(+ \
-                                                                                  : cellResult)
+#pragma omp parallel for default(none) shared(array, i, shape1, shape2) reduction(+ : cellResult)
                         for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[0]); ++k) {
                             DType multiplyResult{};
                             ndarray::internal::multiply(get(k), array.get(k * shape2[1] + i),
@@ -480,8 +478,7 @@ namespace np {
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape1[0]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, shape1) reduction(+ \
-                                                                          : cellResult)
+#pragma omp parallel for default(none) shared(array, i, shape1) reduction(+ : cellResult)
                         for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
                             DType multiplyResult{};
                             ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k),
@@ -502,8 +499,7 @@ namespace np {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         for (std::int32_t j = 0; j < static_cast<std::int32_t>(shape2[1]); ++j) {
                             DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, j, shape1, shape2) reduction(+ \
-                                                                                     : cellResult)
+#pragma omp parallel for default(none) shared(array, i, j, shape1, shape2) reduction(+ : cellResult)
                             for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
                                 DType multiplyResult{};
                                 ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k * shape2[1] + j),
@@ -614,8 +610,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::sum() const {
                 DType result{};
-#pragma omp parallel for default(none) reduction(+ \
-                                                 : result)
+#pragma omp parallel for default(none) reduction(+ : result)
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     const auto &element = get(i);
@@ -627,8 +622,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::nansum() const {
                 DType result{};
-#pragma omp parallel for default(none) reduction(+ \
-                                                 : result)
+#pragma omp parallel for default(none) reduction(+ : result)
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType nanToZeroResult{};
@@ -1482,8 +1476,8 @@ namespace np {
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
                         throw std::invalid_argument("Too many indices for array: array is " +
-                                                 std::to_string(shape().size()) +
-                                                 "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
+                                                    std::to_string(shape().size()) +
+                                                    "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
                 }
                 return {this, indices};
@@ -1511,8 +1505,8 @@ namespace np {
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
                         throw std::invalid_argument("Too many indices for array: array is " +
-                                                 std::to_string(shape().size()) +
-                                                 "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
+                                                    std::to_string(shape().size()) +
+                                                    "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
                 }
                 return {this, indices};
@@ -1558,8 +1552,8 @@ namespace np {
                     offset = static_cast<Size>(shape[dimIndex] + index);
                 } else if (index > static_cast<SignedSize>(shape[dimIndex])) {
                     throw std::invalid_argument("Index " + std::to_string(index) +
-                                             " out of bounds for axis " + std::to_string(dimIndex) +
-                                             " with size " + std::to_string(shape[dimIndex]));
+                                                " out of bounds for axis " + std::to_string(dimIndex) +
+                                                " with size " + std::to_string(shape[dimIndex]));
                 }
                 return IndexType<DType>{SubsettingIndexType{offset}};
             }
@@ -1616,5 +1610,5 @@ namespace np {
             }
 
         }// namespace internal
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -517,12 +517,10 @@ namespace np {
                     using Ranges = std::set<Range>;
 
                     struct ROR {
-                        ROR()
-                        noexcept : start{}, stop{}, step{-1} {
+                        ROR() noexcept : start{}, stop{}, step{-1} {
                         }
 
-                        ROR(const Range &start_, const Range &stop_, SignedSize step_)
-                        noexcept : start{start_}, stop{stop_}, step{step_} {
+                        ROR(const Range &start_, const Range &stop_, SignedSize step_) noexcept : start{start_}, stop{stop_}, step{step_} {
                         }
 
                         explicit ROR(const Ranges &ranges) {
@@ -816,5 +814,5 @@ namespace np {
                 friend class const_iterator;
             };
         }// namespace internal
-    }    // namespace ndarray
+    }// namespace ndarray
 }// namespace np
