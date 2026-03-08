@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,40 @@ SOFTWARE.
 #pragma once
 
 #include <np/Array.hpp>
+#include <np/internal/cuda/Mrrr.hpp>
 #include <np/internal/cuda/Tikhonov.hpp>
 #include <np/linalg/Inv.hpp>
 
 namespace np {
     namespace linalg {
-        // Least squares with Cholesky/Tikhonov Regularized EVD
+        // Least squares with Cholesky (Use Cholesky for small matrices)
         template<typename DType, typename Derived, typename Storage>
-        inline auto lstsq(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &A,
-            const ndarray::internal::NDArrayBase<DType, Derived, Storage> &b, DType lambda = 1e-6) {
+        inline auto lstsq_cholesky(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &A,
+                                   const ndarray::internal::NDArrayBase<DType, Derived, Storage> &b) {
+            if (A.ndim() != 2) {
+                throw std::invalid_argument("Expected 2D array.");
+            }
+            if (b.ndim() != 1) {
+                throw std::invalid_argument("Expected 1D array.");
+            }
+            auto m = A.shape()[0];
+            if (b.shape()[0] != m) {
+                throw std::invalid_argument("Invalid size.");
+            }
+            auto column = A.shape()[0];
+            auto ones = Array<np::float_>{Shape{column}, 1.0};
+            auto a = column_stack(ones, A);
+            auto aT = a.transpose();
+            auto coeffs = inv(aT.dot(a)).dot(aT).dot(b);
+            auto coeff = coeffs["1:"];
+            auto intercept = coeffs.get(0);
+            return A * coeff + intercept;
+        }
+
+        // Least squares with Tikhonov Regularized EVD
+        template<typename DType, typename Derived, typename Storage>
+        inline auto lstsq_tikhonov(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &A,
+                                   const ndarray::internal::NDArrayBase<DType, Derived, Storage> &b, DType lambda = 1e-6) {
             if (A.ndim() != 2) {
                 throw std::invalid_argument("Expected 2D array.");
             }
@@ -45,21 +70,28 @@ namespace np {
             if (b.shape()[0] != m) {
                 throw std::invalid_argument("Invalid size.");
             }
-            if (A.size() < 100) {
-                // Use Cholesky for small matrices
-                auto column = A.shape()[0];
-                auto ones = Array<np::float_>{Shape{column}, 1.0};
-                auto a = column_stack(ones, A);
-                auto aT = a.transpose();
-                auto coeffs = inv(aT.dot(a)).dot(aT).dot(b);
-                auto coeff = coeffs["1:"];
-                auto intercept = coeffs.get(0);
-                return A * coeff + intercept;
-            }
-            // Use Tikhonov for big matrices
-            std::vector<DType> x;
-            x.reserve(n);
+            std::vector<DType> x(n);
             internal::cuda::lstsqTikhonov(A.data(), b.data(), x.data(), m, n, lambda);
+            return NDArrayDynamic<DType>(x);
+        }
+
+        // Least squares with MRRR
+        template<typename DType, typename Derived, typename Storage>
+        inline auto lstsq_mrrr(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &A,
+                               const ndarray::internal::NDArrayBase<DType, Derived, Storage> &b) {
+            if (A.ndim() != 2) {
+                throw std::invalid_argument("Expected 2D array.");
+            }
+            if (b.ndim() != 1) {
+                throw std::invalid_argument("Expected 1D array.");
+            }
+            auto m = A.shape()[0];
+            auto n = A.shape()[1];
+            if (b.shape()[0] != m) {
+                throw std::invalid_argument("Invalid size.");
+            }
+            std::vector<DType> x(n);
+            internal::cuda::lstsqMrrr(A.data(), b.data(), x.data(), m, n);
             return NDArrayDynamic<DType>(x);
         }
     }// namespace linalg

@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,19 @@ SOFTWARE.
 #include <np/Array.hpp>
 #include <np/linalg/LstSq.hpp>
 
+#include <cmath>
 #include <gtest/gtest.h>
 #include <iostream>
 
 using namespace np;
 using namespace np::linalg;
 
-class LinalgLstSqTest : public ::testing::TestWithParam<std::tuple<size_t, size_t, double>> {
+class LinalgLstSqMrrrTest : public ::testing::TestWithParam<std::tuple<size_t, size_t, double>> {
 protected:
 };
 
-TEST_P(LinalgLstSqTest, lstsqTest) {
-    auto [rows, cols, lambda] = GetParam();
+TEST_P(LinalgLstSqMrrrTest, lstsqTest) {
+    auto [rows, cols, error_expected] = GetParam();
 
     // Generate random matrix A and true solution x_true
     Shape shapeA({rows, cols});
@@ -46,13 +47,13 @@ TEST_P(LinalgLstSqTest, lstsqTest) {
     auto x_true = random::rand(shapeX);
 
     // Add noise
-    auto noise = random::rand(Shape{rows}, -0.01, 0.01); // 1 % noise
+    auto noise = random::rand(Shape{rows}, -0.01, 0.01);// 1 % noise
     // Compute b = A * x_true + noise
     auto b = A.dot(x_true) + noise;
 
-    // Solve using Tikhonov Regularized EVD method
+    // Solve using MRRR method
     auto start = std::chrono::high_resolution_clock::now();
-    auto x = lstsq(A, b);
+    auto x = lstsq_mrrr(A, b);
     auto end = std::chrono::high_resolution_clock::now();
 
     double error = 0.0;
@@ -62,15 +63,16 @@ TEST_P(LinalgLstSqTest, lstsqTest) {
 
     auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     std::cout << "Time:  " << time.count() << " ms\n";
-    std::cout << "||x - x_true||:  " << sqrtf(error) << "\n";
+    EXPECT_LT(std::sqrt(error), error_expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    LinalgLstSqTestCases,
-    LinalgLstSqTest,
-    ::testing::Values(
-        std::make_tuple(4,  2,      1e-4),  // Small
-        std::make_tuple(100, 100,   1e-6),  // Square
-        std::make_tuple(1000, 100,  1e-6)   // Large overdetermined
-    )
-);
+        LinalgLstSqMrrrTestCases,
+        LinalgLstSqMrrrTest,
+        ::testing::Values(
+                std::make_tuple(100, 100, 12.0),  // Square
+                std::make_tuple(1000, 100, 7.0),  // Large overdetermined
+                std::make_tuple(100, 1000, 19.0), // Large underdetermined
+                std::make_tuple(1000, 1000, 19.0),// Large square
+                std::make_tuple(10000, 1000, 19.0)// Very large overdetermined
+                ));

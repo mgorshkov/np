@@ -1,7 +1,7 @@
 /*
-MIT License
+C++ numpy-like template-based array implementation
 
-Copyright (c) 2022-2026 Mikhail Gorshkov
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
 #include <np/Array.hpp>
 #include <np/linalg/LstSq.hpp>
 
-int main(int, char **) {
-    // LSTSQ calculation with MRRR method
-    using namespace np;
-    using namespace np::linalg;
+#include <cmath>
+#include <gtest/gtest.h>
+#include <iostream>
 
-    static const constexpr Size rows = 10000;
-    static const constexpr Size cols = 1000;
+using namespace np;
+using namespace np::linalg;
+
+class LinalgLstSqCholeskyTest : public ::testing::TestWithParam<std::tuple<size_t, size_t, double>> {
+protected:
+};
+
+TEST_P(LinalgLstSqCholeskyTest, lstsqTest) {
+    auto [rows, cols, error_expected] = GetParam();
 
     // Generate random matrix A and true solution x_true
     Shape shapeA({rows, cols});
@@ -46,19 +51,24 @@ int main(int, char **) {
     // Compute b = A * x_true + noise
     auto b = A.dot(x_true) + noise;
 
-    // Solve using MRRR method
+    // Solve using Cholesky
     auto start = std::chrono::high_resolution_clock::now();
-    auto x = lstsq_mrrr(A, b);
+    auto x = lstsq_cholesky(A, b);
     auto end = std::chrono::high_resolution_clock::now();
 
     double error = 0.0;
-    for (size_t i = 0; i < cols; ++i) {
+    for (size_t i = 0; i < cols; i++) {
         error += (x.get(i) - x_true.get(i)) * (x.get(i) - x_true.get(i));
     }
 
     auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     std::cout << "Time:  " << time.count() << " ms\n";
-    std::cout << "||x - x_true||:  " << sqrtf(error) << "\n";
-
-    return 0;
+    EXPECT_LT(std::sqrt(error), error_expected);
 }
+
+INSTANTIATE_TEST_SUITE_P(
+        LinalgLstSqCholeskyTestCases,
+        LinalgLstSqCholeskyTest,
+        ::testing::Values(
+                std::make_tuple(4, 2, 1.0)// Small
+                ));
