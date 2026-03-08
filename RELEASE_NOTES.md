@@ -1,6 +1,10 @@
+# Release 0.1.4
+## Changes
+* MRRR least squares
+
 # Release 0.1.3
 ## Changes
-* Least squares
+* CUDA optimizations
 
 # Release 0.1.2
 ## Changes

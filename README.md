@@ -102,12 +102,12 @@ PI=3.14158
 #include <np/linalg/LstSq.hpp>
 
 int main(int, char **) {
-    // LSTSQ calculation with Tikhonov Regularized EVD method
+    // LSTSQ calculation with MRRR method
     using namespace np;
     using namespace np::linalg;
 
-    static const constexpr Size rows = 1000;
-    static const constexpr Size cols = 100;
+    static const constexpr Size rows = 10000;
+    static const constexpr Size cols = 1000;
 
     // Generate random matrix A and true solution x_true
     Shape shapeA({rows, cols});
@@ -121,9 +121,9 @@ int main(int, char **) {
     // Compute b = A * x_true + noise
     auto b = A * x_true + noise;
 
-    // Solve using Tikhonov Regularized EVD method
+    // Solve using MRRR method
     auto start = std::chrono::high_resolution_clock::now();
-    auto x = lstsq(A, b);
+    auto x = lstsq_mrrr(A, b);
     auto end = std::chrono::high_resolution_clock::now();
 
     double error = 0.0;
@@ -168,8 +168,8 @@ cmake --build . --config Release
 6. Run the app
 ```
 $./least-squares
-Time:  31 ms
-||x - x_true||:  5.40635
+Time:  189 ms
+||x - x_true||:  10.1145
 ```
 
 # Links
@@ -178,4 +178,5 @@ Time:  31 ms
 * ML Methods from scikit-learn library: https://github.com/mgorshkov/sklearn
 
 # Plans
-* MRRR LSQR algorithm implementation
+* Other LSQR algorithm implementations
+

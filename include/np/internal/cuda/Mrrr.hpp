@@ -24,27 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <np/Constants.hpp>
-
-/* Array inspection
- Length of array
- len(a)
- */
-
 namespace np {
-    //////////////////////////////////////////////////////////////
-    /// \brief Find length of the array
-    ///
-    /// Find length (first dimension) of the array.
-    ///
-    /// \param array Array to find the length
-    ///
-    /// \return The length of an array
-    ///
-    //////////////////////////////////////////////////////////////
-    template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
-    inline Size len(const Array<DType, SizeT> &array) {
-        return array.len();
-    }
-
+    namespace internal {
+        namespace cuda {
+            template<typename DType>
+            void lstsqMrrr(const DType *A, const DType *b, DType *x, size_t m, size_t n);
+        }
+    }// namespace internal
 }// namespace np

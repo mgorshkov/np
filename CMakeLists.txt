@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.18.0)
 set(NP np)
 
 # Set up project
-project(${NP} VERSION 0.1.3 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX CUDA)
+project(${NP} VERSION 0.1.4 DESCRIPTION "C++ Numpy Implementation" LANGUAGES CXX CUDA)
 
 # C++ 20
 set(CMAKE_CXX_STANDARD 20)

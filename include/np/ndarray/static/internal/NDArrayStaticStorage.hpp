@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -573,6 +573,6 @@ namespace np {
                     std::array<DType, SizeT> m_storage;
                 };
             }// namespace internal
-        }    // namespace array_static
-    }        // namespace ndarray
+        }// namespace array_static
+    }// namespace ndarray
 }// namespace np

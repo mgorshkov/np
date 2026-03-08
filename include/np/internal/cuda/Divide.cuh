@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ SOFTWARE.
 #include <cuda_runtime.h>
 
 template<typename DType1, typename DType2, typename DTypeResult>
-__global__ void divideKernel(const DType1* array1, size_t size1,
-                          const DType2* array2, size_t size2,
-                          DTypeResult* result, size_t maxSize) {
+__global__ void divideKernel(const DType1 *array1, size_t size1,
+                             const DType2 *array2, size_t size2,
+                             DTypeResult *result, size_t maxSize) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= maxSize)
         return;

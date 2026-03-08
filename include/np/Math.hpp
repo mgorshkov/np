@@ -1,7 +1,7 @@
 /*
 C++ numpy-like template-based array implementation
 
-Copyright (c) 2023 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,11 +29,11 @@ SOFTWARE.
 #include <fmt/format.h>
 
 #include <np/internal/cuda/Add.hpp>
-#include <np/internal/cuda/Subtract.hpp>
-#include <np/internal/cuda/Multiply.hpp>
 #include <np/internal/cuda/Divide.hpp>
-#include <np/ndarray/internal/Math.hpp>
+#include <np/internal/cuda/Multiply.hpp>
+#include <np/internal/cuda/Subtract.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/internal/Math.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
 namespace np {

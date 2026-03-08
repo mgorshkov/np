@@ -13,13 +13,20 @@ PACKAGE_TAR=${PACKAGE_PATH}.tgz
 
 echo "PACKAGE_TAR: $PACKAGE_TAR"
 
+function build_package() {
+    mkdir -p ${ROOT_DIR}/build || return 1
+    cd ${ROOT_DIR}/build || return 1
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${PACKAGE_PATH}
+    cmake --build . --config Release
+}
+
 function copy() {
     local path="$1"
-    local dest=$PACKAGE_PATH/$path
+    local dest="${2:-$PACKAGE_PATH/$path}"
 
     mkdir -p $dest
 
-    find $path -maxdepth 1 -type f -regex ".*\.\(hpp\|cpp\|md\|csv\|npy\|sh\|txt\)$" -exec cp {} $dest \;
+    find $path -maxdepth 1 -type f -regex ".*\.\(hpp\|cpp\|md\|csv\|npy\|sh\|txt\|a\|lib\)$" -exec cp {} $dest \;
 }
 
 function create_package() {
@@ -43,6 +50,8 @@ function create_package() {
         include/np/ndarray/static
         include/np/ndarray/static/internal
         samples
+        samples/data-generator
+        samples/least-squares
         samples/monte-carlo
         scripts
         unit_tests
@@ -53,6 +62,8 @@ function create_package() {
     for folder in "${FOLDERS[@]}"; do
         copy $folder
     done
+    mkdir -p $PACKAGE_PATH/lib
+    copy build/libnp.* $PACKAGE_PATH/lib
 
     return 0
 }
@@ -65,6 +76,7 @@ function zip_package() {
 }
 
 function main() {
+    build_package || return 1
     create_package || return 1
     zip_package
 }
