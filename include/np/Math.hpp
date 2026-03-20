@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -25,14 +25,12 @@ SOFTWARE.
 #pragma once
 
 #include <algorithm>
-#include <cuda_runtime.h>
-#include <fmt/format.h>
 
-#include <np/internal/cuda/Add.hpp>
-#include <np/internal/cuda/Divide.hpp>
-#include <np/internal/cuda/Multiply.hpp>
-#include <np/internal/cuda/Subtract.hpp>
+#include <np/Constants.hpp>
+
+#include <np/Exception.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
+#include <np/ndarray/internal/Expression.hpp>
 #include <np/ndarray/internal/Math.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
@@ -41,36 +39,79 @@ namespace np {
     using ndarray::array_static::NDArrayStatic;
 
     //////////////////////////////////////////////////////////////
-    /// \brief Arrays sum
+    /// \brief Sum of array elements
     ///
-    /// Calculate the array-wise element-by-element sum of the arrays.
-    /// Broadcasting rules are applied as in numpy.
+    /// Calculate the array elements sum
     ///
-    /// \param array1 array to sum
-    /// \param array2 array to sum
+    /// \param array array to sum
     ///
-    /// \return The sum of the arrays
+    /// \return The sum of the elements
     ///
     //////////////////////////////////////////////////////////////
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        using DTypeResult = std::common_type_t<DType1, DType2>;
-        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
-        auto size1 = array1.size();
-        auto size2 = array2.size();
-        auto maxSize = std::max(size1, size2);
-        if (maxSize > 256) {
-            internal::cuda::add(array1.data(), size1, array2.data(), size2, result.data(), result.size());
-        } else {
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-            // index variable in OpenMP 'for' statement must have signed integral type
-            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                DTypeResult plusResult;
-                ndarray::internal::add(array1.get(i % size1), array2.get(i % size2), plusResult);
-                result.set(i, plusResult);
-            }
-        }
-        return result;
+    template<Arithmetic DType, typename Derived, typename Storage>
+    inline auto sum(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &array) {
+        return array.sum();
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// \brief Sum of expression elements matching a boolean condition
+    ///
+    /// Count elements of an expression matching a condition like "dist<1".
+    /// For expression trees (e.g., rx*rx + ry*ry), this uses the fused
+    /// AVX2 count_if() path with no intermediate array allocations.
+    ///
+    /// \param cond A condition string (e.g., "dist<1", "x>0.5")
+    /// \param expr An expression to evaluate the condition on
+    ///
+    /// \return Count of elements matching the condition as float_
+    ///
+    //////////////////////////////////////////////////////////////
+    template<typename Derived, typename DType>
+    inline auto sum(const std::string &cond, const ndarray::internal::ExpressionBase<Derived, DType> &expr) {
+        return expr.sum(cond);
+    }
+
+    // Operator overloads that return expressions
+    // lvalue + lvalue
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
+    auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<AddOp, decltype(makeExpression(a)), decltype(makeExpression(b))>(
+                makeExpression(a), makeExpression(b));
+    }
+
+    // rvalue + lvalue: use makeExpression rvalue overload which creates an ArrayExpression
+    // that owns its data via shared_ptr, preventing dangling pointers.
+    // Only enabled for concrete dynamic arrays (NDArrayDynamicStorage), not indexed views or expressions.
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>>
+    auto operator+(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<AddOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(b))>(
+                makeExpression(std::move(a)), makeExpression(b));
+    }
+
+    // lvalue + rvalue: use makeExpression rvalue overload
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator+(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<AddOp, decltype(makeExpression(a)), decltype(makeExpression(std::move(b)))>(
+                makeExpression(a), makeExpression(std::move(b)));
+    }
+
+    // rvalue + rvalue: use makeExpression rvalue overload for both
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator+(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<AddOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(std::move(b)))>(
+                makeExpression(std::move(a)), makeExpression(std::move(b)));
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
@@ -93,37 +134,45 @@ namespace np {
         return array.addInplace(value);
     }
 
-    //////////////////////////////////////////////////////////////
-    /// \brief Arrays subtraction
-    ///
-    /// Calculate the array-wise element-by-element difference of the arrays.
-    /// Broadcasting rules are applied as in numpy.
-    ///
-    /// \param array1 array to subtract from
-    /// \param array2 array to subtract
-    ///
-    /// \return The difference of the arrays
-    ///
-    //////////////////////////////////////////////////////////////
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        using DTypeResult = std::common_type_t<DType1, DType2>;
-        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
-        auto size1 = array1.size();
-        auto size2 = array2.size();
-        auto maxSize = std::max(size1, size2);
-        if (maxSize > 256) {
-            internal::cuda::subtract(array1.data(), size1, array2.data(), size2, result.data(), result.size());
-        } else {
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-            // index variable in OpenMP 'for' statement must have signed integral type
-            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                DTypeResult plusResult;
-                ndarray::internal::subtract(array1.get(i % size1), array2.get(i % size2), plusResult);
-                result.set(i, plusResult);
-            }
-        }
-        return result;
+    // lvalue - lvalue
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
+    auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<SubtractOp, decltype(makeExpression(a)), decltype(makeExpression(b))>(
+                makeExpression(a), makeExpression(b));
+    }
+
+    // rvalue - lvalue: use makeExpression rvalue overload
+    // Only enabled for concrete dynamic arrays (NDArrayDynamicStorage)
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>>
+    auto operator-(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<SubtractOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(b))>(
+                makeExpression(std::move(a)), makeExpression(b));
+    }
+
+    // lvalue - rvalue: use makeExpression rvalue overload
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator-(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<SubtractOp, decltype(makeExpression(a)), decltype(makeExpression(std::move(b)))>(
+                makeExpression(a), makeExpression(std::move(b)));
+    }
+
+    // rvalue - rvalue: use makeExpression rvalue overload for both
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator-(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<SubtractOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(std::move(b)))>(
+                makeExpression(std::move(a)), makeExpression(std::move(b)));
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
@@ -141,37 +190,46 @@ namespace np {
         return array.subtractInplace(value);
     }
 
-    //////////////////////////////////////////////////////////////
-    /// \brief Arrays multiplication
-    ///
-    /// Calculate the memberwise element-by-element multiplication of the arrays.
-    /// Broadcasting rules are applied as in numpy.
-    ///
-    /// \param array1 array to multiply
-    /// \param array2 array to multiply
-    ///
-    /// \return The product of the arrays
-    ///
-    //////////////////////////////////////////////////////////////
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        using DTypeResult = std::common_type_t<DType1, DType2>;
-        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
-        auto size1 = array1.size();
-        auto size2 = array2.size();
-        auto maxSize = std::max(size1, size2);
-        if (maxSize > 256) {
-            internal::cuda::multiply(array1.data(), size1, array2.data(), size2, result.data(), result.size());
-        } else {
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-            // index variable in OpenMP 'for' statement must have signed integral type
-            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                DTypeResult multiplyResult;
-                ndarray::internal::multiply(array1.get(i % size1), array2.get(i % size2), multiplyResult);
-                result.set(i, multiplyResult);
-            }
-        }
-        return result;
+
+    // lvalue * lvalue
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
+    auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<MultiplyOp, decltype(makeExpression(a)), decltype(makeExpression(b))>(
+                makeExpression(a), makeExpression(b));
+    }
+
+    // rvalue * lvalue: use makeExpression rvalue overload
+    // Only enabled for concrete dynamic arrays (NDArrayDynamicStorage)
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>>
+    auto operator*(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<MultiplyOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(b))>(
+                makeExpression(std::move(a)), makeExpression(b));
+    }
+
+    // lvalue * rvalue: use makeExpression rvalue overload
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator*(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<MultiplyOp, decltype(makeExpression(a)), decltype(makeExpression(std::move(b)))>(
+                makeExpression(a), makeExpression(std::move(b)));
+    }
+
+    // rvalue * rvalue: use makeExpression rvalue overload for both
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator*(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<MultiplyOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(std::move(b)))>(
+                makeExpression(std::move(a)), makeExpression(std::move(b)));
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -184,37 +242,45 @@ namespace np {
         return array.multiply(value);
     }
 
-    //////////////////////////////////////////////////////////////
-    /// \brief Arrays division
-    ///
-    /// Calculate the memberwise element-by-element division of the arrays.
-    /// Broadcasting rules are applied as in numpy.
-    ///
-    /// \param array1 array to multiply
-    /// \param array2 array to multiply
-    ///
-    /// \return The division result of the arrays
-    ///
-    //////////////////////////////////////////////////////////////
-    template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2, typename Derived2, typename Storage2>
-    inline auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &array1, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &array2) {
-        using DTypeResult = std::common_type_t<DType1, DType2>;
-        ndarray::array_dynamic::NDArrayDynamic<DTypeResult> result{array1.shape().broadcast(array2.shape())};
-        auto size1 = array1.size();
-        auto size2 = array2.size();
-        auto maxSize = std::max(size1, size2);
-        if (maxSize > 256) {
-            internal::cuda::divide(array1.data(), size1, array2.data(), size2, result.data(), result.size());
-        } else {
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
-            // index variable in OpenMP 'for' statement must have signed integral type
-            for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
-                DTypeResult divideResult;
-                ndarray::internal::divide(array1.get(i % size1), array2.get(i % size2), divideResult);
-                result.set(i, divideResult);
-            }
-        }
-        return result;
+    // lvalue / lvalue
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2>
+    auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<DivideOp, decltype(makeExpression(a)), decltype(makeExpression(b))>(
+                makeExpression(a), makeExpression(b));
+    }
+
+    // rvalue / lvalue: use makeExpression rvalue overload
+    // Only enabled for concrete dynamic arrays (NDArrayDynamicStorage)
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>>
+    auto operator/(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<DivideOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(b))>(
+                makeExpression(std::move(a)), makeExpression(b));
+    }
+
+    // lvalue / rvalue: use makeExpression rvalue overload
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator/(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<DivideOp, decltype(makeExpression(a)), decltype(makeExpression(std::move(b)))>(
+                makeExpression(a), makeExpression(std::move(b)));
+    }
+
+    // rvalue / rvalue: use makeExpression rvalue overload for both
+    template<typename DType1, typename Derived1, typename Storage1, typename DType2, typename Derived2, typename Storage2,
+             typename = std::enable_if_t<std::is_same_v<Storage1, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType1>>>,
+             typename = std::enable_if_t<std::is_same_v<Storage2, ndarray::array_dynamic::internal::NDArrayDynamicStorage<DType2>>>>
+    auto operator/(ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &&a,
+                   ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &&b) {
+        using namespace ndarray::internal;
+        return BinaryExpression<DivideOp, decltype(makeExpression(std::move(a))), decltype(makeExpression(std::move(b)))>(
+                makeExpression(std::move(a)), makeExpression(std::move(b)));
     }
 
     template<Arithmetic DType1, typename Derived1, typename Storage1, Arithmetic DType2>
@@ -380,38 +446,153 @@ namespace np {
                        std::optional<DType1> = std::nullopt,
                        std::optional<DType1> = std::nullopt) {
         if (xp.empty()) {
-            throw std::invalid_argument("Array of sample points is empty");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array of sample points is empty");
         }
         if (xp.ndim() != 1) {
-            throw std::invalid_argument("xp must be 1 dimensional array");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "xp must be 1 dimensional array");
         }
         if (fp.ndim() != 1) {
-            throw std::invalid_argument("fp must be 1 dimensional array");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "fp must be 1 dimensional array");
         }
         if (xp.size() != fp.size()) {
-            throw std::invalid_argument("fp and xp are not of the same length");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "fp and xp are not of the same length");
         }
-        NDArrayDynamic<std::pair<DType2, DType3>> target{Shape{xp.size()}};
-        for (Size i = 0; i < xp.size(); ++i) {
-            target.set(i, {xp.get(i), fp.get(i)});
-        }
-        target.sort();
+
+        const auto x_size = x.size();
+        const auto xp_size = xp.size();
 
         NDArrayDynamic<DType3> result{x.shape()};
-        for (Size i = 0; i < x.size(); ++i) {
-            auto element = x.get(i);
-            auto it = std::upper_bound(target.cbegin(), target.cend(), element, [](const auto &c1, const auto &c2) {
-                return c1 < c2.first;
-            });
-            if (it == target.cend()) {
-                result.set(i, target.get(target.size() - 1).second);
+        auto *result_data = result.data();
+
+        // Fast path: use direct pointer access when all inputs are contiguous
+        if constexpr (Storage1::is_contiguous && Storage2::is_contiguous && Storage3::is_contiguous) {
+            const auto *xp_data = xp.data();
+            const auto *fp_data = fp.data();
+            const auto *x_data = x.data();
+
+            if (xp_size <= 2) {
+                // Fast path for tiny xp (size 1 or 2):
+                // Avoid std::upper_bound binary search overhead (O(log n) for just 1-2 elements).
+                // Use simple direct comparisons instead.
+                if (xp_size == 1) {
+                    // Single sample point: return fp[0] for all x
+                    auto y0 = fp_data[0];
+                    for (Size i = 0; i < x_size; ++i) {
+                        result_data[i] = y0;
+                    }
+                } else {
+                    // xp_size == 2: linear interpolation between two points
+                    auto x0 = xp_data[0];
+                    auto y0 = fp_data[0];
+                    auto x1 = xp_data[1];
+                    auto y1 = fp_data[1];
+                    auto inv_dx = static_cast<DType3>(1.0) / static_cast<DType3>(x1 - x0);
+                    // SIMD-accelerated path for double/float contiguous arrays
+                    if constexpr (std::is_same_v<DType1, double> && std::is_same_v<DType3, double> && Storage1::is_contiguous) {
+                        internal::interp_pd(reinterpret_cast<const double *>(x_data),
+                                            static_cast<double>(x0),
+                                            static_cast<double>(y0),
+                                            static_cast<double>(x1),
+                                            static_cast<double>(y1),
+                                            static_cast<double>(inv_dx),
+                                            reinterpret_cast<double *>(result_data),
+                                            static_cast<std::size_t>(x_size));
+                    } else if constexpr (std::is_same_v<DType1, float> && std::is_same_v<DType3, float> && Storage1::is_contiguous) {
+                        internal::interp_ps(reinterpret_cast<const float *>(x_data),
+                                            static_cast<float>(x0),
+                                            static_cast<float>(y0),
+                                            static_cast<float>(x1),
+                                            static_cast<float>(y1),
+                                            static_cast<float>(inv_dx),
+                                            reinterpret_cast<float *>(result_data),
+                                            static_cast<std::size_t>(x_size));
+                    } else {
+                        for (Size i = 0; i < x_size; ++i) {
+                            auto element = x_data[i];
+                            if (element <= x0) {
+                                result_data[i] = y0;
+                            } else if (element >= x1) {
+                                result_data[i] = y1;
+                            } else {
+                                auto t = static_cast<DType3>(element - x0) * inv_dx;
+                                result_data[i] = static_cast<DType3>(y0) + t * static_cast<DType3>(y1 - y0);
+                            }
+                        }
+                    }
+                }
             } else {
-                auto x0 = (*std::prev(it)).first;
-                auto y0 = (*std::prev(it)).second;
-                auto x1 = (*it).first;
-                auto y1 = (*it).second;
-                auto derivative = static_cast<DType3>((y1 - y0)) / (x1 - x0);
-                result.set(i, static_cast<DType3>(y0 + derivative * (element - x0)));
+                for (Size i = 0; i < x_size; ++i) {
+                    auto element = x_data[i];
+                    auto it = std::upper_bound(xp_data, xp_data + xp_size, element);
+                    if (it == xp_data + xp_size) {
+                        result_data[i] = fp_data[xp_size - 1];
+                    } else if (it == xp_data) {
+                        result_data[i] = fp_data[0];
+                    } else {
+                        auto idx = static_cast<Size>(it - xp_data);
+                        auto x0 = xp_data[idx - 1];
+                        auto y0 = fp_data[idx - 1];
+                        auto x1 = xp_data[idx];
+                        auto y1 = fp_data[idx];
+                        auto derivative = static_cast<DType3>((y1 - y0)) / (x1 - x0);
+                        result_data[i] = static_cast<DType3>(y0 + derivative * (element - x0));
+                    }
+                }
+            }
+        } else {
+            // Fallback for non-contiguous inputs: use virtual get() dispatch
+            if (xp_size <= 2) {
+                if (xp_size == 1) {
+                    auto y0 = fp.get(0);
+                    for (Size i = 0; i < x_size; ++i) {
+                        result_data[i] = y0;
+                    }
+                } else {
+                    auto x0 = xp.get(0);
+                    auto y0 = fp.get(0);
+                    auto x1 = xp.get(1);
+                    auto y1 = fp.get(1);
+                    auto inv_dx = static_cast<DType3>(1.0) / static_cast<DType3>(x1 - x0);
+                    for (Size i = 0; i < x_size; ++i) {
+                        auto element = x.get(i);
+                        if (element <= x0) {
+                            result_data[i] = y0;
+                        } else if (element >= x1) {
+                            result_data[i] = y1;
+                        } else {
+                            auto t = static_cast<DType3>(element - x0) * inv_dx;
+                            result_data[i] = static_cast<DType3>(y0) + t * static_cast<DType3>(y1 - y0);
+                        }
+                    }
+                }
+            } else {
+                // Build sorted index for binary search on non-contiguous xp/fp
+                // Use a vector of pairs for binary search
+                std::vector<std::pair<DType2, DType3>> target(xp_size);
+                for (Size i = 0; i < xp_size; ++i) {
+                    target[i] = {xp.get(i), fp.get(i)};
+                }
+                // xp is already monotonically increasing, so no sort needed
+                for (Size i = 0; i < x_size; ++i) {
+                    auto element = x.get(i);
+                    auto it = std::upper_bound(target.cbegin(), target.cend(), element,
+                                               [](const auto &c1, const auto &c2) {
+                                                   return c1 < c2.first;
+                                               });
+                    if (it == target.cend()) {
+                        result_data[i] = target[xp_size - 1].second;
+                    } else if (it == target.cbegin()) {
+                        result_data[i] = target[0].second;
+                    } else {
+                        auto idx = static_cast<Size>(it - target.cbegin());
+                        auto x0 = target[idx - 1].first;
+                        auto y0 = target[idx - 1].second;
+                        auto x1 = target[idx].first;
+                        auto y1 = target[idx].second;
+                        auto derivative = static_cast<DType3>((y1 - y0)) / (x1 - x0);
+                        result_data[i] = static_cast<DType3>(y0 + derivative * (element - x0));
+                    }
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -33,6 +33,7 @@ SOFTWARE.
 #include <utility>
 #include <vector>
 
+#include <np/Exception.hpp>
 #include <np/Shape.hpp>
 #include <np/internal/Tools.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
@@ -81,7 +82,7 @@ namespace np {
                 if (this != &another) {
                     m_shape = another.m_shape;
                     another.m_shape.clear();
-                    Base::operator=(another);
+                    Base::operator=(std::move(another));
                 }
                 return *this;
             }
@@ -94,7 +95,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             void NDArrayShaped<DType, Derived, Storage>::setShape(const Shape &shape) {
                 if (shape.calcSizeByShape() != m_shape.calcSizeByShape()) {
-                    throw std::invalid_argument("Cannot set shape of different size");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Cannot set shape of different size");
                 }
                 m_shape = shape;
             }

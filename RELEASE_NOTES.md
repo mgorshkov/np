@@ -1,3 +1,7 @@
+# Release 0.1.5
+## Changes
+* More CUDA optimizations added
+
 # Release 0.1.4
 ## Changes
 * MRRR least squares

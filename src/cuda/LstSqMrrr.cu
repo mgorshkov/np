@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov
 
@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifdef USE_CUDA
 #include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <stdexcept>
@@ -33,6 +34,7 @@ SOFTWARE.
 
 #include <np/internal/cuda/Tools.cuh>
 #include <np/internal/cuda/Mrrr.cuh>
+#include <np/Exception.hpp>
 
 // Least Squares with MRRR
 namespace np {
@@ -106,6 +108,15 @@ namespace np {
                 checkCudaError(cudaMemcpy(cuda_A, A, m * n * sizeof(DType), cudaMemcpyHostToDevice));
                 checkCudaError(cudaMemcpy(cuda_b, b, m * sizeof(DType), cudaMemcpyHostToDevice));
 
+                // Convert row-major to column-major layout
+                DType *cuda_A_col;
+                checkCudaError(cudaMalloc(&cuda_A_col, m * n * sizeof(DType)));
+                dim3 blockDim(16, 16);
+                dim3 gridDim((m + blockDim.x - 1) / blockDim.x, (n + blockDim.y - 1) / blockDim.y);
+                rowMajorToColMajor<<<gridDim, blockDim>>>(cuda_A, cuda_A_col, static_cast<int>(m), static_cast<int>(n));
+                checkCudaError(cudaGetLastError());
+                checkCudaError(cudaDeviceSynchronize());
+
                 CublasWrapper cublas;
                 CusolverWrapper cusolver;
 
@@ -117,23 +128,23 @@ namespace np {
                     (int)n,
                     (int)n,
                     (int)m,
-                    cuda_A,
+                    cuda_A_col,
                     (int)m,
-                    cuda_A,
+                    cuda_A_col,
                     (int)m,
                     cuda_AtA.data().get(),
                     (int)n));
 
                 thrust::device_vector<DType> cuda_Atb(n);
                 checkCublasError(cublasGemv<DType>(cublas, CUBLAS_OP_T, (int)m, (int)n,
-                        cuda_A, (int)m, cuda_b, 1, cuda_Atb.data().get(), 1));
+                        cuda_A_col, (int)m, cuda_b, 1, cuda_Atb.data().get(), 1));
 
                 // Scale AtA and Atb if overflow to improve numerical stability
                 DType maxAtb;
                 int maxIdx;
                 checkCublasError(cublasIamax<DType>(cublas, n, cuda_Atb.data().get(), 1, &maxIdx));
                 if (maxIdx == 0) {
-                    throw std::runtime_error("cublasIamax returned zero idx");
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, "cublasIamax returned zero idx");
                 }
                 // maxIdx is 1‑based, convert to 0‑based
                 size_t idx = maxIdx - 1;
@@ -170,7 +181,7 @@ namespace np {
                 if (info_sytrd != 0) {
                     std::ostringstream oss;
                     oss << "sytrd failed with info = " << info_sytrd;
-                    throw std::runtime_error(oss.str());
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, oss.str());
                 }
 
                 // Compute LDL^T factorization of tridiagonal matrix
@@ -202,9 +213,9 @@ namespace np {
                     checkCudaError(cudaMemcpy(e_host.data(), e.data().get(), (n-1) * sizeof(DType), cudaMemcpyDeviceToHost));
                     DType lower, upper;
                     gershgorinBounds(d_host.data(), e_host.data(), (int)n, &lower, &upper);
-                    
-                    DType tol = DType(1000.0);
-                    const int max_iter = 1;
+
+                    DType tol = DType(1e-8);
+                    const int max_iter = 30;
                     const int blockSize = 256;
                     size_t gridSize = (n + blockSize - 1) / blockSize;
                     bisectionEigenvaluesKernel<<<gridSize, blockSize>>>(
@@ -238,7 +249,7 @@ namespace np {
                 if (host_devInfo < 0) {
                     std::ostringstream oss;
                     oss << "Invalid parameter: " << host_devInfo;
-                    throw std::runtime_error(oss.str());
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, oss.str());
                 }
 
                 // Compute min, max from bisection eigenvalues
@@ -290,6 +301,7 @@ namespace np {
                 checkCudaError(cudaMemcpy(x, cuda_x, n * sizeof(DType), cudaMemcpyDeviceToHost));
 
 
+                checkCudaError(cudaFree(cuda_A_col));
                 checkCudaError(cudaFree(cuda_A));
                 checkCudaError(cudaFree(cuda_b));
                 checkCudaError(cudaFree(cuda_x));
@@ -300,3 +312,4 @@ namespace np {
         }// namespace cuda
     }// namespace internal
 }// namespace np
+#endif

@@ -1,5 +1,5 @@
 /*
-MIT License
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov
 
@@ -22,18 +22,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <chrono>
 #include <iostream>
 #include <np/Array.hpp>
 
-int main(int, char **) {
+int main(int argc, char **argv) {
     // PI number calculation with Monte-Carlo method
     using namespace np;
-    static const constexpr Size size = 100'000'000;
+    static constexpr Size defaultSize = 100'000'000;
+
+    Size size = defaultSize;
+    if (argc >= 2) {
+        size = std::atoll(argv[1]);
+        if (size <= 0) {
+            size = defaultSize;
+        }
+    }
+
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     auto rx = random::rand(size);
     auto ry = random::rand(size);
+
+    // Compute distance squared: rx*rx + ry*ry
+    // This creates a lazy expression tree (BinaryExpression<AddOp, ...>)
+    // No evaluation happens until sum() is called
     auto dist = rx * rx + ry * ry;
-    auto inside = (dist["dist<1"]).size();
-    std::cout << "PI=" << 4 * static_cast<double>(inside) / size;
+
+    // np::sum with condition string "dist<1" evaluates the expression tree
+    // in a single fused AVX2 pass with no intermediate array allocations:
+    //   - Loads rx[i], ry[i] directly from source arrays
+    //   - Computes rx[i]^2 + ry[i]^2 in registers
+    //   - Compares to 1.0 and accumulates count
+    //   - No store instructions, no temporary arrays
+    //   - Returns the count directly as float_ (no IndexParent wrapper)
+    auto inside = sum("dist<1", dist);
+
+    auto t_end = std::chrono::high_resolution_clock::now();
+
+    double pi_est = 4 * static_cast<double>(inside) / size;
+
+    auto total_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+
+    std::cout << "PI=" << pi_est << std::endl;
+    std::cerr << "total=" << total_us << " us" << std::endl;
 
     return 0;
 }

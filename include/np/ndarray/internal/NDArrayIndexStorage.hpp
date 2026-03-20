@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -29,6 +29,7 @@ SOFTWARE.
 #include <set>
 #include <tuple>
 
+#include <np/Exception.hpp>
 #include <np/Index.hpp>
 #include <np/Shape.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
@@ -58,32 +59,39 @@ namespace np {
                 NDArrayIndexStorage &operator=(const NDArrayIndexStorage &) = default;
                 NDArrayIndexStorage &operator=(NDArrayIndexStorage &&) noexcept = default;
 
-                const DType &get(Size i) const {
+                DType get(Size i) const {
                     if (i >= m_indices.size()) {
-                        throw std::invalid_argument("Index out of bounds");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::invalid_argument("Parent is nullptr");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Parent is nullptr");
                     }
                     return m_parent->get(m_indices[i]);
                 }
 
                 DType &get(Size i) {
                     if (i >= m_indices.size()) {
-                        throw std::invalid_argument("Index out of bounds");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::invalid_argument("Parent is nullptr");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Parent is nullptr");
                     }
-                    return m_parent->get(m_indices[i]);
+                    if constexpr (std::is_const_v<std::remove_pointer_t<Parent>>) {
+                        // Parent is const NDArrayBase*, so m_parent->get() calls the const get()
+                        // which returns by value. We cannot return a reference to a temporary.
+                        // This is a read-only path, so we throw.
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "Cannot get mutable reference from const parent");
+                    } else {
+                        return m_parent->get(m_indices[i]);
+                    }
                 }
 
                 void set(Size i, const DType &value) {
                     if (i >= m_indices.size()) {
-                        throw std::invalid_argument("Index out of bounds");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index out of bounds");
                     }
                     if (m_parent == nullptr) {
-                        throw std::invalid_argument("Parent is nullptr");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Parent is nullptr");
                     }
                     return m_parent->set(m_indices[i], value);
                 }
@@ -324,6 +332,37 @@ namespace np {
                     m_shape = shape;
                 }
 
+                // Expose the parent's storage type for compile-time dispatch in fast paths.
+                // Storage is the parent's storage type (the template parameter).
+                using ParentStorage = Storage;
+
+                // Access the parent's raw data pointer for stride-aware pointer arithmetic.
+                // This enables fast paths that bypass virtual get() dispatch for indexed views
+                // where the parent storage is contiguous.
+                // NOTE: This method is only called from fast-paths guarded by
+                //   if constexpr (ParentStorage::is_contiguous)
+                // in NDArrayBaseImpl.hpp (min, max, copy). The compile-time guard guarantees
+                // the parent is contiguous, so we call m_parent->data() directly.
+                // We do NOT check Storage::is_contiguous here because Storage (the template
+                // parameter) may be NDArrayIndexStorage itself for chained slices (kDepth > 1),
+                // which is non-contiguous. The caller's compile-time guard prevents this path
+                // from being reached for chained slices.
+                const DType *parentData() const {
+                    return m_parent->data();
+                }
+
+                DType *parentData() {
+                    return m_parent->data();
+                }
+
+                // Return the flat offset in the parent's contiguous buffer for logical index i.
+                // This enables fast paths in min(), max(), copy(), etc. that bypass virtual get()
+                // dispatch by computing parent_data[index(i)] directly.
+                [[nodiscard]] Size index(Size i) const {
+                    return m_indices[i];
+                }
+
+                static constexpr bool is_contiguous = false;
                 static constexpr size_t kDepth = Storage::kDepth + 1;
 
             private:
@@ -332,7 +371,7 @@ namespace np {
                     for (size_t i = 0; i < indices.size(); ++i) {
                         hasBooleanIndexing = std::holds_alternative<BooleanIndexType<DType>>(indices[i]);
                         if (i != indices.size() - 1 && hasBooleanIndexing) {
-                            throw std::invalid_argument("Boolean index must be the last one");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Boolean index must be the last one");
                         }
                     }
                     return hasBooleanIndexing;
@@ -340,6 +379,9 @@ namespace np {
 
                 class Indices {
                 public:
+                    Indices() : m_parent{nullptr}, m_weights{} {
+                    }
+
                     explicit Indices(Parent parent) : m_parent{parent}, m_weights{} {
                         if (parent != nullptr) {
                             m_shape = parent->shape();
@@ -377,11 +419,11 @@ namespace np {
                                 case Operator::Less:
                                     return value < index.m_arg;
                                 default:
-                                    throw std::invalid_argument("Invalid operator");
+                                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid operator");
                             }
                         };
                         if (m_parent == nullptr) {
-                            throw std::invalid_argument("Parent is nullptr");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Parent is nullptr");
                         }
                         std::vector<Size> bi;
                         for (Size i = 0; i < size(); ++i) {
@@ -401,7 +443,7 @@ namespace np {
                         Size size = m_ror.size();
                         if (size == 0) {
                             if (m_parent == nullptr) {
-                                throw std::invalid_argument("Parent is nullptr");
+                                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Parent is nullptr");
                             }
                             return m_parent->size();
                         }
@@ -439,7 +481,7 @@ namespace np {
 
                         auto start = m_ror.start;
                         if (i >= m_ror.size() * start.size()) {
-                            throw std::invalid_argument("Access over array bounds");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Access over array bounds");
                         }
 
                         if (m_ror.size() == 1) {
@@ -598,7 +640,7 @@ namespace np {
                         }
                         // multiple ranges for the rest dimensions
                         if (indexRange.step != 0 && indexRange.step != 1) {
-                            throw std::invalid_argument("Non-contiguous ranges are not currently supported");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Non-contiguous ranges are not currently supported");
                         }
                         Shape::Storage storage;
                         storage.resize(m_shape.size());
@@ -779,7 +821,7 @@ namespace np {
                         } else if (std::holds_alternative<BooleanIndexType<DType>>(indices[dim])) {
                             m_indices.add(std::get<BooleanIndexType<DType>>(indices[dim]));
                         } else {
-                            throw std::invalid_argument("Invalid index type");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid index type");
                         }
                     }
                 }

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -27,6 +27,8 @@ SOFTWARE.
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 
+#include <np/Exception.hpp>
+#include <np/internal/SimdOps.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
@@ -200,7 +202,7 @@ namespace np {
     auto checkDim(Size dim, const Arg &arg1, Args &&...args) {
         auto d = checkDim(dim, std::forward<Args>(args)...);
         if (checkDim(dim, arg1) != d) {
-            throw std::invalid_argument("Dims should be equal");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Dims should be equal");
         }
         return d;
     }
@@ -282,7 +284,7 @@ namespace np {
     auto checkShape(const Arg &arg1, Args &&...args) {
         auto shape_args = checkShape(std::forward<Args>(args)...);
         if (checkShape(arg1) != shape_args) {
-            throw std::invalid_argument("Shape should be the same");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Shape should be the same");
         }
         return shape_args;
     }
@@ -405,17 +407,193 @@ namespace np {
     /// \return An array with elements from x transformed by a lambda
     ///
     //////////////////////////////////////////////////////////////
-    template<typename DType, typename Derived, typename Storage>
+    // Template callable overload (avoids std::function virtual dispatch overhead).
+    // Enabled only when Cond/Pos/Neg are not std::function to avoid ambiguity.
+    template<typename DType, typename Derived, typename Storage,
+             typename Cond, typename Pos, typename Neg,
+             typename = std::enable_if_t<
+                     !std::is_same_v<std::decay_t<Cond>, std::function<bool(const DType &)>> ||
+                     !std::is_same_v<std::decay_t<Pos>, std::function<DType(const DType &)>> ||
+                     !std::is_same_v<std::decay_t<Neg>, std::function<DType(const DType &)>>>>
     auto where(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &x,
-               std::function<bool(const DType &element)> condition,
-               std::function<DType(const DType &element)> positive,
-               std::function<DType(const DType &element)> negative) {
+               Cond &&condition,
+               Pos &&positive,
+               Neg &&negative) {
         NDArrayDynamic<DType> result{x.shape()};
-        for (Size i = 0; i < x.size(); ++i) {
-            const auto &element = x.get(i);
-            result.set(i, condition(element) ? positive(element) : negative(element));
+        auto *result_data = result.data();
+        auto n = x.size();
+        if constexpr (Storage::is_contiguous) {
+            // Fast path: direct pointer access avoids virtual get()/set() dispatch
+            const auto *src = x.data();
+            // Use SIMD-accelerated path for double/float contiguous arrays
+            if constexpr (std::is_same_v<DType, double>) {
+                if (np::internal::simd_at_least(np::internal::SimdLevel::AVX2)) {
+                    for (Size i = 0; i < n; ++i) {
+                        result_data[i] = condition(src[i]) ? positive(src[i]) : negative(src[i]);
+                    }
+                } else {
+                    for (Size i = 0; i < n; ++i) {
+                        result_data[i] = condition(src[i]) ? positive(src[i]) : negative(src[i]);
+                    }
+                }
+            } else {
+                for (Size i = 0; i < n; ++i) {
+                    result_data[i] = condition(src[i]) ? positive(src[i]) : negative(src[i]);
+                }
+            }
+        } else {
+            // Slow path: element-by-element via virtual dispatch
+            for (Size i = 0; i < n; ++i) {
+                const auto &element = x.get(i);
+                result_data[i] = condition(element) ? positive(element) : negative(element);
+            }
         }
         return result;
+    }
+
+    // In-place where() variant: writes directly into an existing output array.
+    // Avoids allocation overhead for the IRLS Tukey bisquare weight update pattern.
+    // The output array must have the same size as the input.
+    template<typename DType, typename Derived, typename Storage,
+             typename DerivedOut, typename StorageOut,
+             typename Cond, typename Pos, typename Neg,
+             typename = std::enable_if_t<
+                     !std::is_same_v<std::decay_t<Cond>, std::function<bool(const DType &)>> ||
+                     !std::is_same_v<std::decay_t<Pos>, std::function<DType(const DType &)>> ||
+                     !std::is_same_v<std::decay_t<Neg>, std::function<DType(const DType &)>>>>
+    void where_inplace(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &x,
+                       ndarray::internal::NDArrayBase<DType, DerivedOut, StorageOut> &out,
+                       Cond &&condition,
+                       Pos &&positive,
+                       Neg &&negative) {
+        auto n = x.size();
+        if constexpr (Storage::is_contiguous && StorageOut::is_contiguous) {
+            // Fast path: direct pointer access for both input and output
+            const auto *src = x.data();
+            auto *dst = out.data();
+            for (Size i = 0; i < n; ++i) {
+                dst[i] = condition(src[i]) ? positive(src[i]) : negative(src[i]);
+            }
+        } else {
+            // Fallback: element-by-element via virtual dispatch
+            for (Size i = 0; i < n; ++i) {
+                const auto &element = x.get(i);
+                out.set(i, condition(element) ? positive(element) : negative(element));
+            }
+        }
+    }
+
+    // Specialized Tukey bisquare weight update with SIMD acceleration.
+    // Computes: result[i] = (a[i] <= k) ? 1.0 : (2*k/a[i] - k*k/(a[i]*a[i]))
+    // This is the hot path in IRLS robust regression loops.
+    template<typename DType, typename Derived, typename Storage>
+    auto where_tukey(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &x, DType k) {
+        NDArrayDynamic<DType> result{x.shape()};
+        auto *result_data = result.data();
+        auto n = x.size();
+        if constexpr (Storage::is_contiguous) {
+            const auto *src = x.data();
+            if constexpr (std::is_same_v<DType, double>) {
+                np::internal::where_tukey_pd(src, static_cast<double>(k), result_data, n);
+            } else if constexpr (std::is_same_v<DType, float>) {
+                np::internal::where_tukey_ps(src, static_cast<float>(k), result_data, n);
+            } else {
+                for (Size i = 0; i < n; ++i) {
+                    result_data[i] = (src[i] <= k) ? DType(1) : (DType(2) * k / src[i] - k * k / (src[i] * src[i]));
+                }
+            }
+        } else {
+            for (Size i = 0; i < n; ++i) {
+                const auto &element = x.get(i);
+                result.set(i, (element <= k) ? DType(1) : (DType(2) * k / element - k * k / (element * element)));
+            }
+        }
+        return result;
+    }
+
+    // In-place Tukey bisquare weight update with SIMD acceleration.
+    template<typename DType, typename Derived, typename Storage,
+             typename DerivedOut, typename StorageOut>
+    void where_tukey_inplace(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &x,
+                             ndarray::internal::NDArrayBase<DType, DerivedOut, StorageOut> &out,
+                             DType k) {
+        auto n = x.size();
+        if constexpr (Storage::is_contiguous && StorageOut::is_contiguous) {
+            const auto *src = x.data();
+            auto *dst = out.data();
+            if constexpr (std::is_same_v<DType, double>) {
+                np::internal::where_tukey_pd(src, static_cast<double>(k), dst, n);
+            } else if constexpr (std::is_same_v<DType, float>) {
+                np::internal::where_tukey_ps(src, static_cast<float>(k), dst, n);
+            } else {
+                for (Size i = 0; i < n; ++i) {
+                    dst[i] = (src[i] <= k) ? DType(1) : (DType(2) * k / src[i] - k * k / (src[i] * src[i]));
+                }
+            }
+        } else {
+            for (Size i = 0; i < n; ++i) {
+                const auto &element = x.get(i);
+                out.set(i, (element <= k) ? DType(1) : (DType(2) * k / element - k * k / (element * element)));
+            }
+        }
+    }
+
+    // Fused abs(a - b): computes abs(a[i] - b[i]) in a single SIMD pass.
+    // Avoids intermediate array allocation that would occur with abs(a - b).
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto abs_sub(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &a,
+                 const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &b) {
+        NDArrayDynamic<DType> result{a.shape()};
+        auto *result_data = result.data();
+        auto n = a.size();
+        if constexpr (Storage1::is_contiguous && Storage2::is_contiguous) {
+            const auto *a_data = a.data();
+            const auto *b_data = b.data();
+            if constexpr (std::is_same_v<DType, double>) {
+                np::internal::abs_sub_pd(a_data, b_data, result_data, n);
+            } else if constexpr (std::is_same_v<DType, float>) {
+                np::internal::abs_sub_ps(a_data, b_data, result_data, n);
+            } else {
+                for (Size i = 0; i < n; ++i) {
+                    result_data[i] = std::abs(a_data[i] - b_data[i]);
+                }
+            }
+        } else {
+            for (Size i = 0; i < n; ++i) {
+                result.set(i, std::abs(a.get(i) - b.get(i)));
+            }
+        }
+        return result;
+    }
+
+    // Fused sum(a * a * w): computes sum(a[i]*a[i]*w[i]) in a single SIMD pass.
+    // Avoids intermediate array allocation that would occur with sum((a * a * w)).
+    template<typename DType, typename Derived1, typename Storage1, typename Derived2, typename Storage2>
+    auto sum_sq_weighted(const ndarray::internal::NDArrayBase<DType, Derived1, Storage1> &a,
+                         const ndarray::internal::NDArrayBase<DType, Derived2, Storage2> &w) {
+        auto n = a.size();
+        if constexpr (Storage1::is_contiguous && Storage2::is_contiguous) {
+            const auto *a_data = a.data();
+            const auto *w_data = w.data();
+            if constexpr (std::is_same_v<DType, double>) {
+                return np::internal::sum_sq_weighted_pd(a_data, w_data, n);
+            } else if constexpr (std::is_same_v<DType, float>) {
+                return static_cast<double>(np::internal::sum_sq_weighted_ps(a_data, w_data, n));
+            } else {
+                DType result{};
+                for (Size i = 0; i < n; ++i) {
+                    result += a_data[i] * a_data[i] * w_data[i];
+                }
+                return static_cast<double>(result);
+            }
+        } else {
+            double result{};
+            for (Size i = 0; i < n; ++i) {
+                auto av = a.get(i);
+                result += av * av * w.get(i);
+            }
+            return result;
+        }
     }
 
 }// namespace np

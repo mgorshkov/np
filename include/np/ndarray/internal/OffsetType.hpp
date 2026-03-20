@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include <np/Exception.hpp>
 #include <np/Shape.hpp>
 #include <vector>
 
@@ -94,7 +95,7 @@ namespace np {
 
                 OffsetType operator--() {
                     if (m_currentPosition == 0) {
-                        throw std::runtime_error("Going before zero position");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "Going before zero position");
                     }
                     OffsetType offset{--m_currentPosition};
                     return offset;
@@ -102,7 +103,7 @@ namespace np {
 
                 OffsetType operator--(int) {
                     if (m_currentPosition == 0) {
-                        throw std::runtime_error("Going before zero position");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "Going before zero position");
                     }
                     OffsetType offset{m_currentPosition--};
                     return offset;

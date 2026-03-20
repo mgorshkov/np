@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -30,6 +30,10 @@ SOFTWARE.
 #include <np/Exception.hpp>
 #include <np/Shape.hpp>
 #include <random>
+
+#ifdef USE_CUDA
+#include <np/internal/cuda/Random.hpp>
+#endif
 
 #include <np/ndarray/constant/NDArrayConstant.hpp>
 #include <np/ndarray/diagonal/NDArrayDiagonal.hpp>
@@ -199,7 +203,7 @@ namespace np {
         vector.resize(num);
         const DType delta = (stop - start) / (static_cast<DType>(num) - 1);
         if (delta == 0) {
-            throw std::invalid_argument("Invalid parameters, delta == 0");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid parameters, delta == 0");
         }
         size_t i = 0;
         for (DType value = start; value <= stop; value += delta) {
@@ -228,7 +232,7 @@ namespace np {
         NDArrayStatic<DType, num> array{};
         const DType delta = (stop - start) / (num - 1);
         if (delta == 0) {
-            throw std::invalid_argument("Invalid parameters, delta == 0");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid parameters, delta == 0");
         }
         Size i{0};
         for (DType value = start; value <= stop; value += delta) {
@@ -272,16 +276,67 @@ namespace np {
     }
 
     namespace random {
-        static std::random_device device;
-        static std::mt19937 generator{device()};
         //////////////////////////////////////////////////////////////
-        /// \brief Seeds the random data generator
+        /// \brief Thread-local random generator for thread-safe random number generation.
         ///
-        /// Seeds the random data generator
+        /// Each thread gets its own std::mt19937_64 instance to avoid:
+        /// 1. Data races (std::mt19937_64 is not thread-safe)
+        /// 2. Cache line contention from multiple threads writing to shared state
+        /// 3. Performance degradation at small array sizes
+        ///
+        /// Uses mt19937_64 (64-bit) instead of mt19937 (32-bit) because:
+        /// - Generating double-precision [0,1) values needs 53 bits of mantissa
+        /// - mt19937_64 provides 64 bits per call vs 32 bits for mt19937
+        /// - std::uniform_real_distribution<double> with mt19937 requires 2 calls
+        /// - With mt19937_64, we use a fast inline conversion: bits >> 11 * 0x1.0p-53
+        ///
+        //////////////////////////////////////////////////////////////
+        inline std::mt19937_64 &getGenerator() {
+            static thread_local std::mt19937_64 generator{std::random_device{}()};
+            return generator;
+        }
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Seeds the random data generator (current thread only)
+        ///
+        /// Seeds the random data generator for the calling thread.
         ///
         //////////////////////////////////////////////////////////////
         inline void seed(unsigned int sd) {
-            generator.seed(sd);
+            getGenerator().seed(sd);
+        }
+
+        //////////////////////////////////////////////////////////////
+        /// \brief Minimum array size to use CUDA for random generation.
+        ///
+        /// CPU OpenMP with mt19937_64 is faster than the CUDA path for sizes
+        /// below this threshold due to:
+        /// 1. cudaMalloc/cudaFree per-call overhead
+        /// 2. cudaMemcpy round-trip latency
+        /// 3. cudaDeviceSynchronize() blocking
+        /// 4. CPU OpenMP already highly optimized for random generation
+        ///
+        /// Set to 500M elements (~4GB of doubles) where GPU bandwidth may
+        /// start to compensate for the overhead.
+        //////////////////////////////////////////////////////////////
+        static constexpr Size kCudaRandMinSize = 500'000'000;
+
+        // Fast conversion of a 64-bit random value to double in [0,1).
+        // Uses the top 53 bits of the 64-bit value (the mantissa precision of double)
+        // and multiplies by 2^-53. This is significantly faster than
+        // std::uniform_real_distribution<double> which has branching and
+        // rejection sampling overhead.
+        //
+        // Result is in [0, 1) with uniform distribution across all 2^53 possible
+        // double values in that range (same as numpy's uniform distribution).
+        inline double fast_rand_double(std::uint64_t bits) {
+            return (bits >> 11) * 0x1.0p-53;
+        }
+
+        // Fast conversion of a 64-bit random value to float in [0,1).
+        // Uses the top 24 bits (the mantissa precision of float).
+        inline float fast_rand_float(std::uint64_t bits) {
+            return (bits >> 40) * 0x1.0p-24f;
         }
 
         //////////////////////////////////////////////////////////////
@@ -297,26 +352,57 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto rand(const Shape &shape, DType minValue = 0.0, DType maxValue = 1.0) {
-            struct rng {
-                std::uniform_real_distribution<DType> distribution;
-                rng(DType min, DType max) : distribution(min, max) {}
-            };
-
-            std::vector<rng> rngs;
-            rngs.reserve(omp_get_max_threads());
-            for (int i = 0; i < omp_get_max_threads(); ++i) {
-                rngs.emplace_back(minValue, maxValue);
-            }
-
             auto size = shape.calcSizeByShape();
             auto *data = new DType[size];
-#pragma omp parallel default(none) shared(rngs, data, size, generator)
+
+#ifdef USE_CUDA
+            // Use GPU for very large arrays only (see kCudaRandMinSize)
+            if (size > kCudaRandMinSize) {
+                // Generate a random seed from the random device
+                unsigned long long seed = std::random_device{}();
+                internal::cuda::randUniform(data, size, minValue, maxValue, seed);
+            } else
+#endif
             {
-                auto &rng = rngs[omp_get_thread_num()];
+                // Each thread uses its own thread_local generator to avoid:
+                // 1. Data races (std::mt19937_64 is not thread-safe)
+                // 2. Cache line contention from shared mutable state
+                // 3. Performance degradation at small array sizes
+#ifdef USE_OPENMP
+#pragma omp parallel default(none) shared(data, size, minValue, maxValue)
+#endif
+                {
+                    auto &local_gen = getGenerator();
+                    if constexpr (std::is_same_v<DType, double>) {
+                        // Fast path for double: use inline bit conversion
+                        // Avoids std::uniform_real_distribution overhead (branching, rejection sampling)
+                        const double scale = (maxValue - minValue);
+                        // index variable in OpenMP 'for' statement must have signed integral type
+#ifdef USE_OPENMP
 #pragma omp for
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
-                    data[offset] = rng.distribution(generator);
+#endif
+                        for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
+                            data[offset] = minValue + fast_rand_double(local_gen()) * scale;
+                        }
+                    } else if constexpr (std::is_same_v<DType, float>) {
+                        // Fast path for float: use inline bit conversion
+                        const float scale = static_cast<float>(maxValue - minValue);
+#ifdef USE_OPENMP
+#pragma omp for
+#endif
+                        for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
+                            data[offset] = static_cast<float>(minValue) + fast_rand_float(local_gen()) * scale;
+                        }
+                    } else {
+                        // Generic path for other types (e.g., int)
+                        std::uniform_real_distribution<DType> distribution(minValue, maxValue);
+#ifdef USE_OPENMP
+#pragma omp for
+#endif
+                        for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
+                            data[offset] = distribution(local_gen);
+                        }
+                    }
                 }
             }
 
@@ -345,10 +431,17 @@ namespace np {
             static Size constexpr m_size = (SizeT * ... * Sizes);
 
             rand_helper() {
-                std::uniform_real_distribution<DType> distribution;
+                auto &local_gen = getGenerator();
                 std::vector<DType> vector;
                 vector.resize(m_size);
-                std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
+                if constexpr (std::is_same_v<DType, double>) {
+                    std::generate(vector.begin(), vector.end(), [&] { return fast_rand_double(local_gen()); });
+                } else if constexpr (std::is_same_v<DType, float>) {
+                    std::generate(vector.begin(), vector.end(), [&] { return fast_rand_float(local_gen()); });
+                } else {
+                    std::uniform_real_distribution<DType> distribution;
+                    std::generate(vector.begin(), vector.end(), [&] { return distribution(local_gen); });
+                }
                 const Shape shape{SizeT, Sizes...};
                 m_array = NDArrayStatic<DType, m_size>(vector, shape);
             }
@@ -390,21 +483,20 @@ namespace np {
         //////////////////////////////////////////////////////////////
         template<typename DType = DTypeDefault>
         auto randn(const Shape &shape) {
-            struct rng {
-                std::normal_distribution<DType> distribution;
-            };
-
-            std::vector<rng> rngs(omp_get_max_threads());
-
             auto size = shape.calcSizeByShape();
             auto *data = new DType[size];
-#pragma omp parallel default(none) shared(rngs, data, size, generator)
+#ifdef USE_OPENMP
+#pragma omp parallel default(none) shared(data, size)
+#endif
             {
-                auto &rng = rngs[omp_get_thread_num()];
+                auto &local_gen = getGenerator();
+                std::normal_distribution<DType> distribution;
+#ifdef USE_OPENMP
 #pragma omp for
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t offset = 0; offset < static_cast<std::int32_t>(size); ++offset) {
-                    data[offset] = rng.distribution(generator);
+                    data[offset] = distribution(local_gen);
                 }
             }
 
@@ -434,9 +526,10 @@ namespace np {
 
             randn_helper() {
                 std::normal_distribution<DType> distribution;
+                auto &local_gen = getGenerator();
                 std::vector<DType> vector;
                 vector.resize(m_size);
-                std::generate(vector.begin(), vector.end(), [&] { return distribution(generator); });
+                std::generate(vector.begin(), vector.end(), [&] { return distribution(local_gen); });
                 const Shape shape{SizeT, Sizes...};
                 m_array = NDArrayStatic<DType, m_size>(vector, shape);
             }
@@ -497,7 +590,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag0(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (!v.empty()) {
-            throw std::invalid_argument("diag0 supports empty arrays");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "diag0 supports empty arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 0>(v, k);
     }
@@ -505,7 +598,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag1(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (v.ndim() != 1) {
-            throw std::invalid_argument("diag1 supports 1D arrays");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "diag1 supports 1D arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 1>(v, k);
     }
@@ -513,7 +606,7 @@ namespace np {
     template<typename DType, typename Derived, typename Storage>
     auto diag2(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k = 0) {
         if (v.ndim() != 2) {
-            throw std::invalid_argument("diag2 supports 2D arrays");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "diag2 supports 2D arrays");
         }
         return NDArrayDiagonal<DType, Derived, Storage, 2>(v, k);
     }

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -34,6 +34,7 @@ SOFTWARE.
 
 #include <np/ndarray/internal/Tools.hpp>
 
+#include <np/Exception.hpp>
 #include <np/internal/Tools.hpp>
 
 namespace np {
@@ -53,7 +54,7 @@ namespace np {
     inline static auto isclose(const ndarray::internal::NDArrayBase<DType1, Derived1, Storage1> &a, const ndarray::internal::NDArrayBase<DType2, Derived2, Storage2> &b,
                                np::float_ rtol = 1e-05, np::float_ atol = 1e-08, bool equal_nan = false) {
         if (a.shape() != b.shape())
-            throw std::invalid_argument("Arrays are different");
+            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Arrays are different");
         ndarray::array_dynamic::NDArrayDynamic<bool_> result{a.shape()};
         for (Size index = 0; index < a.size(); ++index) {
             result.set(index, internal::element_equal(a.get(index), b.get(index), rtol, atol, equal_nan));

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -50,9 +50,9 @@ namespace np {
     using uint64 = std::uint64_t;
 
     // Standard double-precision floating point
+    using float32 = float; // Usually 32 bits on most platforms
+    using float64 = double;// Usually 64 bits on most platforms
     using float_ = double;
-    using float32 = float;
-    using float64 = long double;
     using longdouble = long double;
 
     // Boolean type storing TRUE and FALSE values

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -40,6 +40,7 @@ TEST_P(LinalgLstSqCholeskyTest, lstsqTest) {
     auto [rows, cols, error_expected] = GetParam();
 
     // Generate random matrix A and true solution x_true
+    random::seed(42);
     Shape shapeA({rows, cols});
     auto A = random::rand(shapeA);
 
@@ -70,5 +71,8 @@ INSTANTIATE_TEST_SUITE_P(
         LinalgLstSqCholeskyTestCases,
         LinalgLstSqCholeskyTest,
         ::testing::Values(
-                std::make_tuple(4, 2, 1.0)// Small
+                std::make_tuple(4, 2, 2.0),       // Tiny
+                std::make_tuple(100, 100, 6000.0),// Square
+                std::make_tuple(1000, 100, 100.0),// Overdetermined
+                std::make_tuple(100, 1000, 19.0)  // Underdetermined
                 ));

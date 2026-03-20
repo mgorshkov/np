@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfree-nonheap-object"
 #include <np/Array.hpp>
 
 #include <ArrayTest.hpp>
@@ -501,3 +503,5 @@ TEST_F(ArrayAggregationTest, averageTest4) {
     auto sample = Array<float_>{2.25, 3.25, 4.25};
     compare(result, sample);
 }
+
+#pragma GCC diagnostic pop

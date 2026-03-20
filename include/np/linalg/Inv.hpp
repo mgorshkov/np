@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -25,6 +25,8 @@ SOFTWARE.
 #pragma once
 
 #include <np/Array.hpp>
+#include <np/Exception.hpp>
+#include <sstream>
 
 namespace np {
     namespace linalg {
@@ -64,8 +66,10 @@ namespace np {
             Size n = shape[0];
             if (n == 1) {
                 auto denominator = array.get(0);
-                if (np::internal::element_equal(denominator, 0.0)) {
-                    throw std::invalid_argument("Singular matrix");
+                if (np::internal::element_equal(denominator, 0.0, 1e-10, 1e-10, false)) {
+                    std::stringstream sstream;
+                    sstream << "Singular matrix detected, denominator = " << denominator << std::endl;
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, sstream.str());
                 }
                 return Array<DType>{1.0 / denominator};
             }
@@ -87,8 +91,10 @@ namespace np {
 
                 const auto A_minus_1 = inv(A);
                 auto denominator = d.get(0) - C.dot(A_minus_1).dot(B).get(0);
-                if (np::internal::element_equal(denominator, 0.0)) {
-                    throw std::invalid_argument("Singular matrix");
+                if (np::internal::element_equal(denominator, 0.0, 1e-10, 1e-10, false)) {
+                    std::stringstream sstream;
+                    sstream << "Singular matrix detected, denominator = " << denominator << std::endl;
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, sstream.str());
                 }
                 const auto t = 1.0 / denominator;
                 const auto Y = A_minus_1.multiply(-1).dot(B).multiply(t);

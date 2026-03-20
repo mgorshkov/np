@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -236,7 +236,7 @@ TEST_F(NDArrayStaticStorageTest, from3DIntStdVectorCreationTest) {
     std::vector<std::vector<int>> std_vector_2d_1 = {{{1, 2, 3}, {4, 5, 6}}};
     std::vector<std::vector<int>> std_vector_2d_2 = {{{7, 8, 9}, {10, 11, 12}}};
     std::vector<std::vector<std::vector<int>>> std_vector_3d = {std_vector_2d_1, std_vector_2d_2};
-    NDArrayStaticStorage<int, 2 * 2 * 3> array_3d{std_vector_3d};
+    auto array_3d = NDArrayStaticStorage<int, 2 * 2 * 3>(std_vector_3d);
     checkArrayRepr(array_3d, "[1 2 3 4 5 6 7 8 9 10 11 12]");
 }
 

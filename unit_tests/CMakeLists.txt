@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.18.0)
 
-set(NP_UNIT_TESTS np_unit_tests)
+set(PROJECT_NAME np_unit_tests)
 
-project(${NP_UNIT_TESTS} VERSION 0.1.4 DESCRIPTION "C++ Numpy Unit Tests")
+project(${PROJECT_NAME} VERSION 0.1.5 DESCRIPTION "C++ Numpy Unit Tests")
 
 add_definitions(-DTEST_DATA_FOLDER="${CMAKE_CURRENT_SOURCE_DIR}/test_data")
 
@@ -20,32 +20,31 @@ set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
-include_directories(../include include ${googletest_SOURCE_DIR}/googletest/include)
-
-add_executable(${NP_UNIT_TESTS})
+add_executable(${PROJECT_NAME})
 
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR} "src/*.cpp")
-target_sources(${NP_UNIT_TESTS} PUBLIC ${SOURCES})
+target_sources(${PROJECT_NAME} PUBLIC ${SOURCES})
 
-set_target_properties(${NP_UNIT_TESTS} PROPERTIES
-    CUDA_RUNTIME_LIBRARY Shared
-    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ../include
+        include
 )
 
-add_test(NAME ${NP_UNIT_TESTS} COMMAND tests)
-
-target_link_libraries(
-    ${NP_UNIT_TESTS}
-    gtest
-    ${PTHREAD}
-    CUDA::cudart
-    CUDA::cublas
-    CUDA::cusolver
-    ${NP}
+target_include_directories(${PROJECT_NAME}
+    SYSTEM PRIVATE
+        ${googletest_SOURCE_DIR}/googletest/include
 )
+
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+set(LIBS ${LIBS} np gtest pthread)
+
+# Apply target-dependent cmake options
+include(${cmake_SOURCE_DIR}/Target.cmake)
 
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${NP_UNIT_TESTS}
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
     DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${NP_UNIT_TESTS}
+    COMPONENT ${PROJECT_NAME}
 )

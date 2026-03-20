@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#ifdef USE_CUDA
 #include <cuda_runtime.h>
 
 template<typename DType>
@@ -41,3 +42,4 @@ __global__ void spectralFilterKernel(DType *filtered, const DType *evals, const 
         filtered[i] = (evals[i] > DType(1e-8)) ? atb[i] / evals[i] : DType(0);
     }
 }
+#endif
