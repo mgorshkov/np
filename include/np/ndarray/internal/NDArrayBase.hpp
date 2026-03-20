@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -32,6 +32,7 @@ SOFTWARE.
 #include <vector>
 
 #include <np/Axis.hpp>
+#include <np/Exception.hpp>
 #include <np/Shape.hpp>
 #include <np/internal/Tools.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
@@ -74,6 +75,15 @@ namespace np {
                 NDArrayBase(NDArrayBase &&another) noexcept;
 
                 virtual ~NDArrayBase() = default;
+
+                // CRTP: return reference to the most-derived type
+                const Derived &derived() const {
+                    return static_cast<const Derived &>(*this);
+                }
+
+                Derived &derived() {
+                    return static_cast<Derived &>(*this);
+                }
 
                 NDArrayBase &operator=(const NDArrayBase &another);
 
@@ -337,14 +347,27 @@ namespace np {
                 auto expand_dims(Size axis) const;
 
                 const DType *data() const {
-                    return &m_storage.get(0);
+                    // Some storage types (e.g., NDArrayIndexStorage, NDArrayIdentityStorage)
+                    // are non-contiguous and do not support data(). Only storages with
+                    // truly contiguous memory (is_contiguous == true) support data().
+                    if constexpr (Storage::is_contiguous) {
+                        return &m_storage.get(0);
+                    } else {
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error,
+                                                 "data() not supported for this storage type (non-contiguous)");
+                    }
                 }
 
                 DType *data() {
-                    return &m_storage.get(0);
+                    if constexpr (Storage::is_contiguous) {
+                        return &m_storage.get(0);
+                    } else {
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error,
+                                                 "data() not supported for this storage type (non-contiguous)");
+                    }
                 }
 
-                const DType &get(Size i) const {
+                virtual DType get(Size i) const {
                     return m_storage.get(i);
                 }
 
@@ -356,6 +379,34 @@ namespace np {
                     m_storage.set(i, value);
                 }
 
+                // For 2D arrays
+                const DType &at(Size row, Size column) const {
+                    if (shape().size() != 2) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "At method is supported for 2D arrays only");
+                    }
+                    if (row >= shape()[0]) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid row");
+                    }
+                    if (column >= shape()[1]) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid column");
+                    }
+                    return m_storage.get(row * shape()[1] + column);
+                }
+
+                // For 2D arrays
+                DType &at(Size row, Size column) {
+                    if (shape().size() != 2) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "At method is supported for 2D arrays only");
+                    }
+                    if (row >= shape()[0]) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid row");
+                    }
+                    if (column >= shape()[1]) {
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid column");
+                    }
+                    return m_storage.get(row * shape()[1] + column);
+                }
+
                 Storage &getStorage() {
                     return m_storage;
                 }
@@ -365,7 +416,11 @@ namespace np {
                 }
 
                 [[nodiscard]] Size index(Size i) const {
-                    return m_storage.index(i);
+                    if constexpr (requires { m_storage.index(i); }) {
+                        return m_storage.index(i);
+                    } else {
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "index() not supported by this storage type");
+                    }
                 }
 
                 auto begin() {

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -27,7 +27,7 @@ SOFTWARE.
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
-#include <fmt/format.h>
+#include <format>
 #include <numeric>
 #include <vector>
 
@@ -181,7 +181,7 @@ namespace np {
                 return;
             }
             auto product = std::accumulate(m_sizes.begin(), m_sizes.end(), static_cast<Size>(1), std::multiplies<>());
-            m_sizes = {product};
+            m_sizes.assign(1, product);
         }
 
         //////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ namespace np {
         }
 
         void singleElement() {
-            m_sizes = {1};
+            m_sizes.assign(1, 1);
         }
 
         void addDim(Size size) {
@@ -227,7 +227,7 @@ namespace np {
 
         void removeFirstDim() {
             if (empty()) {
-                throw std::invalid_argument("Empty shape, cannot remove first dim");
+                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Empty shape, cannot remove first dim");
             }
             m_sizes.erase(m_sizes.begin());
         }
@@ -277,7 +277,7 @@ namespace np {
                 Size s1 = i1 < 0 ? 1 : m_sizes[i1];
                 Size s2 = i2 < 0 ? 1 : another.m_sizes[i2];
                 if (s1 != s2 && s1 != 1 && s2 != 1) {
-                    throw std::invalid_argument(fmt::format("Arrays cannot be broadcast together: incompatible sizes: {} vs {}", s1, s2));
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, std::format("Arrays cannot be broadcast together: incompatible sizes: {} vs {}", s1, s2));
                 }
                 Size out;
                 if (s1 == s2 || s2 == 1) {

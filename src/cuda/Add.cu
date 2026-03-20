@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+#ifdef USE_CUDA
 
 #include <string>
 #include <stdexcept>
@@ -45,8 +47,8 @@ namespace np {
                 checkCudaError(cudaMemcpy(cuda_array2, array2, size2 * sizeof(DType2), cudaMemcpyHostToDevice));
 
                 size_t gridSize = (resultSize + blockSize - 1) / blockSize;
-                addKernel<<<gridSize, blockSize>>>(cuda_array1, size1 * sizeof(DType1), cuda_array2,
-                    size2 * sizeof(DType2), cuda_result, resultSize * sizeof(DTypeResult));
+                addKernel<<<gridSize, blockSize>>>(cuda_array1, size1, cuda_array2,
+                    size2, cuda_result, resultSize);
                 checkCudaError(cudaDeviceSynchronize());
 
                 checkCudaError(cudaMemcpy(result, cuda_result, resultSize * sizeof(DTypeResult), cudaMemcpyDeviceToHost));
@@ -61,3 +63,5 @@ namespace np {
        }
     }
 }
+
+#endif

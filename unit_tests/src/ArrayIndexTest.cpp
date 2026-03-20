@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <iostream>
 #include <np/Array.hpp>
 
 #include <ArrayTest.hpp>
@@ -1374,4 +1375,280 @@ TEST_F(ArrayIndexTest, submatrix3x3Test) {
     Array<float_> array_submatrix{c_array_submatrix};
     auto result = array["0:2,0:2"];
     compare(array_submatrix, result);
+}
+
+TEST_F(ArrayIndexTest, dynamicIntArraySliceAdditionTest) {
+    // Create two dynamic 2D int arrays
+    int_ c_array1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    int_ c_array2[2][3] = {{7, 8, 9}, {10, 11, 12}};
+    Array<int_> arr1{c_array1};
+    Array<int_> arr2{c_array2};
+    // Take 1D slices via operator[]
+    auto slice1 = arr1[0];// returns NDArrayIndex<int_, ...> of shape (3)
+    auto slice2 = arr2[0];// same
+    // Attempt to add them using operator+
+    auto result = slice1 + slice2;
+    // Verify result
+    Array<int_> expected{8, 10, 12};// element-wise addition: 1+7, 2+8, 3+9
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, staticIntArraySliceAdditionTest) {
+    // Static arrays
+    Array<int_, 3> arr1{1, 2, 3};
+    Array<int_, 3> arr2{4, 5, 6};
+    auto slice1 = arr1[0];
+    auto slice2 = arr2[0];
+    auto result = slice1 + slice2;
+    Array<int_> expected{5};
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamicFloatArraySliceAdditionTest) {
+    Array<float_> arr1{1.1, 2.2, 3.3};
+    Array<float_> arr2{4.4, 5.5, 6.6};
+    auto slice1 = arr1[0];
+    auto slice2 = arr2[0];
+    auto result = slice1 + slice2;
+    Array<float_> expected{5.5};
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamic2DIntArraySliceAdditionTest) {
+    // Create two dynamic 2D int arrays
+    int_ c_array1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    int_ c_array2[2][3] = {{7, 8, 9}, {10, 11, 12}};
+    Array<int_> arr1{c_array1};
+    Array<int_> arr2{c_array2};
+    // Take 1D slices via operator[]
+    auto slice1 = arr1[0];// returns NDArrayIndex<int_, ...> of shape (3)
+    auto slice2 = arr2[0];// same
+    // Attempt to add them using operator+
+    auto result = slice1 + slice2;
+    // Verify result
+    Array<int_> expected{8, 10, 12};// element-wise addition: 1+7, 2+8, 3+9
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, static2DIntArraySliceAdditionTest) {
+    // Static 2D arrays
+    int_ c_array1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    int_ c_array2[2][3] = {{7, 8, 9}, {10, 11, 12}};
+    Array<int_, 2 * 3> arr1{c_array1};
+    Array<int_, 2 * 3> arr2{c_array2};
+    // Take 1D slices via operator[]
+    auto slice1 = arr1[0];// returns NDArrayIndex<int_, ...> of shape (3)
+    auto slice2 = arr2[0];// same
+    // Attempt to add them using operator+
+    auto result = slice1 + slice2;
+    // Verify result
+    Array<int_> expected{8, 10, 12};// element-wise addition: 1+7, 2+8, 3+9
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamic2DFloatArraySliceAdditionTest) {
+    // Create two dynamic 2D float arrays
+    float_ c_array1[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
+    float_ c_array2[2][3] = {{7.7, 8.8, 9.9}, {10.1, 11.11, 12.12}};
+    Array<float_> arr1{c_array1};
+    Array<float_> arr2{c_array2};
+    // Take 1D slices via operator[]
+    auto slice1 = arr1[0];// returns NDArrayIndex<float_, ...> of shape (3)
+    auto slice2 = arr2[0];// same
+    // Attempt to add them using operator+
+    auto result = slice1 + slice2;
+    // Verify result
+    Array<float_> expected{8.8, 11.0, 13.2};// element-wise addition: 1.1+7.7, 2.2+8.8, 3.3+9.9
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamicIntArrayBooleanIndexingAdditionTest) {
+    // Create two dynamic 1D int arrays with same values
+    Array<int_> arr1{1, 2, 3, 4, 5};
+    Array<int_> arr2{1, 2, 3, 4, 5};
+    // Take boolean-indexed slices via operator[](string)
+    auto slice1 = arr1["array <= 3"];// returns NDArrayIndex<int_, ...> of shape (3) with values 1,2,3
+    auto slice2 = arr2["array <= 3"];// same shape, values 1,2,3
+    // Attempt to add them using operator+
+    auto result = slice1 + slice2;
+    // Verify result
+    Array<int_> expected{2, 4, 6};// element-wise addition: 1+1, 2+2, 3+3
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, staticIntArrayBooleanIndexingAdditionTest) {
+    // Static arrays with same values
+    Array<int_, 5> arr1{1, 2, 3, 4, 5};
+    Array<int_, 5> arr2{1, 2, 3, 4, 5};
+    // Boolean indexing
+    auto slice1 = arr1["array <= 3"];
+    auto slice2 = arr2["array <= 3"];
+    auto result = slice1 + slice2;
+    Array<int_> expected{2, 4, 6};// element-wise addition: 1+1, 2+2, 3+3
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamicFloatArrayBooleanIndexingAdditionTest) {
+    // Dynamic float arrays with same values
+    Array<float_> arr1{1.1, 2.2, 3.3, 4.4, 5.5};
+    Array<float_> arr2{1.1, 2.2, 3.3, 4.4, 5.5};
+    // Boolean indexing
+    auto slice1 = arr1["array <= 3.3"];
+    auto slice2 = arr2["array <= 3.3"];
+    auto result = slice1 + slice2;
+    Array<float_> expected{2.2, 4.4, 6.6};// element-wise addition: 1.1+1.1=2.2, 2.2+2.2=4.4, 3.3+3.3=6.6
+    compare(result, expected);
+}
+
+TEST_F(ArrayIndexTest, dynamicIntArraySliceSubtractionTest) {
+    // Create two dynamic 2D int arrays
+    int_ c_array1[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    int_ c_array2[2][3] = {{7, 8, 9}, {10, 11, 12}};
+    Array<int_> arr1{c_array1};
+    Array<int_> arr2{c_array2};
+    // Take 1D slices via operator[]
+    auto slice1 = arr1[0];// returns NDArrayIndex<int_, ...> of shape (3)
+    auto slice2 = arr2[0];// same
+    // Subtract using operator- (element-wise)
+    auto total = sum(abs(slice1 - slice2));
+    EXPECT_EQ(total, 18);// 6+6+6
+}
+
+TEST_F(ArrayIndexTest, staticIntArraySliceSubtractionTest) {
+    // Static arrays
+    Array<int_, 3> arr1{1, 2, 3};
+    Array<int_, 3> arr2{4, 5, 6};
+    auto slice1 = arr1[0];
+    auto slice2 = arr2[0];
+    auto total = sum(abs(slice1 - slice2));
+    EXPECT_EQ(total, 3);
+}
+
+TEST_F(ArrayIndexTest, dynamicFloatArraySliceSubtractionTest) {
+    // Dynamic float arrays
+    Array<float_> arr1{1.1, 2.2, 3.3};
+    Array<float_> arr2{4.4, 5.5, 6.6};
+    auto slice1 = arr1[0];
+    auto slice2 = arr2[0];
+    auto total = sum(abs(slice1 - slice2));
+    EXPECT_FLOAT_EQ(total, 3.3);
+}
+
+TEST_F(ArrayIndexTest, dynamicPairwiseFragmentTest) {
+    // Simulate the pairwise function with const dynamic arrays
+    const Array<int_> X{1, 2, 3, 4, 5};
+    const Array<int_> Y{6, 7, 8, 9, 10};
+    // Compute pairwise distance between X[2] and Y[3]
+    auto total = sum(abs(X[2] - Y[3]));
+    EXPECT_EQ(total, 6);// |3 - 9| = 6
+    // Test with another pair
+    auto total2 = sum(abs(X[0] - Y[4]));
+    EXPECT_EQ(total2, 9);// |1 - 10| = 9
+    // Test with slices of same shape (1D)
+    auto total3 = sum(abs(X[0] - Y[0]));
+    EXPECT_EQ(total3, 5);// |1 - 6| = 5
+}
+
+TEST_F(ArrayIndexTest, staticPairwiseFragmentTest) {
+    // Simulate the pairwise function with const static arrays
+    const Array<int_, 5> X{1, 2, 3, 4, 5};
+    const Array<int_, 5> Y{6, 7, 8, 9, 10};
+    // Compute pairwise distance between X[2] and Y[3]
+    auto diff = X[2] - Y[3];
+    auto abs_diff = diff.abs();
+    auto total = abs_diff.sum();
+    EXPECT_EQ(total, 6);// |3 - 9| = 6
+    // Test with another pair
+    auto total2 = sum(abs(X[0] - Y[4]));
+    EXPECT_EQ(total2, 9);// |1 - 10| = 9
+    // Test with slices of same shape (1D)
+    auto total3 = sum(abs(X[0] - Y[0]));
+    EXPECT_EQ(total3, 5);// |1 - 6| = 5
+}
+
+TEST_F(ArrayIndexTest, dynamic2DIntArrayAtTest) {
+    // dynamic
+    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> array{c_array_2d};
+    // const access
+    const Array<int_> &const_array = array;
+    EXPECT_EQ(const_array.at(0, 0), 1);
+    EXPECT_EQ(const_array.at(0, 1), 2);
+    EXPECT_EQ(const_array.at(0, 2), 3);
+    EXPECT_EQ(const_array.at(1, 0), 4);
+    EXPECT_EQ(const_array.at(1, 1), 5);
+    EXPECT_EQ(const_array.at(1, 2), 6);
+    // non-const access and modification
+    array.at(0, 0) = 10;
+    EXPECT_EQ(array.at(0, 0), 10);
+    array.at(1, 2) = -1;
+    EXPECT_EQ(array.at(1, 2), -1);
+}
+
+TEST_F(ArrayIndexTest, static2DIntArrayAtTest) {
+    // static
+    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_, 2 * 3> array{c_array_2d};
+    EXPECT_EQ(array.at(0, 0), 1);
+    EXPECT_EQ(array.at(0, 1), 2);
+    EXPECT_EQ(array.at(0, 2), 3);
+    EXPECT_EQ(array.at(1, 0), 4);
+    EXPECT_EQ(array.at(1, 1), 5);
+    EXPECT_EQ(array.at(1, 2), 6);
+    // modification
+    array.at(1, 1) = 99;
+    EXPECT_EQ(array.at(1, 1), 99);
+}
+
+TEST_F(ArrayIndexTest, dynamic2DFloatArrayAtTest) {
+    // dynamic
+    float_ c_array_2d[2][3] = {{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}};
+    Array<float_> array{c_array_2d};
+    EXPECT_FLOAT_EQ(array.at(0, 0), 1.1);
+    EXPECT_FLOAT_EQ(array.at(0, 1), 2.2);
+    EXPECT_FLOAT_EQ(array.at(0, 2), 3.3);
+    EXPECT_FLOAT_EQ(array.at(1, 0), 4.4);
+    EXPECT_FLOAT_EQ(array.at(1, 1), 5.5);
+    EXPECT_FLOAT_EQ(array.at(1, 2), 6.6);
+    array.at(0, 0) = 9.9;
+    EXPECT_FLOAT_EQ(array.at(0, 0), 9.9);
+}
+
+TEST_F(ArrayIndexTest, dynamic2DStringArrayAtTest) {
+    // dynamic
+    string_ c_array_2d[2][3] = {{"str1", "str2", "str3"}, {"str4", "str5", "str6"}};
+    Array<string_> array{c_array_2d};
+    EXPECT_EQ(array.at(0, 0), "str1");
+    EXPECT_EQ(array.at(0, 1), "str2");
+    EXPECT_EQ(array.at(0, 2), "str3");
+    EXPECT_EQ(array.at(1, 0), "str4");
+    EXPECT_EQ(array.at(1, 1), "str5");
+    EXPECT_EQ(array.at(1, 2), "str6");
+    array.at(1, 2) = "modified";
+    EXPECT_EQ(array.at(1, 2), "modified");
+}
+
+TEST_F(ArrayIndexTest, atOutOfBoundsRowTest) {
+    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> array{c_array_2d};
+    EXPECT_THROW(array.at(2, 0), std::invalid_argument);
+    EXPECT_THROW(array.at(5, 1), std::invalid_argument);
+    EXPECT_THROW(array.at(-1, 0), std::invalid_argument);// Size is unsigned, but -1 wraps to large number, will also be out of bounds
+}
+
+TEST_F(ArrayIndexTest, atOutOfBoundsColumnTest) {
+    int_ c_array_2d[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    Array<int_> array{c_array_2d};
+    EXPECT_THROW(array.at(0, 3), std::invalid_argument);
+    EXPECT_THROW(array.at(1, 5), std::invalid_argument);
+}
+
+TEST_F(ArrayIndexTest, atNon2DArrayTest) {
+    // 1D array
+    Array<int_> array1D{1, 2, 3};
+    EXPECT_THROW(array1D.at(0, 0), std::invalid_argument);
+    // 3D array
+    int_ c_array_3d[2][2][2] = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}};
+    Array<int_> array3D{c_array_3d};
+    EXPECT_THROW(array3D.at(0, 0), std::invalid_argument);
 }

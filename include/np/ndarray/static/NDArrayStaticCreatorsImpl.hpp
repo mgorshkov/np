@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -94,7 +94,7 @@ namespace np {
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT>::NDArrayStatic(
                     NDArrayStatic<DType, SizeT> &&another) noexcept
-                : NDArrayStaticBase<DType, SizeT>{another} {
+                : NDArrayStaticBase<DType, SizeT>{std::move(another)} {
             }
 
             template<typename DType, Size SizeT>
@@ -200,7 +200,7 @@ namespace np {
             template<typename DType, Size SizeT>
             inline NDArrayStatic<DType, SizeT> &
             NDArrayStatic<DType, SizeT>::operator=(NDArrayStatic<DType, SizeT> &&another) noexcept {
-                NDArrayStaticBase<DType, SizeT>::operator=(another);
+                NDArrayStaticBase<DType, SizeT>::operator=(std::move(another));
                 return *this;
             }
 

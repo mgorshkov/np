@@ -1,7 +1,7 @@
 /*
-MIT License
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
-Copyright (c) 2022-2026 Mikhail Gorshkov
+Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ SOFTWARE.
 #include <np/linalg/LstSq.hpp>
 
 int main(int, char **) {
-    // LSTSQ calculation with MRRR method
+    // LSTSQ calculation benchmark
     using namespace np;
     using namespace np::linalg;
 
@@ -46,9 +46,8 @@ int main(int, char **) {
     // Compute b = A * x_true + noise
     auto b = A.dot(x_true) + noise;
 
-    // Solve using MRRR method
     auto start = std::chrono::high_resolution_clock::now();
-    auto x = lstsq_mrrr(A, b);
+    auto x = lstsq(A, b);
     auto end = std::chrono::high_resolution_clock::now();
 
     double error = 0.0;

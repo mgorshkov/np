@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -27,7 +27,7 @@ SOFTWARE.
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 
-#ifdef OPENMP
+#ifdef USE_OPENMP
 #include <omp.h>
 #else
 inline int omp_get_max_threads() {

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -30,6 +30,7 @@ SOFTWARE.
 #include <iterator>
 #include <utility>
 
+#include <np/Exception.hpp>
 #include <np/internal/Tools.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
 #include <np/ndarray/internal/Tools.hpp>
@@ -77,17 +78,17 @@ namespace np {
                     }
 
                     DType &get(Size) {
-                        throw std::runtime_error("non-constant get method is not implemented for NDArrayConstantStorage");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "non-constant get method is not implemented for NDArrayConstantStorage");
                         static DType result{};
                         return result;
                     }
 
                     void set(Size, DType) {
-                        throw std::runtime_error("set method is not implemented for NDArrayConstantStorage");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "set method is not implemented for NDArrayConstantStorage");
                     }
 
                     void sort() {
-                        throw std::runtime_error("sort method is not implemented for NDArrayConstantStorage");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "sort method is not implemented for NDArrayConstantStorage");
                     }
 
                     class iterator {
@@ -307,17 +308,18 @@ namespace np {
                     }
 
                     [[nodiscard]] Shape shape() const {
-                        throw std::runtime_error("shape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "shape() is not implemented");
                     }
 
                     void setShape(const Shape &) {
-                        throw std::runtime_error("setShape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "setShape() is not implemented");
                     }
 
                     void push_back(const DType &) {
-                        throw std::runtime_error("push_back() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "push_back() is not implemented");
                     }
 
+                    static constexpr bool is_contiguous = false;
                     static constexpr size_t kDepth = 0;
 
                 private:

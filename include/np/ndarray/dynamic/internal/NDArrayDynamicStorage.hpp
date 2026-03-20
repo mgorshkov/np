@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -34,6 +34,7 @@ SOFTWARE.
 #include <utility>
 #include <vector>
 
+#include <np/Exception.hpp>
 #include <np/internal/Tools.hpp>
 #include <np/ndarray/dynamic/internal/Tools.hpp>
 #include <np/ndarray/dynamic/internal/Using.hpp>
@@ -250,6 +251,7 @@ namespace np {
 
                     NDArrayDynamicStorage &operator=(const NDArrayDynamicStorage &storage) {
                         if (this != &storage) {
+                            delete[] m_ptr;
                             m_size = storage.m_size;
                             m_capacity = storage.m_capacity;
                             m_ptr = new DType[m_size];
@@ -260,6 +262,7 @@ namespace np {
 
                     NDArrayDynamicStorage &operator=(NDArrayDynamicStorage &&storage) noexcept {
                         if (this != &storage) {
+                            delete[] m_ptr;
                             m_size = storage.m_size;
                             m_capacity = storage.m_capacity;
                             m_ptr = storage.m_ptr;
@@ -270,6 +273,7 @@ namespace np {
                     }
 
                     NDArrayDynamicStorage &operator=(const DType &value) {
+                        delete[] m_ptr;
                         m_size = 1;
                         m_capacity = 1;
                         m_ptr = new DType[1];
@@ -279,14 +283,17 @@ namespace np {
 
                     template<size_t Size1T>
                     NDArrayDynamicStorage &operator=(CArray1DType<Size1T> array) {
+                        delete[] m_ptr;
                         m_size = Size1T;
                         m_capacity = Size1T;
                         m_ptr = new DType[Size1T];
                         std::copy(std::begin(array), std::end(array), std::begin(*m_ptr));
+                        return *this;
                     }
 
                     template<size_t Size1T, size_t Size2T>
                     NDArrayDynamicStorage &operator=(CArray2DType<Size1T, Size2T> array) {
+                        delete[] m_ptr;
                         m_size = Size2T * Size1T;
                         m_capacity = Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -295,10 +302,12 @@ namespace np {
                             std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                             std::advance(ptr, Size1T);
                         }
+                        return *this;
                     }
 
                     template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayDynamicStorage &operator=(CArray3DType<Size1T, Size2T, Size3T> array) {
+                        delete[] m_ptr;
                         m_size = Size3T * Size2T * Size1T;
                         m_capacity = Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -309,10 +318,12 @@ namespace np {
                                 std::advance(ptr, Size1T);
                             }
                         }
+                        return *this;
                     }
 
                     template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayDynamicStorage &operator=(CArray4DType<Size1T, Size2T, Size3T, Size4T> array) {
+                        delete[] m_ptr;
                         m_size = Size4T * Size3T * Size2T * Size1T;
                         m_capacity = Size4T * Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -325,10 +336,12 @@ namespace np {
                                 }
                             }
                         }
+                        return *this;
                     }
 
                     template<size_t Size1T>
                     NDArrayDynamicStorage &operator=(const StdArray1DType<Size1T> &array) {
+                        delete[] m_ptr;
                         m_size = Size1T;
                         m_capacity = Size1T;
                         m_ptr = new DType[Size1T];
@@ -339,6 +352,7 @@ namespace np {
 
                     template<size_t Size1T, size_t Size2T>
                     NDArrayDynamicStorage &operator=(const StdArray2DType<Size1T, Size2T> &array) {
+                        delete[] m_ptr;
                         m_size = Size2T * Size1T;
                         m_capacity = Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -347,10 +361,12 @@ namespace np {
                             std::copy(std::begin(array[i]), std::end(array[i]), ptr);
                             std::advance(ptr, Size1T);
                         }
+                        return *this;
                     }
 
                     template<size_t Size1T, size_t Size2T, size_t Size3T>
                     NDArrayDynamicStorage &operator=(const StdArray3DType<Size1T, Size2T, Size3T> &array) {
+                        delete[] m_ptr;
                         m_size = Size3T * Size2T * Size1T;
                         m_capacity = Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -361,11 +377,13 @@ namespace np {
                                 std::advance(ptr, Size1T);
                             }
                         }
+                        return *this;
                     }
 
                     template<size_t Size1T, size_t Size2T, size_t Size3T, size_t Size4T>
                     NDArrayDynamicStorage &
                     operator=(const StdArray4DType<Size1T, Size2T, Size3T, Size4T> &array) {
+                        delete[] m_ptr;
                         m_size = Size4T * Size3T * Size2T * Size1T;
                         m_capacity = Size4T * Size3T * Size2T * Size1T;
                         m_ptr = new DType[m_size];
@@ -378,9 +396,11 @@ namespace np {
                                 }
                             }
                         }
+                        return *this;
                     }
 
                     NDArrayDynamicStorage &operator=(const StdVector1DType &vector) {
+                        delete[] m_ptr;
                         m_size = vector.size();
                         m_capacity = vector.size();
                         m_ptr = new DType[m_size];
@@ -388,6 +408,7 @@ namespace np {
                     }
 
                     NDArrayDynamicStorage &operator=(const StdVector2DType &vector) {
+                        delete[] m_ptr;
                         m_size = vector.size() * vector[0].size();
                         m_capacity = vector.size() * vector[0].size();
                         m_ptr = new DType[m_size];
@@ -400,6 +421,7 @@ namespace np {
                     }
 
                     NDArrayDynamicStorage &operator=(const StdVector3DType &vector) {
+                        delete[] m_ptr;
                         m_size = vector.size() * vector[0].size() * vector[0][0].size();
                         m_capacity = vector.size() * vector[0].size() * vector[0][0].size();
                         m_ptr = new DType[m_size];
@@ -410,9 +432,11 @@ namespace np {
                                 }
                             }
                         }
+                        return *this;
                     }
 
                     NDArrayDynamicStorage &operator=(const StdVector4DType &vector) {
+                        delete[] m_ptr;
                         m_size = vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size();
                         m_capacity = vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size();
                         m_ptr = new DType[m_size];
@@ -425,6 +449,7 @@ namespace np {
                                 }
                             }
                         }
+                        return *this;
                     }
 
                     [[nodiscard]] const DType &get(Size i) const {
@@ -672,11 +697,11 @@ namespace np {
                     }
 
                     [[nodiscard]] Shape shape() const {
-                        throw std::runtime_error("shape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "shape() is not implemented");
                     }
 
                     void setShape(const Shape &) {
-                        throw std::runtime_error("setShape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "setShape() is not implemented");
                     }
 
                     void push_back(const DType &value) {
@@ -690,8 +715,9 @@ namespace np {
                         }
                         m_ptr[m_size++] = value;
                     }
-
+                    static constexpr bool is_contiguous = true;
                     static constexpr size_t kDepth = 0;
+
 
                 private:
                     Size m_size;
