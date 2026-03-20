@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -30,6 +30,7 @@ SOFTWARE.
 #include <iostream>
 #include <sstream>
 
+#include <np/Exception.hpp>
 #include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
@@ -63,12 +64,12 @@ namespace np {
                 static constexpr char descrPattern[] = "\'descr\': \'";
                 size_t descrStart = header.find(descrPattern);
                 if (descrStart == std::string::npos) {
-                    throw std::invalid_argument("Array DType description is not found");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array DType description is not found");
                 }
                 descrStart += sizeof(descrPattern) - 1;
                 size_t descrEnd = header.find('\'', descrStart);
                 if (descrEnd == std::string::npos) {
-                    throw std::invalid_argument("Array DType description has incorrect format");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array DType description has incorrect format");
                 }
                 std::string descrStr = header.substr(descrStart, descrEnd - descrStart);
                 Descr descr{};
@@ -212,12 +213,12 @@ namespace np {
                 static constexpr char shapePattern[] = "\'shape\': (";
                 size_t shapeStart = header.find(shapePattern);
                 if (shapeStart == std::string::npos) {
-                    throw std::invalid_argument("Array shape is not found");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array shape is not found");
                 }
                 shapeStart += sizeof(shapePattern) - 1;
                 size_t shapeEnd = header.find(')', shapeStart);
                 if (shapeEnd == std::string::npos) {
-                    throw std::invalid_argument("Array DType description has incorrect format");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array DType description has incorrect format");
                 }
                 std::string shapeStr{header.substr(shapeStart, shapeEnd - shapeStart)};
                 return Shape{shapeStr};
@@ -235,7 +236,7 @@ namespace np {
                 uint8_t majorRead;
                 stream.read((char *) &majorRead, 1);
                 if (majorRead != major) {
-                    throw std::runtime_error("Invalid major");
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, "Invalid major");
                 }
                 // The next 1 byte is an unsigned byte: the minor version number of the file format, e.g. x00.
                 // Note: the version of the file format is not tied to the version of the numpy package.
@@ -243,7 +244,7 @@ namespace np {
                 uint8_t minorRead;
                 stream.read((char *) &minorRead, 1);
                 if (minorRead != minor) {
-                    throw std::runtime_error("Invalid minor");
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, "Invalid minor");
                 }
 
                 uint16_t headerSize;

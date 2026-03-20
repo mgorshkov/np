@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -31,6 +31,7 @@ SOFTWARE.
 #include <np/Constants.hpp>
 #include <np/DType.hpp>
 
+#include <np/Exception.hpp>
 #include <np/ndarray/dynamic/NDArrayDynamic.hpp>
 #include <np/ndarray/static/NDArrayStatic.hpp>
 
@@ -52,7 +53,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename DType2 = DTypeDefault, Size SizeT2 = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> averageImpl(const Array<DType, SizeT> &, const Array<DType2, SizeT2> &, auto &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT, typename DType2 = DTypeDefault, Size SizeT2 = SIZE_DEFAULT>
@@ -79,7 +80,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> sumImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -106,7 +107,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nansumImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -133,7 +134,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> minImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -160,7 +161,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> maxImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -187,7 +188,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> cumsumImpl(const Array<DType, SizeT> &, Array<DType> &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -214,7 +215,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nancumsumImpl(const Array<DType, SizeT> &, Array<DType> &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -241,7 +242,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> meanImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -268,7 +269,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nanmeanImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -297,7 +298,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> medianImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -326,7 +327,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nanmedianImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -353,7 +354,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> covImpl(const Array<DType, SizeT> &, Array<float_> &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -381,7 +382,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> corrcoefImpl(const Array<DType, SizeT> &, Array<float_> &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -409,7 +410,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> stdImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -437,7 +438,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nanstdImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -465,7 +466,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> varImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
@@ -493,7 +494,7 @@ namespace np {
     //////////////////////////////////////////////////////////////
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>
     std::enable_if_t<!std::is_arithmetic_v<DType>> nanvarImpl(const Array<DType, SizeT> &, float_ &) {
-        throw std::invalid_argument("Invalid argument");
+        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid argument");
     }
 
     template<typename DType = DTypeDefault, Size SizeT = SIZE_DEFAULT>

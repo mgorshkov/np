@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -69,10 +69,11 @@ namespace np {
                     if (&another != this) {
                         NDArrayIdentityBase<DType>::operator=(another);
                     }
+                    return *this;
                 }
 
                 NDArrayIdentity &operator=(NDArrayIdentity &&another) noexcept {
-                    NDArrayIdentityBase<DType>::operator=(another);
+                    NDArrayIdentityBase<DType>::operator=(std::move(another));
                     return *this;
                 }
             };

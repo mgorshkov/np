@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#ifdef USE_CUDA
 namespace np {
     namespace internal {
         namespace cuda {
@@ -32,3 +33,4 @@ namespace np {
         }
     }// namespace internal
 }// namespace np
+#endif

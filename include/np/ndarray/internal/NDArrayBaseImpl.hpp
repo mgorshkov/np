@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -25,8 +25,7 @@ SOFTWARE.
 #pragma once
 
 #include <cstddef>
-#include <cuda_runtime.h>
-#include <fmt/format.h>
+#include <cstring>
 #include <fstream>
 #include <memory>
 #include <optional>
@@ -35,7 +34,9 @@ SOFTWARE.
 #include <vector>
 
 #include <np/Axis.hpp>
+#include <np/Exception.hpp>
 #include <np/Shape.hpp>
+#include <np/internal/SimdOps.hpp>
 #include <np/ndarray/internal/Agg.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
@@ -143,7 +144,9 @@ namespace np {
                 auto size1 = size();
                 auto size2 = array.size();
                 auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
                     ndarray::internal::add(get(i % size1), array.get(i % size2));
@@ -155,12 +158,27 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::add(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
-#pragma omp parallel for default(none) shared(value, result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
-                    DType addResult;
-                    ndarray::internal::add(get(i), value, addResult);
-                    result.set(i, addResult);
+                auto *result_data = result.data();
+                auto n = size();
+                if constexpr (Storage::is_contiguous) {
+                    // Fast path: direct pointer access avoids virtual get()/set() dispatch
+                    const auto *src = data();
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(result_data, src, value, n)
+#endif
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(n); ++i) {
+                        result_data[i] = static_cast<DType>(src[i] + value);
+                    }
+                } else {
+                    // Slow path: element-by-element via virtual dispatch
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(value, result, n)
+#endif
+                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(n); ++i) {
+                        DType addResult;
+                        ndarray::internal::add(get(i), value, addResult);
+                        result.set(i, addResult);
+                    }
                 }
                 return result;
             }
@@ -171,7 +189,9 @@ namespace np {
                 auto size1 = size();
                 auto size2 = array.size();
                 auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
                     ndarray::internal::subtract(get(i % size1), array.get(i % size2));
@@ -183,7 +203,9 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::subtract(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(value, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType subtractResult;
@@ -196,7 +218,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::subtractInplace(const DType2 &value) {
-#pragma omp parallel for default(none) shared(value, result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(value)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::subtract(get(i % size()), value);
@@ -208,7 +232,9 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::subtractFrom(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(value, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType subtractResult;
@@ -222,7 +248,9 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::multiply(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(value, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType multiplyResult;
@@ -238,7 +266,9 @@ namespace np {
                 auto size1 = size();
                 auto size2 = array.size();
                 auto maxSize = std::max(size1, size2);
-#pragma omp parallel for default(none) shared(array, maxSize, size1, size2, result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, maxSize, size1, size2)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(maxSize); ++i) {
                     ndarray::internal::divide(get(i % size1), array.get(i % size2));
@@ -250,7 +280,9 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::divide(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(value, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType divideResult;
@@ -263,7 +295,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::divideInplace(const DType2 &value) {
-#pragma omp parallel for default(none) shared(value, result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(value)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::divide(get(i % size()), value);
@@ -275,7 +309,9 @@ namespace np {
             template<Arithmetic DType2>
             auto NDArrayBase<DType, Derived, Storage>::divideFrom(const DType2 &value) const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(value, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType divideResult;
@@ -288,7 +324,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::exp() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType expResult{};
@@ -300,7 +338,9 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::expInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::exp(get(i));
@@ -311,7 +351,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::sqrt() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType sqrtResult{};
@@ -323,7 +365,9 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::sqrtInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::sqrt(get(i));
@@ -334,7 +378,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::sin() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType sinResult{};
@@ -346,7 +392,9 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::sinInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::sin(get(i));
@@ -357,7 +405,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::cos() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType cosResult{};
@@ -369,7 +419,9 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::cosInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::cos(get(i));
@@ -380,7 +432,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::log() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType logResult{};
@@ -392,7 +446,9 @@ namespace np {
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::logInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::log(get(i));
@@ -403,19 +459,40 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::abs() const {
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shape()};
-#pragma omp parallel for default(none) shared(result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
-                    DType absResult{};
-                    ndarray::internal::abs(get(i), absResult);
-                    result.set(i, absResult);
+                auto n = static_cast<std::int32_t>(size());
+                auto *result_data = result.data();
+                if constexpr (Storage::is_contiguous) {
+                    // Fast path: direct pointer access avoids virtual get() dispatch
+                    const auto *src = data();
+                    // Use SIMD-accelerated abs for double/float
+                    if constexpr (std::is_same_v<DType, double>) {
+                        np::internal::abs_pd(src, result_data, static_cast<std::size_t>(n));
+                    } else if constexpr (std::is_same_v<DType, float>) {
+                        np::internal::abs_ps(src, result_data, static_cast<std::size_t>(n));
+                    } else {
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(result_data, src, n)
+#endif
+                        for (std::int32_t i = 0; i < n; ++i) {
+                            result_data[i] = std::abs(src[i]);
+                        }
+                    }
+                } else {
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(result_data, n)
+#endif
+                    for (std::int32_t i = 0; i < n; ++i) {
+                        result_data[i] = std::abs(get(i));
+                    }
                 }
                 return result;
             }
 
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::absInplace() {
-#pragma omp parallel for default(none) shared(result)
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     ndarray::internal::abs(get(i));
@@ -435,11 +512,13 @@ namespace np {
 
                 if (ndim1 == 1 && ndim2 == 1) {
                     if (size1 != size2) {
-                        throw std::invalid_argument("Sizes are different for 1D arrays");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sizes are different for 1D arrays");
                     }
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{Shape{1}};
                     DType cellResult = 0;
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(array, size1) reduction(+ : cellResult)
+#endif
                     // index variable in OpenMP 'for' statement must have signed integral type
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(size1); ++i) {
                         DType multiplyResult{};
@@ -451,14 +530,16 @@ namespace np {
                 }
                 if (ndim1 == 1 && ndim2 == 2) {
                     if (shape1[0] != shape2[0]) {
-                        throw std::invalid_argument("Shapes are not consistent for 2D and 1D arrays");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Shapes are not consistent for 2D and 1D arrays");
                     }
                     Shape resultShape{shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape2[1]); ++i) {
                         // index variable in OpenMP 'for' statement must have signed integral type
                         DType cellResult{0};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(array, i, shape1, shape2) reduction(+ : cellResult)
+#endif
                         for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[0]); ++k) {
                             DType multiplyResult{};
                             ndarray::internal::multiply(get(k), array.get(k * shape2[1] + i),
@@ -471,35 +552,88 @@ namespace np {
                 }
                 if (ndim1 == 2 && ndim2 == 1) {
                     if (shape1[1] != shape2[0]) {
-                        throw std::invalid_argument("Shapes are not consistent for 2D and 1D arrays");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Shapes are not consistent for 2D and 1D arrays");
                     }
                     Shape resultShape{shape1[0]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape1[0]); ++i) {
-                        // index variable in OpenMP 'for' statement must have signed integral type
-                        DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, shape1) reduction(+ : cellResult)
-                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
-                            DType multiplyResult{};
-                            ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k),
-                                                        multiplyResult);
-                            cellResult += multiplyResult;
+                    auto *result_data = result.data();
+                    auto nrows = static_cast<std::int32_t>(shape1[0]);
+                    auto ncols = static_cast<std::int32_t>(shape1[1]);
+                    if constexpr (Storage::is_contiguous && Storage2::is_contiguous) {
+                        // Fast path: direct pointer access avoids virtual get() dispatch
+                        const auto *src = data();
+                        const auto *vec = array.data();
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(result_data, src, vec, nrows, ncols)
+#endif
+                        for (std::int32_t i = 0; i < nrows; ++i) {
+                            DType cellResult{0};
+                            const auto *row = src + static_cast<size_t>(i) * ncols;
+                            for (std::int32_t k = 0; k < ncols; ++k) {
+                                cellResult += row[k] * vec[k];
+                            }
+                            result_data[i] = cellResult;
                         }
-                        result.set(i, cellResult);
+                    } else if (!Storage2::is_contiguous && Storage::is_contiguous && ncols <= 4) {
+                        // Fast path for non-contiguous coefficient vector with small n (≤4):
+                        // Extract the few coefficient values into local variables first,
+                        // then use the fast pointer-based path for the matrix.
+                        // This avoids virtual get() dispatch for every element access.
+                        // Typical use case: predict() with m_coeff = m_coeffs["1:"] (view, rank 1-3)
+                        const auto *src = data();
+                        DType vec_local[4];
+                        for (std::int32_t k = 0; k < ncols; ++k) {
+                            vec_local[k] = array.get(k);
+                        }
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(result_data, src, vec_local, nrows, ncols)
+#endif
+                        for (std::int32_t i = 0; i < nrows; ++i) {
+                            DType cellResult{0};
+                            const auto *row = src + static_cast<size_t>(i) * ncols;
+                            // Fully unrolled for ncols ≤ 4 to help compiler auto-vectorize
+                            if (ncols == 4) {
+                                cellResult = row[0] * vec_local[0] + row[1] * vec_local[1] + row[2] * vec_local[2] + row[3] * vec_local[3];
+                            } else if (ncols == 3) {
+                                cellResult = row[0] * vec_local[0] + row[1] * vec_local[1] + row[2] * vec_local[2];
+                            } else if (ncols == 2) {
+                                cellResult = row[0] * vec_local[0] + row[1] * vec_local[1];
+                            } else {
+                                cellResult = row[0] * vec_local[0];
+                            }
+                            result_data[i] = cellResult;
+                        }
+                    } else {
+                        // index variable in OpenMP 'for' statement must have signed integral type
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, shape1, result, nrows, ncols)
+#endif
+                        for (std::int32_t i = 0; i < nrows; ++i) {
+                            DType cellResult{0};
+                            for (std::int32_t k = 0; k < ncols; ++k) {
+                                DType multiplyResult{};
+                                ndarray::internal::multiply(get(i * ncols + k), array.get(k),
+                                                            multiplyResult);
+                                cellResult += multiplyResult;
+                            }
+                            result.set(i, cellResult);
+                        }
                     }
                     return result;
                 }
                 if (ndim1 == 2 && ndim2 == 2) {
                     if (shape1[1] != shape2[0]) {
-                        throw std::invalid_argument("Shapes are not consistent for 2D arrays");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Shapes are not consistent for 2D arrays");
                     }
                     Shape resultShape{shape1[0], shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
+                    // index variable in OpenMP 'for' statement must have signed integral type
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, shape1, shape2, result) collapse(2)
+#endif
                     for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape1[0]); ++i) {
-                        // index variable in OpenMP 'for' statement must have signed integral type
                         for (std::int32_t j = 0; j < static_cast<std::int32_t>(shape2[1]); ++j) {
                             DType cellResult{0};
-#pragma omp parallel for default(none) shared(array, i, j, shape1, shape2) reduction(+ : cellResult)
                             for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[1]); ++k) {
                                 DType multiplyResult{};
                                 ndarray::internal::multiply(get(i * shape1[1] + k), array.get(k * shape2[1] + j),
@@ -511,14 +645,16 @@ namespace np {
                     }
                     return result;
                 }
-                throw std::invalid_argument("Arrays are not 1D or 2D");
+                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Arrays are not 1D or 2D");
             }
 
             template<typename DType, typename Derived, typename Storage>
             template<typename DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::operator==(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 array_dynamic::NDArrayDynamicBool result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(array, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     const auto equals = get(i) == array.get(i);
@@ -531,7 +667,9 @@ namespace np {
             template<typename DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::operator<(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 array_dynamic::NDArrayDynamicBool result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(array, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     auto equals = get(i) < array.get(i);
@@ -544,7 +682,9 @@ namespace np {
             template<typename DType2, typename Derived2, typename Storage2>
             auto NDArrayBase<DType, Derived, Storage>::operator>(const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 array_dynamic::NDArrayDynamicBool result{shape()};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) shared(array, result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     auto equals = get(i) > array.get(i);
@@ -561,10 +701,10 @@ namespace np {
                 if (!weights.empty()) {
                     if (weights.ndim() == 1) {
                         if (weights.size() != shape()[0]) {
-                            throw std::invalid_argument("Incorrect weigths shape");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Incorrect weigths shape");
                         }
                     } else if (weights.shape() != shape()) {
-                        throw std::invalid_argument("Incorrect weigths shape");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Incorrect weigths shape");
                     }
                     if (ndim() == 1) {
                         float_ sum{};
@@ -610,11 +750,23 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::sum() const {
                 DType result{};
-#pragma omp parallel for default(none) reduction(+ : result)
-                // index variable in OpenMP 'for' statement must have signed integral type
-                for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
-                    const auto &element = get(i);
-                    result += element;
+                auto n = static_cast<std::int32_t>(size());
+                if constexpr (Storage::is_contiguous) {
+                    // Fast path: direct pointer access avoids virtual get() dispatch
+                    const auto *src = data();
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(n, src) reduction(+ : result)
+#endif
+                    for (std::int32_t i = 0; i < n; ++i) {
+                        result += src[i];
+                    }
+                } else {
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(n) reduction(+ : result)
+#endif
+                    for (std::int32_t i = 0; i < n; ++i) {
+                        result += get(i);
+                    }
                 }
                 return result;
             }
@@ -622,7 +774,9 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             DType NDArrayBase<DType, Derived, Storage>::nansum() const {
                 DType result{};
+#ifdef USE_OPENMP
 #pragma omp parallel for default(none) reduction(+ : result)
+#endif
                 // index variable in OpenMP 'for' statement must have signed integral type
                 for (std::int32_t i = 0; i < static_cast<std::int32_t>(size()); ++i) {
                     DType nanToZeroResult{};
@@ -636,11 +790,71 @@ namespace np {
             DType NDArrayBase<DType, Derived, Storage>::min() const {
                 DType result{};
                 bool inited{false};
-                for (Size i = 0; i < size(); ++i) {
-                    const auto &element = get(i);
-                    if (!inited || element < result) {
-                        result = element;
-                        inited = true;
+                auto n = size();
+                if constexpr (Storage::is_contiguous) {
+                    // Fast path: direct pointer access avoids virtual get() dispatch
+                    const auto *src = data();
+                    for (Size i = 0; i < n; ++i) {
+                        const auto &element = src[i];
+                        if (!inited || element < result) {
+                            result = element;
+                            inited = true;
+                        }
+                    }
+                } else {
+                    // Fast path for non-contiguous (strided) storage:
+                    // Use stride-aware pointer arithmetic to avoid virtual get() dispatch.
+                    // For indexed views (e.g., a column of a row-major matrix), the parent
+                    // storage is contiguous, so we can compute the parent pointer offset
+                    // directly via index(i) and access the parent's raw data.
+                    // Guard with kDepth > 0 since only NDArrayIndexStorage (kDepth > 0)
+                    // has a parent; leaf-level non-contiguous storages (e.g., NDArrayConstantStorage,
+                    // NDArrayIdentityStorage) have kDepth == 0 and no ParentStorage alias.
+                    if constexpr (Storage::kDepth > 0) {
+                        using ParentStorage = typename Storage::ParentStorage;
+                        if constexpr (ParentStorage::is_contiguous) {
+                            // The parent is contiguous, so we can access its data() directly.
+                            // index(i) returns the flat offset in the parent's contiguous buffer.
+                            // Check at compile time whether the storage provides index().
+                            if constexpr (requires { m_storage.index(Size{0}); }) {
+                                const auto *parent_data = m_storage.parentData();
+                                for (Size i = 0; i < n; ++i) {
+                                    const auto &element = parent_data[m_storage.index(i)];
+                                    if (!inited || element < result) {
+                                        result = element;
+                                        inited = true;
+                                    }
+                                }
+                            } else {
+                                // Fallback: element-by-element via virtual dispatch
+                                for (Size i = 0; i < n; ++i) {
+                                    const auto &element = get(i);
+                                    if (!inited || element < result) {
+                                        result = element;
+                                        inited = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback: element-by-element via virtual dispatch
+                            for (Size i = 0; i < n; ++i) {
+                                const auto &element = get(i);
+                                if (!inited || element < result) {
+                                    result = element;
+                                    inited = true;
+                                }
+                            }
+                        }
+                    } else {
+                        // Leaf-level non-contiguous storage (e.g., NDArrayConstantStorage,
+                        // NDArrayIdentityStorage): no parent, fall back to virtual get() dispatch.
+                        for (Size i = 0; i < n; ++i) {
+                            const auto &element = get(i);
+                            if (!inited || element < result) {
+                                result = element;
+                                inited = true;
+                            }
+                        }
                     }
                 }
                 return result;
@@ -650,11 +864,64 @@ namespace np {
             DType NDArrayBase<DType, Derived, Storage>::max() const {
                 DType result{};
                 bool inited{false};
-                for (Size i = 0; i < size(); ++i) {
-                    const auto &element = get(i);
-                    if (!inited || element > result) {
-                        result = element;
-                        inited = true;
+                auto n = size();
+                if constexpr (Storage::is_contiguous) {
+                    // Fast path: direct pointer access avoids virtual get() dispatch
+                    const auto *src = data();
+                    for (Size i = 0; i < n; ++i) {
+                        const auto &element = src[i];
+                        if (!inited || element > result) {
+                            result = element;
+                            inited = true;
+                        }
+                    }
+                } else {
+                    // Fast path for non-contiguous (strided) storage:
+                    // Use stride-aware pointer arithmetic to avoid virtual get() dispatch.
+                    // Guard with kDepth > 0 since only NDArrayIndexStorage (kDepth > 0)
+                    // has a parent; leaf-level non-contiguous storages have kDepth == 0.
+                    if constexpr (Storage::kDepth > 0) {
+                        using ParentStorage = typename Storage::ParentStorage;
+                        if constexpr (ParentStorage::is_contiguous) {
+                            // Check at compile time whether the storage provides index().
+                            if constexpr (requires { m_storage.index(Size{0}); }) {
+                                const auto *parent_data = m_storage.parentData();
+                                for (Size i = 0; i < n; ++i) {
+                                    const auto &element = parent_data[m_storage.index(i)];
+                                    if (!inited || element > result) {
+                                        result = element;
+                                        inited = true;
+                                    }
+                                }
+                            } else {
+                                // Fallback: element-by-element via virtual dispatch
+                                for (Size i = 0; i < n; ++i) {
+                                    const auto &element = get(i);
+                                    if (!inited || element > result) {
+                                        result = element;
+                                        inited = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback: element-by-element via virtual dispatch
+                            for (Size i = 0; i < n; ++i) {
+                                const auto &element = get(i);
+                                if (!inited || element > result) {
+                                    result = element;
+                                    inited = true;
+                                }
+                            }
+                        }
+                    } else {
+                        // Leaf-level non-contiguous storage: no parent, fall back to virtual get() dispatch.
+                        for (Size i = 0; i < n; ++i) {
+                            const auto &element = get(i);
+                            if (!inited || element > result) {
+                                result = element;
+                                inited = true;
+                            }
+                        }
                     }
                 }
                 return result;
@@ -731,39 +998,36 @@ namespace np {
                 auto s = size();
                 if (s == 0)
                     return 0;
-                ndarray::array_dynamic::NDArrayDynamic<float_> array{shape()};
-                for (Size i = 0; i < s; ++i) {
-                    array.set(i, get(i));
+                // Use DType directly for the buffer to avoid unnecessary type conversion.
+                // When DType is double (the common case for float_=double), this avoids
+                // a pointless static_cast copy of 800KB for 100k elements.
+                if constexpr (Storage::is_contiguous) {
+                    // Work on a copy since nth_element modifies the data
+                    const DType *src = static_cast<const DType *>(derived().data());
+                    std::vector<DType> buf(src, src + s);
+                    auto mid = buf.begin() + static_cast<std::ptrdiff_t>(s / 2);
+                    if (s % 2 == 0) {
+                        std::nth_element(buf.begin(), mid, buf.end());
+                        auto mid2 = std::max_element(buf.begin(), mid);
+                        return static_cast<float_>((*mid + *mid2) * 0.5);
+                    }
+                    std::nth_element(buf.begin(), mid, buf.end());
+                    return static_cast<float_>(*mid);
                 }
-                auto middle1 = array.getStorage().begin();
-                std::advance(middle1, s / 2);
-
-                const auto begin = array.getStorage().begin();
-                const auto end = array.getStorage().end();
+                // Fallback for non-contiguous storage: copy element-by-element
+                std::vector<DType> buf(s);
+                for (Size i = 0; i < s; ++i) {
+                    buf[i] = static_cast<DType>(get(i));
+                }
+                auto mid = buf.begin() + static_cast<std::ptrdiff_t>(s / 2);
 
                 if (s % 2 == 0) {
-                    auto middle2 = array.getStorage().begin();
-                    std::advance(middle2, (s - 1) / 2);
-
-                    std::nth_element(begin,
-                                     middle1,
-                                     end);
-
-                    std::nth_element(begin,
-                                     middle2,
-                                     end);
-
-                    // Find the average of values at indices size / 2 and (size - 1) / 2
-                    float_ addResult;
-                    ndarray::internal::add(array.get((s - 1) / 2), array.get(s / 2), addResult);
-                    float_ result;
-                    ndarray::internal::divide(addResult, 2.0, result);
-                    return result;
+                    std::nth_element(buf.begin(), mid, buf.end());
+                    auto mid2 = std::max_element(buf.begin(), mid);
+                    return static_cast<float_>((*mid + *mid2) * 0.5);
                 }
-                std::nth_element(begin,
-                                 middle1,
-                                 end);
-                return array.get(s / 2);
+                std::nth_element(buf.begin(), mid, buf.end());
+                return static_cast<float_>(*mid);
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -816,7 +1080,7 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::cov() const {
                 auto sh = shape();
                 if (sh.size() != 1 && sh.size() != 2)
-                    throw std::invalid_argument("Only 1D and 2D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D and 2D arrays supported");
 
                 if (sh.size() == 1) {
                     float_ res;
@@ -843,7 +1107,7 @@ namespace np {
                 auto sh = shape();
                 auto s = sh.size();
                 if (s != 1 && s != 2)
-                    throw std::invalid_argument("Only 1D and 2D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D and 2D arrays supported");
 
                 if (s == 1) {
                     float_ res{};
@@ -955,8 +1219,52 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::copy() const {
                 array_dynamic::NDArrayDynamic<DType> result{shape()};
-                for (Size i = 0; i < size(); ++i) {
-                    result.set(i, get(i));
+                auto n = size();
+                auto *result_data = result.data();
+                if constexpr (Storage::is_contiguous) {
+                    if constexpr (std::is_trivially_copyable_v<DType>) {
+                        // Fast path: direct memcpy for contiguous storage with trivially copyable types
+                        const auto *src = data();
+                        std::memcpy(result_data, src, n * sizeof(DType));
+                    } else {
+                        // Element-by-element copy for non-trivially-copyable types (e.g., std::string)
+                        const auto *src = data();
+                        for (Size i = 0; i < n; ++i) {
+                            result_data[i] = src[i];
+                        }
+                    }
+                } else {
+                    // Fast path for non-contiguous (strided) storage:
+                    // Use stride-aware pointer arithmetic to avoid virtual get()/set() dispatch.
+                    // Guard with kDepth > 0 since only NDArrayIndexStorage (kDepth > 0)
+                    // has a parent; leaf-level non-contiguous storages have kDepth == 0.
+                    if constexpr (Storage::kDepth > 0) {
+                        using ParentStorage = typename Storage::ParentStorage;
+                        if constexpr (ParentStorage::is_contiguous) {
+                            // Check at compile time whether the storage provides index().
+                            if constexpr (requires { m_storage.index(Size{0}); }) {
+                                const auto *parent_data = m_storage.parentData();
+                                for (Size i = 0; i < n; ++i) {
+                                    result_data[i] = parent_data[m_storage.index(i)];
+                                }
+                            } else {
+                                // Fallback: element-by-element via virtual dispatch
+                                for (Size i = 0; i < n; ++i) {
+                                    result_data[i] = get(i);
+                                }
+                            }
+                        } else {
+                            // Fallback: element-by-element via virtual dispatch
+                            for (Size i = 0; i < n; ++i) {
+                                result_data[i] = get(i);
+                            }
+                        }
+                    } else {
+                        // Leaf-level non-contiguous storage: no parent, fall back to virtual get() dispatch.
+                        for (Size i = 0; i < n; ++i) {
+                            result_data[i] = get(i);
+                        }
+                    }
                 }
                 return result;
             }
@@ -980,7 +1288,7 @@ namespace np {
                 }
                 //auto s = sh.size();
                 //if (s != 1 && s != 2)
-                //    throw std::runtime_error("Only 1D and 2D arrays are currently supported");
+                //    NP_THROW_WITH_STACKTRACE(std::runtime_error, "Only 1D and 2D arrays are currently supported");
                 auto shapeNew{sh};
                 shapeNew.transpose();
                 ndarray::array_dynamic::NDArrayDynamic<DType> result{shapeNew};
@@ -995,11 +1303,11 @@ namespace np {
                         ndarray::array_dynamic::NDArrayDynamic<DType> subarray;
                         auto shape = this->shape();
                         if (shape.empty()) {
-                            throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
+                            NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " of an empty array requested");
                         }
                         if (shape.size() == 1) {
                             if (i >= shape[0]) {
-                                throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
+                                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " out of bounds");
                             }
                             subarray = ndarray::array_dynamic::NDArrayDynamic<DType>{this->get(i)};
                         } else {
@@ -1032,7 +1340,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::reshape(const Shape &shape) const {
                 if (size() != shape.calcSizeByShape())
-                    throw std::invalid_argument("Sizes of new and current arrays must be equal");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sizes of new and current arrays must be equal");
                 array_dynamic::NDArrayDynamic<DType> result{shape};
                 for (Size i = 0; i < shape.calcSizeByShape(); ++i) {
                     result.set(i, get(i));
@@ -1076,7 +1384,7 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::insert(Size index, const NDArrayBase<DType2, Derived2, Storage2> &array) const {
                 auto size1 = size();
                 if (index > size1) {
-                    throw std::invalid_argument("Index exceeds array bounds");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index exceeds array bounds");
                 }
                 if (array.size() == 0)
                     return copy();
@@ -1099,9 +1407,9 @@ namespace np {
             auto NDArrayBase<DType, Derived, Storage>::del(Size index) const {
                 auto sz = size();
                 if (sz == 0)
-                    throw std::invalid_argument("Cannot del from an empty array");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Cannot del from an empty array");
                 if (index > sz) {
-                    throw std::invalid_argument("Index exceeds array bounds");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index exceeds array bounds");
                 }
                 Shape sh{sz - 1};
                 array_dynamic::NDArrayDynamic<DType> result{sh};
@@ -1127,14 +1435,14 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::invalid_argument("Number of dims should be equal");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Number of dims should be equal");
                 // All the dims except the 'axis' should be equal
                 for (size_t i = 0; i < sh1.size(); ++i) {
                     if (i != *axis && sh1[i] != sh2[i])
-                        throw std::invalid_argument("All the dims except the first should be equal");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "All the dims except the first should be equal");
                 }
                 if (*axis >= sh1.size())
-                    throw std::invalid_argument("axis : " + std::to_string(*axis) + " is out of bounds for array of dimension " + std::to_string(sh1.size()));
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "axis : " + std::to_string(*axis) + " is out of bounds for array of dimension " + std::to_string(sh1.size()));
                 Shape sh{sh1};
                 auto size1 = sh1.calcSizeByShape();
                 auto size2 = sh2.calcSizeByShape();
@@ -1167,7 +1475,7 @@ namespace np {
                     return result;
                 }
 
-                throw std::invalid_argument("axis > 1 are not supported");
+                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "axis > 1 are not supported");
             }
 
             template<typename DType1, typename Derived1, typename Storage1>
@@ -1195,7 +1503,7 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::invalid_argument("Number of dims should be equal");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Number of dims should be equal");
                 return sh1.size() == 1 ?
                                        //concatenation along 1st axis
                                concatenate(array)
@@ -1217,7 +1525,7 @@ namespace np {
                 Shape sh1 = shape();
                 Shape sh2 = array.shape();
                 if (sh1.size() != sh2.size())
-                    throw std::invalid_argument("Number of dims should be equal");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Number of dims should be equal");
                 if (sh1.size() == 1) {
                     //concatenation along 1st axis
                     return concatenate(array);
@@ -1227,7 +1535,7 @@ namespace np {
                 Size sizes = 1;
                 for (Size i = 0; i < last; ++i) {
                     if (sh1[i] != sh2[i])
-                        throw std::invalid_argument("All the dims except the last should be equal");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "All the dims except the last should be equal");
                     sizes *= sh1[i];
                 }
                 Shape sh = shape();
@@ -1250,7 +1558,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::hsplit(size_t sections) const {
                 if (sections == 0) {
-                    throw std::invalid_argument("Sections must not be 0");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sections must not be 0");
                 }
                 Shape sh = shape();
                 if (sh.empty()) {
@@ -1262,7 +1570,7 @@ namespace np {
                 } else if (sh.size() == 1) {
                     Shape sh1{sh};
                     if (sh[0] % sections != 0) {
-                        throw std::invalid_argument("Array split does not result in an equal division");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array split does not result in an equal division");
                     }
                     Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
@@ -1280,7 +1588,7 @@ namespace np {
                 }
                 Shape sh1{sh};
                 if (sh[1] % sections != 0) {
-                    throw std::invalid_argument("Array split does not result in an equal division");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array split does not result in an equal division");
                 }
                 Size rest = 1;
                 for (size_t i = 2; i < sh1.size(); ++i) {
@@ -1311,7 +1619,7 @@ namespace np {
             template<typename DType, typename Derived, typename Storage>
             auto NDArrayBase<DType, Derived, Storage>::vsplit(size_t sections) const {
                 if (sections == 0) {
-                    throw std::invalid_argument("Sections must not be 0");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sections must not be 0");
                 }
                 Shape sh = shape();
                 if (sh.empty()) {
@@ -1323,7 +1631,7 @@ namespace np {
                 } else if (sh.size() == 1) {
                     Shape sh1{sh};
                     if (sh[0] % sections != 0) {
-                        throw std::invalid_argument("Array split does not result in an equal division");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array split does not result in an equal division");
                     }
                     Size sectionSize = sh[0] / static_cast<Size>(sections);
                     sh1[0] = sectionSize;
@@ -1341,7 +1649,7 @@ namespace np {
                 }
                 Shape sh0{sh};
                 if (sh[0] % sections != 0) {
-                    throw std::invalid_argument("Array split does not result in an equal division");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Array split does not result in an equal division");
                 }
                 Size rest = 1;
                 for (size_t i = 1; i < sh0.size(); ++i) {
@@ -1374,7 +1682,7 @@ namespace np {
                 if (axis > ndim()) {
                     std::stringstream ss;
                     ss << axis << " is out of bounds for array of dimension " << ndim();
-                    throw std::invalid_argument(ss.str());
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, ss.str());
                 }
                 auto newShape = shape();
                 newShape.expandDims(axis);
@@ -1412,12 +1720,12 @@ namespace np {
             typename NDArrayBase<DType, Derived, Storage>::IndexParentConstType NDArrayBase<DType, Derived, Storage>::operator[](SignedSize i) const {
                 auto shape = this->shape();
                 if (shape.empty()) {
-                    throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " of an empty array requested");
                 }
                 Size offset = i;
                 if (shape.size() == 1) {
                     if (i >= static_cast<SignedSize>(shape[0])) {
-                        throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " out of bounds");
                     }
                     if (i < 0) {
                         offset = static_cast<SignedSize>(shape[0]) + i;
@@ -1432,12 +1740,12 @@ namespace np {
             typename NDArrayBase<DType, Derived, Storage>::IndexParentType NDArrayBase<DType, Derived, Storage>::operator[](SignedSize i) {
                 auto shape = this->shape();
                 if (shape.empty()) {
-                    throw std::invalid_argument("Index " + std::to_string(i) + " of an empty array requested");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " of an empty array requested");
                 }
                 Size offset = i;
                 if (shape.size() == 1) {
                     if (i >= static_cast<SignedSize>(shape[0])) {
-                        throw std::invalid_argument("Index " + std::to_string(i) + " out of bounds");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(i) + " out of bounds");
                     }
                     if (i < 0) {
                         offset = static_cast<SignedSize>(shape[0]) + i;
@@ -1475,9 +1783,9 @@ namespace np {
 
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
-                        throw std::invalid_argument("Too many indices for array: array is " +
-                                                    std::to_string(shape().size()) +
-                                                    "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Too many indices for array: array is " +
+                                                                                std::to_string(shape().size()) +
+                                                                                "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
                 }
                 return {this, indices};
@@ -1504,9 +1812,9 @@ namespace np {
 
                     ++dimIndex;
                     if (dimIndex >= shape().size()) {
-                        throw std::invalid_argument("Too many indices for array: array is " +
-                                                    std::to_string(shape().size()) +
-                                                    "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Too many indices for array: array is " +
+                                                                                std::to_string(shape().size()) +
+                                                                                "-dimensional, but " + std::to_string(dimIndex + 1) + " were indexed");
                     }
                 }
                 return {this, indices};
@@ -1535,7 +1843,7 @@ namespace np {
                         return indexingHandler.worker(dimIndex, dimCond);
                     }
                 }
-                throw std::invalid_argument("Invalid operator[] argument");
+                NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid operator[] argument");
             }
 
             template<typename DType, typename Derived, typename Storage>
@@ -1551,9 +1859,9 @@ namespace np {
                 if (index < 0) {
                     offset = static_cast<Size>(shape[dimIndex] + index);
                 } else if (index > static_cast<SignedSize>(shape[dimIndex])) {
-                    throw std::invalid_argument("Index " + std::to_string(index) +
-                                                " out of bounds for axis " + std::to_string(dimIndex) +
-                                                " with size " + std::to_string(shape[dimIndex]));
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Index " + std::to_string(index) +
+                                                                            " out of bounds for axis " + std::to_string(dimIndex) +
+                                                                            " with size " + std::to_string(shape[dimIndex]));
                 }
                 return IndexType<DType>{SubsettingIndexType{offset}};
             }
@@ -1566,7 +1874,7 @@ namespace np {
                 Size last = shape[dimIndex];
                 SignedSize step = 1;
                 if (colonPos == std::string::npos) {
-                    throw std::invalid_argument("Invalid format");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Invalid format");
                 } else {
                     auto firstStr = dimCond.substr(0, colonPos);
                     if (!firstStr.empty()) {

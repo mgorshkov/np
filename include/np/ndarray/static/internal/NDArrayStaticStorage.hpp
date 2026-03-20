@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -32,6 +32,7 @@ SOFTWARE.
 #include <vector>
 
 #include <np/Constants.hpp>
+#include <np/Exception.hpp>
 #include <np/ndarray/internal/Tools.hpp>
 
 namespace np {
@@ -183,12 +184,14 @@ namespace np {
                         }
                     }
 
-                    explicit NDArrayStaticStorage(const StdVector1DType &vector) noexcept {
+                    explicit NDArrayStaticStorage(const StdVector1DType &vector) noexcept
+                        : m_storage{} {
                         assert(vector.size() == SizeT);
                         std::copy(std::begin(vector), std::end(vector), std::begin(m_storage));
                     }
 
-                    explicit NDArrayStaticStorage(const StdVector2DType &vector) noexcept {
+                    explicit NDArrayStaticStorage(const StdVector2DType &vector) noexcept
+                        : m_storage{} {
                         assert(vector.size() * vector[0].size() == SizeT);
                         auto it = std::begin(m_storage);
                         for (size_t i = 0; i < vector.size(); ++i) {
@@ -197,7 +200,8 @@ namespace np {
                         }
                     }
 
-                    explicit NDArrayStaticStorage(const StdVector3DType &vector) noexcept {
+                    explicit NDArrayStaticStorage(const StdVector3DType &vector) noexcept
+                        : m_storage{} {
                         assert(vector.size() * vector[0].size() * vector[0][0].size() == SizeT);
                         auto it = std::begin(m_storage);
                         for (size_t i = 0; i < vector.size(); ++i) {
@@ -208,7 +212,8 @@ namespace np {
                         }
                     }
 
-                    explicit NDArrayStaticStorage(const StdVector4DType &vector) noexcept {
+                    explicit NDArrayStaticStorage(const StdVector4DType &vector) noexcept
+                        : m_storage{} {
                         assert(vector.size() * vector[0].size() * vector[0][0].size() * vector[0][0][0].size() == SizeT);
                         auto it = std::begin(m_storage);
                         for (size_t i = 0; i < vector.size(); ++i) {
@@ -221,7 +226,8 @@ namespace np {
                         }
                     }
 
-                    NDArrayStaticStorage(std::initializer_list<DType> init_list) noexcept {
+                    NDArrayStaticStorage(std::initializer_list<DType> init_list) noexcept
+                        : m_storage{} {
                         for (auto it = std::begin(m_storage); it != std::end(m_storage); std::advance(it, std::size(init_list))) {
                             std::copy(std::begin(init_list), std::end(init_list), it);
                         }
@@ -556,17 +562,18 @@ namespace np {
                     }
 
                     [[nodiscard]] Shape shape() const {
-                        throw std::runtime_error("shape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "shape() is not implemented");
                     }
 
                     void setShape(const Shape &) {
-                        throw std::runtime_error("setShape() is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "setShape() is not implemented");
                     }
 
                     void push_back(const DType &) {
-                        throw std::runtime_error("push_back is not implemented");
+                        NP_THROW_WITH_STACKTRACE(std::runtime_error, "push_back is not implemented");
                     }
 
+                    static constexpr bool is_contiguous = true;
                     static constexpr size_t kDepth = 0;
 
                 private:

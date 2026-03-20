@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include <np/Exception.hpp>
 #include <np/ndarray/internal/Math.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
 
@@ -35,14 +36,14 @@ namespace np {
             inline static float_ vectorCorr(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
-                    throw std::invalid_argument("Only 1D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D arrays supported");
 
                 auto sh2 = v2.shape();
                 if (sh2.size() != 1)
-                    throw std::invalid_argument("Only 1D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D arrays supported");
 
                 if (v1.len() != v2.len()) {
-                    throw std::invalid_argument("Sizes are different");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sizes are different");
                 }
 
                 float_ sum1 = 0;
@@ -75,14 +76,14 @@ namespace np {
             inline static float_ vectorCov(const NDArrayBase<DType, Derived1, Storage1> &v1, const NDArrayBase<DType, Derived2, Storage2> &v2) {
                 auto sh1 = v1.shape();
                 if (sh1.size() != 1)
-                    throw std::invalid_argument("Only 1D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D arrays supported");
 
                 auto sh2 = v2.shape();
                 if (sh2.size() != 1)
-                    throw std::invalid_argument("Only 1D arrays supported");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Only 1D arrays supported");
 
                 if (v1.len() != v2.len()) {
-                    throw std::invalid_argument("Sizes are different");
+                    NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Sizes are different");
                 }
 
                 float_ sum{};

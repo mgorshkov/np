@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -24,15 +24,28 @@ SOFTWARE.
 
 #pragma once
 
+#ifdef USE_CUDA
+
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 #include <cusolverDn.h>
+#include <np/Exception.hpp>
 #include <sstream>
 
 namespace np {
     namespace internal {
         namespace cuda {
             const size_t blockSize = 256;
+
+            // Kernel to convert row-major to column-major layout
+            template<typename DType>
+            __global__ void rowMajorToColMajor(const DType *src, DType *dst, int m, int n) {
+                int i = blockIdx.x * blockDim.x + threadIdx.x;
+                int j = blockIdx.y * blockDim.y + threadIdx.y;
+                if (i < m && j < n) {
+                    dst[i + j * m] = src[i * n + j];
+                }
+            }
 
             template<typename DType>
             inline cublasStatus_t cublasGemv(cublasHandle_t handle, cublasOperation_t trans,
@@ -328,11 +341,109 @@ namespace np {
                 return cusolverDnDsytrd(handle, uplo, n, A, lda, d, e, tau, work, lwork, devInfo);
             }
 
+            template<typename DType>
+            inline cusolverStatus_t cusolverDnGels_bufferSize(cusolverDnHandle_t handle,
+                                                              int rows,
+                                                              int cols,
+                                                              int nrhs,
+                                                              DType *dA,
+                                                              int ldda,
+                                                              DType *dB,
+                                                              int lddb,
+                                                              DType *dX,
+                                                              int lddx,
+                                                              void *dWorkspace,
+                                                              size_t *lwork_bytes);
+
+            template<>
+            inline cusolverStatus_t cusolverDnGels_bufferSize<float>(cusolverDnHandle_t handle,
+                                                                     int rows,
+                                                                     int cols,
+                                                                     int nrhs,
+                                                                     float *dA,
+                                                                     int ldda,
+                                                                     float *dB,
+                                                                     int lddb,
+                                                                     float *dX,
+                                                                     int lddx,
+                                                                     void *dWorkspace,
+                                                                     size_t *lwork_bytes) {
+                return cusolverDnSSgels_bufferSize(handle, rows, cols, nrhs, dA, ldda, dB, lddb, dX, lddx, dWorkspace, lwork_bytes);
+            }
+
+            template<>
+            inline cusolverStatus_t cusolverDnGels_bufferSize<double>(cusolverDnHandle_t handle,
+                                                                      int rows,
+                                                                      int cols,
+                                                                      int nrhs,
+                                                                      double *dA,
+                                                                      int ldda,
+                                                                      double *dB,
+                                                                      int lddb,
+                                                                      double *dX,
+                                                                      int lddx,
+                                                                      void *dWorkspace,
+                                                                      size_t *lwork_bytes) {
+                return cusolverDnDDgels_bufferSize(handle, rows, cols, nrhs, dA, ldda, dB, lddb, dX, lddx, dWorkspace, lwork_bytes);
+            }
+
+            template<typename DType>
+            inline cusolverStatus_t cusolverDnGels(cusolverDnHandle_t handle,
+                                                   int rows,
+                                                   int cols,
+                                                   int nrhs,
+                                                   DType *dA,
+                                                   int ldda,
+                                                   DType *dB,
+                                                   int lddb,
+                                                   DType *dX,
+                                                   int lddx,
+                                                   void *dWorkspace,
+                                                   size_t lwork_bytes,
+                                                   int *iter,
+                                                   int *d_info);
+
+            template<>
+            inline cusolverStatus_t cusolverDnGels<float>(cusolverDnHandle_t handle,
+                                                          int rows,
+                                                          int cols,
+                                                          int nrhs,
+                                                          float *dA,
+                                                          int ldda,
+                                                          float *dB,
+                                                          int lddb,
+                                                          float *dX,
+                                                          int lddx,
+                                                          void *dWorkspace,
+                                                          size_t lwork_bytes,
+                                                          int *iter,
+                                                          int *d_info) {
+                return cusolverDnSSgels(handle, rows, cols, nrhs, dA, ldda, dB, lddb, dX, lddx, dWorkspace, lwork_bytes, iter, d_info);
+            }
+
+            template<>
+            inline cusolverStatus_t cusolverDnGels<double>(cusolverDnHandle_t handle,
+                                                           int rows,
+                                                           int cols,
+                                                           int nrhs,
+                                                           double *dA,
+                                                           int ldda,
+                                                           double *dB,
+                                                           int lddb,
+                                                           double *dX,
+                                                           int lddx,
+                                                           void *dWorkspace,
+                                                           size_t lwork_bytes,
+                                                           int *iter,
+                                                           int *d_info) {
+                return cusolverDnDDgels(handle, rows, cols, nrhs, dA, ldda, dB, lddb, dX, lddx, dWorkspace, lwork_bytes, iter, d_info);
+            }
+
             inline void checkCudaError(cudaError_t err) {
                 if (err != cudaSuccess) {
                     std::ostringstream oss;
                     oss << "CUDA error: " << cudaGetErrorString(err);
-                    throw std::runtime_error(oss.str());
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, oss.str());
                 }
             }
 
@@ -373,7 +484,7 @@ namespace np {
                     }
                     std::ostringstream oss;
                     oss << "cuBLAS error: " << status << " (" << msg << ")";
-                    throw std::runtime_error(oss.str());
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, oss.str());
                 }
             }
 
@@ -429,7 +540,7 @@ namespace np {
                     }
                     std::ostringstream oss;
                     oss << "cuSOLVER error: " << status << " (" << msg << ")";
-                    throw std::runtime_error(oss.str());
+                    NP_THROW_WITH_STACKTRACE(std::runtime_error, oss.str());
                 }
             }
 
@@ -465,3 +576,4 @@ namespace np {
         }// namespace cuda
     }// namespace internal
 }// namespace np
+#endif

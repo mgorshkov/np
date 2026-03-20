@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -192,6 +192,15 @@ namespace np {
                 NDArrayDynamic<bool_> operator==(const NDArrayDynamic &array) const;
                 NDArrayDynamic<bool_> operator<(const NDArrayDynamic &array) const;
                 NDArrayDynamic<bool_> operator>(const NDArrayDynamic &array) const;
+
+                // Evaluate to a concrete array (returns a copy of itself)
+                NDArrayDynamic<DType> eval() const {
+                    NDArrayDynamic<DType> result{NDArrayDynamicBase<DType>::shape()};
+                    for (Size i = 0; i < result.size(); ++i) {
+                        result.set(i, NDArrayDynamicBase<DType>::get(i));
+                    }
+                    return result;
+                }
 
                 template<typename DTypeNew>
                 inline NDArrayDynamic<DTypeNew> astype() {

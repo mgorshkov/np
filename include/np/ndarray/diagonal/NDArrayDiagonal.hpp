@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -36,6 +36,7 @@ SOFTWARE.
 #include <np/ndarray/internal/NDArrayIndex.hpp>
 #include <np/ndarray/internal/NDArrayShaped.hpp>
 
+#include <np/Exception.hpp>
 #include <np/ndarray/diagonal/internal/NDArrayDiagonalStorage.hpp>
 #include <np/ndarray/diagonal/internal/NDArrayDiagonalStorageStreamIo.hpp>
 
@@ -74,10 +75,11 @@ namespace np {
                     if (&another != this) {
                         NDArrayDiagonalBase<DType, Derived, Storage, Dims>::operator=(another);
                     }
+                    return *this;
                 }
 
                 NDArrayDiagonal &operator=(NDArrayDiagonal &&another) noexcept {
-                    NDArrayDiagonalBase<DType, Derived, Storage, Dims>::operator=(another);
+                    NDArrayDiagonalBase<DType, Derived, Storage, Dims>::operator=(std::move(another));
                     return *this;
                 }
 
@@ -85,7 +87,7 @@ namespace np {
                 static Shape calcShape(const ndarray::internal::NDArrayBase<DType, Derived, Storage> &v, int k) {
                     auto size = static_cast<Size>(std::abs(k));
                     if (Dims != v.ndim()) {
-                        throw std::invalid_argument("Incorrect Dims");
+                        NP_THROW_WITH_STACKTRACE(std::invalid_argument, "Incorrect Dims");
                     }
                     // empty array
                     if constexpr (Dims == 0) {

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -28,7 +28,10 @@ SOFTWARE.
 #include <cstddef>
 #include <cstring>
 #include <exception>
+#include <stdexcept>
 #include <string>
+
+#include <np/StackTrace.hpp>
 
 #ifdef WIN32
 #include <windows.h>
@@ -46,15 +49,23 @@ SOFTWARE.
 #define NP_THROW_CONSTEXPR_UNLESS_WITH_ARG(cond, message, arg) \
     if constexpr (!(cond)) throw np::Exception(message, arg);
 
+// Macro to throw any standard exception with stack trace appended
+#define NP_THROW_WITH_STACKTRACE(exception_type, message) \
+    throw exception_type(np::addStackTrace(message))
+
 namespace np {
+    // Helper function to add stack trace to a message
+    inline std::string addStackTrace(const std::string &message) {
+        return message + "\nStack trace:\n" + getStackTrace();
+    }
     class Exception : public std::runtime_error {
     public:
         inline explicit Exception(const std::string &message)
-            : std::runtime_error(message) {
+            : std::runtime_error(message + "\nStack trace:\n" + getStackTrace()) {
         }
 
         inline Exception(const std::string &message, const std::string &arg)
-            : std::runtime_error(message + arg + ", Error: " + getLastError()) {
+            : std::runtime_error(message + arg + ", Error: " + getLastError() + "\nStack trace:\n" + getStackTrace()) {
         }
 
     private:

@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #pragma once
-
+#ifdef USE_CUDA
 #include <cuda_runtime.h>
 
 template<typename DType1, typename DType2, typename DTypeResult>
@@ -38,3 +38,4 @@ __global__ void divideKernel(const DType1 *array1, size_t size1,
     DType2 val2 = array2[i % size2];
     result[i] = val1 / val2;
 }
+#endif// USE_CUDA

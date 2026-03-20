@@ -1,51 +1,60 @@
 cmake_minimum_required(VERSION 3.18.0)
 
-set(MONTE_CARLO monte_carlo)
-project(${MONTE_CARLO})
+set(PROJECT_NAME monte_carlo)
 
-# C++ 20
-set(CMAKE_CXX_STANDARD 20)
+project(${PROJECT_NAME})
 
-# Find CUDA package
-find_package(CUDAToolkit REQUIRED)
+# Tune up various optimizations
+# Enable CUDA support
+option(ENABLE_CUDA "Enable CUDA optimizations" ON)
+# Set up options for basic compile optimizations
+option(ENABLE_AVX2 "Enable AVX2 optimizations" ON)
+option(ENABLE_AVX512 "Enable AVX512 optimizations" OFF)
+option(ENABLE_AMX "Enable AMX (Advanced Matrix Extensions) optimizations" OFF)
+# Set up options for OpenMP support
+option(ENABLE_OPENMP "Enable OpenMP" ON)
 
 include(FetchContent)
+
 FetchContent_Declare(
-    fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_TAG 9.1.0
+    cmake
+    GIT_REPOSITORY https://github.com/mgorshkov/cmake.git
+    GIT_TAG main
 )
-FetchContent_MakeAvailable(fmt)
+FetchContent_MakeAvailable(cmake)
 
-find_library(NP_LIBRARY
-    NAMES np libnp
-    PATHS
-        ../../build
-        /usr/local/lib
-        /usr/lib
-    NO_DEFAULT_PATH
+# Apply global cmake options
+include(${cmake_SOURCE_DIR}/Config.cmake)
+
+FetchContent_Declare(
+    np
+    GIT_REPOSITORY https://github.com/mgorshkov/np.git
+    GIT_TAG main
+    CMAKE_ARGS
+    -DENABLE_CUDA=${ENABLE_CUDA}
+    -DENABLE_OPENMP=${ENABLE_OPENMP}
+    -DENABLE_SSE2=${ENABLE_SSE2}
+    -DENABLE_SSE3=${ENABLE_SSE3}
+    -DENABLE_AVX=${ENABLE_AVX}
+    -DENABLE_AVX2=${ENABLE_AVX2}
+    -DENABLE_AVX512=${ENABLE_AVX512}
+    -DENABLE_AMX=${ENABLE_AMX}
+    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
 )
-if(NOT NP_LIBRARY)
-    message(FATAL_ERROR "NP library not found! Build parent np first.")
-endif()
 
-message(STATUS "Found NP: ${NP_LIBRARY}")
-include_directories(../../include)
+FetchContent_MakeAvailable(np)
 
-add_executable(${MONTE_CARLO} main.cpp)
+include_directories(${np_SOURCE_DIR}/include)
 
-target_link_libraries(
-    ${MONTE_CARLO}
-    ${PTHREAD}
-    ${NP_LIBRARY}
-    CUDA::cudart
-    CUDA::cublas
-    CUDA::cusolver
-    fmt::fmt
-)
+add_executable(${PROJECT_NAME} main.cpp)
+
+set(LIBS ${LIBS} np pthread)
+
+# Apply target-dependent cmake options
+include(${cmake_SOURCE_DIR}/Target.cmake)
 
 install(
-    TARGETS ${MONTE_CARLO}
+    TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${MONTE_CARLO}
+    COMPONENT ${PROJECT_NAME}
 )

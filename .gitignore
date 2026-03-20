@@ -32,10 +32,9 @@
 *.app
 
 # Build folders
-build
+build*
 cmake-*
 package
-build
 
 # Idea folders
 .idea

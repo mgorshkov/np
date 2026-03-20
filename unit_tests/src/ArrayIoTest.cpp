@@ -1,5 +1,5 @@
 /*
-C++ numpy-like template-based array implementation
+⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU
 
 Copyright (c) 2022-2026 Mikhail Gorshkov (mikhail.gorshkov@gmail.com)
 
@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <chrono>
 #include <filesystem>
 #include <iostream>
+#include <random>
 
 #include <np/Array.hpp>
 
@@ -32,7 +34,25 @@ SOFTWARE.
 using namespace np;
 
 class ArrayIoTest : public ArrayTest {
+public:
+    void SetUp() override {
+        // Create a temporary directory with random suffix
+        std::random_device rd;
+        std::string dirName = "np_test_" + std::to_string(rd());
+        m_tempDir = std::filesystem::temp_directory_path() / dirName;
+        std::filesystem::create_directory(m_tempDir);
+    }
+
+    void TearDown() override {
+        // Remove temporary directory and its contents
+        std::filesystem::remove_all(m_tempDir);
+    }
+
 protected:
+    std::filesystem::path getTestFilePath(const std::string &baseName) const {
+        return m_tempDir / baseName;
+    }
+
     static void compareFiles(const std::filesystem::path &file1, const std::filesystem::path &file2) {
         std::ifstream input1(file1, std::ios::binary);
         ASSERT_TRUE(input1.is_open());
@@ -65,13 +85,18 @@ protected:
         ASSERT_EQ(buffer1, buffer2);
     }
 
-    static void compareFileWithTestData(const std::string &filename) {
-        auto test_filename = std::filesystem::absolute(filename);
-        test_filename.replace_extension(".npy");
+    static void compareFileWithTestData(const std::filesystem::path &filepath) {
+        auto test_filename = filepath;
+        if (!test_filename.has_extension()) {
+            test_filename.replace_extension(".npy");
+        }
         auto fname = test_filename.filename();
         auto sample_filename{TEST_DATA_FOLDER / fname};
         compareFiles(test_filename, sample_filename);
     }
+
+private:
+    std::filesystem::path m_tempDir;
 };
 
 TEST_F(ArrayIoTest, dynamicEmptyIntArraySaveLoadTest) {
@@ -80,19 +105,19 @@ TEST_F(ArrayIoTest, dynamicEmptyIntArraySaveLoadTest) {
      */
     // dynamic
     Array<intc> array{};
-    const char *filename = "empty_int";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<intc>(filename);
+    auto filepath = getTestFilePath("empty_int");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<intc>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<intc>(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamicEmptyFloatArraySaveLoadTest) {
     Array<float_> array{};
-    const char *filename = "empty_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("empty_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
@@ -101,10 +126,10 @@ TEST_F(ArrayIoTest, dynamicEmptyStringArraySaveLoadTest) {
     >>> np.array([], dtype='string_')
      */
     Array<string_> array{};
-    const char *filename = "empty_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("empty_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
@@ -113,10 +138,10 @@ TEST_F(ArrayIoTest, dynamicEmptyUnicodeArraySaveLoadTest) {
     >>> np.array([], dtype='str')
      */
     Array<unicode_> array{};
-    const char *filename = "empty_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("empty_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -127,13 +152,13 @@ TEST_F(ArrayIoTest, static1DIntArraySaveLoadTest) {
     // static
     Array<int_, 4> array{1, 2, 3, 4};
 #ifdef _MSC_VER
-    const char *filename = "1D_int_msvc";
+    auto filepath = getTestFilePath("1D_int_msvc");
 #else // !MSVC
-    const char *filename = "1D_int";
+    auto filepath = getTestFilePath("1D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -144,13 +169,13 @@ TEST_F(ArrayIoTest, dynamic1DIntArraySaveLoadTest) {
     // dynamic
     Array<int_> array{1, 2, 3, 4};
 #ifdef _MSC_VER
-    const char *filename = "1D_int_msvc";
+    auto filepath = getTestFilePath("1D_int_msvc");
 #else // !MSVC
-    const char *filename = "1D_int";
+    auto filepath = getTestFilePath("1D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -159,10 +184,10 @@ TEST_F(ArrayIoTest, static1DFloatArraySaveLoadTest) {
     >>> np.array([1.1, 2.2, 3.3, 4.4])
      */
     Array<float_, 4> array{1.1, 2.2, 3.3, 4.4};
-    const char *filename = "1D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("1D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -171,10 +196,10 @@ TEST_F(ArrayIoTest, dynamic1DFloatArraySaveLoadTest) {
     >>> np.array([1.1, 2.2, 3.3, 4.4])
      */
     Array<float_> array{1.1, 2.2, 3.3, 4.4};
-    const char *filename = "1D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("1D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -183,10 +208,10 @@ TEST_F(ArrayIoTest, static1DStringArraySaveLoadTest) {
     >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='string_')
      */
     Array<string_, 4> array{"str1", "str2", "str3", "str4"};
-    static const char *filename = "1D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("1D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -195,10 +220,10 @@ TEST_F(ArrayIoTest, dynamic1DStringArraySaveLoadTest) {
     >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='string_')
      */
     Array<string_> array{"str1", "str2", "str3", "str4"};
-    static const char *filename = "1D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("1D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -207,10 +232,10 @@ TEST_F(ArrayIoTest, static1DUnicodeArraySaveLoadTest) {
     >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='str')
      */
     Array<unicode_, 4> array{L"str1", L"str2", L"str3", L"str4"};
-    static const char *filename = "1D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("1D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -219,10 +244,10 @@ TEST_F(ArrayIoTest, dynamic1DUnicodeArraySaveLoadTest) {
     >>> np.array(['str1', 'str2', 'str3', 'str4'], dtype='str')
      */
     Array<unicode_> array{L"str1", L"str2", L"str3", L"str4"};
-    static const char *filename = "1D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("1D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -234,13 +259,13 @@ TEST_F(ArrayIoTest, static2DIntArraySaveLoadTest) {
     long arr[2][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
     Array<int_, 2 * 4> array{arr};
 #ifdef _MSC_VER
-    const char *filename = "2D_int_msvc";
+    auto filepath = getTestFilePath("2D_int_msvc");
 #else // !MSVC
-    const char *filename = "2D_int";
+    auto filepath = getTestFilePath("2D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -252,13 +277,13 @@ TEST_F(ArrayIoTest, dynamic2DIntArraySaveLoadTest) {
     long arr[2][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
     Array<int_> array{arr};
 #ifdef _MSC_VER
-    const char *filename = "2D_int_msvc";
+    auto filepath = getTestFilePath("2D_int_msvc");
 #else // !MSVC
-    const char *filename = "2D_int";
+    auto filepath = getTestFilePath("2D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
 }
 
@@ -268,20 +293,20 @@ TEST_F(ArrayIoTest, static2DFloatArraySaveLoadTest) {
      */
     double arr[2][4] = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}};
     Array<float_, 2 * 4> array{arr};
-    static const char *filename = "2D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("2D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
 TEST_F(ArrayIoTest, dynamic2DFloatArraySaveLoadTest) {
     double arr[2][4] = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}};
     Array<float_> array{arr};
-    static const char *filename = "2D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("2D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
@@ -292,10 +317,10 @@ TEST_F(ArrayIoTest, static2DStringArraySaveLoadTest) {
     string_ arr[2][4] = {{"str1", "str2", "str3", "str4"},
                          {"str5", "str6", "str7", "str8"}};
     Array<string_, 2 * 4> array{arr};
-    static const char *filename = "2D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("2D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -306,10 +331,10 @@ TEST_F(ArrayIoTest, dynamic2DStringArraySaveLoadTest) {
     string_ arr[2][4] = {{"str1", "str2", "str3", "str4"},
                          {"str5", "str6", "str7", "str8"}};
     Array<string_> array{arr};
-    static const char *filename = "2D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("2D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
@@ -320,10 +345,10 @@ TEST_F(ArrayIoTest, static2DUnicodeArraySaveLoadTest) {
     unicode_ arr[2][4] = {{L"str1", L"str2", L"str3", L"str4"},
                           {L"str5", L"str6", L"str7", L"str8"}};
     Array<unicode_, 2 * 4> array{arr};
-    static const char *filename = "2D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("2D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -334,10 +359,10 @@ TEST_F(ArrayIoTest, dynamic2DUnicodeArraySaveLoadTest) {
     unicode_ arr[2][4] = {{L"str1", L"str2", L"str3", L"str4"},
                           {L"str5", L"str6", L"str7", L"str8"}};
     Array<unicode_> array{arr};
-    static const char *filename = "2D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("2D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
 
@@ -358,13 +383,13 @@ TEST_F(ArrayIoTest, static3DIntArraySaveLoadTest) {
              {22, 23, 24}}};
     Array<int_, 2 * 4 * 3> array{arr};
 #ifdef _MSC_VER
-    const char *filename = "3D_int_msvc";
+    auto filepath = getTestFilePath("3D_int_msvc");
 #else // !MSVC
-    const char *filename = "3D_int";
+    auto filepath = getTestFilePath("3D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -385,13 +410,13 @@ TEST_F(ArrayIoTest, dynamic3DIntArraySaveLoadTest) {
              {22, 23, 24}}};
     Array<int_> array{arr};
 #ifdef _MSC_VER
-    const char *filename = "3D_int_msvc";
+    auto filepath = getTestFilePath("3D_int_msvc");
 #else // !MSVC
-    const char *filename = "3D_int";
+    auto filepath = getTestFilePath("3D_int");
 #endif// MSVC
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<int_>(filename);
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<int_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<int_>(array, arrayLoaded));
 }
 
@@ -410,10 +435,10 @@ TEST_F(ArrayIoTest, static3DFloatArraySaveLoadTest) {
              {19.19, 20.2, 21.21},
              {22.22, 23.23, 24.24}}};
     Array<float_, 2 * 4 * 3> array{arr};
-    static const char *filename = "3D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("3D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -428,10 +453,10 @@ TEST_F(ArrayIoTest, dynamic3DFloatArraySaveLoadTest) {
              {19.19, 20.2, 21.21},
              {22.22, 23.23, 24.24}}};
     Array<float_> array{arr};
-    static const char *filename = "3D_float";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<float_>(filename);
+    auto filepath = getTestFilePath("3D_float");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<float_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<float_>(array, arrayLoaded));
 }
 
@@ -456,10 +481,10 @@ TEST_F(ArrayIoTest, static3DStringArraySaveLoadTest) {
              {"str7_1", "str7_2", "str7_3"},
              {"str8_1", "str8_2", "str8_3"}}};
     Array<string_, 2 * 4 * 3> array{arr};
-    static const char *filename = "3D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("3D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -484,10 +509,10 @@ TEST_F(ArrayIoTest, dynamic3DStringArraySaveLoadTest) {
              {"str7_1", "str7_2", "str7_3"},
              {"str8_1", "str8_2", "str8_3"}}};
     Array<string_> array{arr};
-    static const char *filename = "3D_string";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<string_>(filename);
+    auto filepath = getTestFilePath("3D_string");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<string_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<string_>(array, arrayLoaded));
 }
 
@@ -511,10 +536,10 @@ TEST_F(ArrayIoTest, static3DUnicodeArraySaveLoadTest) {
                               {L"str7_1", L"str7_2", L"str7_3"},
                               {L"str8_1", L"str8_2", L"str8_3"}}};
     Array<unicode_, 2 * 4 * 3> array{arr};
-    static const char *filename = "3D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("3D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal(array, arrayLoaded));
 }
 
@@ -538,9 +563,9 @@ TEST_F(ArrayIoTest, dynamic3DUnicodeArraySaveLoadTest) {
                               {L"str7_1", L"str7_2", L"str7_3"},
                               {L"str8_1", L"str8_2", L"str8_3"}}};
     Array<unicode_> array{arr};
-    static const char *filename = "3D_unicode";
-    array.save(filename);
-    compareFileWithTestData(filename);
-    auto arrayLoaded = load<unicode_>(filename);
+    auto filepath = getTestFilePath("3D_unicode");
+    array.save(filepath.string().c_str());
+    compareFileWithTestData(filepath);
+    auto arrayLoaded = load<unicode_>(filepath.string().c_str());
     ASSERT_TRUE(array_equal<unicode_>(array, arrayLoaded));
 }
