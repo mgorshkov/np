@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME np)
 
 # Set up project
-project(${PROJECT_NAME} VERSION 0.1.5 DESCRIPTION "⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU" LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.1.6 DESCRIPTION "⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU" LANGUAGES CXX)
 
 # Tune up various optimizations
 # Enable CUDA support

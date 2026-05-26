@@ -1,3 +1,7 @@
+# Release 0.1.6
+## Changes
+* Cholesky solver fixed
+
 # Release 0.1.5
 ## Changes
 * More CUDA optimizations added
