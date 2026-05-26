@@ -4,17 +4,17 @@
 
 
 # Configuration directories and files
-SourceDirectory: /Users/mgorshkov/git/np
-BuildDirectory: /Users/mgorshkov/git/np
+SourceDirectory: /home/mike/git/np
+BuildDirectory: /home/mike/git/np
 
 # Where to place the cost data store
 CostDataFile: 
 
 # Site is something like machine.domain, i.e. pragmatic.crd
-Site: iMac.fritz.box
+Site: gpu
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: Darwin-c++
+BuildName: Linux-c++
 
 # Subprojects
 LabelsForSubprojects: 
@@ -27,8 +27,8 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/opt/homebrew/Cellar/cmake/3.24.2/bin/cmake" "/Users/mgorshkov/git/np"
-MakeCommand: /opt/homebrew/Cellar/cmake/3.24.2/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
+ConfigureCommand: "/usr/bin/cmake" "/home/mike/git/np"
+MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
 # version control
@@ -63,8 +63,8 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
-CompilerVersion: 14.0.0.14000029
+Compiler: /usr/bin/c++
+CompilerVersion: 13.3.0
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
@@ -76,7 +76,7 @@ CudaSanitizerCommand:
 CudaSanitizerCommandOptions: 
 MemoryCheckType: 
 MemoryCheckSanitizerOptions: 
-MemoryCheckCommand: MEMORYCHECK_COMMAND-NOTFOUND
+MemoryCheckCommand: /usr/bin/valgrind
 MemoryCheckCommandOptions: 
 MemoryCheckSuppressionFile: 
 
@@ -94,6 +94,9 @@ TimeOut: 1500
 # During parallel testing CTest will not start a new test if doing
 # so would cause the system load to exceed this value.
 TestLoad: 
+
+TLSVerify: 
+TLSVersion: 
 
 UseLaunchers: 
 CurlOptions: 

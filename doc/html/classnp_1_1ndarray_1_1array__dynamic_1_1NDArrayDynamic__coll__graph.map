@@ -1,0 +1,9 @@
+<map id="np::ndarray::array_dynamic::NDArrayDynamic&lt; DType &gt;" name="np::ndarray::array_dynamic::NDArrayDynamic&lt; DType &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="94,872,293,1167"/>
+<area shape="rect" id="Node000002" href="$classnp_1_1ndarray_1_1internal_1_1NDArrayShaped.html" title=" " alt="" coords="114,543,273,823"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,836,196,872,191,872,191,836"/>
+<area shape="rect" id="Node000003" href="$classnp_1_1ndarray_1_1internal_1_1NDArrayBase.html" title=" " alt="" coords="5,5,200,480"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="157,493,167,542,162,543,152,494"/>
+<area shape="rect" id="Node000004" href="$classnp_1_1Shape.html" title="Shape of an array." alt="" coords="224,110,347,375"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="260,376,228,527,223,526,255,375"/>
+</map>

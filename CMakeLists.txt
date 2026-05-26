@@ -37,7 +37,7 @@ include(${cmake_SOURCE_DIR}/Target.cmake)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-set(MAKE_DOC OFF)
+option(MAKE_DOC "Build Doxygen documentation" ON)
 
 # Make unit tests and sample if it's the main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

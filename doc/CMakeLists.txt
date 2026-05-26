@@ -25,9 +25,7 @@ if (DOXYGEN_FOUND)
         set(CMAKE_INSTALL_DATAROOTDIR "share" CACHE PATH "read-only architecture-independent data root (share)")
     endif()
 
-    doxygen_add_docs(doc ${CMAKE_CURRENT_SOURCE_DIR}/../README.md 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../CONTRIBUTING.md
-        ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING.md
+    doxygen_add_docs(doc ${CMAKE_CURRENT_SOURCE_DIR}/../README.md
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
         ${CMAKE_CURRENT_SOURCE_DIR}/../samples
         WORKING_DIRECTORY ${PROJECT_DIR}

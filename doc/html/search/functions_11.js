@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['where_0',['where',['../namespacenp.html#a2dd971e196a9db8b37a6a4281c5ff33a',1,'np']]]
+];

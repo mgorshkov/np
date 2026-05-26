@@ -1,0 +1,7 @@
+<map id="np::ndarray::internal::NDArrayShaped&lt; DType, Derived, Storage &gt;" name="np::ndarray::internal::NDArrayShaped&lt; DType, Derived, Storage &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="101,543,285,837"/>
+<area shape="rect" id="Node000002" href="$classnp_1_1ndarray_1_1internal_1_1NDArrayBase.html" title=" " alt="" coords="5,5,200,480"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,493,166,542,161,543,151,494"/>
+<area shape="rect" id="Node000003" href="$classnp_1_1Shape.html" title="Shape of an array." alt="" coords="224,110,347,375"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,376,229,527,224,526,255,375"/>
+</map>
