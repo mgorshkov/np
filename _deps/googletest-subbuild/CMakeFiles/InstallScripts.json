@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/mike/git/np/_deps/googletest-subbuild/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
