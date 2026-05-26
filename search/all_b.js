@@ -1,5 +1,11 @@
 var searchData=
 [
-  ['ones_0',['ones',['../namespacenp.html#abdb9a9bc5a12c36c695cff8b07472f52',1,'np::ones(Shape shape)'],['../namespacenp.html#a543fdf8424f4072d7b5362eb932d3adc',1,'np::ones()']]],
-  ['string_1',['string',['../classnp_1_1_shape.html#a2b42d5f53b50504fc744140d762bc201',1,'np::Shape']]]
+  ['macos_0',['macos',['../index.html#autotoc_md9',1,'Linux/MacOS'],['../index.html#autotoc_md16',1,'Linux/MacOS']]],
+  ['maximpl_1',['maxImpl',['../namespacenp.html#a1e979661455f18be30aafdbca1a12465',1,'np']]],
+  ['meanimpl_2',['meanImpl',['../namespacenp.html#acf5b142e60cd9501caf57a2436929c66',1,'np']]],
+  ['medianimpl_3',['medianImpl',['../namespacenp.html#a8985acf73efd00686279c6a58a8a49e6',1,'np']]],
+  ['minimpl_4',['minImpl',['../namespacenp.html#a6ddb98b6ea3961e2d148788e577bf7c4',1,'np']]],
+  ['monte_20carlo_5',['Usage example (samples/monte-carlo)',['../index.html#autotoc_md7',1,'']]],
+  ['monte_20carlo_20π_20estimation_20avx2_20cpu_6',['Python vs C++ Monte Carlo π Estimation (AVX2 CPU)',['../index.html#autotoc_md11',1,'']]],
+  ['multiplyop_7',['MultiplyOp',['../structnp_1_1ndarray_1_1internal_1_1MultiplyOp.html',1,'np::ndarray::internal']]]
 ];

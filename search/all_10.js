@@ -1,5 +1,25 @@
 var searchData=
 [
-  ['vsplit_0',['vsplit',['../namespacenp.html#a32e54066ef6778d37f46791eebb41aeb',1,'np']]],
-  ['vstack_1',['vstack',['../namespacenp.html#aaa4c7066d029f9726520111e88ae787c',1,'np']]]
+  ['sample_0',['sample',['../index.html#autotoc_md8',1,'How to build the sample'],['../index.html#autotoc_md15',1,'How to build the sample']]],
+  ['samples_20least_20squares_1',['Usage example (samples/least-squares)',['../index.html#autotoc_md14',1,'']]],
+  ['samples_20monte_20carlo_2',['Usage example (samples/monte-carlo)',['../index.html#autotoc_md7',1,'']]],
+  ['save_3',['save',['../namespacenp.html#afdc7f8624d59b8d5489b8be424427008',1,'np']]],
+  ['savetxt_4',['savetxt',['../namespacenp.html#a7190a0ce8953b3798e93b46fa8e98ab8',1,'np']]],
+  ['savez_5',['savez',['../namespacenp.html#ae3cd851193a9c709bcf384af8561063b',1,'np']]],
+  ['scalarwrapper_6',['ScalarWrapper',['../structnp_1_1ndarray_1_1internal_1_1ScalarWrapper.html',1,'np::ndarray::internal']]],
+  ['shape_7',['shape',['../classnp_1_1Shape.html',1,'np::Shape'],['../classnp_1_1Shape.html#a6677220ba59d536154055c4f223aba35',1,'np::Shape::Shape(std::initializer_list&lt; Size &gt; initList)'],['../classnp_1_1Shape.html#a2e61259685f0d8ca0dfed4dfe6cdd411',1,'np::Shape::Shape(const std::string &amp;shapeTupleStr)'],['../classnp_1_1Shape.html#a3d59830fe38a947017102d2bd057a154',1,'np::Shape::Shape(Storage &amp;&amp;storage)'],['../classnp_1_1Shape.html#ad9f9188d821d58662ad08f4bdc06283c',1,'np::Shape::Shape(const Storage &amp;storage)']]],
+  ['simd_20dispatch_20function_20pointers_8',['SIMD Dispatch Function Pointers',['../group__simd__dispatch.html',1,'']]],
+  ['simd_20optimized_9',['GELSD-based Least Squares (SIMD-optimized)',['../group__gelsd__lstsq.html',1,'']]],
+  ['sin_10',['sin',['../namespacenp.html#a8c93fe892efed47d094c4f89cdf6d87f',1,'np']]],
+  ['size_11',['size',['../index.html#autotoc_md19',1,'Results by problem size'],['../index.html#autotoc_md12',1,'Results by size']]],
+  ['sqrt_12',['sqrt',['../namespacenp.html#a155ce377dabc7242ccb2aac353acaa1b',1,'np']]],
+  ['squarebracketsinserter_13',['squarebracketsinserter',['../classnp_1_1ndarray_1_1internal_1_1SquareBracketsInserter.html',1,'np::ndarray::internal::SquareBracketsInserter&lt; Stream &gt;'],['../classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1SquareBracketsInserter.html',1,'np::ndarray::array_dynamic::internal::SquareBracketsInserter&lt; Stream &gt;'],['../classnp_1_1ndarray_1_1array__diagonal_1_1internal_1_1SquareBracketsInserter.html',1,'np::ndarray::array_diagonal::internal::SquareBracketsInserter&lt; Stream &gt;'],['../classnp_1_1ndarray_1_1array__constant_1_1internal_1_1SquareBracketsInserter.html',1,'np::ndarray::array_constant::internal::SquareBracketsInserter&lt; Stream &gt;']]],
+  ['squares_14',['Usage example (samples/least-squares)',['../index.html#autotoc_md14',1,'']]],
+  ['squares_20simd_20optimized_15',['GELSD-based Least Squares (SIMD-optimized)',['../group__gelsd__lstsq.html',1,'']]],
+  ['stack_16',['stack',['../namespacenp.html#af9f258033ac2b295c315e19334a7e100',1,'np']]],
+  ['stdimpl_17',['stdImpl',['../namespacenp.html#a971a9f81f98452ab497272ca9fea63ec',1,'np']]],
+  ['subtractop_18',['SubtractOp',['../structnp_1_1ndarray_1_1internal_1_1SubtractOp.html',1,'np::ndarray::internal']]],
+  ['sum_19',['sum',['../namespacenp.html#aef2c40f6267dd6e931c5ff90c01e0cee',1,'np::sum(const std::string &amp;cond, const ndarray::internal::ExpressionBase&lt; Derived, DType &gt; &amp;expr)'],['../namespacenp.html#af31a025d4f0387062bfc0a3a69fabf51',1,'np::sum(const ndarray::internal::NDArrayBase&lt; DType, Derived, Storage &gt; &amp;array)']]],
+  ['sumimpl_20',['sumImpl',['../namespacenp.html#aefa059e9fe007b31b08c9e22e71c4b2d',1,'np']]],
+  ['summary_20table_21',['summary table',['../index.html#autotoc_md13',1,'Summary table'],['../index.html#autotoc_md20',1,'Summary table']]]
 ];

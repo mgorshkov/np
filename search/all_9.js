@@ -1,8 +1,14 @@
 var searchData=
 [
-  ['maximpl_0',['maxImpl',['../namespacenp.html#a1e979661455f18be30aafdbca1a12465',1,'np']]],
-  ['meanimpl_1',['meanImpl',['../namespacenp.html#acf5b142e60cd9501caf57a2436929c66',1,'np']]],
-  ['medianimpl_2',['medianImpl',['../namespacenp.html#a8985acf73efd00686279c6a58a8a49e6',1,'np']]],
-  ['minimpl_3',['minImpl',['../namespacenp.html#a6ddb98b6ea3961e2d148788e577bf7c4',1,'np']]],
-  ['multiply_4',['multiply',['../namespacenp.html#ada0d9445e6682fbfd63d3785b2519fe3',1,'np']]]
+  ['indexinghandler_0',['IndexingHandler',['../structnp_1_1ndarray_1_1internal_1_1IndexingHandler.html',1,'np::ndarray::internal']]],
+  ['insert_1',['insert',['../namespacenp.html#a7383a7ea5ec9f9d822bd873b955bfb8f',1,'np']]],
+  ['install_2',['Install',['../index.html#autotoc_md6',1,'']]],
+  ['interp_3',['interp',['../namespacenp.html#aa5f4e17e36a935ea63327bd006e2e090',1,'np']]],
+  ['is_5farithmetic_5fbinary_5fexpr_4',['is_arithmetic_binary_expr',['../structnp_1_1ndarray_1_1internal_1_1is__arithmetic__binary__expr.html',1,'np::ndarray::internal']]],
+  ['is_5farithmetic_5fbinary_5fexpr_3c_20binaryexpression_3c_20op_2c_20left_2c_20right_20_3e_20_3e_5',['is_arithmetic_binary_expr&lt; BinaryExpression&lt; Op, Left, Right &gt; &gt;',['../structnp_1_1ndarray_1_1internal_1_1is__arithmetic__binary__expr_3_01BinaryExpression_3_01Op_00_01Left_00_01Right_01_4_01_4.html',1,'np::ndarray::internal']]],
+  ['is_5farray_5fexpression_6',['is_array_expression',['../structnp_1_1ndarray_1_1internal_1_1is__array__expression.html',1,'np::ndarray::internal']]],
+  ['is_5farray_5fexpression_3c_20arrayexpression_3c_20t_2c_20derived_2c_20storage_20_3e_20_3e_7',['is_array_expression&lt; ArrayExpression&lt; T, Derived, Storage &gt; &gt;',['../structnp_1_1ndarray_1_1internal_1_1is__array__expression_3_01ArrayExpression_3_01T_00_01Derived_00_01Storage_01_4_01_4.html',1,'np::ndarray::internal']]],
+  ['is_5fbinary_5fop_8',['is_binary_op',['../structnp_1_1ndarray_1_1internal_1_1is__binary__op.html',1,'np::ndarray::internal']]],
+  ['is_5fbinary_5fop_3c_20binaryexpression_3c_20op1_2c_20left_2c_20right_20_3e_2c_20op2_20_3e_9',['is_binary_op&lt; BinaryExpression&lt; Op1, Left, Right &gt;, Op2 &gt;',['../structnp_1_1ndarray_1_1internal_1_1is__binary__op_3_01BinaryExpression_3_01Op1_00_01Left_00_01Right_01_4_00_01Op2_01_4.html',1,'np::ndarray::internal']]],
+  ['iterator_10',['iterator',['../classnp_1_1ndarray_1_1array__constant_1_1internal_1_1NDArrayConstantStorage_1_1iterator.html',1,'np::ndarray::array_constant::internal::NDArrayConstantStorage&lt; DType &gt;::iterator'],['../classnp_1_1ndarray_1_1array__diagonal_1_1internal_1_1NDArrayDiagonalStorage_1_1iterator.html',1,'np::ndarray::array_diagonal::internal::NDArrayDiagonalStorage&lt; DType, Derived, Storage, Dims &gt;::iterator'],['../classnp_1_1ndarray_1_1array__diagonal_1_1internal_1_1NDArrayIdentityStorage_1_1iterator.html',1,'np::ndarray::array_diagonal::internal::NDArrayIdentityStorage&lt; DType &gt;::iterator'],['../classnp_1_1ndarray_1_1array__dynamic_1_1internal_1_1NDArrayDynamicStorage_1_1iterator.html',1,'np::ndarray::array_dynamic::internal::NDArrayDynamicStorage&lt; DType &gt;::iterator'],['../classnp_1_1ndarray_1_1array__static_1_1internal_1_1NDArrayStaticStorage_1_1iterator.html',1,'np::ndarray::array_static::internal::NDArrayStaticStorage&lt; DType, SizeT &gt;::iterator'],['../classnp_1_1ndarray_1_1internal_1_1NDArrayIndexStorage_1_1iterator.html',1,'np::ndarray::internal::NDArrayIndexStorage&lt; DType, Storage, Parent &gt;::iterator']]]
 ];

@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['flatten_0',['flatten',['../classnp_1_1_shape.html#a93d055e720907cab5ed0aa60f2e7de7b',1,'np::Shape']]],
-  ['full_1',['full',['../namespacenp.html#a9ab18ea3366839cc5316c5f734a67b03',1,'np::full(DType fillValue, const Shape &amp;shape)'],['../namespacenp.html#a2c2626f804e583ccf2bd4aef70174668',1,'np::full(DType fillValue)']]]
+  ['empty_0',['empty',['../namespacenp.html#a7cdabca76c50f555354b2d2ad79f6260',1,'np']]],
+  ['exp_1',['exp',['../namespacenp.html#a169a422e2156643b8b558ea13fdaa6db',1,'np']]],
+  ['expand_5fdims_2',['expand_dims',['../namespacenp.html#acc7a0ee88924aabb189fb4c042d0dfa2',1,'np']]],
+  ['eye_3',['eye',['../namespacenp.html#a14d8d019ac30c7679d17c88f630f635e',1,'np']]]
 ];

@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['ones_0',['ones',['../namespacenp.html#abdb9a9bc5a12c36c695cff8b07472f52',1,'np::ones(Shape shape)'],['../namespacenp.html#a543fdf8424f4072d7b5362eb932d3adc',1,'np::ones()']]],
-  ['string_1',['string',['../classnp_1_1_shape.html#a2b42d5f53b50504fc744140d762bc201',1,'np::Shape']]]
+  ['maximpl_0',['maxImpl',['../namespacenp.html#a1e979661455f18be30aafdbca1a12465',1,'np']]],
+  ['meanimpl_1',['meanImpl',['../namespacenp.html#acf5b142e60cd9501caf57a2436929c66',1,'np']]],
+  ['medianimpl_2',['medianImpl',['../namespacenp.html#a8985acf73efd00686279c6a58a8a49e6',1,'np']]],
+  ['minimpl_3',['minImpl',['../namespacenp.html#a6ddb98b6ea3961e2d148788e577bf7c4',1,'np']]]
 ];

@@ -1,0 +1,7 @@
+<map id="np::ndarray::array_static::NDArrayStatic&lt; DType, SizeT &gt;" name="np::ndarray::array_static::NDArrayStatic&lt; DType, SizeT &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="24,856,181,1151"/>
+<area shape="rect" id="Node000002" href="$classnp_1_1ndarray_1_1internal_1_1NDArrayShaped.html" title=" " alt="" coords="28,528,177,808"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,822,105,856,100,856,100,822"/>
+<area shape="rect" id="Node000003" href="$classnp_1_1ndarray_1_1internal_1_1NDArrayBase.html" title=" " alt="" coords="5,5,200,480"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="105,494,105,528,100,528,100,494"/>
+</map>

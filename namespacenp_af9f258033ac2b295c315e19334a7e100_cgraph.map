@@ -1,0 +1,5 @@
+<map id="np::stack" name="np::stack">
+<area shape="rect" id="Node000001" title="Join a sequence of arrays along a new axis." alt="" coords="5,5,87,31"/>
+<area shape="rect" id="Node000002" href="$namespacenp.html#abee8ed522bd3d81ca53d11726916ea64" title="Stack 1D arrays as columns into a 2D array." alt="" coords="135,5,239,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,15,121,15,121,21,87,21"/>
+</map>

@@ -25,27 +25,34 @@
 var NAVTREE =
 [
   [ "np", "index.html", [
-    [ "About", "index.html", [
-      [ "Description", "index.html#autotoc_md1", [
-        [ "Static array", "index.html#autotoc_md2", null ],
-        [ "Dynamic array", "index.html#autotoc_md3", null ]
-      ] ],
-      [ "Latest artifact", "index.html#autotoc_md4", null ],
-      [ "Requirements", "index.html#autotoc_md5", null ],
-      [ "Repo", "index.html#autotoc_md6", null ],
-      [ "Build unit tests and sample", "index.html#autotoc_md7", [
-        [ "Linux/MacOS", "index.html#autotoc_md8", null ],
-        [ "Windows", "index.html#autotoc_md9", null ]
-      ] ],
-      [ "Build docs", "index.html#autotoc_md10", null ],
-      [ "Install", "index.html#autotoc_md11", null ],
-      [ "Usage example (samples/monte-carlo)", "index.html#autotoc_md12", null ],
-      [ "How to build the sample", "index.html#autotoc_md13", [
-        [ "Linux/MacOS", "index.html#autotoc_md14", null ],
-        [ "Windows", "index.html#autotoc_md15", null ]
-      ] ],
-      [ "Links", "index.html#autotoc_md16", null ]
+    [ "About", "index.html#autotoc_md0", null ],
+    [ "Description", "index.html#autotoc_md1", null ],
+    [ "Requirements", "index.html#autotoc_md2", null ],
+    [ "Repo", "index.html#autotoc_md3", null ],
+    [ "Build library and unit tests", "index.html#autotoc_md4", null ],
+    [ "Build docs", "index.html#autotoc_md5", null ],
+    [ "Install", "index.html#autotoc_md6", null ],
+    [ "Usage example (samples/monte-carlo)", "index.html#autotoc_md7", null ],
+    [ "How to build the sample", "index.html#autotoc_md8", [
+      [ "Linux/MacOS", "index.html#autotoc_md9", null ],
+      [ "Windows", "index.html#autotoc_md10", null ]
     ] ],
+    [ "Python vs C++ Monte Carlo π Estimation (AVX2 CPU)", "index.html#autotoc_md11", [
+      [ "Results by size", "index.html#autotoc_md12", null ],
+      [ "Summary table", "index.html#autotoc_md13", null ]
+    ] ],
+    [ "Usage example (samples/least-squares)", "index.html#autotoc_md14", null ],
+    [ "How to build the sample", "index.html#autotoc_md15", [
+      [ "Linux/MacOS", "index.html#autotoc_md16", null ],
+      [ "Windows", "index.html#autotoc_md17", null ]
+    ] ],
+    [ "Python vs C++ Least‑Squares (lstsq) Comparison", "index.html#autotoc_md18", [
+      [ "Results by problem size", "index.html#autotoc_md19", null ],
+      [ "Summary table", "index.html#autotoc_md20", null ]
+    ] ],
+    [ "Links", "index.html#autotoc_md21", null ],
+    [ "Plans", "index.html#autotoc_md22", null ],
+    [ "Topics", "topics.html", "topics" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -53,6 +60,7 @@ var NAVTREE =
         [ "Functions", "namespacemembers_func.html", null ]
       ] ]
     ] ],
+    [ "Concepts", "concepts.html", "concepts" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -70,7 +78,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_agg_8hpp_source.html"
+"Add_8hpp_source.html",
+"namespacenp.html#a76394190922945786f64dc43be353047"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

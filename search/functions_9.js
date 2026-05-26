@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['maximpl_0',['maxImpl',['../namespacenp.html#a1e979661455f18be30aafdbca1a12465',1,'np']]],
-  ['meanimpl_1',['meanImpl',['../namespacenp.html#acf5b142e60cd9501caf57a2436929c66',1,'np']]],
-  ['medianimpl_2',['medianImpl',['../namespacenp.html#a8985acf73efd00686279c6a58a8a49e6',1,'np']]],
-  ['minimpl_3',['minImpl',['../namespacenp.html#a6ddb98b6ea3961e2d148788e577bf7c4',1,'np']]],
-  ['multiply_4',['multiply',['../namespacenp.html#ada0d9445e6682fbfd63d3785b2519fe3',1,'np']]]
+  ['len_0',['len',['../namespacenp.html#a81e60cf8fd893417ad84abb9709b2b81',1,'np']]],
+  ['linspace_1',['linspace',['../namespacenp.html#afe84cd603b0fff194c3770f5c166b8bd',1,'np::linspace(DType start, DType stop, Size num=50)'],['../namespacenp.html#a2dfcd923d40dbe8f476133969177e304',1,'np::linspace(DType start, DType stop)']]],
+  ['load_2',['load',['../namespacenp.html#a878ee12c3a6683b88243d39fd825f8c3',1,'np']]],
+  ['loadtxt_3',['loadtxt',['../namespacenp.html#a122f0bd6e15da891ee674a938be4d0e5',1,'np']]],
+  ['log_4',['log',['../namespacenp.html#a073ddbaec13986ae9d7130216b798186',1,'np']]]
 ];
