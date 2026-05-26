@@ -44,6 +44,29 @@ namespace np {
                 // and enable better compiler optimization for tiny matrices
                 if (n <= 4) {
                     switch (n) {
+                        case 4: {
+                            // L[0][0] = sqrt(A[0][0])
+                            L[0] = std::sqrt(A[0]);
+                            // L[1][0] = A[1][0] / L[0][0]
+                            L[4] = A[4] / L[0];
+                            // L[1][1] = sqrt(A[1][1] - L[1][0]^2)
+                            L[5] = std::sqrt(A[5] - L[4] * L[4]);
+                            // L[2][0] = A[2][0] / L[0][0]
+                            L[8] = A[8] / L[0];
+                            // L[2][1] = (A[2][1] - L[2][0]*L[1][0]) / L[1][1]
+                            L[9] = (A[9] - L[8] * L[4]) / L[5];
+                            // L[2][2] = sqrt(A[2][2] - L[2][0]^2 - L[2][1]^2)
+                            L[10] = std::sqrt(A[10] - L[8] * L[8] - L[9] * L[9]);
+                            // L[3][0] = A[3][0] / L[0][0]
+                            L[12] = A[12] / L[0];
+                            // L[3][1] = (A[3][1] - L[3][0]*L[1][0]) / L[1][1]
+                            L[13] = (A[13] - L[12] * L[4]) / L[5];
+                            // L[3][2] = (A[3][2] - L[3][0]*L[2][0] - L[3][1]*L[2][1]) / L[2][2]
+                            L[14] = (A[14] - L[12] * L[8] - L[13] * L[9]) / L[10];
+                            // L[3][3] = sqrt(A[3][3] - L[3][0]^2 - L[3][1]^2 - L[3][2]^2)
+                            L[15] = std::sqrt(A[15] - L[12] * L[12] - L[13] * L[13] - L[14] * L[14]);
+                            break;
+                        }
                         case 3: {
                             // L[0][0] = sqrt(A[0][0])
                             L[0] = std::sqrt(A[0]);
@@ -112,9 +135,31 @@ namespace np {
                 // Fast path for n <= 4: manually unrolled to avoid loop overhead
                 if (n <= 4) {
                     switch (n) {
+                        case 4: {
+                            // Forward substitution: L * y = b
+                            // L is lower triangular, stored row-major in the flat array
+                            // L[0]=L00, L[4]=L10, L[8]=L20, L[12]=L30
+                            // L[5]=L11, L[9]=L21, L[13]=L31
+                            // L[10]=L22, L[14]=L32
+                            // L[15]=L33
+                            y[0] = b[0] / L[0];
+                            y[1] = (b[1] - L[4] * y[0]) / L[5];
+                            y[2] = (b[2] - L[8] * y[0] - L[9] * y[1]) / L[10];
+                            y[3] = (b[3] - L[12] * y[0] - L[13] * y[1] - L[14] * y[2]) / L[15];
+                            // Backward substitution: L^T * x = y
+                            // L^T is upper triangular: L[0]=L00, L[4]=L01, L[8]=L02, L[12]=L03
+                            // L[5]=L11, L[9]=L12, L[13]=L13
+                            // L[10]=L22, L[14]=L23
+                            // L[15]=L33
+                            x[3] = y[3] / L[15];
+                            x[2] = (y[2] - L[14] * x[3]) / L[10];
+                            x[1] = (y[1] - L[9] * x[2] - L[13] * x[3]) / L[5];
+                            x[0] = (y[0] - L[4] * x[1] - L[8] * x[2] - L[12] * x[3]) / L[0];
+                            break;
+                        }
                         case 3: {
                             // Forward substitution: L * y = b
-                            // L is lower triangular, stored column-major in the flat array
+                            // L is lower triangular, stored row-major in the flat array
                             // L[0]=L00, L[3]=L10, L[6]=L20, L[4]=L11, L[7]=L21, L[8]=L22
                             y[0] = b[0] / L[0];
                             y[1] = (b[1] - L[3] * y[0]) / L[4];
@@ -199,15 +244,20 @@ namespace np {
                                 b[1] += r1 * yi;
                                 b[2] += r2 * yi;
                                 b[3] += r3 * yi;
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += r0 * r0;
-                                A[1] += r1 * r0;
+                                // j=1,k=0: A[4], j=1,k=1: A[5]
+                                A[4] += r1 * r0;
                                 A[5] += r1 * r1;
-                                A[2] += r2 * r0;
-                                A[6] += r2 * r1;
+                                // j=2,k=0: A[8], j=2,k=1: A[9], j=2,k=2: A[10]
+                                A[8] += r2 * r0;
+                                A[9] += r2 * r1;
                                 A[10] += r2 * r2;
-                                A[3] += r3 * r0;
-                                A[7] += r3 * r1;
-                                A[11] += r3 * r2;
+                                // j=3,k=0: A[12], j=3,k=1: A[13], j=3,k=2: A[14], j=3,k=3: A[15]
+                                A[12] += r3 * r0;
+                                A[13] += r3 * r1;
+                                A[14] += r3 * r2;
                                 A[15] += r3 * r3;
                                 break;
                             }
@@ -216,11 +266,15 @@ namespace np {
                                 b[0] += r0 * yi;
                                 b[1] += r1 * yi;
                                 b[2] += r2 * yi;
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += r0 * r0;
-                                A[1] += r1 * r0;
+                                // j=1,k=0: A[3], j=1,k=1: A[4]
+                                A[3] += r1 * r0;
                                 A[4] += r1 * r1;
-                                A[2] += r2 * r0;
-                                A[5] += r2 * r1;
+                                // j=2,k=0: A[6], j=2,k=1: A[7], j=2,k=2: A[8]
+                                A[6] += r2 * r0;
+                                A[7] += r2 * r1;
                                 A[8] += r2 * r2;
                                 break;
                             }
@@ -228,8 +282,11 @@ namespace np {
                                 DType r0 = row[0], r1 = row[1];
                                 b[0] += r0 * yi;
                                 b[1] += r1 * yi;
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += r0 * r0;
-                                A[1] += r1 * r0;
+                                // j=1,k=0: A[2], j=1,k=1: A[3]
+                                A[2] += r1 * r0;
                                 A[3] += r1 * r1;
                                 break;
                             }
@@ -327,15 +384,20 @@ namespace np {
                                 b[1] += w_row_1 * y[i];
                                 b[2] += w_row_2 * y[i];
                                 b[3] += w_row_3 * y[i];
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += w_row_0 * row[0];
-                                A[1] += w_row_1 * row[0];
+                                // j=1,k=0: A[4], j=1,k=1: A[5]
+                                A[4] += w_row_1 * row[0];
                                 A[5] += w_row_1 * row[1];
-                                A[2] += w_row_2 * row[0];
-                                A[6] += w_row_2 * row[1];
+                                // j=2,k=0: A[8], j=2,k=1: A[9], j=2,k=2: A[10]
+                                A[8] += w_row_2 * row[0];
+                                A[9] += w_row_2 * row[1];
                                 A[10] += w_row_2 * row[2];
-                                A[3] += w_row_3 * row[0];
-                                A[7] += w_row_3 * row[1];
-                                A[11] += w_row_3 * row[2];
+                                // j=3,k=0: A[12], j=3,k=1: A[13], j=3,k=2: A[14], j=3,k=3: A[15]
+                                A[12] += w_row_3 * row[0];
+                                A[13] += w_row_3 * row[1];
+                                A[14] += w_row_3 * row[2];
                                 A[15] += w_row_3 * row[3];
                                 break;
                             }
@@ -346,11 +408,15 @@ namespace np {
                                 b[0] += w_row_0 * y[i];
                                 b[1] += w_row_1 * y[i];
                                 b[2] += w_row_2 * y[i];
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += w_row_0 * row[0];
-                                A[1] += w_row_1 * row[0];
+                                // j=1,k=0: A[3], j=1,k=1: A[4]
+                                A[3] += w_row_1 * row[0];
                                 A[4] += w_row_1 * row[1];
-                                A[2] += w_row_2 * row[0];
-                                A[5] += w_row_2 * row[1];
+                                // j=2,k=0: A[6], j=2,k=1: A[7], j=2,k=2: A[8]
+                                A[6] += w_row_2 * row[0];
+                                A[7] += w_row_2 * row[1];
                                 A[8] += w_row_2 * row[2];
                                 break;
                             }
@@ -359,8 +425,11 @@ namespace np {
                                 DType w_row_1 = weight * row[1];
                                 b[0] += w_row_0 * y[i];
                                 b[1] += w_row_1 * y[i];
+                                // Lower triangular indices: A[j*n + k] for j >= k
+                                // j=0,k=0: A[0]
                                 A[0] += w_row_0 * row[0];
-                                A[1] += w_row_1 * row[0];
+                                // j=1,k=0: A[2], j=1,k=1: A[3]
+                                A[2] += w_row_1 * row[0];
                                 A[3] += w_row_1 * row[1];
                                 break;
                             }
