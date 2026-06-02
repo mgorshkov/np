@@ -37,6 +37,9 @@ SOFTWARE.
 #include <np/Exception.hpp>
 #include <np/Shape.hpp>
 #include <np/internal/SimdOps.hpp>
+#ifdef USE_CUDA
+#include <np/internal/cuda/Dot1d2d.hpp>
+#endif
 #include <np/ndarray/internal/Agg.hpp>
 #include <np/ndarray/internal/Indexing.hpp>
 #include <np/ndarray/internal/NDArrayBase.hpp>
@@ -534,19 +537,39 @@ namespace np {
                     }
                     Shape resultShape{shape2[1]};
                     ndarray::array_dynamic::NDArrayDynamic<DType> result{resultShape};
-                    for (std::int32_t i = 0; i < static_cast<std::int32_t>(shape2[1]); ++i) {
-                        // index variable in OpenMP 'for' statement must have signed integral type
-                        DType cellResult{0};
-#ifdef USE_OPENMP
-#pragma omp parallel for default(none) shared(array, i, shape1, shape2) reduction(+ : cellResult)
-#endif
-                        for (std::int32_t k = 0; k < static_cast<std::int32_t>(shape1[0]); ++k) {
-                            DType multiplyResult{};
-                            ndarray::internal::multiply(get(k), array.get(k * shape2[1] + i),
-                                                        multiplyResult);
-                            cellResult += multiplyResult;
+                    auto nrows = static_cast<std::size_t>(shape1[0]);
+                    auto ncols = static_cast<std::size_t>(shape2[1]);
+                    if constexpr (Storage::is_contiguous && Storage2::is_contiguous && std::is_same_v<DType, float>) {
+                        // Fast path: direct pointer access avoids virtual get() dispatch
+                        // and uses SIMD-accelerated dot_1d_2d_ps or CUDA dot1d2d for the inner loop.
+                        const auto *src = data();
+                        const auto *mat = array.data();
+                        auto *result_data = result.data();
+#ifdef USE_CUDA
+                        // Use CUDA for large enough matrices (matching the threshold in Expression.hpp)
+                        if (nrows * ncols > 256) {
+                            np::internal::cuda::dot1d2d(src, mat, nrows, ncols, result_data);
+                        } else {
+                            np::internal::dot_1d_2d_ps(src, mat, nrows, ncols, result_data);
                         }
-                        result.set(i, cellResult);
+#else
+                        np::internal::dot_1d_2d_ps(src, mat, nrows, ncols, result_data);
+#endif
+                    } else {
+                        for (std::int32_t i = 0; i < static_cast<std::int32_t>(ncols); ++i) {
+                            // index variable in OpenMP 'for' statement must have signed integral type
+                            DType cellResult{0};
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(array, i, nrows, ncols) reduction(+ : cellResult)
+#endif
+                            for (std::int32_t k = 0; k < static_cast<std::int32_t>(nrows); ++k) {
+                                DType multiplyResult{};
+                                ndarray::internal::multiply(get(k), array.get(k * ncols + i),
+                                                            multiplyResult);
+                                cellResult += multiplyResult;
+                            }
+                            result.set(i, cellResult);
+                        }
                     }
                     return result;
                 }

@@ -1,3 +1,7 @@
+# Release 0.1.7
+## Changes
+* Fused matrix multiplication
+
 # Release 0.1.6
 ## Changes
 * Cholesky solver fixed
