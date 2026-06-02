@@ -117,6 +117,23 @@ namespace np {
         using sum_sq_weighted_ps_fn = float (*)(const float *a, const float *w, std::size_t n);
         extern sum_sq_weighted_ps_fn sum_sq_weighted_ps;
 
+        // ---- Matrix-vector dot product (1D · 2D) ----
+
+        /// Compute y = x * W^T where x is a 1D vector of size rows and W is a
+        /// row-major matrix of shape (rows, cols). Result is a 1D vector of size cols.
+        /// y[j] = sum_i x[i] * W[i * cols + j]
+        ///
+        /// This is the core operation for quantized neural network inference:
+        /// dequantized weight matrix (rows x cols) · input vector (rows,).
+        ///
+        /// @param x      Input vector of size rows
+        /// @param W      Row-major matrix of size rows * cols
+        /// @param rows   Number of rows in W
+        /// @param cols   Number of columns in W
+        /// @param result Output vector of size cols
+        using dot_1d_2d_ps_fn = void (*)(const float *x, const float *W, std::size_t rows, std::size_t cols, float *result);
+        extern dot_1d_2d_ps_fn dot_1d_2d_ps;
+
         // ---- Conditional selection (where) ----
 
         /// Tukey bisquare weight update for double arrays.

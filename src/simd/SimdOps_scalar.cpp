@@ -27,6 +27,7 @@ SOFTWARE.
 /// portable fallback when no SIMD is available.
 
 #include <cstddef>
+#include <cstdint>
 #include <cmath>
 
 namespace np {
@@ -171,6 +172,23 @@ namespace np {
                 } else {
                     result[i] = y0 + (element - x0) * (y1 - y0) * inv_dx;
                 }
+            }
+        }
+
+        // ---- Matrix-vector dot product (1D · 2D) ----
+
+        /// Scalar implementation of y = x * W^T where W is (rows x cols).
+        /// y[j] = sum_i x[i] * W[i * cols + j]
+        void dot_1d_2d_ps_scalar(const float *x, const float *W, std::size_t rows, std::size_t cols, float *result) {
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(x, W, rows, cols, result)
+#endif
+            for (std::int32_t j = 0; j < static_cast<std::int32_t>(cols); ++j) {
+                float sum = 0.0f;
+                for (std::size_t i = 0; i < rows; ++i) {
+                    sum += x[i] * W[i * cols + j];
+                }
+                result[j] = sum;
             }
         }
 

@@ -53,6 +53,7 @@ namespace np {
         float sum_sq_weighted_ps_scalar(const float *, const float *, std::size_t);
         void interp_pd_scalar(const double *, double, double, double, double, double, double *, std::size_t);
         void interp_ps_scalar(const float *, float, float, float, float, float, float *, std::size_t);
+        void dot_1d_2d_ps_scalar(const float *, const float *, std::size_t, std::size_t, float *);
 
         // AVX2 implementations (compiled with -mavx2)
         void add_pd_avx2(const double *, const double *, double *, std::size_t);
@@ -75,6 +76,7 @@ namespace np {
         float sum_sq_weighted_ps_avx2(const float *, const float *, std::size_t);
         void interp_pd_avx2(const double *, double, double, double, double, double, double *, std::size_t);
         void interp_ps_avx2(const float *, float, float, float, float, float, float *, std::size_t);
+        void dot_1d_2d_ps_avx2(const float *, const float *, std::size_t, std::size_t, float *);
 
         // AVX-512 implementations (compiled with -mavx512f)
         void add_pd_avx512(const double *, const double *, double *, std::size_t);
@@ -97,6 +99,7 @@ namespace np {
         float sum_sq_weighted_ps_avx512(const float *, const float *, std::size_t);
         void interp_pd_avx512(const double *, double, double, double, double, double, double *, std::size_t);
         void interp_ps_avx512(const float *, float, float, float, float, float, float *, std::size_t);
+        void dot_1d_2d_ps_avx512(const float *, const float *, std::size_t, std::size_t, float *);
 
         // AMX implementations (compiled with -mamx-tile)
         void amx_process_pd_impl(const double *, const double *, double *, std::size_t,
@@ -105,6 +108,7 @@ namespace np {
                                  void (*)(const float *, const float *, float *, std::size_t));
         void interp_pd_amx(const double *, double, double, double, double, double, double *, std::size_t);
         void interp_ps_amx(const float *, float, float, float, float, float, float *, std::size_t);
+        void dot_1d_2d_ps_amx(const float *, const float *, std::size_t, std::size_t, float *);
 
         // ---- Function pointer definitions ----
 
@@ -128,6 +132,7 @@ namespace np {
         sum_sq_weighted_ps_fn sum_sq_weighted_ps = sum_sq_weighted_ps_scalar;
         interp_pd_fn interp_pd = interp_pd_scalar;
         interp_ps_fn interp_ps = interp_ps_scalar;
+        dot_1d_2d_ps_fn dot_1d_2d_ps = dot_1d_2d_ps_scalar;
         amx_process_pd_fn amx_process_pd = nullptr;
         amx_process_ps_fn amx_process_ps = nullptr;
 
@@ -159,6 +164,7 @@ namespace np {
                 sum_sq_weighted_ps = sum_sq_weighted_ps_avx2;
                 interp_pd = interp_pd_avx2;
                 interp_ps = interp_ps_avx2;
+                dot_1d_2d_ps = dot_1d_2d_ps_avx2;
             }
 
             // AVX-512 level (overrides AVX2)
@@ -183,6 +189,7 @@ namespace np {
                 sum_sq_weighted_ps = sum_sq_weighted_ps_avx512;
                 interp_pd = interp_pd_avx512;
                 interp_ps = interp_ps_avx512;
+                dot_1d_2d_ps = dot_1d_2d_ps_avx512;
             }
 
             // AMX level (adds tile processing on top of AVX-512)
@@ -191,6 +198,7 @@ namespace np {
                 amx_process_ps = amx_process_ps_impl;
                 interp_pd = interp_pd_amx;
                 interp_ps = interp_ps_amx;
+                dot_1d_2d_ps = dot_1d_2d_ps_amx;
             }
         }
 

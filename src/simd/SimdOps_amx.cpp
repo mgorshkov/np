@@ -34,6 +34,7 @@ SOFTWARE.
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <cstdlib>
 #include <immintrin.h>
 
 // Mark each function with the required target ISA and disable auto-vectorization
@@ -198,5 +199,83 @@ namespace np {
                 interp_ps_avx512(x + i, x0, y0, x1, y1, inv_dx, result + i, n - i);
             }
         }
+
+        // ---- Matrix-vector dot product (1D · 2D) with AMX tiles ----
+
+        /// AMX + AVX512 implementation of y = x * W^T where W is (rows x cols).
+        /// Uses AMX tiles to load 16 rows of W at once (256 floats per tile row),
+        /// then processes each column using AVX512 FMA for the inner dot product.
+        /// The tile acts as a wide load unit (16x wider than AVX512) to maximize
+        /// memory bandwidth utilization.
+        AMX_TARGET_ATTR
+        void dot_1d_2d_ps_amx(const float *x, const float *W, std::size_t rows, std::size_t cols, float *result) {
+            amx_init_tiles();
+            // Zero out result first
+            std::memset(result, 0, cols * sizeof(float));
+
+            std::size_t i = 0;
+            // Process rows in tiles of 16
+            for (; i + kAmxTileRows - 1 < rows; i += kAmxTileRows) {
+                // Load 16 rows of W into tile 0 (16 rows x 64 bytes per row = 256 floats per row stride)
+                // Each tile row stores cols floats, but only 64 bytes (16 floats) are contiguous
+                // The tile stride is cols * sizeof(float) bytes per row
+                _tile_loadd(0, W + i * cols, cols * sizeof(float));
+
+                // Process columns in batches of 16 using AVX512
+                // For each column batch, we compute the dot product of x[i..i+15]
+                // with W[(i+row)*cols + j..j+15] for each row in the tile
+                std::size_t j = 0;
+                for (; j + 15 < cols; j += 16) {
+                    __m512 sum_vec = _mm512_setzero_ps();
+                    // For each row in the tile, load 16 floats and FMA with x[row]
+                    for (std::size_t row = 0; row < kAmxTileRows; ++row) {
+                        __m512 x_brcst = _mm512_set1_ps(x[i + row]);
+                        __m512 w_vec = _mm512_loadu_ps(W + (i + row) * cols + j);
+                        sum_vec = _mm512_fmadd_ps(x_brcst, w_vec, sum_vec);
+                    }
+                    // Accumulate into result
+                    __m512 r_vec = _mm512_loadu_ps(result + j);
+                    r_vec = _mm512_add_ps(r_vec, sum_vec);
+                    _mm512_storeu_ps(result + j, r_vec);
+                }
+                // Handle remaining columns (less than 16)
+                for (; j < cols; ++j) {
+                    float sum = 0.0f;
+                    for (std::size_t row = 0; row < kAmxTileRows; ++row) {
+                        sum += x[i + row] * W[(i + row) * cols + j];
+                    }
+                    result[j] += sum;
+                }
+            }
+
+            amx_release_tiles();
+
+            // Process remaining rows (less than a full tile) using AVX512
+            if (i < rows) {
+                std::size_t remaining = rows - i;
+                // Process columns in batches of 16
+                std::size_t j = 0;
+                for (; j + 15 < cols; j += 16) {
+                    __m512 sum_vec = _mm512_setzero_ps();
+                    for (std::size_t r = 0; r < remaining; ++r) {
+                        __m512 x_brcst = _mm512_set1_ps(x[i + r]);
+                        __m512 w_vec = _mm512_loadu_ps(W + (i + r) * cols + j);
+                        sum_vec = _mm512_fmadd_ps(x_brcst, w_vec, sum_vec);
+                    }
+                    __m512 r_vec = _mm512_loadu_ps(result + j);
+                    r_vec = _mm512_add_ps(r_vec, sum_vec);
+                    _mm512_storeu_ps(result + j, r_vec);
+                }
+                // Handle remaining columns
+                for (; j < cols; ++j) {
+                    float sum = 0.0f;
+                    for (std::size_t r = 0; r < remaining; ++r) {
+                        sum += x[i + r] * W[(i + r) * cols + j];
+                    }
+                    result[j] += sum;
+                }
+            }
+        }
+
     } // namespace internal
 } // namespace np

@@ -25,6 +25,7 @@ SOFTWARE.
 /// AVX-512 implementations of SIMD operations.
 
 #include <cstddef>
+#include <cstdint>
 #include <immintrin.h>
 
 // Mark each function with the required target ISA and disable auto-vectorization
@@ -377,6 +378,35 @@ namespace np {
                 } else {
                     result[i] = y0 + (element - x0) * (y1 - y0) * inv_dx;
                 }
+            }
+        }
+
+        // ---- Matrix-vector dot product (1D · 2D) ----
+
+        /// AVX-512 implementation of y = x * W^T where W is (rows x cols).
+        /// y[j] = sum_i x[i] * W[i * cols + j]
+        /// Uses FMA for the inner dot product loop and OpenMP over the outer loop.
+        AVX512_TARGET_ATTR
+        void dot_1d_2d_ps_avx512(const float *x, const float *W, std::size_t rows, std::size_t cols, float *result) {
+#ifdef USE_OPENMP
+#pragma omp parallel for default(none) shared(x, W, rows, cols, result)
+#endif
+            for (std::int32_t j = 0; j < static_cast<std::int32_t>(cols); ++j) {
+                __m512 sum_vec = _mm512_setzero_ps();
+                std::size_t i = 0;
+                // Process 16 elements at a time with FMA
+                for (; i + 15 < rows; i += 16) {
+                    __m512 x_vec = _mm512_loadu_ps(x + i);
+                    __m512 w_vec = _mm512_loadu_ps(W + i * cols + j);
+                    sum_vec = _mm512_fmadd_ps(x_vec, w_vec, sum_vec);
+                }
+                // Horizontal add to get final sum
+                float sum = _mm512_reduce_add_ps(sum_vec);
+                // Handle remaining elements
+                for (; i < rows; ++i) {
+                    sum += x[i] * W[i * cols + j];
+                }
+                result[j] = sum;
             }
         }
 
