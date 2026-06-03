@@ -604,7 +604,7 @@ namespace np {
                         // This avoids virtual get() dispatch for every element access.
                         // Typical use case: predict() with m_coeff = m_coeffs["1:"] (view, rank 1-3)
                         const auto *src = data();
-                        DType vec_local[4];
+                        DType vec_local[4]{};
                         for (std::int32_t k = 0; k < ncols; ++k) {
                             vec_local[k] = array.get(k);
                         }

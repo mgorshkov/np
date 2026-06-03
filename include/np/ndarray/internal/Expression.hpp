@@ -437,6 +437,7 @@ namespace np {
                                 }
                             }
 #endif
+#ifdef ENABLE_AVX2
                             // AVX2: 4 doubles per iteration
                             if (np::internal::simd_at_least(np::internal::SimdLevel::AVX2)) {
                                 for (; i + 3 < n; i += 4) {
@@ -444,6 +445,7 @@ namespace np {
                                     _mm256_storeu_pd(result_data + i, c);
                                 }
                             }
+#endif
                             // Scalar remainder
                             for (; i < n; ++i) {
                                 result_data[i] = applyOp(m_left.get(i), m_right.get(i));
@@ -502,6 +504,7 @@ namespace np {
                                 }
                             }
 #endif
+#ifdef ENABLE_AVX2
                             // AVX2: 8 floats per iteration
                             if (np::internal::simd_at_least(np::internal::SimdLevel::AVX2)) {
                                 for (; i + 7 < n; i += 8) {
@@ -509,6 +512,7 @@ namespace np {
                                     _mm256_storeu_ps(result_data + i, c);
                                 }
                             }
+#endif
                             // Scalar remainder
                             for (; i < n; ++i) {
                                 result_data[i] = applyOp(m_left.get(i), m_right.get(i));
@@ -546,7 +550,7 @@ namespace np {
 
                         // For double-precision comparisons, use SIMD register-based path
                         if constexpr (std::is_same_v<typename Left::DType, double>) {
-                            double threshold = m_right.get(0);
+                            [[maybe_unused]] double threshold = m_right.get(0);
 
                             Size i = 0;
 #if defined(ENABLE_AMX) && defined(ENABLE_AVX512)
@@ -582,6 +586,7 @@ namespace np {
                                 }
                             }
 #endif
+#ifdef ENABLE_AVX2
                             if (np::internal::simd_at_least(np::internal::SimdLevel::AVX2)) {
                                 __m256d thresh = _mm256_set1_pd(threshold);
                                 for (; i + 3 < n; i += 4) {
@@ -593,6 +598,7 @@ namespace np {
                                     count += __builtin_popcount(mask_bits);
                                 }
                             }
+#endif
                             // Scalar remainder
                             for (; i < n; ++i) {
                                 if (applyOp(m_left.get(i), m_right.get(i))) ++count;
@@ -602,7 +608,7 @@ namespace np {
 
                         // For single-precision comparisons, use SIMD register-based path
                         if constexpr (std::is_same_v<typename Left::DType, float>) {
-                            float threshold = static_cast<float>(m_right.get(0));
+                            [[maybe_unused]] float threshold = static_cast<float>(m_right.get(0));
 
                             Size i = 0;
 #if defined(ENABLE_AMX) && defined(ENABLE_AVX512)
@@ -634,6 +640,7 @@ namespace np {
                                 }
                             }
 #endif
+#ifdef ENABLE_AVX2
                             if (np::internal::simd_at_least(np::internal::SimdLevel::AVX2)) {
                                 __m256 thresh = _mm256_set1_ps(threshold);
                                 for (; i + 7 < n; i += 8) {
@@ -645,6 +652,7 @@ namespace np {
                                     count += __builtin_popcount(mask_bits);
                                 }
                             }
+#endif
                             // Scalar remainder
                             for (; i < n; ++i) {
                                 if (applyOp(m_left.get(i), m_right.get(i))) ++count;
@@ -685,6 +693,7 @@ namespace np {
                     }
                 }
 
+#ifdef ENABLE_AVX2
                 // Compute a __m256d register for chunk i by getting registers from children
                 // and applying this node's operation. No memory stores involved.
                 __m256d compute_reg256(Size i) const {
@@ -700,6 +709,7 @@ namespace np {
                         return _mm256_div_pd(a, b);
                     }
                 }
+#endif
 
 #ifdef ENABLE_AVX512
                 // Compute a __m512d register for chunk i (AVX512)
@@ -733,6 +743,7 @@ namespace np {
                 }
 #endif
 
+#ifdef ENABLE_AVX2
                 // Compute a __m256 register for chunk i (float, AVX2)
                 __m256 compute_reg256_ps(Size i) const {
                     __m256 a = get_left_reg256_ps(i);
@@ -747,7 +758,9 @@ namespace np {
                         return _mm256_div_ps(a, b);
                     }
                 }
+#endif
 
+#ifdef ENABLE_AVX2
                 // Get the left operand's __m256d register for chunk i.
                 // If left is a BinaryExpression, recursively compute its register.
                 // If left is an ArrayExpression, load from its data pointer directly.
@@ -778,6 +791,7 @@ namespace np {
                         return _mm256_loadu_pd(m_right.data() + i);
                     }
                 }
+#endif
 
 #ifdef ENABLE_AVX512
                 // Get the left operand's __m512d register for chunk i (AVX512)
@@ -857,6 +871,7 @@ namespace np {
                 }
 #endif
 
+#ifdef ENABLE_AVX2
                 // Get the left operand's __m256 register for chunk i (float, AVX2)
                 __m256 get_left_reg256_ps(Size i) const {
                     if constexpr (is_binary_op<Left, AddOp>::value ||
@@ -880,6 +895,7 @@ namespace np {
                         return _mm256_loadu_ps(m_right.data() + i);
                     }
                 }
+#endif
 
 #ifdef ENABLE_AVX512
                 // Get the left operand's __m512 register for chunk i (float, AVX512)

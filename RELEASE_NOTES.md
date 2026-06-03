@@ -1,3 +1,7 @@
+# Release 0.1.8
+## Changes
+* Bugfixes
+
 # Release 0.1.7
 ## Changes
 * Fused matrix multiplication
