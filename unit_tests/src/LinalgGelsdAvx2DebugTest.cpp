@@ -28,6 +28,8 @@ SOFTWARE.
  * forward-declared as non-static wrappers from src/simd/LstSqGelsd_avx2.cpp.
  */
 
+#ifdef ENABLE_AVX2
+
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -1915,3 +1917,5 @@ TEST(GelsdAvx2DebugTest, larfbRightStepByStep) {
     EXPECT_LT(W2_err, 1e-14);
     EXPECT_LT(C_err_sameW, 1e-5);
 }
+
+#endif

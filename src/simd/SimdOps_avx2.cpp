@@ -30,9 +30,10 @@ SOFTWARE.
 
 // Mark each function with the required target ISA and disable auto-vectorization
 // so the compiler only emits AVX2 (not AVX512 or AMX) instructions in this translation unit.
-#define AVX2_TARGET_ATTR __attribute__((target("avx2"), optimize("no-tree-vectorize")))
+#define AVX2_TARGET_ATTR __attribute__((target("avx2,fma"), optimize("no-tree-vectorize")))
 
 // Horizontal add helper for AVX2: sums all 4 doubles in a __m256d register
+AVX2_TARGET_ATTR
 inline double horizontalAdd(__m256d a) {
     __m128d lo = _mm256_castpd256_pd128(a);
     __m128d hi = _mm256_extractf128_pd(a, 1);
@@ -42,6 +43,7 @@ inline double horizontalAdd(__m256d a) {
 }
 
 // Horizontal add helper for AVX2: sums all 8 floats in a __m256 register
+AVX2_TARGET_ATTR
 inline float horizontalAdd(__m256 a) {
     __m128 lo = _mm256_castps256_ps128(a);
     __m128 hi = _mm256_extractf128_ps(a, 1);
