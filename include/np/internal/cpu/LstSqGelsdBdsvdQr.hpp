@@ -47,6 +47,14 @@ namespace np {
                                  T *s, T *U, T *VT) {
                 if (n == 0) return;
 
+                // The copies below are lowered to memcpy of n * sizeof(T) bytes.
+                // Reject lengths whose byte count cannot be represented as a
+                // ptrdiff_t; GCC otherwise reports a spurious -Wstringop-overflow
+                // for the unbounded size_t argument.
+                constexpr size_t kMaxCount =
+                        static_cast<size_t>(std::numeric_limits<std::ptrdiff_t>::max()) / sizeof(T);
+                if (n > kMaxCount) return;
+
                 std::vector<T> d(n + 1, T(0)), e(n + 1, T(0));
                 std::copy_n(d_in, n, d.data());
                 std::copy_n(e_in + 1, n - 1, e.data() + 1);

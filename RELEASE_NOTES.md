@@ -1,3 +1,7 @@
+# Release 0.1.9
+## Changes
+* AVX-512 optimizations
+
 # Release 0.1.8
 ## Changes
 * Bugfixes
