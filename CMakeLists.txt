@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME np)
 
 # Set up project
-project(${PROJECT_NAME} VERSION 0.1.8 DESCRIPTION "⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU" LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.1.9 DESCRIPTION "⚡ NumPy-style arrays in C++ | CUDA GPU + SIMD (AVX2/AVX512/AMX) CPU" LANGUAGES CXX)
 
 # Tune up various optimizations
 # Enable CUDA support
@@ -12,6 +12,13 @@ option(ENABLE_CUDA "Enable CUDA optimizations" ON)
 # Set up options for basic compile optimizations
 option(ENABLE_AVX2 "Enable AVX2 optimizations" ON)
 option(ENABLE_AVX512 "Enable AVX512 optimizations" OFF)
+# AVX-512 sub-features (Ice Lake+ only). ENABLE_AVX512 alone enables the base
+# set (F/DQ/BW/VL) so the library runs on any AVX-512 CPU (e.g. Cascade Lake).
+# VBMI/VBMI2 are NOT present on Cascade Lake; enabling them without runtime
+# dispatch support crashes with SIGILL on older AVX-512 CPUs.
+option(ENABLE_AVX512_VBMI "Enable AVX512-VBMI (byte permutes; Ice Lake+) optimizations" OFF)
+option(ENABLE_AVX512_VBMI2 "Enable AVX512-VBMI2 (byte compress/expand; Ice Lake+) optimizations" OFF)
+
 option(ENABLE_AMX "Enable AMX (Advanced Matrix Extensions) optimizations" OFF)
 # Set up options for OpenMP support
 option(ENABLE_OPENMP "Enable OpenMP" ON)
